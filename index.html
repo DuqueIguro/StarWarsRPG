@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars RPG - Hub Central</title>
+    <title>Hub Central - Star Wars RPG</title>
     <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
 
     <div class="main-container">
@@ -20,51 +24,62 @@
             </div>
         </div>
 
-        <div class="content-grid">
+        <div class="content-wrapper">
 
             <aside class="sidebar">
                 <div class="sidebar-module">
                     <h3 class="sidebar-title">NAVEGAÇÃO RÁPIDA</h3>
                     <ul class="nav-links">
-                        <li><a href="#">HANGAR</a></li>
-                        <li><a href="#">COMUNICAÇÃO</a></li>
-                        <li><a href="#">MAPA GALÁCTICO</a></li>
-                        <li><a href="#">MANUTENÇÃO</a></li>
+                        <li><a href="#"><i class="fa-solid fa-warehouse"></i> HANGAR</a></li>
+                        <li><a href="#"><i class="fa-solid fa-satellite-dish"></i> COMUNICAÇÃO</a></li>
+                        <li><a href="#"><i class="fa-solid fa-globe"></i> MAPA GALÁCTICO</a></li>
+                        <li><a href="#"><i class="fa-solid fa-wrench"></i> MANUTENÇÃO</a></li>
                     </ul>
                 </div>
+
                 <div class="sidebar-module">
                     <h3 class="sidebar-title">STATUS DA FROTA</h3>
                     <ul class="fleet-status">
-                        <li><span class="status-indicator online"></span>CRIMSON-01</li>
-                        <li><span class="status-indicator offline"></span>GHOST-03</li>
-                        <li><span class="status-indicator mission"></span>SHADOW-05</li>
-                        <li><span class="status-indicator online"></span>ROGUE-02</li>
+                        <li><span class="status-indicator online"></span><span>CRIMSON-01</span></li>
+                        <li><span class="status-indicator offline"></span><span>GHOST-03</span></li>
+                        <li><span class="status-indicator mission"></span><span>SHADOW-05</span></li>
                     </ul>
                 </div>
+
                 <div class="sidebar-module">
                     <h3 class="sidebar-title">INTEGRIDADE DO SISTEMA</h3>
                     <div class="system-integrity">
-                        <label>ESCUDOS</label>
-                        <progress value="95" max="100"></progress>
-                        <label>SUPORTE DE VIDA</label>
-                        <progress value="100" max="100"></progress>
-                        <label>HIPERPROPULSOR</label>
-                        <progress value="80" max="100"></progress>
+                        <label><i class="fa-solid fa-shield-halved"></i> ESCUDOS</label>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar warning" style="width: 55%;"></div>
+                        </div>
+                        <label><i class="fa-solid fa-heart-pulse"></i> SUPORTE DE VIDA</label>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 100%;"></div>
+                        </div>
+                        <label><i class="fa-solid fa-jet-fighter-up"></i> HIPERPROPULSOR</label>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar " style="width: 87%;"></div>
+                        </div>
                     </div>
                 </div>
             </aside>
 
-            <main class="main-panel">
-                <h1>PAINEL DE ACESSO</h1>
+            <main class="main-content">
+                <h1><i class="fa-solid fa-terminal"></i> PAINEL DE ACESSO</h1>
 
                 <div class="hub-container">
                     <div class="module-card">
                         <div class="card-header">
-                            <span>TERMINAL DE INDENTIDADE E REGISTROS</span>
+                            <span><i class="fa-solid fa-user-astronaut"></i> FICHA AUTOMÁTICA</span>
                             <span class="module-id">#47-GAMMA</span>
                         </div>
                         <p class="card-description">
-                            Esta interface permite o acesso e gerenciamento do seu dossiê operacional. É seu dever manter todos os dados atualizados, incluindo certificações de pilotagem, proficiência em armamentos e histórico de serviço. A precisão do seu perfil afeta diretamente a atribuição de missões, seus níveis de acesso e a liquidação de pagamentos. Dados incorretos podem resultar em falha de protocolo.
+                            Módulo de Registros de Pessoal e Identificação Biométrica. Esta interface permite o acesso e
+                            gerenciamento do seu dossiê operacional. É seu dever manter todos os dados atualizados,
+                            incluindo certificações de pilotagem, proficiência em armamentos e histórico de serviço. A
+                            precisão do seu perfil afeta diretamente a atribuição de missões, seus níveis de acesso e a
+                            liquidação de pagamentos. Dados incorretos podem resultar em falha de protocolo.
                         </p>
                         <div class="card-footer">
                             <a href="ficha/FichaAutomaticaSaga.html" class="access-button">ACESSAR</a>
@@ -74,11 +89,16 @@
 
                     <div class="module-card">
                         <div class="card-header">
-                            <span>TERMINAL DE REQUISIÇÃO AO MERCADO GALÁCTICO</span>
+                            <span><i class="fa-solid fa-rocket"></i> INVENTÁRIO E LOJAS</span>
                             <span class="module-id">#12-DELTA</span>
                         </div>
                         <p class="card-description">
-                            Gerencie o conteúdo do seu compartimento de carga pessoal e acesse nossa rede de fornecedores afiliados. O sistema integra mercados em toda a galáxia, desde os comerciantes de peças robustas e material de sobrevivência na Orla Exterior até os fabricantes de equipamentos de precisão nos Mundos do Núcleo. Utilize seus créditos para requisitar suprimentos, armamentos ou componentes de nave. Todas as transações são criptografadas e registradas.
+                            Terminal de Requisição e Acesso ao Mercado Galáctico. Gerencie o conteúdo do seu
+                            compartimento de carga pessoal e acesse nossa rede de fornecedores afiliados. O sistema
+                            integra mercados em toda a galáxia, desde os comerciantes de peças robustas e material de
+                            sobrevivência na Orla Exterior até os fabricantes de equipamentos de precisão nos Mundos do
+                            Núcleo. Utilize seus créditos para requisitar suprimentos, armamentos ou componentes de
+                            nave. Todas as transações são criptografadas e registradas.
                         </p>
                         <div class="card-footer">
                             <a href="inventario/Inventario.html" class="access-button">EXPLORAR</a>
@@ -87,11 +107,11 @@
                     </div>
                 </div>
 
-                 <div class="activity-log">
+                <div class="activity-log">
                     <h3 class="log-title">LOG DE ATIVIDADES DO SISTEMA</h3>
                     <div class="log-content">
                         <p>> Conexão estabelecida com o servidor CORELLIAN v3.2...</p>
-                        <p>> Autenticação do PILOTO_07 bem-sucedida.</p>
+                        <p class="log-success">> Autenticação do PILOTO_07 bem-sucedida.</p>
                         <p>> Carregando módulos de acesso rápido...</p>
                         <p class="log-warning">> Alerta: Flutuação de energia detectada no setor 4.</p>
                         <p>> Módulo #47-GAMMA carregado. Status: OK.</p>
@@ -101,17 +121,43 @@
                         <p>> Aguardando comando do usuário...</p>
                     </div>
                 </div>
+
+                <div class="system-readout-panel">
+                    <h3 class="readout-title">// ANÁLISE DE FLUXO DE DADOS //</h3>
+                    <div class="readout-item">
+                        <span>UPLINK STATUS</span>
+                        <div class="readout-bar-container">
+                            <div class="readout-bar" style="width: 100%; background-color: #5cb85c;"></div>
+                        </div>
+                        <span class="status-text ok">ESTÁVEL</span>
+                    </div>
+                    <div class="readout-item">
+                        <span>ENCRIPTAÇÃO</span>
+                        <div class="readout-bar-container">
+                            <div class="readout-bar" style="width: 100%; background-color: #00aaff;"></div>
+                        </div>
+                        <span class="status-text info">AES-256</span>
+                    </div>
+                    <div class="readout-item">
+                        <span>PACOTES DE DADOS</span>
+                        <div class="readout-bar-container">
+                            <div class="readout-bar" style="width: 75%; background-color: #f0ad4e;"></div>
+                        </div>
+                        <span class="status-text warning">PERDA PARCIAL</span>
+                    </div>
+                </div>
+
             </main>
 
         </div>
 
         <div class="bottom-bar">
-            <span>© ABY 22 - FROTA ESTELAR LOCAL | ORLA EXTERIOR - SETOR ARKANIS</span>
-            <span>CONEXÃO SEGURA ESTABELECIDA</span>
-            <span class="system-time">HORA: 13:37:00</span>
+            <span>© ABY 22 - FROTA ESTELAR LOCAL | SETOR ARKANIS</span>
+            <span class="system-time">HORA DO SISTEMA: 13:37:00</span>
         </div>
 
     </div>
 
 </body>
+
 </html>
