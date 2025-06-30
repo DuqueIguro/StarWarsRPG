@@ -1,0 +1,165 @@
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background-color: #0c0a09; /* stone-950 */
+    color: #F3F4F6; /* text-gray-100 */
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+}
+h1, h2, h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #facc15; /* yellow-400 */
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+}
+.section-container {
+    background-color: rgba(28, 25, 23, 0.8); /* stone-900 with opacity */
+    backdrop-filter: blur(4px);
+    border: 1px solid #a16207; /* yellow-700 */
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
+}
+input[type="text"], input[type="number"], textarea, select {
+    background-color: #1c1917; /* stone-900 */
+    border: 1px solid #57534e; /* stone-600 */
+    color: #F9FAFB; /* text-gray-50 */
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    width: 100%;
+    transition: all 0.2s ease-in-out;
+}
+input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #facc15; /* yellow-400 */
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.4);
+}
+label {
+    font-weight: 600;
+    color: #D1D5DB; /* text-gray-300 */
+}
+.stat-box {
+    background-color: #292524; /* stone-800 */
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+.stat-value {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
+}
+.stat-mod {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    color: #facc15; /* yellow-400 */
+}
+.dice-icon {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    fill: #facc15; /* yellow-400 */
+}
+.dice-icon:hover {
+    transform: scale(1.2) rotate(15deg);
+    fill: #fde047; /* yellow-300 */
+}
+/* Estilos do Modal de Rolagem de Dados */
+#dice-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+#dice-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background-color: #1c1917;
+    border: 2px solid #facc15;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s;
+}
+#dice-modal.show .modal-content {
+    transform: scale(1);
+}
+.modal-content h3 {
+    margin-bottom: 1rem;
+}
+#roll-result {
+    font-size: 3rem;
+    font-family: 'Orbitron', sans-serif;
+    color: #facc15;
+    margin: 1rem 0;
+}
+#roll-breakdown {
+    font-size: 1rem;
+    color: #D1D5DB;
+}
+/* Estilo base para os GRUPOS de botões (negativo e positivo) */
+.hp-btn-group {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem;
+    border-radius: 0.375rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Cor para o grupo NEGATIVO (vermelho) */
+.hp-btn-group-negative {
+    background: linear-gradient(to bottom, #7f1d1d, #521313);
+    border: 1px solid #dc2626;
+}
+
+/* Cor para o grupo POSITIVO (verde) */
+.hp-btn-group-positive {
+    background: linear-gradient(to bottom, #166534, #14532d);
+    border: 1px solid #22c55e;
+}
+
+/* Estilo para TODOS os botões dentro da barra */
+.hp-btn {
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    border-radius: 0.25rem;
+}
+
+.hp-btn-group-negative .hp-btn {
+    color: #fecaca;
+}
+
+.hp-btn-group-positive .hp-btn {
+    color: #a7f3d0;
+}
+
+.hp-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+    color: #ffffff;
+}
+
+#pv-atual-display {
+    color: #fefce8;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    flex-shrink: 0;
+}
