@@ -1,0 +1,538 @@
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escudo do Mestre Interativo - Star Wars RPG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --sw-yellow: #FBBF24;
+            --sw-dark-blue: #1F2937;
+            --sw-light-blue: #374151;
+            --sw-text: #E5E7EB;
+            --sw-text-dark: #111827;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--sw-text-dark);
+            color: var(--sw-text);
+        }
+        h1, h2, h3, .tab-button, button {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+        .tab-button.active {
+            background-color: var(--sw-yellow);
+            color: var(--sw-text-dark);
+            border-bottom-color: #F59E0B;
+        }
+        .tab-content {
+            background-color: var(--sw-dark-blue);
+            border: 1px solid var(--sw-light-blue);
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .table-header {
+            background-color: var(--sw-light-blue);
+        }
+        .table-row-odd {
+            background-color: var(--sw-dark-blue);
+        }
+        .table-row-even {
+            background-color: var(--sw-light-blue);
+        }
+        .star-wars-crawl {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            background: black;
+            border-radius: 0.5rem;
+        }
+        .star-wars-crawl-content {
+            position: absolute;
+            top: 100%;
+            width: 100%;
+            animation: crawl 45s linear infinite;
+            transform-origin: 50% 100%;
+        }
+        .star-wars-crawl-text {
+            transform: perspective(300px) rotateX(25deg);
+            text-align: justify;
+            color: var(--sw-yellow);
+            font-size: 1.5rem;
+        }
+        @keyframes crawl {
+            0% { top: 100%; }
+            100% { top: -150%; }
+        }
+        .btn-primary {
+            background-color: var(--sw-yellow);
+            color: var(--sw-text-dark);
+            padding: 8px 16px;
+            border-radius: 0.375rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #F59E0B;
+        }
+        .input-field {
+            background-color: var(--sw-light-blue);
+            border: 1px solid #4B5563;
+            color: var(--sw-text);
+            border-radius: 0.375rem;
+            padding: 8px;
+        }
+        .dice-result-display {
+            background-color: #111827;
+            border: 1px solid var(--sw-light-blue);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 100px;
+        }
+        .dice-history li {
+            border-bottom: 1px solid var(--sw-light-blue);
+            padding: 4px 0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-yellow-400 tracking-wider">Escudo do Mestre</h1>
+            <p class="text-lg text-gray-300">Star Wars RPG - Edição Saga</p>
+        </div>
+
+        <!-- Abas de Navegação -->
+        <div class="mb-4 border-b border-gray-600 flex flex-wrap justify-center">
+            <button class="tab-button text-sm md:text-base py-2 px-4 font-semibold rounded-t-lg" onclick="openTab(event, 'Ferramentas')">Ferramentas</button>
+            <button class="tab-button text-sm md:text-base py-2 px-4 font-semibold rounded-t-lg" onclick="openTab(event, 'Combate')">Combate</button>
+            <button class="tab-button text-sm md:text-base py-2 px-4 font-semibold rounded-t-lg" onclick="openTab(event, 'Pericias')">Perícias</button>
+            <button class="tab-button text-sm md:text-base py-2 px-4 font-semibold rounded-t-lg" onclick="openTab(event, 'RegrasGerais')">Regras Gerais</button>
+            <button class="tab-button text-sm md:text-base py-2 px-4 font-semibold rounded-t-lg" onclick="openTab(event, 'NPCs')">NPCs & Criaturas</button>
+            <button class="tab-button text-sm md:text-base py-2 px-4 font-semibold rounded-t-lg" onclick="openTab(event, 'Veiculos')">Veículos</button>
+        </div>
+
+        <!-- Conteúdo das Abas -->
+        <div id="Ferramentas" class="tab-content p-6 rounded-b-lg rounded-tr-lg">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-400">Ferramentas do Mestre</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Rolador de Dados -->
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Rolador de Dados</h3>
+                    <div class="flex flex-wrap gap-2 items-center mb-4">
+                        <input type="number" id="dice-num" value="1" min="1" class="input-field w-16">
+                        <select id="dice-type" class="input-field">
+                            <option value="4">d4</option>
+                            <option value="6">d6</option>
+                            <option value="8">d8</option>
+                            <option value="10">d10</option>
+                            <option value="12">d12</option>
+                            <option value="20" selected>d20</option>
+                            <option value="100">d100</option>
+                        </select>
+                        <span class="text-xl">+</span>
+                        <input type="number" id="dice-mod" value="0" class="input-field w-16">
+                        <button class="btn-primary" onclick="rollDice()">Rolar</button>
+                    </div>
+                    <div class="dice-result-display mb-4">
+                        <p class="text-lg">Resultado: <span id="dice-total" class="font-bold text-2xl text-yellow-400">0</span></p>
+                        <p class="text-sm text-gray-400">Rolagens: <span id="dice-rolls"></span></p>
+                    </div>
+                    <h4 class="font-semibold mb-2 text-yellow-200">Histórico de Rolagens</h4>
+                    <ul id="dice-history" class="text-sm h-32 overflow-y-auto bg-gray-900 p-2 rounded"></ul>
+                </div>
+
+                <!-- Rastreador de Combate -->
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Rastreador de Combate</h3>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <input type="text" id="combatant-name" placeholder="Nome" class="input-field flex-grow">
+                        <input type="number" id="combatant-init" placeholder="Iniciativa" class="input-field w-24">
+                        <input type="number" id="combatant-hp" placeholder="PV" class="input-field w-20">
+                        <button class="btn-primary" onclick="addCombatant()">Add</button>
+                    </div>
+                    <button class="btn-primary mb-2 w-full" onclick="sortCombatants()">Ordenar por Iniciativa</button>
+                    <div id="combat-tracker" class="space-y-2"></div>
+                </div>
+                
+                <!-- Gerador de Nomes -->
+                 <div class="lg:col-span-2 bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Gerador de Nomes</h3>
+                     <div class="flex flex-wrap gap-2 items-center mb-4">
+                        <select id="name-species" class="input-field">
+                            <option value="Humano">Humano</option>
+                            <option value="Twi'lek">Twi'lek</option>
+                            <option value="Rodiano">Rodiano</option>
+                            <option value="Wookiee">Wookiee</option>
+                            <option value="Bothan">Bothan</option>
+                            <option value="Sullustano">Sullustano</option>
+                        </select>
+                        <button class="btn-primary" onclick="generateName()">Gerar Nome</button>
+                    </div>
+                    <div class="dice-result-display">
+                        <p class="text-lg">Nome Gerado: <span id="generated-name" class="font-bold text-2xl text-yellow-400"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="Combate" class="tab-content hidden p-6 rounded-b-lg rounded-tr-lg">
+            <!-- Conteúdo da aba Combate (igual ao anterior, com possíveis melhorias) -->
+             <h2 class="text-2xl font-bold mb-4 text-yellow-400">Referência Rápida de Combate</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Ações em Combate</h3>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li><span class="font-bold">Ação Padrão:</span> Atacar, usar perícia, usar poder da Força.</li>
+                        <li><span class="font-bold">Ação de Movimento:</span> Mover-se, sacar arma, levantar-se.</li>
+                        <li><span class="font-bold">Ação Rápida:</span> Largar item, mirar (2 ações), trocar modo da arma.</li>
+                        <li><span class="font-bold">Ação de Rodada Completa:</span> Investida, ataque total.</li>
+                        <li><span class="font-bold">Reação:</span> Ataque de oportunidade, usar certas perícias/talentos.</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Cálculos de Ataque</h3>
+                    <p><span class="font-bold">Ataque Físico:</span> 1d20 + BBA + Mod. Vigor</p>
+                    <p><span class="font-bold">Ataque à Distância:</span> 1d20 + BBA + Mod. Destreza + Mod. Alcance</p>
+                    <button class="btn-primary text-sm mt-2" onclick="quickRoll(20, 0, 'Teste de Ataque')">Rolar 1d20</button>
+                    <p class="mt-2"><span class="font-bold">Dano Físico:</span> Dano Arma + ½ Nível + Mod. Vigor</p>
+                    <p><span class="font-bold">Dano à Distância:</span> Dano Arma + ½ Nível</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Defesas</h3>
+                    <p><span class="font-bold">Reflexo:</span> 10 + Nível Heróico¹ + Mod. Des + Bônus Classe</p>
+                    <p><span class="font-bold">Fortitude:</span> 10 + Nível Heróico + Mod. Con + Bônus Classe</p>
+                    <p><span class="font-bold">Vontade:</span> 10 + Nível Heróico + Mod. Sab + Bônus Classe</p>
+                    <p class="text-xs mt-1">¹Ou Bônus de Armadura, o que for maior.</p>
+                </div>
+                <div class="md:col-span-2 lg:col-span-3 bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Trilha de Condição</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead><tr class="table-header"><th class="p-2">Passo</th><th class="p-2">Efeito</th></tr></thead>
+                            <tbody>
+                                <tr class="table-row-even"><td class="p-2">0</td><td class="p-2">Normal (sem penalidades)</td></tr>
+                                <tr class="table-row-odd"><td class="p-2">-1</td><td class="p-2">-1 em todas as defesas, ataques e testes.</td></tr>
+                                <tr class="table-row-even"><td class="p-2">-2</td><td class="p-2">-2 em todas as defesas, ataques e testes.</td></tr>
+                                <tr class="table-row-odd"><td class="p-2">-5</td><td class="p-2">-5 em todas as defesas, ataques e testes.</td></tr>
+                                <tr class="table-row-even"><td class="p-2">-10</td><td class="p-2">-10 em defesas, ataques e testes; metade da velocidade.</td></tr>
+                                <tr class="table-row-odd"><td class="p-2">Fim</td><td class="p-2">Inconsciente ou Desativado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="Pericias" class="tab-content hidden p-6 rounded-b-lg rounded-tr-lg">
+            <!-- Conteúdo da aba Perícias (igual ao anterior, com possíveis melhorias) -->
+             <h2 class="text-2xl font-bold mb-4 text-yellow-400">Referência Rápida de Perícias</h2>
+             <div class="flex justify-center mb-4">
+                <button class="btn-primary" onclick="quickRoll(20, 0, 'Teste de Perícia')">Rolar Teste de Perícia (1d20)</button>
+             </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">CDs Comuns de Perícias</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead><tr class="table-header"><th class="p-2">Tarefa</th><th class="p-2">Perícia</th><th class="p-2">CD</th></tr></thead>
+                            <tbody>
+                                <tr class="table-row-even"><td class="p-2">Equilibrar-se (superfície estreita)</td><td class="p-2">Acrobacia</td><td class="p-2">15</td></tr>
+                                <tr class="table-row-odd"><td class="p-2">Escapar de amarras</td><td class="p-2">Acrobacia</td><td class="p-2">25</td></tr>
+                                <tr class="table-row-even"><td class="p-2">Escalar parede com apoios</td><td class="p-2">Escalar</td><td class="p-2">15</td></tr>
+                                <tr class="table-row-odd"><td class="p-2">Desativar dispositivo simples</td><td class="p-2">Mecânica</td><td class="p-2">15</td></tr>
+                                <tr class="table-row-even"><td class="p-2">Reparo improvisado</td><td class="p-2">Mecânica</td><td class="p-2">25</td></tr>
+                                <tr class="table-row-odd"><td class="p-2">Mudar atitude (Indiferente)</td><td class="p-2">Persuasão</td><td class="p-2">Vontade do alvo -2</td></tr>
+                                <tr class="table-row-even"><td class="p-2">Primeiros Socorros</td><td class="p-2">Tratar Ferimento</td><td class="p-2">15</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Modificadores de Enganação</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead><tr class="table-header"><th class="p-2">Enganação</th><th class="p-2">Modificador</th></tr></thead>
+                            <tbody>
+                                <tr class="table-row-even"><td class="p-2">Simples (crível, a favor do alvo)</td><td class="p-2">+5</td></tr>
+                                <tr class="table-row-odd"><td class="p-2">Moderada (crível, pouco impacto)</td><td class="p-2">+0</td></tr>
+                                <tr class="table-row-even"><td class="p-2">Difícil (pouco crível, algum risco)</td><td class="p-2">-5</td></tr>
+                                <tr class="table-row-odd"><td class="p-2">Incrível (difícil de acreditar, risco considerável)</td><td class="p-2">-10</td></tr>
+                                <tr class="table-row-even"><td class="p-2">Absurda (quase impossível)</td><td class="p-2">-20</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="RegrasGerais" class="tab-content hidden p-6 rounded-b-lg rounded-tr-lg">
+            <!-- Conteúdo da aba Regras Gerais (igual ao anterior) -->
+             <h2 class="text-2xl font-bold mb-4 text-yellow-400">Regras Gerais</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Pontos de Força</h3>
+                    <p>Gaste 1 Ponto de Força (ação livre, 1/rodada) para adicionar 1d6 ao resultado de um ataque, perícia ou teste de habilidade.</p>
+                    <ul class="list-disc list-inside mt-2">
+                        <li><span class="font-bold">Nível 8+:</span> Role 2d6, use o maior.</li>
+                        <li><span class="font-bold">Nível 15+:</span> Role 3d6, use o maior.</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Pontos de Destino</h3>
+                    <p>Gaste 1 Ponto de Destino para:</p>
+                    <ul class="list-disc list-inside mt-2">
+                        <li>Acertar um ataque crítico automaticamente.</li>
+                        <li>Fazer um ataque inimigo falhar automaticamente.</li>
+                        <li>Agir fora da sua vez na iniciativa.</li>
+                        <li>Receber 3 Pontos de Força.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="NPCs" class="tab-content hidden p-6 rounded-b-lg rounded-tr-lg">
+            <!-- Conteúdo da aba NPCs (igual ao anterior) -->
+             <h2 class="text-2xl font-bold mb-4 text-yellow-400">NPCs e Criaturas Comuns</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-yellow-300">Stormtrooper (ND 1)</h3>
+                    <p><span class="font-bold">Defesas:</span> Ref 16, Fort 12, Von 10</p>
+                    <p><span class="font-bold">PV:</span> 10; <span class="font-bold">Limiar:</span> 12</p>
+                    <p><span class="font-bold">Ataque:</span> Rifle Blaster +4 (3d8)</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-yellow-300">Rancor (ND 11)</h3>
+                    <p><span class="font-bold">Defesas:</span> Ref 17, Fort 16, Von 8</p>
+                    <p><span class="font-bold">PV:</span> 138; <span class="font-bold">Limiar:</span> 36</p>
+                    <p><span class="font-bold">Ataque:</span> 2 Garras +11 (1d8+20)</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="Veiculos" class="tab-content hidden p-6 rounded-b-lg rounded-tr-lg">
+            <!-- Conteúdo da aba Veículos (igual ao anterior) -->
+             <h2 class="text-2xl font-bold mb-4 text-yellow-400">Referência Rápida de Veículos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Tamanho de Veículos</h3>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li><span class="font-bold">Grande (-1):</span> Moto Speeder</li>
+                        <li><span class="font-bold">Enorme (-2):</span> Caça TIE</li>
+                        <li><span class="font-bold">Imenso (-5):</span> X-wing</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-300">Dano por Colisão</h3>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><span class="font-bold">Grande:</span> 2d6 + Mod. Vig</li>
+                        <li><span class="font-bold">Enorme:</span> 4d6 + Mod. Vig</li>
+                        <li><span class="font-bold">Imenso:</span> 6d6 + Mod. Vig</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Easter Egg -->
+        <div class="mt-8 text-center">
+             <div class="star-wars-crawl">
+                <div class="star-wars-crawl-content">
+                    <div class="star-wars-crawl-text">
+                        <p>Há muito tempo, numa galáxia muito, muito distante....</p>
+                        <p>É um período de grande aventura. Mestres de Jogo corajosos preparam as suas campanhas, buscando criar histórias épicas de heroísmo e vilania.</p>
+                        <p>Com este escudo digital, o Mestre tem ao seu dispor as ferramentas para forjar lendas, desafiar os heróis e tecer os fios do destino que unem a galáxia...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Sound Engine ---
+        let synth;
+        function setupSound() {
+            if (!synth) {
+                synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 },
+                    volume: -20
+                }).toDestination();
+            }
+        }
+
+        function playDiceSound() {
+            if (typeof Tone === 'undefined') return;
+            setupSound();
+            const now = Tone.now();
+            const numNotes = Math.floor(Math.random() * 4) + 3; // 3 to 6 notes
+            for(let i = 0; i < numNotes; i++) {
+                const note = 200 + Math.random() * 600; // Random frequency
+                const duration = Math.random() * 0.1 + 0.05;
+                const time = now + i * 0.05;
+                synth.triggerAttackRelease(note, duration, time);
+            }
+        }
+
+        // --- Tab Management ---
+        function openTab(evt, tabName) {
+            let i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementsByClassName("tab-button")[0].click();
+        });
+
+        // --- Dice Roller ---
+        const diceHistory = [];
+        function rollDice(num, sides, mod, description = "Rolagem") {
+            playDiceSound();
+            const numDice = num || parseInt(document.getElementById('dice-num').value);
+            const diceType = sides || parseInt(document.getElementById('dice-type').value);
+            const modifier = mod !== undefined ? mod : parseInt(document.getElementById('dice-mod').value);
+            
+            let total = 0;
+            let rolls = [];
+            for (let i = 0; i < numDice; i++) {
+                const roll = Math.floor(Math.random() * diceType) + 1;
+                rolls.push(roll);
+                total += roll;
+            }
+            
+            total += modifier;
+            
+            document.getElementById('dice-total').textContent = total;
+            document.getElementById('dice-rolls').textContent = `[${rolls.join(', ')}] + ${modifier}`;
+            
+            updateHistory(`${description}: ${total} (${numDice}d${diceType}+${modifier})`);
+        }
+
+        function quickRoll(sides, mod, description) {
+            openTab({currentTarget: document.querySelector('button[onclick*="Ferramentas"]')}, 'Ferramentas');
+            document.getElementById('dice-num').value = 1;
+            document.getElementById('dice-type').value = sides;
+            document.getElementById('dice-mod').value = mod;
+            rollDice(1, sides, mod, description);
+        }
+
+        function updateHistory(entry) {
+            diceHistory.unshift(entry);
+            if (diceHistory.length > 20) {
+                diceHistory.pop();
+            }
+            const historyList = document.getElementById('dice-history');
+            historyList.innerHTML = '';
+            diceHistory.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                historyList.appendChild(li);
+            });
+        }
+
+        // --- Combat Tracker ---
+        let combatants = [];
+        let combatantId = 0;
+
+        function addCombatant() {
+            const name = document.getElementById('combatant-name').value;
+            const init = parseInt(document.getElementById('combatant-init').value);
+            const hp = parseInt(document.getElementById('combatant-hp').value);
+
+            if (name && !isNaN(init) && !isNaN(hp)) {
+                combatants.push({ id: combatantId++, name, init, hp, maxHp: hp });
+                renderCombatTracker();
+                document.getElementById('combatant-name').value = '';
+                document.getElementById('combatant-init').value = '';
+                document.getElementById('combatant-hp').value = '';
+            }
+        }
+
+        function sortCombatants() {
+            combatants.sort((a, b) => b.init - a.init);
+            renderCombatTracker();
+        }
+
+        function updateHp(id, amount) {
+            const combatant = combatants.find(c => c.id === id);
+            if (combatant) {
+                combatant.hp += amount;
+                if (combatant.hp < 0) combatant.hp = 0;
+                if (combatant.hp > combatant.maxHp) combatant.hp = combatant.maxHp;
+                renderCombatTracker();
+            }
+        }
+        
+        function removeCombatant(id) {
+            combatants = combatants.filter(c => c.id !== id);
+            renderCombatTracker();
+        }
+
+        function renderCombatTracker() {
+            const trackerDiv = document.getElementById('combat-tracker');
+            trackerDiv.innerHTML = '';
+            combatants.forEach(c => {
+                const combatantDiv = document.createElement('div');
+                combatantDiv.className = 'bg-gray-900 p-3 rounded-lg flex justify-between items-center';
+                combatantDiv.innerHTML = `
+                    <div>
+                        <p class="font-bold">${c.name} <span class="text-sm text-gray-400">(Inic: ${c.init})</span></p>
+                        <p class="text-sm">PV: ${c.hp} / ${c.maxHp}</p>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <input type="number" id="hp-change-${c.id}" class="input-field w-16" value="1">
+                        <button class="bg-red-600 text-white px-2 py-1 rounded" onclick="updateHp(${c.id}, -document.getElementById('hp-change-${c.id}').valueAsNumber)">-</button>
+                        <button class="bg-green-600 text-white px-2 py-1 rounded" onclick="updateHp(${c.id}, document.getElementById('hp-change-${c.id}').valueAsNumber)">+</button>
+                        <button class="bg-gray-600 text-white px-2 py-1 rounded" onclick="removeCombatant(${c.id})">X</button>
+                    </div>
+                `;
+                trackerDiv.appendChild(combatantDiv);
+            });
+        }
+        
+        // --- Name Generator ---
+        const names = {
+            "Humano": ["Jax Pavan", "Kaelen", "Corran Horn", "Talon Karrde", "Garm Bel Iblis", "Bria Tharen", "Mirax Terrik", "Zane Carrick", "Dash Rendar"],
+            "Twi'lek": ["Orn Free Taa", "Aayla Secura", "Bib Fortuna", "Oola", "Tott Doneeta", "Nima-Da-Boda", "Firith Olan"],
+            "Rodiano": ["Greedo", "Beedo", "Navik o Vermelho", "Chio Fain", "Neela", "Wald"],
+            "Wookiee": ["Chewbacca", "Tarfful", "Lowbacca", "Groznik", "Rorworr", "Salporin"],
+            "Bothan": ["Borsk Fey'lya", "Koth Melan", "Tereb Ab'lon", "Tav Breil'lya", "Karka Kre'fey"],
+            "Sullustano": ["Nien Nunb", "Sian Tevv", "Aril Nunb", "Syub Snunb", "Dilr Nep"]
+        };
+        
+        function generateName() {
+            const species = document.getElementById('name-species').value;
+            const nameList = names[species];
+            if (nameList) {
+                const randomIndex = Math.floor(Math.random() * nameList.length);
+                document.getElementById('generated-name').textContent = nameList[randomIndex];
+            }
+        }
+        
+        // Generate a name on load
+        document.addEventListener("DOMContentLoaded", generateName);
+
+    </script>
+
+</body>
+</html>
