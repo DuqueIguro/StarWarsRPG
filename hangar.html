@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso ao Hangar | Terminal</title>
+    <link rel="stylesheet" href="styles/hangar.css">
+</head>
+<body>
+    <div class="terminal">
+        <p>> TERMINAL DE ACESSO AO HANGAR - PROPRIEDADE DE DUR'TOC</p>
+        <p>> SISTEMA OPERACIONAL CORELLIAN v3.2</p>
+        <p>> ATENÇÃO: TENTATIVAS DE ACESSO NÃO AUTORIZADAS SERÃO... TRATADAS COM EXTREMA IRRITABILIDADE.</p>
+        <br>
+        <div id="login-prompt">
+            <span>> INSIRA A CHAVE DE ACESSO MESTRA: </span>
+            <input type="password" id="passwordInput" onkeypress="handleKeyPress(event)">
+            <span id="cursor">_</span>
+        </div>
+        
+        <div id="feedback"></div>
+
+        <br>
+        <p>> A CHAVE É UMA RELÍQUIA VIVA, UMA HERANÇA PERDIDA.</p>
+    </div>
+
+    <script>
+        // Foca no input assim que a página carrega
+        document.getElementById('passwordInput').focus();
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const feedback = document.getElementById('feedback');
+            
+            // A senha é "Kalicore"
+            if (input.value.toLowerCase() === 'kalicore') {
+                feedback.style.color = '#00FF41';
+                feedback.textContent = '> CHAVE VÁLIDA. ACESSO CONCEDIDO. REDIRECIONANDO...';
+                setTimeout(() => {
+                    window.location.href = 'hangarAutorizado.html';
+                }, 1500); // Espera 1.5 segundos antes de redirecionar
+            } else {
+                feedback.style.color = '#FF4141';
+                feedback.textContent = '> ACESSO NEGADO. CHAVE INCORRETA.';
+                input.value = ''; // Limpa o campo
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        }
+    </script>
+</body>
+</html>

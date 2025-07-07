@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+body {
+    background-color: #000;
+    color: #00FF41; /* Verde tecnológico */
+    font-family: 'VT323', monospace; /* Fonte estilo terminal */
+    font-size: 20px;
+    margin: 0;
+    padding: 20px;
+    text-shadow: 0 0 5px #00FF41; /* Efeito de brilho */
+}
+
+/* Efeito de scanlines para dar um ar de monitor antigo */
+body::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 2;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+}
+
+.terminal {
+    border: 2px solid #00FF41;
+    padding: 25px;
+    max-width: 900px;
+    margin: 40px auto;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+    background-color: rgba(0, 20, 0, 0.1); /* Fundo sutilmente verde */
+}
+
+h1, h2, h3 {
+    color: #33FF77; /* Tom de verde mais claro para títulos */
+    text-transform: uppercase;
+}
+
+p, li, span {
+    line-height: 1.6;
+}
+
+a {
+    color: #00FF41;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    background-color: #00FF41;
+    color: #000;
+}
+
+/* Estilo para a tela de login */
+#login-prompt {
+    display: flex;
+    align-items: center;
+}
+
+#passwordInput {
+    background: transparent;
+    border: none;
+    color: #00FF41;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    text-shadow: 0 0 5px #00FF41;
+    outline: none;
+    margin-left: 10px;
+    flex-grow: 1;
+}
+
+#cursor {
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    from, to { color: transparent; }
+    50% { color: #00FF41; }
+}
+
+button {
+    background-color: #00FF41;
+    color: #000;
+    border: none;
+    padding: 5px 15px;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+#feedback {
+    margin-top: 15px;
+    color: #FF4141; /* Vermelho para acesso negado */
+    height: 25px;
+}
+
+.cite {
+    font-size: 10px;
+    opacity: 0.6;
+    color: #33FF77;
+}
