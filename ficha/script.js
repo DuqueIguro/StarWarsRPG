@@ -1,7 +1,12 @@
 let ultimoPvCalculado = 0;
 
 
-function updateSheet() {
+
+
+
+
+function initFicha() {
+    function updateSheet() {
 
     console.log('Atualizando ficha...');
     console.log('TESTE DO UPDATE SHEET');
@@ -121,10 +126,6 @@ function updateSheet() {
     iniciativaContainer.querySelector('.rollable').dataset.rollLabel = 'Teste de Iniciativa';
     updateAttackBonuses();
 }
-
-
-
-//document.addEventListener('DOMContentLoaded', () => {
     // Referências aos elementos da página
     const selectEspecie = document.getElementById('especie');
     const selectTamanho = document.getElementById('tamanho');
@@ -741,12 +742,48 @@ function updateSheet() {
         });
     }
 
+    // Chave para o localStorage
+const SAVE_KEY = 'starwarsrpg_ficha_save';
+
+// Função para salvar os dados do formulário
+function saveData() {
+    const data = {};
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.type === 'checkbox') {
+            data[el.id || el.name || el.className + el.value] = el.checked;
+        } else {
+            data[el.id || el.name || el.className + el.value] = el.value;
+        }
+    });
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+}
+
+// Função para carregar os dados do formulário
+function loadData() {
+    const data = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        const key = el.id || el.name || el.className + el.value;
+        if (data.hasOwnProperty(key)) {
+            if (el.type === 'checkbox') {
+                el.checked = data[key];
+            } else {
+                el.value = data[key];
+            }
+        }
+    });
+}
+
+// Função para salvar automaticamente ao alterar qualquer campo
+function bindSaveOnChange() {
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.addEventListener('change', saveData);
+        el.addEventListener('input', saveData);
+    });
+}
+
     loadData();
     bindSaveOnChange();
-    if (document.getElementById('def-fort').textContent == "10") {
-        updateSheet();
-        console.log("Dados não encontrados, calculando ficha inicial.");
-    }
+    updateSheet();
 
     // Se não houver dados salvos, faz um cálculo inicial da ficha.
     if (!localStorage.getItem(SAVE_KEY)) {
@@ -754,4 +791,8 @@ function updateSheet() {
         updateSheet();
     }
 
-//});
+}
+
+// Chama a função de inicialização imediatamente
+initFicha();
+
