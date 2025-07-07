@@ -748,11 +748,60 @@ const SAVE_KEY = 'starwarsrpg_ficha_save';
 // Função para salvar os dados do formulário
 function saveData() {
     const data = {};
+    // Campos dentro de pericia-item
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        if (el.type === 'checkbox') {
+        // Campos dentro de pericia-item
+        if (
+            el.closest('.pericia-item') &&
+            (
+                (el.type === 'checkbox' && (el.classList.contains('trained-check') || el.classList.contains('focus-check'))) ||
+                el.classList.contains('other-bonus')
+            )
+        ) {
+            const pericia = el.closest('.pericia-item').dataset.skill;
+            if (el.type === 'checkbox') {
+                const tipo = el.classList.contains('trained-check') ? 'trained' : 'focus';
+                data[`pericia_${pericia}_${tipo}`] = el.checked;
+            } else if (el.classList.contains('other-bonus')) {
+                data[`pericia_${pericia}_other`] = el.value;
+            }
+        }
+        // Checkboxes genéricas
+        else if (el.type === 'checkbox') {
             data[el.id || el.name || el.className + el.value] = el.checked;
-        } else {
+        }
+        // Outros campos
+        else {
             data[el.id || el.name || el.className + el.value] = el.value;
+        }
+    });
+    // Salva todas as armas corretamente, mesmo com múltiplas armas
+    document.querySelectorAll('.weapon-block-container').forEach((container, idx) => {
+        // Use sempre o índice como identificador único para garantir ordem e unicidade
+        const weaponId = idx;
+        const nomeArma = container.querySelector('.weapon-name');
+        if (nomeArma) {
+            data[`weapon_${weaponId}_name`] = nomeArma.value;
+        }
+        const bonusAtaqueArma = container.querySelector('.attack-bonus-display');
+        if (bonusAtaqueArma) {
+            data[`weapon_${weaponId}_bonus`] = bonusAtaqueArma.value;
+        }
+        const tipoAtaqueArma = container.querySelector('.attack-type-select');
+        if (tipoAtaqueArma) {
+            data[`weapon_${weaponId}_type`] = tipoAtaqueArma.value;
+        }
+        const danoArma = container.querySelector('.dano-input');
+        if (danoArma) {
+            data[`weapon_${weaponId}_dano`] = danoArma.value;
+        }
+        // O campo de notas/crítico é o ÚLTIMO input[type="text"] que não é .weapon-name nem .dano-input
+        const allTextInputs = Array.from(container.querySelectorAll('input[type="text"]'));
+        const notasArma = allTextInputs.find(
+            el => !el.classList.contains('weapon-name') && !el.classList.contains('dano-input')
+        );
+        if (notasArma) {
+            data[`weapon_${weaponId}_notas`] = notasArma.value;
         }
     });
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
@@ -762,14 +811,81 @@ function saveData() {
 function loadData() {
     const data = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        const key = el.id || el.name || el.className + el.value;
-        if (data.hasOwnProperty(key)) {
+        // Campos dentro de pericia-item
+        if (
+            el.closest('.pericia-item') &&
+            (
+                (el.type === 'checkbox' && (el.classList.contains('trained-check') || el.classList.contains('focus-check'))) ||
+                el.classList.contains('other-bonus')
+            )
+        ) {
+            const pericia = el.closest('.pericia-item').dataset.skill;
             if (el.type === 'checkbox') {
+                const tipo = el.classList.contains('trained-check') ? 'trained' : 'focus';
+                const key = `pericia_${pericia}_${tipo}`;
+                if (data.hasOwnProperty(key)) {
+                    el.checked = data[key];
+                }
+            } else if (el.classList.contains('other-bonus')) {
+                const key = `pericia_${pericia}_other`;
+                if (data.hasOwnProperty(key)) {
+                    el.value = data[key];
+                }
+            }
+        }
+        // Checkboxes genéricas
+        else if (el.type === 'checkbox') {
+            const key = el.id || el.name || el.className + el.value;
+            if (data.hasOwnProperty(key)) {
                 el.checked = data[key];
-            } else {
+            }
+        }
+        // Outros campos
+        else {
+            const key = el.id || el.name || el.className + el.value;
+            if (data.hasOwnProperty(key)) {
                 el.value = data[key];
             }
         }
+    });
+    // Carrega todas as armas corretamente, mesmo com múltiplas armas
+    document.querySelectorAll('.weapon-block-container').forEach((container, idx) => {
+        const weaponId = idx;
+        const nomeArma = container.querySelector('.weapon-name');
+        if (nomeArma) {
+            const key = `weapon_${weaponId}_name`;
+            if (data.hasOwnProperty(key)) nomeArma.value = data[key];
+        }
+        const bonusAtaqueArma = container.querySelector('.attack-bonus-display');
+        if (bonusAtaqueArma) {
+            const key = `weapon_${weaponId}_bonus`;
+            if (data.hasOwnProperty(key)) bonusAtaqueArma.value = data[key];
+        }
+        const tipoAtaqueArma = container.querySelector('.attack-type-select');
+        if (tipoAtaqueArma) {
+            const key = `weapon_${weaponId}_type`;
+            if (data.hasOwnProperty(key)) tipoAtaqueArma.value = data[key];
+        }
+        const danoArma = container.querySelector('.dano-input');
+        if (danoArma) {
+            const key = `weapon_${weaponId}_dano`;
+            if (data.hasOwnProperty(key)) danoArma.value = data[key];
+        }
+        // O campo de notas/crítico é o ÚLTIMO input[type="text"] que não é .weapon-name nem .dano-input
+        const allTextInputs = Array.from(container.querySelectorAll('input[type="text"]'));
+        const notasArma = allTextInputs.find(
+            el => !el.classList.contains('weapon-name') && !el.classList.contains('dano-input')
+        );
+        if (notasArma) {
+            const key = `weapon_${weaponId}_notas`;
+            if (data.hasOwnProperty(key)) notasArma.value = data[key];
+        }
+    });
+
+    // ...existing code for generic checkboxes and other fields...
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        // ...existing code for pericia-item...
+        // ...existing code for generic checkboxes and other fields...
     });
 }
 
