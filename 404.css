@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+body {
+    background: radial-gradient(ellipse at center, #0a1a2f 0%, #050a13 100%);
+    color: #a7b0c2;
+    font-family: 'Orbitron', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-container {
+    text-align: center;
+    padding: 40px 30px;
+    background: rgba(10, 20, 35, 0.85);
+    border: 2px solid #00aaff;
+    border-radius: 18px;
+    box-shadow: 0 0 40px #00aaff33, 0 0 120px #00aaff11;
+    max-width: 400px;
+}
+
+.error-holo {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 18px;
+}
+
+.holo-glow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #00aaff55 0%, #00aaff00 80%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(8px);
+    z-index: 0;
+    animation: holo-pulse 2s infinite alternate;
+}
+
+@keyframes holo-pulse {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.error-code {
+    font-size: 4.5em;
+    font-weight: bold;
+    color: #00aaff;
+    text-shadow: 0 0 18px #00aaff, 0 0 40px #00aaff77;
+    letter-spacing: 0.1em;
+    position: relative;
+    z-index: 1;
+    font-family: 'Orbitron', Arial, sans-serif;
+}
+
+.error-icon {
+    display: block;
+    font-size: 2.2em;
+    color: #00ffff;
+    margin-top: -10px;
+    text-shadow: 0 0 12px #00ffff, 0 0 24px #00ffff55;
+    z-index: 1;
+    position: relative;
+}
+
+h1 {
+    color: #00aaff;
+    font-size: 1.5em;
+    margin: 0 0 18px 0;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px #00aaff99;
+}
+
+.error-detail {
+    color: #f0ad4e;
+    font-size: 1em;
+    display: block;
+    margin-top: 10px;
+    font-style: italic;
+    text-shadow: 0 0 8px #f0ad4e88;
+}
+
+.error-btn {
+    display: inline-block;
+    margin-top: 28px;
+    padding: 12px 28px;
+    background: #00aaff;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-family: 'Orbitron', Arial, sans-serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 0 18px #00aaff99;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.error-btn:hover {
+    background: #0077aa;
+    box-shadow: 0 0 28px #00aaffcc;
+}
+
+@media (max-width: 600px) {
+    .error-container {
+        max-width: 95vw;
+        padding: 20px 5vw;
+    }
+    .error-code {
+        font-size: 3em;
+    }
+}
