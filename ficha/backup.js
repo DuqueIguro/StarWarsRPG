@@ -217,6 +217,10 @@ function bindSaveOnChange() {
     allInputsAndSelects.forEach(element => {
         element.addEventListener('change', saveData);
         element.addEventListener('keyup', saveData); // Salva enquanto digita
+        element.addEventListener('input', saveData); // Salva ao digitar
+        window.addEventListener('click', saveData); // Salva ao clicar
+        window.addEventListener('beforeunload', saveData); // Salva ao fechar a guia
+
     });
     // Adiciona listener para botões de remover/adicionar
     document.body.addEventListener('click', (e) => {
