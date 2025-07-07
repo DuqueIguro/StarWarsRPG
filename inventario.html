@@ -44,7 +44,7 @@
                 <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS PESSOAIS</h2>
                 <p class="font-aurebesh text-md text-yellow-500">Creditos Pessoais</p>
                 <div id="personal-credits" contenteditable="true"
-                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all">1000</div>
+                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all" tabindex="0">1000</div>
             </div>
         </div>
 
@@ -177,6 +177,19 @@
 
     <script src="inventario/database.js"></script>
     <script src="inventario/script.js" defer></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    var personalCredits = document.getElementById('personal-credits');
+    if (personalCredits) {
+        personalCredits.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.target.blur();
+            }
+        });
+    }
+});
+</script>
 
 </body>
 
