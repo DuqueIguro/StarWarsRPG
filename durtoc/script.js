@@ -56,6 +56,7 @@ const addCustomItemBtn = document.getElementById('add-custom-item-btn');
 const customItemModal = document.getElementById('custom-item-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const customItemForm = document.getElementById('custom-item-form');
+const sortByEl = document.getElementById('sort-by');
 
 
 // --- FUNÇÕES DE RENDERIZAÇÃO ---
@@ -104,6 +105,15 @@ const createItemCard = (item, context = 'shop') => {
     return card;
 };
 
+const qualityOrder = {
+    'Lendária': 5,
+    'Imperial': 4,
+    'Excelente': 3,
+    'Boa': 2,
+    'Normal': 1,
+    'Baixa': 0
+};
+
 const renderItems = () => {
     itemGridEl.innerHTML = '';
     const filteredItems = state.itemDatabase.filter(item => {
@@ -118,7 +128,24 @@ const renderItems = () => {
          return;
     }
 
-    filteredItems.sort((a,b) => b.price - a.price);
+    const sortMethod = sortByEl.value;
+    filteredItems.sort((a, b) => {
+        switch (sortMethod) {
+            case 'price-asc':
+                return a.price - b.price;
+            case 'name-asc':
+                return a.name.localeCompare(b.name);
+            case 'name-desc':
+                return b.name.localeCompare(a.name);
+            case 'quality-desc':
+                return (qualityOrder[b.quality] || 0) - (qualityOrder[a.quality] || 0);
+            case 'quality-asc':
+                return (qualityOrder[a.quality] || 0) - (qualityOrder[b.quality] || 0);
+            case 'price-desc':
+            default:
+                return b.price - a.price;
+        }
+    });
 
     filteredItems.forEach(item => {
         const card = createItemCard(item, 'shop');
@@ -363,6 +390,7 @@ const init = () => {
     addCustomItemBtn.addEventListener('click', () => customItemModal.classList.remove('hidden'));
     closeModalBtn.addEventListener('click', () => customItemModal.classList.add('hidden'));
     customItemForm.addEventListener('submit', handleCustomItemSubmit);
+    sortByEl.addEventListener('change', renderItems);
     
     renderCredits();
     renderItems();

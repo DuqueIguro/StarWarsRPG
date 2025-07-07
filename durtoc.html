@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="./img/mandalorian.ico"></head>
+    <link rel="stylesheet" href="durtoc/style.css">
+    <link rel="icon" type="image/x-icon" href="durtoc/img/mandalorian.ico"></head>
 <body class="min-h-screen p-4 md:p-8">
 
     <div id="notification" class="notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px]"></div>
@@ -48,7 +48,7 @@
                     <div class="flex flex-col md:flex-row gap-4">
                         <div class="flex-grow">
                              <h3 class="font-orbitron text-lg mb-2 text-cyan-400">FILTROS DE BUSCA</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <input type="text" id="search-input" placeholder="Buscar por nome..." class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
                                 <select id="quality-filter" class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
                                     <option value="all">Todas as Qualidades</option>
@@ -67,6 +67,14 @@
                                     <option value="Peças de Dróides">Peças de Dróides</option>
                                     <option value="Equipamento">Equipamento</option>
                                     <option value="Outros">Outros</option>
+                                </select>
+                                <select id="sort-by" class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                    <option value="price-desc">Preço (Maior para Menor)</option>
+                                    <option value="price-asc">Preço (Menor para Maior)</option>
+                                    <option value="name-asc">Nome (A-Z)</option>
+                                    <option value="name-desc">Nome (Z-A)</option>
+                                    <option value="quality-desc">Qualidade (Melhor para Pior)</option>
+                                    <option value="quality-asc">Qualidade (Pior para Melhor)</option>
                                 </select>
                             </div>
                         </div>
@@ -155,8 +163,8 @@
         </div>
     </div>
 
-    <script src="database.js"></script>
-    <script src="script.js" defer></script>
+    <script src="durtoc/database.js"></script>
+    <script src="durtoc/script.js" defer></script>
 
 </body>
 </html>
