@@ -31,6 +31,19 @@
 
 <body class="p-4 sm:p-6 md:p-8">
 
+    <!-- Botão de voltar fixo no canto superior esquerdo -->
+    <a
+        href="index.html"
+        style="position:fixed;top:24px;left:24px;z-index:1000;display:flex;align-items:center;gap:6px;text-decoration:none"
+        class="px-3 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
+        title="Voltar para a página inicial"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+        </svg>
+        Voltar
+    </a>
+
     <!-- Botão de salvar fixo no canto superior direito -->
     <button
         onclick="saveData()"
