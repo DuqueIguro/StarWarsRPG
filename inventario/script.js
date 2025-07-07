@@ -44,6 +44,7 @@ const tabPanes = document.querySelectorAll('.tab-pane');
 const searchInput = document.getElementById('search-input');
 const qualityFilter = document.getElementById('quality-filter');
 const categoryFilter = document.getElementById('category-filter');
+const sortByEl = document.getElementById('sort-by');
 const cartEl = document.getElementById('cart');
 const cartItemsEl = document.getElementById('cart-items');
 const closeCartBtn = document.getElementById('close-cart-btn');
@@ -104,9 +105,18 @@ const createItemCard = (item, context = 'shop') => {
     return card;
 };
 
+const qualityOrder = {
+    'Lendária': 5,
+    'Imperial': 4,
+    'Excelente': 3,
+    'Boa': 2,
+    'Normal': 1,
+    'Baixa': 0
+};
+
 const renderItems = () => {
     itemGridEl.innerHTML = '';
-    const filteredItems = state.itemDatabase.filter(item => {
+    let filteredItems = state.itemDatabase.filter(item => {
         const searchMatch = item.name.toLowerCase().includes(state.filters.search.toLowerCase());
         const qualityMatch = state.filters.quality === 'all' || item.quality === state.filters.quality;
         const categoryMatch = state.filters.category === 'all' || item.category === state.filters.category;
@@ -114,11 +124,28 @@ const renderItems = () => {
     });
 
     if (filteredItems.length === 0) {
-         itemGridEl.innerHTML = '<p class="text-gray-400 col-span-full text-center">Nenhum item encontrado com os filtros atuais.</p>';
-         return;
+        itemGridEl.innerHTML = '<p class="text-gray-400 col-span-full text-center">Nenhum item encontrado com os filtros atuais.</p>';
+        return;
     }
 
-    filteredItems.sort((a,b) => b.price - a.price);
+    const sortMethod = sortByEl.value;
+    filteredItems.sort((a, b) => {
+        switch (sortMethod) {
+            case 'price-asc':
+                return a.price - b.price;
+            case 'name-asc':
+                return a.name.localeCompare(b.name);
+            case 'name-desc':
+                return b.name.localeCompare(a.name);
+            case 'quality-desc':
+                return (qualityOrder[b.quality] || 0) - (qualityOrder[a.quality] || 0);
+            case 'quality-asc':
+                return (qualityOrder[a.quality] || 0) - (qualityOrder[b.quality] || 0);
+            case 'price-desc':
+            default:
+                return b.price - a.price;
+        }
+    });
 
     filteredItems.forEach(item => {
         const card = createItemCard(item, 'shop');
@@ -363,6 +390,7 @@ const init = () => {
     addCustomItemBtn.addEventListener('click', () => customItemModal.classList.remove('hidden'));
     closeModalBtn.addEventListener('click', () => customItemModal.classList.add('hidden'));
     customItemForm.addEventListener('submit', handleCustomItemSubmit);
+    sortByEl.addEventListener('change', renderItems);
     
     renderCredits();
     renderItems();

@@ -14,10 +14,12 @@
         }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="inventario/style.css">
     <link rel="icon" type="image/x-icon" href="inventario/img/sabres.ico">
 </head>
@@ -93,6 +95,15 @@
                                     <option value="Peças de Dróides">Peças de Dróides</option>
                                     <option value="Equipamento">Equipamento</option>
                                     <option value="Outros">Outros</option>
+                                </select>
+                                <select id="sort-by"
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                    <option value="price-desc">Preço (Maior para Menor)</option>
+                                    <option value="price-asc">Preço (Menor para Maior)</option>
+                                    <option value="name-asc">Nome (A-Z)</option>
+                                    <option value="name-desc">Nome (Z-A)</option>
+                                    <option value="quality-desc">Qualidade (Melhor para Pior)</option>
+                                    <option value="quality-asc">Qualidade (Pior para Melhor)</option>
                                 </select>
                             </div>
                         </div>
