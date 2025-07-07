@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Aurebesh';
-    src: url('Aurebesh.woff') format('woff'); /* Carrega o arquivo local */
+    src: url('invntario/Aurebesh.woff') format('woff'); /* Carrega o arquivo local */
 }
 
 body {
