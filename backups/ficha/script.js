@@ -755,3 +755,9 @@ function updateSheet() {
     }
 
 //});
+
+
+function funcionapoha() {
+    console.log("Função de teste chamada.1");
+    teste();
+}
