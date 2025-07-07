@@ -2,7 +2,7 @@
 const STORAGE_KEY = 'starWarsRPGState';
 
 const defaultState = {
-    personalCredits: 3500,
+    personalCredits: 4100,
     workshopCredits: 10000,
     cart: [],
     personalInventory: [],
