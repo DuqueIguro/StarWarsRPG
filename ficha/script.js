@@ -123,7 +123,7 @@ function updateSheet() {
 }
 
 
-
+//se apagar da bom, mas da ruim
 document.addEventListener('DOMContentLoaded', () => {
     // Referências aos elementos da página
     const selectEspecie = document.getElementById('especie');
