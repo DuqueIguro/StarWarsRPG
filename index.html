@@ -19,7 +19,7 @@
             <div class="system-info">
                 <span>SISTEMA: CORELLIAN v3.2</span>
                 <span>
-                    <a href="durtoc.html" style="color: inherit; text-decoration: none; cursor: pointer;" tabindex="-1">USUÁRIO: PILOTO_07</a>
+                    <a href="durtoc.html" style="color: inherit; text-decoration: none; cursor: progress;" tabindex="-1">USUÁRIO: PILOTO_07</a>
                 </span>
             </div>
             <div class="system-status">
@@ -111,7 +111,7 @@
                     </div>
                 </div>
 
-                <div class="activity-log">
+                <div class="activity-log" id="activity-log">
                     <h3 class="log-title">LOG DE ATIVIDADES DO SISTEMA</h3>
                     <div class="log-content">
                         <p>> Conexão estabelecida com o servidor CORELLIAN v3.2...</p>
@@ -162,6 +162,15 @@
 
     </div>
 
+    <script>
+        const log = document.getElementById('activity-log');
+        log.addEventListener('mouseenter', () => {
+            document.body.style.overflow = 'hidden';
+        });
+        log.addEventListener('mouseleave', () => {
+            document.body.style.overflow = '';
+        });
+    </script>
 </body>
 
 </html>
