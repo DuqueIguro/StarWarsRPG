@@ -167,11 +167,21 @@ body {
     background-color: #5cb85c;
     border-radius: 3px;
     box-shadow: 0 0 8px #5cb85c;
+    transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .progress-bar.warning {
     background-color: #f0ad4e;
     box-shadow: 0 0 8px #f0ad4e;
+}
+
+/* Efeito hover para barras de Integridade do Sistema */
+.progress-bar-container:hover .progress-bar {
+    box-shadow: 0 0 18px 6px #5cb85c;
+    transform: scaleY(1.15);
+}
+.progress-bar-container:hover .progress-bar.warning {
+    box-shadow: 0 0 18px 6px #f0ad4e;
 }
 
 /* ======== CONTEÚDO PRINCIPAL ======== */
@@ -411,6 +421,14 @@ h1 {
 .readout-bar {
     height: 100%;
     box-shadow: 0 0 8px;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+/* Efeito hover para barras de Análise de Fluxo de Dados */
+.readout-bar-container:hover .readout-bar {
+    /* Remove filter, usa box-shadow igual ao campo de integridade */
+    box-shadow: 0 0 18px 6px currentColor;
+    transform: scaleY(1.15);
 }
 
 .status-text {
