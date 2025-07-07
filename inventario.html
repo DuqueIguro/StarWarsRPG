@@ -39,18 +39,12 @@
     </header>
 
     <main class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-8">
             <div class="glass-pane p-4 rounded-lg text-center">
                 <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS PESSOAIS</h2>
                 <p class="font-aurebesh text-md text-yellow-500">Creditos Pessoais</p>
                 <div id="personal-credits" contenteditable="true"
-                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all">3500</div>
-            </div>
-            <div class="glass-pane p-4 rounded-lg text-center">
-                <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS DA OFICINA</h2>
-                <p class="font-aurebesh text-md text-yellow-500">Creditos da Oficina</p>
-                <div id="workshop-credits" contenteditable="true"
-                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all">10000</div>
+                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all">1000</div>
             </div>
         </div>
 
@@ -61,9 +55,6 @@
                 <button data-tab="personagem"
                     class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO
                     PESSOAL</button>
-                <button data-tab="oficina"
-                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO DA
-                    OFICINA</button>
             </nav>
         </div>
 
@@ -123,11 +114,6 @@
                 <div id="personal-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 </div>
             </div>
-
-            <div id="oficina-pane" class="tab-pane hidden">
-                <div id="workshop-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                </div>
-            </div>
         </div>
     </main>
 
@@ -143,10 +129,6 @@
             <div class="mb-2">
                 <span class="font-bold">Total Pessoal:</span>
                 <span id="cart-total-personal" class="float-right">0 Créditos</span>
-            </div>
-            <div class="mb-4">
-                <span class="font-bold">Total Oficina:</span>
-                <span id="cart-total-workshop" class="float-right">0 Créditos</span>
             </div>
             <button id="checkout-btn" class="w-full btn-primary font-bold py-2 rounded-md">FINALIZAR COMPRA</button>
         </div>
@@ -186,15 +168,6 @@
                             <option value="Equipamento">Equipamento</option>
                             <option value="Outros">Outros</option>
                         </select>
-                    </div>
-                    <div>
-                        <p class="mb-2 font-bold text-cyan-400">Adicionar ao Inventário:</p>
-                        <div class="flex gap-4">
-                            <label class="flex items-center"><input type="radio" name="inventory" value="personal"
-                                    class="mr-2" checked> Pessoal</label>
-                            <label class="flex items-center"><input type="radio" name="inventory" value="workshop"
-                                    class="mr-2"> Oficina</label>
-                        </div>
                     </div>
                     <button type="submit" class="w-full btn-success font-bold py-2 rounded-md">Salvar Item</button>
                 </div>

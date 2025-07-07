@@ -2,14 +2,12 @@
 const STORAGE_KEY = 'starWarsRPGState';
 
 const defaultState = {
-    personalCredits: 3500,
-    workshopCredits: 10000,
+    personalCredits: 1000,
     cart: [],
     personalInventory: [],
-    workshopInventory: [],
     activeTab: 'lojas',
     filters: { search: '', quality: 'all', category: 'all' },
-    itemDatabase: [...itemDatabase] // Usa uma cópia da base de dados original
+    itemDatabase: [...itemDatabase]
 };
 
 let state = JSON.parse(JSON.stringify(defaultState));
@@ -17,9 +15,7 @@ let state = JSON.parse(JSON.stringify(defaultState));
 const saveState = () => {
     const stateToSave = {
         personalCredits: state.personalCredits,
-        workshopCredits: state.workshopCredits,
         personalInventory: state.personalInventory,
-        workshopInventory: state.workshopInventory,
         itemDatabase: state.itemDatabase
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
@@ -35,10 +31,8 @@ const loadState = () => {
 
 // --- ELEMENTOS DO DOM ---
 const personalCreditsEl = document.getElementById('personal-credits');
-const workshopCreditsEl = document.getElementById('workshop-credits');
 const itemGridEl = document.getElementById('item-grid');
 const personalInventoryGridEl = document.getElementById('personal-inventory-grid');
-const workshopInventoryGridEl = document.getElementById('workshop-inventory-grid');
 const tabsEl = document.getElementById('tabs');
 const tabPanes = document.querySelectorAll('.tab-pane');
 const searchInput = document.getElementById('search-input');
@@ -49,7 +43,6 @@ const cartEl = document.getElementById('cart');
 const cartItemsEl = document.getElementById('cart-items');
 const closeCartBtn = document.getElementById('close-cart-btn');
 const cartTotalPersonalEl = document.getElementById('cart-total-personal');
-const cartTotalWorkshopEl = document.getElementById('cart-total-workshop');
 const checkoutBtn = document.getElementById('checkout-btn');
 const notificationEl = document.getElementById('notification');
 const resetBtn = document.getElementById('reset-btn');
@@ -62,7 +55,6 @@ const customItemForm = document.getElementById('custom-item-form');
 // --- FUNÇÕES DE RENDERIZAÇÃO ---
 const renderCredits = () => {
     personalCreditsEl.textContent = state.personalCredits.toLocaleString();
-    workshopCreditsEl.textContent = state.workshopCredits.toLocaleString();
 };
 
 const createItemCard = (item, context = 'shop') => {
@@ -74,7 +66,7 @@ const createItemCard = (item, context = 'shop') => {
     if (context === 'shop') {
         buttonsHtml = `<button class="add-to-cart-btn mt-4 btn-primary font-bold py-2 px-4 rounded-md w-full">Adicionar ao Carrinho</button>`;
     } else {
-         buttonsHtml = `<button class="remove-from-inventory-btn mt-4 btn-danger font-bold py-2 px-4 rounded-md w-full">Remover do Inventário</button>`;
+        buttonsHtml = `<button class="remove-from-inventory-btn mt-4 btn-danger font-bold py-2 px-4 rounded-md w-full">Remover do Inventário</button>`;
     }
 
     card.innerHTML = `
@@ -94,11 +86,10 @@ const createItemCard = (item, context = 'shop') => {
     if (context === 'shop') {
         card.querySelector('.add-to-cart-btn').addEventListener('click', () => handleAddToCart(item));
     } else {
-         card.querySelector('.remove-from-inventory-btn').dataset.item = itemData;
-         card.querySelector('.remove-from-inventory-btn').addEventListener('click', (e) => {
+        card.querySelector('.remove-from-inventory-btn').dataset.item = itemData;
+        card.querySelector('.remove-from-inventory-btn').addEventListener('click', (e) => {
             const itemToRemove = JSON.parse(e.target.dataset.item);
-            if(context === 'personal') handleRemoveFromInventory('personal', itemToRemove);
-            if(context === 'workshop') handleRemoveFromInventory('workshop', itemToRemove);
+            handleRemoveFromInventory(itemToRemove);
         });
     }
 
@@ -155,19 +146,10 @@ const renderItems = () => {
 
 const renderInventories = () => {
     personalInventoryGridEl.innerHTML = '<p class="text-gray-400 col-span-full text-center">Nenhum item no inventário pessoal.</p>';
-    workshopInventoryGridEl.innerHTML = '<p class="text-gray-400 col-span-full text-center">Nenhum item no inventário da oficina.</p>';
-    
     if (state.personalInventory.length > 0) {
         personalInventoryGridEl.innerHTML = '';
         state.personalInventory.sort((a,b) => b.price - a.price).forEach(item => {
             personalInventoryGridEl.appendChild(createItemCard(item, 'personal'));
-        });
-    }
-
-    if (state.workshopInventory.length > 0) {
-        workshopInventoryGridEl.innerHTML = '';
-        state.workshopInventory.sort((a,b) => b.price - a.price).forEach(item => {
-            workshopInventoryGridEl.appendChild(createItemCard(item, 'workshop'));
         });
     }
 };
@@ -175,7 +157,6 @@ const renderInventories = () => {
 const renderCart = () => {
     cartItemsEl.innerHTML = '';
     let totalPersonal = 0;
-    let totalWorkshop = 0;
 
     if (state.cart.length === 0) {
         cartItemsEl.innerHTML = '<p class="text-gray-400">O carrinho está vazio.</p>';
@@ -186,38 +167,17 @@ const renderCart = () => {
             div.innerHTML = `
                 <p class="font-bold">${cartItem.item.name}</p>
                 <p class="text-sm text-yellow-400">${cartItem.item.price.toLocaleString()} Créditos</p>
-                <div class="mt-2 flex space-x-2">
-                   <button data-index="${index}" class="assign-btn assign-personal-btn text-xs btn-primary px-2 py-1 rounded-md flex-1">Personagem</button>
-                   <button data-index="${index}" class="assign-btn assign-workshop-btn text-xs btn-primary px-2 py-1 rounded-md flex-1">Oficina</button>
-                </div>
                 <div class="mt-1 flex">
                     <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1 rounded-md w-full">Remover</button>
                 </div>
             `;
-
-            const personalBtn = div.querySelector('.assign-personal-btn');
-            const workshopBtn = div.querySelector('.assign-workshop-btn');
-
-            if (cartItem.destination === 'personal') {
-                personalBtn.classList.replace('btn-primary', 'btn-secondary');
-                personalBtn.classList.add('opacity-75');
-                totalPersonal += cartItem.item.price;
-            } else if (cartItem.destination === 'workshop') {
-                workshopBtn.classList.replace('btn-primary', 'btn-secondary');
-                workshopBtn.classList.add('opacity-75');
-                totalWorkshop += cartItem.item.price;
-            }
+            totalPersonal += cartItem.item.price;
             cartItemsEl.appendChild(div);
         });
     }
 
     cartTotalPersonalEl.textContent = `${totalPersonal.toLocaleString()} Créditos`;
-    cartTotalWorkshopEl.textContent = `${totalWorkshop.toLocaleString()} Créditos`;
-    
-    document.querySelectorAll('.assign-btn').forEach(btn => btn.addEventListener('click', (e) => {
-        const destination = e.target.classList.contains('assign-personal-btn') ? 'personal' : 'workshop';
-        handleAssignDestination(e.target.dataset.index, destination);
-    }));
+
     document.querySelectorAll('.remove-from-cart-btn').forEach(btn => btn.addEventListener('click', (e) => handleRemoveFromCart(parseInt(e.target.dataset.index))));
 };
 
@@ -246,7 +206,6 @@ const handleUpdateCredits = (e) => {
     const value = parseInt(e.target.textContent.replace(/[,.]/g, ''));
     if (!isNaN(value)) {
         if (e.target.id === 'personal-credits') state.personalCredits = value;
-        else state.workshopCredits = value;
     }
     renderCredits();
     saveState();
@@ -255,22 +214,14 @@ const handleUpdateCredits = (e) => {
 const showNotification = (message, type = 'success') => {
     notificationEl.textContent = message;
     notificationEl.className = `notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px] ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
-    
-    // Atraso mínimo para garantir que a transição CSS funcione
     setTimeout(() => {
-        // Remove as classes que o escondem
         notificationEl.classList.remove('opacity-0', 'translate-y-[-20px]');
-        // Adiciona as classes que o tornam visível
         notificationEl.classList.add('opacity-100', 'translate-y-0');
     }, 10);
-
-    // Define um tempo para o popup desaparecer
     setTimeout(() => {
-        // Remove as classes que o tornam visível
         notificationEl.classList.remove('opacity-100', 'translate-y-0');
-        // Adiciona de volta as classes que o escondem para ativar a animação de saída
         notificationEl.classList.add('opacity-0', 'translate-y-[-20px]');
-    }, 3000); // O popup desaparecerá após 3000ms (3 segundos)
+    }, 3000);
 };
 
 const handleAddToCart = (item) => {
@@ -294,28 +245,17 @@ const handleAssignDestination = (index, destination) => {
 
 const handleCheckout = () => {
     let personalCost = 0;
-    let workshopCost = 0;
-    if (state.cart.some(item => item.destination === null)) {
-        showNotification('Por favor, atribua todos os itens a um inventário.', 'danger');
-        return;
-    }
+    // Não é mais necessário checar destino
     state.cart.forEach(cartItem => {
-        if (cartItem.destination === 'personal') personalCost += cartItem.item.price;
-        else workshopCost += cartItem.item.price;
+        personalCost += cartItem.item.price;
     });
     if (state.personalCredits < personalCost) {
         showNotification('Créditos pessoais insuficientes!', 'danger');
         return;
     }
-    if (state.workshopCredits < workshopCost) {
-        showNotification('Créditos da oficina insuficientes!', 'danger');
-        return;
-    }
     state.personalCredits -= personalCost;
-    state.workshopCredits -= workshopCost;
     state.cart.forEach(cartItem => {
-        if (cartItem.destination === 'personal') state.personalInventory.push(cartItem.item);
-        else state.workshopInventory.push(cartItem.item);
+        state.personalInventory.push(cartItem.item);
     });
     state.cart = [];
     renderCredits();
@@ -326,12 +266,8 @@ const handleCheckout = () => {
     saveState();
 };
 
-const handleRemoveFromInventory = (inventoryType, itemToRemove) => {
-    if(inventoryType === 'personal') {
-        state.personalInventory = state.personalInventory.filter(item => item.uid !== itemToRemove.uid);
-    } else if (inventoryType === 'workshop') {
-        state.workshopInventory = state.workshopInventory.filter(item => item.uid !== itemToRemove.uid);
-    }
+const handleRemoveFromInventory = (itemToRemove) => {
+    state.personalInventory = state.personalInventory.filter(item => item.uid !== itemToRemove.uid);
     showNotification(`${itemToRemove.name} removido do inventário.`, 'danger');
     renderInventories();
     saveState();
@@ -356,15 +292,9 @@ const handleCustomItemSubmit = (e) => {
         uid: Date.now() + Math.random()
     };
 
-    const destination = document.querySelector('input[name="inventory"]:checked').value;
-
-    // Adiciona ao banco de dados principal e ao inventário correto
+    // Sempre adiciona ao inventário do personagem
     state.itemDatabase.push(newItem);
-    if (destination === 'personal') {
-        state.personalInventory.push(newItem);
-    } else {
-        state.workshopInventory.push(newItem);
-    }
+    state.personalInventory.push(newItem);
 
     showNotification(`Item customizado "${newItem.name}" adicionado!`, 'success');
     saveState();
@@ -377,9 +307,7 @@ const handleCustomItemSubmit = (e) => {
 // --- INICIALIZAÇÃO ---
 const init = () => {
     loadState();
-    
     personalCreditsEl.addEventListener('blur', handleUpdateCredits);
-    workshopCreditsEl.addEventListener('blur', handleUpdateCredits);
     tabsEl.addEventListener('click', handleTabClick);
     searchInput.addEventListener('input', handleFilterChange);
     qualityFilter.addEventListener('change', handleFilterChange);
@@ -391,7 +319,6 @@ const init = () => {
     closeModalBtn.addEventListener('click', () => customItemModal.classList.add('hidden'));
     customItemForm.addEventListener('submit', handleCustomItemSubmit);
     sortByEl.addEventListener('change', renderItems);
-    
     renderCredits();
     renderItems();
     renderInventories();
