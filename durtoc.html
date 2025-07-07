@@ -15,9 +15,17 @@
     <div id="notification" class="notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px]"></div>
 
     <header class="text-center mb-8 relative">
+        <a href="index.html"
+           class="absolute top-0 left-0 flex items-center gap-1 py-1 px-3 rounded-md font-orbitron text-cyan-300 border border-cyan-700 bg-gray-900/70 hover:bg-cyan-900/60 transition-colors shadow-md text-xs font-bold"
+           style="text-decoration:none;">
+            <span class="text-lg">&#8592;</span> Voltar
+        </a>
         <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento de Recursos</h1>
         <p class="font-aurebesh text-lg text-cyan-500">Terminal de Gerenciamento de Recursos</p>
-        <button id="reset-btn" class="absolute top-0 right-0 btn-danger font-bold text-xs py-1 px-3 rounded-md">Resetar Jogo</button>
+        <button id="reset-btn"
+            class="absolute top-0 right-0 btn-danger font-orbitron text-xs py-1 px-3 rounded-md border border-red-700 bg-red-900/80 hover:bg-red-700/80 transition-colors shadow-md font-bold">
+            Resetar Jogo
+        </button>
     </header>
 
     <main class="max-w-7xl mx-auto">
@@ -26,18 +34,19 @@
                 <span class="font-orbitron text-xl md:text-2xl text-cyan-300 tracking-widest block">
                     Bem-Vindo De Volta Piloto-07, Codnome: Dur'toc
                 </span>
+                <p class="font-aurebesh text-lg text-cyan-500">Bem-Vindo De Volta Piloto-07, Codnome: Dur'toc</p>
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div class="glass-pane p-4 rounded-lg text-center">
                 <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS PESSOAIS</h2>
                 <p class="font-aurebesh text-md text-yellow-500">Creditos Pessoais</p>
-                <div id="personal-credits" contenteditable="true" class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all">4100</div>
+                <div id="personal-credits" contenteditable="true" class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all" tabindex="0"></div>
             </div>
             <div class="glass-pane p-4 rounded-lg text-center">
                 <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS DA OFICINA</h2>
                 <p class="font-aurebesh text-md text-yellow-500">Creditos da Oficina</p>
-                <div id="workshop-credits" contenteditable="true" class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all">10000</div>
+                <div id="workshop-credits" contenteditable="true" class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all" tabindex="0"></div>
             </div>
         </div>
 
@@ -172,6 +181,18 @@
 
     <script src="durtoc/database.js"></script>
     <script src="durtoc/script.js" defer></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    function handleCreditsEnterBlur(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            e.target.blur();
+        }
+    }
+    document.getElementById('personal-credits').addEventListener('keydown', handleCreditsEnterBlur);
+    document.getElementById('workshop-credits').addEventListener('keydown', handleCreditsEnterBlur);
+});
+</script>
 
 </body>
 </html>
