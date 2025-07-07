@@ -70,6 +70,12 @@ let itemDatabase = [
     { name: "Eletrobinóculos de Reconhecimento", category: "Equipamento", quality: "Boa", price: 700, description: "Possui modo de visão noturna, estabilizador de imagem e um medidor de distância básico." },
     { name: "Eletrobinóculos de Franco-atirador", category: "Equipamento", quality: "Excelente", price: 2500, description: "Inclui múltiplos espectros de visão (térmica, EM), medidor de distância preciso e pode se conectar a um datapad para gravar." },
 
+    // -- Pilha de Energia
+    { name: "Pilha de Energia (Genérica)", category: "Equipamento", quality: "Baixa", price: 1, description: "Uma imitação barata. Fornece energia, mas talvez não a voltagem exata que sua blaster de alta qualidade espera." },
+    { name: "Pilha de Energia (Normal)", category: "Equipamento", quality: "Normal", price: 2, description: "Bateria retangular padrão." },
+    { name: "Pilha de Energia (Boa)", category: "Equipamento", quality: "Boa", price: 4, description: "Pilha de energia que garante a potência correta para cada disparo." },
+    { name: "Pilha de Energia de Nível Militar", category: "Equipamento", quality: "Excelente", price: 6, description: "Desenvolvida para armas pesadas, esta pilha de energia garante que sua blaster repetidora nunca falhe no calor da batalha." },
+
 // --- EQUIPAMENTO (TRAJES E ARMAS) ---
 
     // -- Traje de Voo
@@ -277,7 +283,6 @@ let itemDatabase = [
     { name: "Lançador de Míssil de Concussão (Voleio)", category: "Peças de Naves", quality: "Excelente", price: 4500, description: "Sistema de lançamento rápido capaz de disparar múltiplos mísseis em uma barragem massiva para sobrecarregar qualquer defesa." },
     { name: "Míssil de Concussão Guiado", category: "Peças de Naves", quality: "Excelente", price: 600, description: "Munição com sistema de mira aprimorado para maior precisão contra alvos ágeis. (por unidade)" },
     { name: "Célula de Energia de Alta Capacidade", category: "Peças de Naves", quality: "Excelente", price: 30, description: "Uma célula de energia que oferece mais disparos e uma saída de energia mais consistente para armas e sistemas." },
-    { name: "Pilha de Energia de Nível Militar", category: "Peças de Naves", quality: "Excelente", price: 6, description: "Desenvolvida para armas pesadas, esta pilha de energia garante que sua blaster repetidora nunca falhe no calor da batalha." },
     { name: "Anel de Transporte de Hiperpropulsão (Protótipo)", category: "Peças de Naves", quality: "Excelente", price: 210000, description: "Um anel de hiperespaço experimental, mais rápido e com menor consumo de energia que qualquer modelo de produção." },
     { name: "Projetor de Raio Trator de Campo Amplo", category: "Peças de Naves", quality: "Excelente", price: 60000, description: "Um projetor de raio trator tão poderoso que pode segurar múltiplos caças ou um cargueiro leve com facilidade." },
     { name: "Projetor de Poço de Gravidade", category: "Peças de Naves", quality: "Excelente", price: 150000, description: "Tecnologia rara e de alto consumo de energia que gera sombras de massa artificiais, capaz de arrancar naves do hiperespaço." },
@@ -300,7 +305,6 @@ let itemDatabase = [
     { name: "Lançador de Míssil de Concussão (Boa)", category: "Peças de Naves", quality: "Boa", price: 3000, description: "Um lançador bem construído que garante que os mísseis não falhem ao serem disparados." },
     { name: "Míssil de Concussão (Boa)", category: "Peças de Naves", quality: "Boa", price: 400, description: "Míssil de concussão de fabricação padrão militar, confiável e preciso. (por unidade)" },
     { name: "Célula de Energia (Boa)", category: "Peças de Naves", quality: "Boa", price: 20, description: "Célula de energia de marca, com vida útil mais longa e recarga mais eficiente." },
-    { name: "Pilha de Energia (Boa)", category: "Peças de Naves", quality: "Boa", price: 4, description: "Pilha de energia que garante a potência correta para cada disparo." },
     { name: "Anel de Transporte de Hiperpropulsão (Boa)", category: "Peças de Naves", quality: "Boa", price: 140000, description: "Um anel de hiperespaço confiável e bem conservado, perfeito para caças Jedi." },
     { name: "Projetor de Raio Trator (Boa)", category: "Peças de Naves", quality: "Boa", price: 40000, description: "Um projetor de raio trator padrão, capaz de capturar naves do tamanho de um cargueiro." },
     
@@ -322,7 +326,6 @@ let itemDatabase = [
     { name: "Lançador de Míssil de Concussão (Normal)", category: "Peças de Naves", quality: "Normal", price: 1500, description: "Arma de projétil padrão." },
     { name: "Míssil de Concussão (Normal)", category: "Peças de Naves", quality: "Normal", price: 200, description: "Munição de projétil comum. (por unidade)" },
     { name: "Célula de Energia (Normal)", category: "Peças de Naves", quality: "Normal", price: 10, description: "Bateria compacta padrão." },
-    { name: "Pilha de Energia (Normal)", category: "Peças de Naves", quality: "Normal", price: 2, description: "Bateria retangular padrão." },
     { name: "Anel de Transporte de Hiperpropulsão (Normal)", category: "Peças de Naves", quality: "Normal", price: 70000, description: "Módulo externo para caças que não possuem um hiperpropulsor interno." },
     { name: "Projetor de Raio Trator (Normal)", category: "Peças de Naves", quality: "Normal", price: 20000, description: "Componente chave de cruzadores para capturar naves." },
     
@@ -344,7 +347,6 @@ let itemDatabase = [
     { name: "Lançador de Míssil de Concussão (Usado)", category: "Peças de Naves", quality: "Baixa", price: 900, description: "Pintado de novo para cobrir os arranhões. O mecanismo de recarga é um pouco lento." },
     { name: "Míssil de Concussão (Recondicionado)", category: "Peças de Naves", quality: "Baixa", price: 120, description: "Este míssil foi 'gentilmente usado'. O sistema de orientação pode ter algumas ideias próprias. (por unidade)" },
     { name: "Célula de Energia (Recarregada)", category: "Peças de Naves", quality: "Baixa", price: 5, description: "Recarregada tantas vezes que a capacidade máxima é um mistério. Boa sorte." },
-    { name: "Pilha de Energia (Genérica)", category: "Peças de Naves", quality: "Baixa", price: 1, description: "Uma imitação barata. Fornece energia, mas talvez não a voltagem exata que sua blaster de alta qualidade espera." },
     { name: "Anel de Transporte de Hiperpropulsão (Antigo)", category: "Peças de Naves", quality: "Baixa", price: 40000, description: "Esteve parado em um cemitério de naves por uma década. A maioria da ferrugem foi removida." },
     { name: "Projetor de Raio Trator (Fraco)", category: "Peças de Naves", quality: "Baixa", price: 12000, description: "Consegue segurar uma nave, mas qualquer motor mais forte pode escapar. Melhor usá-lo em naves já danificadas." },
     
