@@ -25,9 +25,20 @@
         }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="ficha/script.js" defer></script>
+    <script src="ficha/backup.js"></script>
 </head>
 
 <body class="p-4 sm:p-6 md:p-8">
+
+    <!-- Botão de salvar fixo no canto superior direito -->
+    <button
+        onclick="saveData()"
+        style="position:fixed;top:24px;right:24px;z-index:1000"
+        class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
+        title="Salvar Ficha">
+        Salvar
+    </button>
 
     <div id="dice-modal">
         <div class="modal-content">
@@ -423,9 +434,6 @@
             </div>
         </div>
     </div>
-
-    <script src="ficha/script.js"></script>
-    <script src="ficha/backup.js"></script>
 </body>
 
 </html>
