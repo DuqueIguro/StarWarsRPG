@@ -30,6 +30,41 @@
             <li><strong>Tripulação Mínima:</strong> 1 (Dur'toc, auxiliado por droids)</li>
         </ul>
 
+        <h2 style="text-align: center;">Veículos Acoplados</h2>
+        <section class="terminal" id="vehicle-bay">
+            <h3>O Cinzel</h3>
+            <p>
+                Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit
+                foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a
+                maioria.
+            </p>
+            <ul>
+                <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
+                <li><strong>Comprimento:</strong> 9.8 metros</li>
+                <li><strong>Velocidade Máxima (Atm.):</strong> 1.000 km/h</li>
+                <li><strong>Hyperdrive:</strong> Não possui</li>
+                <li><strong>Armamento:</strong> 2 Canhões Laser de disparo rápido</li>
+                <li><strong>Sistema Dróide:</strong> Integrado a uma unidade astromecânica "Zunido".</li>
+            </ul>
+
+            <hr class="section-divider">
+
+            <h3>O Moedor</h3>
+            <p>
+                Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de
+                transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
+            </p>
+            <ul>
+                <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
+                <li><strong>Classe:</strong> Speeder Terrestre</li>
+                <li><strong>Tripulação:</strong> 1 Piloto (ergonomia exclusiva para Dur'toc)</li>
+                <li><strong>Passageiros:</strong> Nenhum, espaço convertido em compartimento de carga.</li>
+                <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
+                <li><strong>Armamento:</strong> Nenhum</li>
+            </ul>
+
+        </section>
+
         <!-- Informações de combustivel -->
         <section class="terminal" id="fuel-terminal">
 
@@ -115,41 +150,6 @@
 
         </section>
 
-        <h2 style="text-align: center;">Veículos Acoplados</h2>
-        <section class="terminal" id="vehicle-bay">
-            <h3>O Cinzel</h3>
-            <p>
-                Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit
-                foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a
-                maioria.
-            </p>
-            <ul>
-                <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
-                <li><strong>Comprimento:</strong> 9.8 metros</li>
-                <li><strong>Velocidade Máxima (Atm.):</strong> 1.000 km/h</li>
-                <li><strong>Hyperdrive:</strong> Não possui</li>
-                <li><strong>Armamento:</strong> 2 Canhões Laser de disparo rápido</li>
-                <li><strong>Sistema Dróide:</strong> Integrado a uma unidade astromecânica "Zunido".</li>
-            </ul>
-
-            <hr class="section-divider">
-
-            <h3>O Moedor</h3>
-            <p>
-                Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de
-                transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
-            </p>
-            <ul>
-                <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
-                <li><strong>Classe:</strong> Speeder Terrestre</li>
-                <li><strong>Tripulação:</strong> 1 Piloto (ergonomia exclusiva para Dur'toc)</li>
-                <li><strong>Passageiros:</strong> Nenhum, espaço convertido em compartimento de carga.</li>
-                <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
-                <li><strong>Armamento:</strong> Nenhum</li>
-            </ul>
-
-        </section>
-
         <div style="text-align: center; margin-top: 40px;">
             <button id="open-travel-modal-btn" class="main-action-btn"> > FAZER VIAGEM < </button>
         </div>
@@ -188,8 +188,9 @@
                     <input type="number" id="travel-quantity" placeholder="0">
                 </div>
 
-                <button id="calculate-trip-btn" class="main-action-btn" disabled> > CALCULAR E REALIZAR VIAGEM < </button>
-                <p id="trip-feedback"></p>
+                <button id="calculate-trip-btn" class="main-action-btn" disabled> > CALCULAR E REALIZAR VIAGEM <
+                        </button>
+                        <p id="trip-feedback"></p>
             </div>
         </div>
 
