@@ -338,3 +338,7 @@ button {
     margin-top: 15px;
     font-style: italic;
 }
+
+i.fa-solid {
+    margin-right: 10px;
+}

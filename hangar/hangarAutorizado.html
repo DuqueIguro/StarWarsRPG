@@ -6,19 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hangar - Star Wars RPG</title>
     <link rel="stylesheet" href="../styles/hangar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="nave.ico">
 </head>
 
 <body>
     <div class="terminal">
-        <h1 style="text-align: center;">Hangar Principal</h1>
+        <h1 style="text-align: center;"><i class="fa-solid fa-warehouse"></i> Hangar Principal</h1>
         <h2 style="font-size: 52px; text-align: center;">A Engrenagem Mestra</h2>
         <p>
             Obra-prima de Dur'toc, esta nave é a manifestação de seu brilhantismo e fúria. Foi concebida como um
             cruzador cargueiro totalmente autossuficiente e uma base de operações móvel.
         </p>
 
-        <h2>// Especificações da Nave</h2>
+        <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações da Nave</h2>
         <ul>
             <li><strong>Classe:</strong> Cruzador Cargueiro de Reparos</li>
             <li><strong>Comprimento:</strong> 165 metros</li>
@@ -31,46 +32,10 @@
             <li><strong>Tripulação Mínima:</strong> 1 (Dur'toc, auxiliado por droids)</li>
         </ul>
 
-        <h2 style="text-align: center;">Veículos Acoplados</h2>
-        <section class="terminal" id="vehicle-bay">
-            <h3>O Cinzel</h3>
-            <p>
-                Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit
-                foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a
-                maioria.
-            </p>
-            <ul>
-                <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
-                <li><strong>Comprimento:</strong> 9.8 metros</li>
-                <li><strong>Velocidade Máxima (Atm.):</strong> 1.000 km/h</li>
-                <li><strong>Hyperdrive:</strong> Não possui</li>
-                <li><strong>Armamento:</strong> 2 Canhões Laser de disparo rápido</li>
-                <li><strong>Sistema Dróide:</strong> Integrado a uma unidade astromecânica "Zunido".</li>
-            </ul>
-
-            <hr class="section-divider">
-
-            <h3>O Moedor</h3>
-            <p>
-                Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de
-                transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
-            </p>
-            <ul>
-                <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
-                <li><strong>Classe:</strong> Speeder Terrestre</li>
-                <li><strong>Tripulação:</strong> 1 Piloto (ergonomia exclusiva para Dur'toc)</li>
-                <li><strong>Passageiros:</strong> Nenhum, espaço convertido em compartimento de carga.</li>
-                <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
-                <li><strong>Armamento:</strong> Nenhum</li>
-            </ul>
-
-        </section>
-
-        <!-- Informações de combustivel -->
         <section class="terminal" id="fuel-terminal">
 
             <div id="fuel-toggle" class="terminal-header-collapsible">
-                <h2>DADOS DE COMBUSTÍVEL</h2>
+                <h2><i class="fa-solid fa-gas-pump"></i> DADOS DE COMBUSTÍVEL</h2>
                 <p class="toggle-prompt">// Iniciar Transmissão...</p>
             </div>
 
@@ -106,25 +71,20 @@
                         </ul>
                     </div>
                 </div>
-                <!-- <div class="terminal-footer">
-                    <p>// FIM DA TRANSMISSÃO...</p>
-                </div> -->
             </div>
         </section>
 
-        <!-- Gerenciamento de Combustivel -->
         <section class="terminal" id="fuel-management-terminal">
 
             <div id="management-toggle" class="terminal-header-collapsible">
-                <h2>GERENCIAMENTO DE COMBUSTÍVEL</h2>
+                <h2><i class="fa-solid fa-sliders"></i> GERENCIAMENTO DE COMBUSTÍVEL</h2>
                 <p class="toggle-prompt">// Abrir Canal de Entrada...</p>
             </div>
 
             <div id="management-content" class="collapsible-content collapsed">
                 <div class="fuel-input-grid">
-
                     <div class="ship-fuel-input">
-                        <h4>-- A Engrenagem Mestra --</h4>
+                        <h4><i class="fa-solid fa-truck-monster"></i> -- A Engrenagem Mestra --</h4>
                         <label for="cargueiro-subluz">Subluz (Máx: 10.000L):</label>
                         <input type="number" id="cargueiro-subluz" name="cargueiro-subluz" placeholder="0">
 
@@ -133,32 +93,65 @@
                     </div>
 
                     <div class="ship-fuel-input">
-                        <h4>-- O Cinzel --</h4>
+                        <h4><i class="fa-solid fa-jet-fighter"></i> -- O Cinzel --</h4>
                         <label for="cinzel-subluz">Combustível Padrão (Máx: 500L):</label>
                         <input type="number" id="cinzel-subluz" name="cinzel-subluz" placeholder="0">
                     </div>
 
                     <div class="ship-fuel-input">
-                        <h4>-- O Moedor --</h4>
+                        <h4><i class="fa-solid fa-motorcycle"></i> -- O Moedor --</h4>
                         <label for="moedor-fuel">Células de Energia (Máx: 100%):</label>
                         <input type="number" id="moedor-fuel" name="moedor-fuel" placeholder="0">
                     </div>
-
                 </div>
-                <button id="save-fuel-btn"> > REGISTRAR NÍVEIS < </button>
-                        <p id="save-feedback"></p>
+                <button id="save-fuel-btn"><i class="fa-solid fa-floppy-disk"></i> > REGISTRAR NÍVEIS < </button>
+                <p id="save-feedback"></p>
             </div>
+        </section>
+        
+        <section class="terminal" id="vehicle-bay">
+            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Veículos Acoplados</h2>
+            
+            <h3><i class="fa-solid fa-jet-fighter"></i> O Cinzel</h3>
+            <p>
+                Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit
+                foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a
+                maioria.
+            </p>
+            <ul>
+                <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
+                <li><strong>Comprimento:</strong> 9.8 metros</li>
+                <li><strong>Velocidade Máxima (Atm.):</strong> 1.000 km/h</li>
+                <li><strong>Hyperdrive:</strong> Não possui</li>
+                <li><strong>Armamento:</strong> 2 Canhões Laser de disparo rápido</li>
+                <li><strong>Sistema Dróide:</strong> Integrado a uma unidade astromecânica "Zunido".</li>
+            </ul>
 
+            <hr class="section-divider">
+
+            <h3><i class="fa-solid fa-motorcycle"></i> O Moedor</h3>
+            <p>
+                Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de
+                transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
+            </p>
+            <ul>
+                <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
+                <li><strong>Classe:</strong> Speeder Terrestre</li>
+                <li><strong>Tripulação:</strong> 1 Piloto (ergonomia exclusiva para Dur'toc)</li>
+                <li><strong>Passageiros:</strong> Nenhum, espaço convertido em compartimento de carga.</li>
+                <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
+                <li><strong>Armamento:</strong> Nenhum</li>
+            </ul>
         </section>
 
         <div style="text-align: center; margin-top: 40px;">
-            <button id="open-travel-modal-btn" class="main-action-btn"> > FAZER VIAGEM < </button>
+            <button id="open-travel-modal-btn" class="main-action-btn"><i class="fa-solid fa-rocket"></i> > FAZER VIAGEM < </button>
         </div>
 
         <div id="travel-modal" class="modal">
             <div class="modal-content terminal">
                 <span class="close-btn">&times;</span>
-                <h2>Planejamento de Rota</h2>
+                <h2><i class="fa-solid fa-map-location-dot"></i> Planejamento de Rota</h2>
 
                 <div class="modal-step">
                     <label for="vehicle-select">> Selecione a Nave:</label>
@@ -180,8 +173,7 @@
 
                 <div id="travel-options-step" class="modal-step hidden">
                     <label for="travel-type-select">> Tipo de Ação:</label>
-                    <select id="travel-type-select">
-                    </select>
+                    <select id="travel-type-select"></select>
                 </div>
 
                 <div id="quantity-step" class="modal-step hidden">
@@ -189,17 +181,16 @@
                     <input type="number" id="travel-quantity" placeholder="0">
                 </div>
 
-                <button id="calculate-trip-btn" class="main-action-btn" disabled> > CALCULAR E REALIZAR VIAGEM <
-                        </button>
-                        <p id="trip-feedback"></p>
+                <button id="calculate-trip-btn" class="main-action-btn" disabled><i class="fa-solid fa-calculator"></i> > CALCULAR E REALIZAR VIAGEM < </button>
+                <p id="trip-feedback"></p>
             </div>
         </div>
-
-        <p style="font-size: 25px;"><a href="../index.html">// Retornar ao Sistema Principal...</a></p>
+        
+        <p style="font-size: 25px; text-align: center;"><a href="../index.html"><i class="fa-solid fa-arrow-left-long"></i> Retornar ao Sistema Principal...</a></p>
 
     </div>
 
-    <script src="fuel.js" defer></script>
+    <script src="../js/fuel.js"></script>
 </body>
 
 </html>

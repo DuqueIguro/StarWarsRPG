@@ -34,10 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================
     // --- FUNÇÕES DE ARMAZENAMENTO LOCAL (localStorage) ---
     // ==========================================================
-
-    // Função para salvar TODOS os níveis de combustível atuais no localStorage
     function saveFuelLevels() {
-        console.log("Salvando níveis de combustível...");
         for (const key in fuelInputs) {
             if (fuelInputs[key]) {
                 localStorage.setItem(key, fuelInputs[key].value);
@@ -45,9 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Função para carregar os níveis de combustível do localStorage ao iniciar a página
     function loadFuelLevels() {
-        console.log("Carregando níveis de combustível...");
         for (const key in fuelInputs) {
             if (fuelInputs[key]) {
                 const savedValue = localStorage.getItem(key);
@@ -64,8 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const fuelContent = document.getElementById('fuel-content');
         const fuelPrompt = fuelToggle.querySelector('.toggle-prompt');
         fuelToggle.addEventListener('click', () => {
-            fuelContent.classList.toggle('collapsed');
-            fuelPrompt.textContent = fuelContent.classList.contains('collapsed') ? "// Iniciar Transmissão..." : "// Ocultar Transmissão...";
+            fuelContent.classList.toggle('collapsed')
+            fuelPrompt.innerHTML = fuelContent.classList.contains('collapsed') 
+                ? '<i class="fa-solid fa-folder"></i> // Iniciar Transmissão...' 
+                : '<i class="fa-solid fa-folder-open"></i> // Ocultar Transmissão...';
         });
     }
 
@@ -79,11 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         managementToggle.addEventListener('click', () => {
             managementContent.classList.toggle('collapsed');
-            managementPrompt.textContent = managementContent.classList.contains('collapsed') ? "// Abrir Canal de Entrada..." : "// Fechar Canal de Entrada...";
+            managementPrompt.innerHTML = managementContent.classList.contains('collapsed') 
+                ? '<i class="fa-solid fa-folder"></i> // Abrir Canal de Entrada...' 
+                : '<i class="fa-solid fa-folder-open"></i> // Fechar Canal de Entrada...';
         });
 
         saveButton.addEventListener('click', () => {
-            // NOVO: Chama a função para salvar os dados
             saveFuelLevels(); 
             saveFeedback.textContent = "> NÍVEIS DE COMBUSTÍVEL REGISTRADOS NO DATAPAD.";
             setTimeout(() => { saveFeedback.textContent = ""; }, 3000);
@@ -186,8 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const newFuel = currentFuel - fuelCost;
             fuelInput.value = newFuel.toFixed(2);
             tripFeedback.textContent = `> VIAGEM CONCLUÍDA. Custo: ${fuelCost.toFixed(2)}L. Combustível restante: ${newFuel.toFixed(2)}L.`;
-            
-            // NOVO: Salva automaticamente os níveis após uma viagem bem-sucedida
             saveFuelLevels();
         } else {
             tripFeedback.textContent = `> FALHA. Combustível insuficiente. Necessário: ${fuelCost.toFixed(2)}L. Disponível: ${currentFuel.toFixed(2)}L.`;
