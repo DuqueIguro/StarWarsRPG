@@ -11,7 +11,7 @@ function checkPassword() {
         feedback.textContent = '> CHAVE VÁLIDA. ACESSO CONCEDIDO. REDIRECIONANDO...';
         setTimeout(() => {
             window.location.href = 'hangar/hangarAutorizado.html';
-        }, 1500); // Espera 1.5 segundos antes de redirecionar
+        }, 500); // Espera 0.5 segundos antes de redirecionar
     } else {
         feedback.style.color = '#FF4141';
         feedback.textContent = '> ACESSO NEGADO. CHAVE INCORRETA.';
