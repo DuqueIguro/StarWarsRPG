@@ -334,7 +334,7 @@ function initFicha() {
         'Conhecimento (Tecnologia)': 'int', 'Conhecimento (Tradições Galácticas)': 'int', 'Enganação': 'car', 'Escalar': 'vig',
         'Furtividade': 'des', 'Iniciativa': 'des', 'Mecânica': 'int', 'Montar': 'des', 'Nadar': 'vig', 'Obter Informação': 'car',
         'Percepção': 'sab', 'Persuasão': 'car', 'Pilotar': 'des', 'Resistência': 'con', 'Saltar': 'vig', 'Sobrevivência': 'sab',
-        'Tratar Ferimentos': 'sab', 'Usar a Força': 'car', 'Usar Computadores': 'int'
+        'Tratar Ferimentos': 'sab', 'Usar a Força': 'sab', 'Usar Computadores': 'int'
     };
 
     // Criação dinâmica da lista de perícias
