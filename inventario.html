@@ -8,9 +8,9 @@
 
     <script>
         tailwind.config = {
-          corePlugins: {
-            preflight: false,
-          }
+            corePlugins: {
+                preflight: false,
+            }
         }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,8 +32,8 @@
 
     <header class="text-center mb-8 relative">
         <a href="index.html"
-           class="absolute top-0 left-0 flex items-center gap-1 py-1 px-3 rounded-md font-orbitron text-cyan-300 border border-cyan-700 bg-gray-900/70 hover:bg-cyan-900/60 transition-colors shadow-md text-xs font-bold"
-           style="text-decoration:none;">
+            class="absolute top-0 left-0 flex items-center gap-1 py-1 px-3 rounded-md font-orbitron text-cyan-300 border border-cyan-700 bg-gray-900/70 hover:bg-cyan-900/60 transition-colors shadow-md text-xs font-bold"
+            style="text-decoration:none;">
             <span class="text-lg">&#8592;</span> Voltar
         </a>
         <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento
@@ -185,18 +185,18 @@
     <script src="inventario/database.js"></script>
     <script src="inventario/script.js" defer></script>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var personalCredits = document.getElementById('personal-credits');
-    if (personalCredits) {
-        personalCredits.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                e.target.blur();
+        document.addEventListener('DOMContentLoaded', function () {
+            var personalCredits = document.getElementById('personal-credits');
+            if (personalCredits) {
+                personalCredits.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.target.blur();
+                    }
+                });
             }
         });
-    }
-});
-</script>
+    </script>
 
 </body>
 

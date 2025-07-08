@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +8,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="durtoc/style.css">
     <link rel="icon" type="image/x-icon" href="inventario/img/sabres.ico">
 </head>
+
 <body class="min-h-screen p-4 md:p-8">
 
-    <div id="notification" class="notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px]"></div>
+    <div id="notification"
+        class="notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px]">
+    </div>
 
     <header class="text-center mb-8 relative">
         <a href="index.html"
-           class="absolute top-0 left-0 flex items-center gap-1 py-1 px-3 rounded-md font-orbitron text-cyan-300 border border-cyan-700 bg-gray-900/70 hover:bg-cyan-900/60 transition-colors shadow-md text-xs font-bold"
-           style="text-decoration:none;">
+            class="absolute top-0 left-0 flex items-center gap-1 py-1 px-3 rounded-md font-orbitron text-cyan-300 border border-cyan-700 bg-gray-900/70 hover:bg-cyan-900/60 transition-colors shadow-md text-xs font-bold"
+            style="text-decoration:none;">
             <span class="text-lg">&#8592;</span> Voltar
         </a>
-        <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento de Recursos</h1>
+        <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento
+            de Recursos</h1>
         <p class="font-aurebesh text-lg text-cyan-500">Terminal de Gerenciamento de Recursos</p>
         <button id="reset-btn"
             class="absolute top-0 right-0 btn-danger font-orbitron text-xs py-1 px-3 rounded-md border border-red-700 bg-red-900/80 hover:bg-red-700/80 transition-colors shadow-md font-bold">
@@ -42,32 +49,41 @@
             <div class="glass-pane p-4 rounded-lg text-center">
                 <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS PESSOAIS</h2>
                 <p class="font-aurebesh text-md text-yellow-500">Creditos Pessoais</p>
-                <div id="personal-credits" contenteditable="true" class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all" tabindex="0"></div>
+                <div id="personal-credits" contenteditable="true"
+                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all" tabindex="0"></div>
             </div>
             <div class="glass-pane p-4 rounded-lg text-center">
                 <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS DA OFICINA</h2>
                 <p class="font-aurebesh text-md text-yellow-500">Creditos da Oficina</p>
-                <div id="workshop-credits" contenteditable="true" class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all" tabindex="0"></div>
+                <div id="workshop-credits" contenteditable="true"
+                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all" tabindex="0"></div>
             </div>
         </div>
 
         <div class="mb-4 border-b border-cyan-700">
             <nav class="flex space-x-2" id="tabs">
-                <button data-tab="lojas" class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-active">LOJAS</button>
-                <button data-tab="personagem" class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO PESSOAL</button>
-                <button data-tab="oficina" class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO DA OFICINA</button>
+                <button data-tab="lojas"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-active">LOJAS</button>
+                <button data-tab="personagem"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO
+                    PESSOAL</button>
+                <button data-tab="oficina"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO DA
+                    OFICINA</button>
             </nav>
         </div>
 
         <div id="tab-content">
             <div id="lojas-pane" class="tab-pane">
-                 <div class="glass-pane p-4 rounded-lg mb-4">
+                <div class="glass-pane p-4 rounded-lg mb-4">
                     <div class="flex flex-col md:flex-row gap-4">
                         <div class="flex-grow">
-                             <h3 class="font-orbitron text-lg mb-2 text-cyan-400">FILTROS DE BUSCA</h3>
+                            <h3 class="font-orbitron text-lg mb-2 text-cyan-400">FILTROS DE BUSCA</h3>
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <input type="text" id="search-input" placeholder="Buscar por nome..." class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
-                                <select id="quality-filter" class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                <input type="text" id="search-input" placeholder="Buscar por nome..."
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                <select id="quality-filter"
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
                                     <option value="all">Todas as Qualidades</option>
                                     <option value="Lendária">Lendária</option>
                                     <option value="Imperial">Imperial</option>
@@ -76,7 +92,8 @@
                                     <option value="Normal">Normal</option>
                                     <option value="Baixa">Baixa</option>
                                 </select>
-                                <select id="category-filter" class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                <select id="category-filter"
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
                                     <option value="all">Todas as Categorias</option>
                                     <option value="Naves Prontas">Naves Prontas</option>
                                     <option value="Dróides Prontos">Dróides Prontos</option>
@@ -85,7 +102,8 @@
                                     <option value="Equipamento">Equipamento</option>
                                     <option value="Outros">Outros</option>
                                 </select>
-                                <select id="sort-by" class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                <select id="sort-by"
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
                                     <option value="price-desc">Preço (Maior para Menor)</option>
                                     <option value="price-asc">Preço (Menor para Maior)</option>
                                     <option value="name-asc">Nome (A-Z)</option>
@@ -96,33 +114,37 @@
                             </div>
                         </div>
                         <div class="md:pl-4 md:border-l border-cyan-700 flex-shrink-0 flex items-center">
-                             <button id="add-custom-item-btn" class="btn-success font-bold py-2 px-4 rounded-md w-full h-fit">Adicionar Item Customizado</button>
+                            <button id="add-custom-item-btn"
+                                class="btn-success font-bold py-2 px-4 rounded-md w-full h-fit">Adicionar Item
+                                Customizado</button>
                         </div>
                     </div>
                 </div>
-                <div id="item-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-2">
-                    </div>
+                <div id="item-grid"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-2">
+                </div>
             </div>
 
             <div id="personagem-pane" class="tab-pane hidden">
                 <div id="personal-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                     </div>
+                </div>
             </div>
 
             <div id="oficina-pane" class="tab-pane hidden">
                 <div id="workshop-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    </div>
+                </div>
             </div>
         </div>
     </main>
 
-    <div id="cart" class="fixed top-0 right-0 h-full w-full md:w-1/3 lg:w-1/4 glass-pane p-4 transform translate-x-full z-40 flex flex-col">
+    <div id="cart"
+        class="fixed top-0 right-0 h-full w-full md:w-1/3 lg:w-1/4 glass-pane p-4 transform translate-x-full z-40 flex flex-col">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-orbitron text-2xl text-cyan-300">CARRINHO</h2>
             <button id="close-cart-btn" class="text-2xl hover:text-red-500">&times;</button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto pr-2">
-            </div>
+        </div>
         <div class="mt-4 pt-4 border-t border-cyan-700">
             <div class="mb-2">
                 <span class="font-bold">Total Pessoal:</span>
@@ -135,18 +157,22 @@
             <button id="checkout-btn" class="w-full btn-primary font-bold py-2 rounded-md">FINALIZAR COMPRA</button>
         </div>
     </div>
-    
-    <div id="custom-item-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+
+    <div id="custom-item-modal"
+        class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="glass-pane rounded-lg p-8 w-full max-w-lg">
             <div class="flex justify-between items-center mb-4">
-                 <h2 class="font-orbitron text-2xl text-cyan-300">ADICIONAR ITEM CUSTOMIZADO</h2>
-                 <button id="close-modal-btn" class="text-2xl hover:text-red-500">&times;</button>
+                <h2 class="font-orbitron text-2xl text-cyan-300">ADICIONAR ITEM CUSTOMIZADO</h2>
+                <button id="close-modal-btn" class="text-2xl hover:text-red-500">&times;</button>
             </div>
             <form id="custom-item-form">
                 <div class="space-y-4">
-                    <input type="text" id="custom-item-name" placeholder="Nome do Item" class="modal-input w-full" required>
-                    <textarea id="custom-item-desc" placeholder="Descrição" class="modal-input w-full" rows="3" required></textarea>
-                    <input type="number" id="custom-item-price" placeholder="Preço em Créditos" class="modal-input w-full" min="0" required>
+                    <input type="text" id="custom-item-name" placeholder="Nome do Item" class="modal-input w-full"
+                        required>
+                    <textarea id="custom-item-desc" placeholder="Descrição" class="modal-input w-full" rows="3"
+                        required></textarea>
+                    <input type="number" id="custom-item-price" placeholder="Preço em Créditos"
+                        class="modal-input w-full" min="0" required>
                     <div class="grid grid-cols-2 gap-4">
                         <select id="custom-item-quality" class="modal-input w-full" required>
                             <option value="" disabled selected>Qualidade</option>
@@ -158,8 +184,8 @@
                             <option value="Baixa">Baixa</option>
                         </select>
                         <select id="custom-item-category" class="modal-input w-full" required>
-                             <option value="" disabled selected>Categoria</option>
-                             <option value="Naves Prontas">Nave Pronta</option>
+                            <option value="" disabled selected>Categoria</option>
+                            <option value="Naves Prontas">Nave Pronta</option>
                             <option value="Dróides Prontos">Dróide Pronto</option>
                             <option value="Peças de Naves">Peça de Nave</option>
                             <option value="Peças de Dróides">Peça de Dróide</option>
@@ -170,8 +196,10 @@
                     <div>
                         <p class="mb-2 font-bold text-cyan-400">Adicionar ao Inventário:</p>
                         <div class="flex gap-4">
-                            <label class="flex items-center"><input type="radio" name="inventory" value="personal" class="mr-2" checked> Pessoal</label>
-                            <label class="flex items-center"><input type="radio" name="inventory" value="workshop" class="mr-2"> Oficina</label>
+                            <label class="flex items-center"><input type="radio" name="inventory" value="personal"
+                                    class="mr-2" checked> Pessoal</label>
+                            <label class="flex items-center"><input type="radio" name="inventory" value="workshop"
+                                    class="mr-2"> Oficina</label>
                         </div>
                     </div>
                     <button type="submit" class="w-full btn-success font-bold py-2 rounded-md">Salvar Item</button>
@@ -183,17 +211,18 @@
     <script src="inventario/database.js"></script>
     <script src="durtoc/script.js" defer></script>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    function handleCreditsEnterBlur(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            e.target.blur();
-        }
-    }
-    document.getElementById('personal-credits').addEventListener('keydown', handleCreditsEnterBlur);
-    document.getElementById('workshop-credits').addEventListener('keydown', handleCreditsEnterBlur);
-});
-</script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function handleCreditsEnterBlur(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.target.blur();
+                }
+            }
+            document.getElementById('personal-credits').addEventListener('keydown', handleCreditsEnterBlur);
+            document.getElementById('workshop-credits').addEventListener('keydown', handleCreditsEnterBlur);
+        });
+    </script>
 
 </body>
+
 </html>

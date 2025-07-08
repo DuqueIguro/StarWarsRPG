@@ -8,20 +8,22 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap"
+        rel="stylesheet">
+
     <link rel="icon" type="image/x-icon" href="ficha/img/mandalorian.ico">
     <link rel="stylesheet" href="ficha/style.css">
-    
+
     <script src="ficha/dadosRacas.js"></script>
     <script src="ficha/dadosClasses.js"></script>
     <script src="ficha/dadosTamanhos.js"></script>
 
     <script>
         tailwind.config = {
-          corePlugins: {
-            preflight: false,
-          }
+            corePlugins: {
+                preflight: false,
+            }
         }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,22 +34,19 @@
 <body class="p-4 sm:p-6 md:p-8">
 
     <!-- Botão de voltar fixo no canto superior esquerdo -->
-    <a
-        href="index.html"
+    <a href="index.html"
         style="position:fixed;top:24px;left:24px;z-index:1000;display:flex;align-items:center;gap:6px;text-decoration:none"
         class="px-3 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
-        title="Voltar para a página inicial"
-    >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        title="Voltar para a página inicial">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
         </svg>
         Voltar
     </a>
 
     <!-- Botão de salvar fixo no canto superior direito -->
-    <button
-        onclick="saveData()"
-        style="position:fixed;top:24px;right:24px;z-index:1000"
+    <button onclick="saveData()" style="position:fixed;top:24px;right:24px;z-index:1000"
         class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
         title="Salvar Ficha">
         Salvar
