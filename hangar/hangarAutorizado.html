@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hangar | Acesso Concedido</title>
+    <title>Hangar - Star Wars RPG</title>
     <link rel="stylesheet" href="../styles/hangar.css">
 </head>
+
 <body>
     <div class="terminal">
-        <h1>== Hangar Principal: A Engrenagem Mestra ==</h1>
-        <p>Obra-prima de Dur'toc, esta nave é a manifestação de seu brilhantismo e fúria. Foi concebida como um cruzador cargueiro totalmente autossuficiente e uma base de operações móvel.</p>
-        
-        <h2>// Especificações da Nave //</h2>
+        <h1 style="text-align: center;">Hangar Principal</h1>
+        <h2 style="font-size: 52px; text-align: center;">A Engrenagem Mestra</h2>
+        <p>
+            Obra-prima de Dur'toc, esta nave é a manifestação de seu brilhantismo e fúria. Foi concebida como um
+            cruzador cargueiro totalmente autossuficiente e uma base de operações móvel.
+        </p>
+
+        <h2>// Especificações da Nave</h2>
         <ul>
             <li><strong>Classe:</strong> Cruzador Cargueiro de Reparos</li>
             <li><strong>Comprimento:</strong> 165 metros</li>
@@ -19,38 +25,132 @@
             <li><strong>Propulsão:</strong> Motor de Hiperespaço Classe 1.2 (Primário), Classe 9 (Reserva)</li>
             <li><strong>Armamento:</strong> 2 Canhões Iônicos de Disparo Rápido</li>
             <li><strong>Defesas:</strong> Escudos defletores de alta capacidade e blindagem de casco reforçada.</li>
-            <li><strong>Instalações Notáveis:</strong> Hangares de Reparo Duplos, Oficina de Engenharia Central, Porão de Carga Modular (1.000 toneladas)</li>
+            <li><strong>Instalações Notáveis:</strong> Hangares de Reparo Duplos, Oficina de Engenharia Central, Porão
+                de Carga Modular (1.000 toneladas)</li>
             <li><strong>Tripulação Mínima:</strong> 1 (Dur'toc, auxiliado por droids)</li>
         </ul>
 
-        <hr>
+        <!-- Informações de combustivel -->
+        <section class="terminal" id="fuel-terminal">
 
-        <h2>== Veículos Acoplados ==</h2>
-        
-        <h3>O Cinzel</h3>
-        <p>Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a maioria.</p>
-        <ul>
-            <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
-            <li><strong>Comprimento:</strong> 9.8 metros</li>
-            <li><strong>Velocidade Máxima (Atm.):</strong> 1.000 km/h</li>
-            <li><strong>Hyperdrive:</strong> Não possui</li>
-            <li><strong>Armamento:</strong> 2 Canhões Laser de disparo rápido</li>
-            <li><strong>Sistema Dróide:</strong> Integrado a uma unidade astromecânica "Zunido".</li>
-        </ul>
+            <div id="fuel-toggle" class="terminal-header-collapsible">
+                <h2>DADOS DE COMBUSTÍVEL</h2>
+                <p class="toggle-prompt">// Iniciar Transmissão...</p>
+            </div>
 
-        <h3>O Moedor</h3>
-        <p>Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.</p>
-        <ul>
-            <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
-            <li><strong>Classe:</strong> Speeder Terrestre</li>
-            <li><strong>Tripulação:</strong> 1 Piloto (ergonomia exclusiva para Dur'toc)</li>
-            <li><strong>Passageiros:</strong> Nenhum, espaço convertido em compartimento de carga.</li>
-            <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
-            <li><strong>Armamento:</strong> Nenhum</li>
-        </ul>
+            <div id="fuel-content" class="collapsible-content collapsed">
+                <div class="fuel-section-container">
+                    <div class="fuel-section">
+                        <h3>COMBUSTÍVEL SUBLUZ (PROPULSÃO PADRÃO)</h3>
+                        <ul>
+                            <li><strong>Custo por Litro:</strong> 10 Créditos</li>
+                            <li><strong>Capacidade Máxima:</strong> 10.000 Litros</li>
+                            <li><strong>Custo para Tanque Cheio:</strong> 100.000 Créditos</li>
+                        </ul>
+                        <h4>Taxas de Consumo (Subluz):</h4>
+                        <ul>
+                            <li><strong>Voo em Espaço:</strong> 10L / 100km</li>
+                            <li><strong>Voo em Atmosfera:</strong> 20L / 100km</li>
+                            <li><strong>Combate (Aprox.):</strong> 50L / hora</li>
+                        </ul>
+                    </div>
 
-        <br>
-        <p>> <a href="../index.html">RETORNAR AO SISTEMA PRINCIPAL</a></p>
+                    <div class="fuel-section">
+                        <h3>COAXIUM REFINADO (HIPERESPAÇO)</h3>
+                        <ul>
+                            <li><strong>Custo por Litro:</strong> 20.000 Créditos</li>
+                            <li><strong>Capacidade Máxima:</strong> 10 Litros</li>
+                            <li><strong>Custo para Tanque Cheio:</strong> 200.000 Créditos</li>
+                        </ul>
+                        <h4>Taxas de Consumo (Salto Hiperespaço):</h4>
+                        <ul>
+                            <li><strong>Salto Curto (Setorial):</strong> 0.2L por salto</li>
+                            <li><strong>Salto Médio (Inter-sistemas):</strong> 0.5L por salto</li>
+                            <li><strong>Salto Longo (Regional):</strong> 1.0L por salto</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- <div class="terminal-footer">
+                    <p>// FIM DA TRANSMISSÃO...</p>
+                </div> -->
+            </div>
+        </section>
+
+        <!-- Gerenciamento de Combustivel -->
+        <section class="terminal" id="fuel-management-terminal">
+
+            <div id="management-toggle" class="terminal-header-collapsible">
+                <h2>GERENCIAMENTO DE COMBUSTÍVEL</h2>
+                <p class="toggle-prompt">// Abrir Canal de Entrada...</p>
+            </div>
+
+            <div id="management-content" class="collapsible-content collapsed">
+                <div class="fuel-input-grid">
+
+                    <div class="ship-fuel-input">
+                        <h4>-- A Engrenagem Mestra --</h4>
+                        <label for="cargueiro-subluz">Subluz (Máx: 10.000L):</label>
+                        <input type="number" id="cargueiro-subluz" name="cargueiro-subluz" placeholder="0">
+
+                        <label for="cargueiro-coaxium">Coaxium (Máx: 10L):</label>
+                        <input type="number" id="cargueiro-coaxium" name="cargueiro-coaxium" placeholder="0">
+                    </div>
+
+                    <div class="ship-fuel-input">
+                        <h4>-- O Cinzel --</h4>
+                        <label for="cinzel-subluz">Combustível Padrão (Máx: 500L):</label>
+                        <input type="number" id="cinzel-subluz" name="cinzel-subluz" placeholder="0">
+                    </div>
+
+                    <div class="ship-fuel-input">
+                        <h4>-- O Moedor --</h4>
+                        <label for="moedor-fuel">Células de Energia (Máx: 100%):</label>
+                        <input type="number" id="moedor-fuel" name="moedor-fuel" placeholder="0">
+                    </div>
+
+                </div>
+                <button id="save-fuel-btn"> > REGISTRAR NÍVEIS < </button>
+                        <p id="save-feedback"></p>
+            </div>
+
+        </section>
+
+        <h2 style="text-align: center;">Veículos Acoplados</h2>
+        <section class="terminal" id="vehicle-bay">
+            <h3>O Cinzel</h3>
+            <p>
+                Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a maioria.
+            </p>
+            <ul>
+                <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
+                <li><strong>Comprimento:</strong> 9.8 metros</li>
+                <li><strong>Velocidade Máxima (Atm.):</strong> 1.000 km/h</li>
+                <li><strong>Hyperdrive:</strong> Não possui</li>
+                <li><strong>Armamento:</strong> 2 Canhões Laser de disparo rápido</li>
+                <li><strong>Sistema Dróide:</strong> Integrado a uma unidade astromecânica "Zunido".</li>
+            </ul>
+
+            <hr class="section-divider">
+
+            <h3>O Moedor</h3>
+            <p>
+                Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
+            </p>
+            <ul>
+                <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
+                <li><strong>Classe:</strong> Speeder Terrestre</li>
+                <li><strong>Tripulação:</strong> 1 Piloto (ergonomia exclusiva para Dur'toc)</li>
+                <li><strong>Passageiros:</strong> Nenhum, espaço convertido em compartimento de carga.</li>
+                <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
+                <li><strong>Armamento:</strong> Nenhum</li>
+            </ul>
+
+        </section>
+
+        <p style="font-size: 25px;">> <a href="../index.html">RETORNAR AO SISTEMA PRINCIPAL</a></p>
     </div>
+
+    <script src="fuel.js" defer></script>
 </body>
+
 </html>
