@@ -1,10 +1,5 @@
 let ultimoPvCalculado = 0;
 
-
-
-
-
-
 function initFicha() {
     function updateSheet() {
 
