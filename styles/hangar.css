@@ -256,3 +256,85 @@ button {
     border-top: 2px dashed rgba(0, 255, 65, 0.3);
     margin: 25px 0;
 }
+
+/* Botão de ação principal (Fazer Viagem) */
+.main-action-btn {
+    background-color: #00FF41;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    cursor: pointer;
+    text-shadow: none; /* Remove o brilho do texto dentro do botão */
+    width: 50%;
+}
+.main-action-btn:disabled {
+    background-color: #555;
+    color: #999;
+    cursor: not-allowed;
+}
+
+
+/* Fundo do Modal (Overlay) */
+.modal {
+    display: none; /* Escondido por padrão */
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7); /* Preto com transparência */
+    backdrop-filter: blur(3px); /* Efeito de desfoque no fundo */
+}
+
+/* Conteúdo da janela Modal */
+.modal-content {
+    position: relative;
+    margin: 10% auto;
+    max-width: 600px;
+}
+
+/* Botão de fechar (X) */
+.close-btn {
+    color: #FF4141;
+    float: right;
+    font-size: 32px;
+    font-weight: bold;
+}
+.close-btn:hover,
+.close-btn:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilo dos passos do formulário no modal */
+.modal-step {
+    margin: 20px 0;
+}
+.modal-step.hidden {
+    display: none;
+}
+.modal-step label {
+    display: block;
+    margin-bottom: 8px;
+}
+.modal-step select, .modal-step input {
+    width: 98%;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #00FF41;
+    color: #00FF41;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+}
+
+#trip-feedback {
+    text-align: center;
+    height: 25px;
+    margin-top: 15px;
+    font-style: italic;
+}

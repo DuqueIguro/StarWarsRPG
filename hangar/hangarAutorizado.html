@@ -119,7 +119,9 @@
         <section class="terminal" id="vehicle-bay">
             <h3>O Cinzel</h3>
             <p>
-                Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a maioria.
+                Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit
+                foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a
+                maioria.
             </p>
             <ul>
                 <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
@@ -134,7 +136,8 @@
 
             <h3>O Moedor</h3>
             <p>
-                Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
+                Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de
+                transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
             </p>
             <ul>
                 <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
@@ -147,7 +150,51 @@
 
         </section>
 
-        <p style="font-size: 25px;">> <a href="../index.html">RETORNAR AO SISTEMA PRINCIPAL</a></p>
+        <div style="text-align: center; margin-top: 40px;">
+            <button id="open-travel-modal-btn" class="main-action-btn"> > FAZER VIAGEM < </button>
+        </div>
+
+        <div id="travel-modal" class="modal">
+            <div class="modal-content terminal">
+                <span class="close-btn">&times;</span>
+                <h2>Planejamento de Rota</h2>
+
+                <div class="modal-step">
+                    <label for="vehicle-select">> Selecione a Nave:</label>
+                    <select id="vehicle-select">
+                        <option value="none" selected>-- Nenhum --</option>
+                        <option value="cargueiro">Engrenagem Mestra</option>
+                        <option value="cinzel">O Cinzel</option>
+                        <option value="moedor">O Moedor</option>
+                    </select>
+                </div>
+
+                <div id="propulsion-step" class="modal-step hidden">
+                    <label for="propulsion-select">> Tipo de Propulsão:</label>
+                    <select id="propulsion-select">
+                        <option value="subluz">Subluz</option>
+                        <option value="hiperespaço">Hiperespaço</option>
+                    </select>
+                </div>
+
+                <div id="travel-options-step" class="modal-step hidden">
+                    <label for="travel-type-select">> Tipo de Ação:</label>
+                    <select id="travel-type-select">
+                    </select>
+                </div>
+
+                <div id="quantity-step" class="modal-step hidden">
+                    <label for="travel-quantity" id="quantity-label">> Detalhes:</label>
+                    <input type="number" id="travel-quantity" placeholder="0">
+                </div>
+
+                <button id="calculate-trip-btn" class="main-action-btn" disabled> > CALCULAR E REALIZAR VIAGEM < </button>
+                <p id="trip-feedback"></p>
+            </div>
+        </div>
+
+        <p style="font-size: 25px;"><a href="../index.html">// Retornar ao Sistema Principal...</a></p>
+
     </div>
 
     <script src="fuel.js" defer></script>
