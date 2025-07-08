@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 body {
-    background-color: #000;
+    background-color: #03320a;
     color: #00FF41; /* Verde tecnológico */
     font-family: 'VT323', monospace; /* Fonte estilo terminal */
     font-size: 20px;
@@ -14,7 +14,7 @@ body {
 body::after {
     content: " ";
     display: block;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
