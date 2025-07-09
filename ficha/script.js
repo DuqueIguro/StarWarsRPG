@@ -215,62 +215,62 @@ function initFicha() {
     }
 
     // Funções para adicionar e remover itens e armas automáticos
-    function adicionarArmaPadrao(id, nome, dano, tipoAtaque = 'vig') {
-        const weaponList = document.getElementById('weapon-list');
-        if (weaponList.querySelector(`[data-automatic-id="${id}"]`)) return;
+    // function adicionarArmaPadrao(id, nome, dano, tipoAtaque = 'vig') {
+    //     const weaponList = document.getElementById('weapon-list');
+    //     if (weaponList.querySelector(`[data-automatic-id="${id}"]`)) return;
 
-        const weaponRow = document.createElement('div');
-        weaponRow.className = 'weapon-block-container arma-automatica';
-        weaponRow.dataset.automaticId = id;
-        weaponRow.innerHTML = `
-            <div class="grid grid-cols-2 gap-2 weapon-block">
-                <input type="text" class="weapon-name" value="${nome}">
-                <div class="flex items-center gap-1">
-                    <input type="text" class="attack-bonus-display w-full p-1 text-center" readonly>
-                    <select class="attack-type-select w-20 p-1">
-                        <option value="vig" ${tipoAtaque === 'vig' ? 'selected' : ''}>VIG</option>
-                        <option value="des" ${tipoAtaque === 'des' ? 'selected' : ''}>DES</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="text" class="dano-input w-full" value="${dano}">
-                    <svg class="dice-icon w-6 h-6 rollable cursor-pointer" viewBox="0 0 24 24"><path d="M12 2.02c.86 0 1.68.17 2.45.5l5.55 2.22c1.54.62 2.45 2.2 2.45 3.85v6.82c0 1.65-.91 3.23-2.45 3.85l-5.55 2.22a4.95 4.95 0 0 1-4.9 0l-5.55-2.22A4.95 4.95 0 0 1 1.55 15.4V8.59c0-1.65.91-3.23 2.45-3.85l5.55-2.22c.77-.33 1.59-.5 2.45-.5m0 1.98c-.58 0-1.15.1-1.68.3l-5.55 2.22c-.93.37-1.52 1.29-1.52 2.3v6.82c0 1.01.59 1.93 1.52 2.3l5.55 2.22c.53.2 1.1.3 1.68.3s1.15-.1 1.68-.3l5.55-2.22c.93-.37 1.52-1.29 1.52-2.3V8.59c0-1.01-.59-1.93-1.52-2.3l-5.55-2.22A3.01 3.01 0 0 0 12 4zM11 7h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2z"/></svg>
-                </div>
-                <input type="text" value="19-20/x2 Ignora RD" placeholder="Crítico / Notas">
-            </div>
-            <button class="remove-weapon-btn mt-2 w-full text-xs text-red-500 hover:text-red-400">Remover Arma</button>
-            <hr class="border-stone-700 mt-2 hidden">
-        `;
-        weaponList.appendChild(weaponRow);
-        updateSheet();
-    }
+    //     const weaponRow = document.createElement('div');
+    //     weaponRow.className = 'weapon-block-container arma-automatica';
+    //     weaponRow.dataset.automaticId = id;
+    //     weaponRow.innerHTML = `
+    //         <div class="grid grid-cols-2 gap-2 weapon-block">
+    //             <input type="text" class="weapon-name" value="${nome}">
+    //             <div class="flex items-center gap-1">
+    //                 <input type="text" class="attack-bonus-display w-full p-1 text-center" readonly>
+    //                 <select class="attack-type-select w-20 p-1">
+    //                     <option value="vig" ${tipoAtaque === 'vig' ? 'selected' : ''}>VIG</option>
+    //                     <option value="des" ${tipoAtaque === 'des' ? 'selected' : ''}>DES</option>
+    //                 </select>
+    //             </div>
+    //             <div class="flex items-center gap-2">
+    //                 <input type="text" class="dano-input w-full" value="${dano}">
+    //                 <svg class="dice-icon w-6 h-6 rollable cursor-pointer" viewBox="0 0 24 24"><path d="M12 2.02c.86 0 1.68.17 2.45.5l5.55 2.22c1.54.62 2.45 2.2 2.45 3.85v6.82c0 1.65-.91 3.23-2.45 3.85l-5.55 2.22a4.95 4.95 0 0 1-4.9 0l-5.55-2.22A4.95 4.95 0 0 1 1.55 15.4V8.59c0-1.65.91-3.23 2.45-3.85l5.55-2.22c.77-.33 1.59-.5 2.45-.5m0 1.98c-.58 0-1.15.1-1.68.3l-5.55 2.22c-.93.37-1.52 1.29-1.52 2.3v6.82c0 1.01.59 1.93 1.52 2.3l5.55 2.22c.53.2 1.1.3 1.68.3s1.15-.1 1.68-.3l5.55-2.22c.93-.37 1.52-1.29 1.52-2.3V8.59c0-1.01-.59-1.93-1.52-2.3l-5.55-2.22A3.01 3.01 0 0 0 12 4zM11 7h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2z"/></svg>
+    //             </div>
+    //             <input type="text" value="19-20/x2 Ignora RD" placeholder="Crítico / Notas">
+    //         </div>
+    //         <button class="remove-weapon-btn mt-2 w-full text-xs text-red-500 hover:text-red-400">Remover Arma</button>
+    //         <hr class="border-stone-700 mt-2 hidden">
+    //     `;
+    //     weaponList.appendChild(weaponRow);
+    //     updateSheet();
+    // }
 
-    function removerArmaPadrao(id) {
-        const armaParaRemover = document.querySelector(`.arma-automatica[data-automatic-id="${id}"]`);
-        if (armaParaRemover) armaParaRemover.remove();
-    }
+    // function removerArmaPadrao(id) {
+    //     const armaParaRemover = document.querySelector(`.arma-automatica[data-automatic-id="${id}"]`);
+    //     if (armaParaRemover) armaParaRemover.remove();
+    // }
 
-    function adicionarItemPadrao(id, nome, peso) {
-        const equipmentList = document.getElementById('equipment-list');
-        if (equipmentList.querySelector(`[data-automatic-id="${id}"]`)) return;
-        const itemRow = document.createElement('div');
-        itemRow.className = 'grid grid-cols-12 gap-2 items-center item-automatico';
-        itemRow.dataset.automaticId = id;
-        itemRow.innerHTML = `
-            <input type="text" value="${nome}" class="col-span-6 p-1">
-            <input type="number" placeholder="0" class="col-span-3 p-1 text-center">
-            <input type="number" step="0.1" value="${peso}" class="col-span-2 p-1 text-center item-weight">
-            <button class="remove-item-btn col-span-1 text-red-500 hover:text-red-400 font-bold text-center text-lg">X</button>
-        `;
-        equipmentList.appendChild(itemRow);
-        updateTotalWeight();
-    }
+    // function adicionarItemPadrao(id, nome, peso) {
+    //     const equipmentList = document.getElementById('equipment-list');
+    //     if (equipmentList.querySelector(`[data-automatic-id="${id}"]`)) return;
+    //     const itemRow = document.createElement('div');
+    //     itemRow.className = 'grid grid-cols-12 gap-2 items-center item-automatico';
+    //     itemRow.dataset.automaticId = id;
+    //     itemRow.innerHTML = `
+    //         <input type="text" value="${nome}" class="col-span-6 p-1">
+    //         <input type="number" placeholder="0" class="col-span-3 p-1 text-center">
+    //         <input type="number" step="0.1" value="${peso}" class="col-span-2 p-1 text-center item-weight">
+    //         <button class="remove-item-btn col-span-1 text-red-500 hover:text-red-400 font-bold text-center text-lg">X</button>
+    //     `;
+    //     equipmentList.appendChild(itemRow);
+    //     updateTotalWeight();
+    // }
 
-    function removerItemPadrao(id) {
-        const itemParaRemover = document.querySelector(`.item-automatico[data-automatic-id="${id}"]`);
-        if (itemParaRemover) itemParaRemover.remove();
-        updateTotalWeight();
-    }
+    // function removerItemPadrao(id) {
+    //     const itemParaRemover = document.querySelector(`.item-automatico[data-automatic-id="${id}"]`);
+    //     if (itemParaRemover) itemParaRemover.remove();
+    //     updateTotalWeight();
+    // }
 
     // Função que aplica os bônus da classe
     function aplicarBonusDeClasse() {
@@ -282,36 +282,36 @@ function initFicha() {
         document.getElementById('def-classe-von').value = bonus.von || 0;
 
         // Corrigido: NÃO sobrescreve talentos manuais ao trocar de classe
-        const talentosList = document.getElementById('talentos-list');
+        // const talentosList = document.getElementById('talentos-list');
         // Só adiciona talentos automáticos se não existirem (não limpa manualmente)
-        const talentos = classeData.talentosIniciais || [];
-        talentos.forEach(talento => {
-            // Só adiciona se não existir já um input readonly com esse valor
-            const exists = Array.from(talentosList.querySelectorAll('input[readonly]')).some(input => input.value === talento);
-            if (!exists) {
-                const row = document.createElement('div');
-                row.className = 'flex items-center gap-2 py-1 talento-automatico';
-                row.innerHTML = `<input type="text" value="${talento}" class="w-full p-1" readonly><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
-                talentosList.appendChild(row);
-            }
-        });
-        const weaponList = document.getElementById('weapon-list');
-        if (nomeClasse === 'jedi') {
-            const currentWeaponInputs = weaponList.querySelectorAll('.weapon-name');
-            let allPlaceholders = currentWeaponInputs.length > 0;
-            currentWeaponInputs.forEach(input => {
-                if (input.value !== '') allPlaceholders = false;
-            });
-            if (allPlaceholders) weaponList.innerHTML = '';
-            adicionarArmaPadrao('sabre-jedi', 'Sabre de Luz', '2d8', 'des');
-            adicionarItemPadrao('sabre-jedi', 'Sabre de Luz', 1.0);
-        } else {
-            removerArmaPadrao('sabre-jedi');
-            removerItemPadrao('sabre-jedi');
-            if (weaponList.children.length === 0) {
-                createWeaponRow();
-            }
-        }
+        // const talentos = classeData.talentosIniciais || [];
+        // talentos.forEach(talento => {
+        //     // Só adiciona se não existir já um input readonly com esse valor
+        //     const exists = Array.from(talentosList.querySelectorAll('input[readonly]')).some(input => input.value === talento);
+        //     if (!exists) {
+        //         const row = document.createElement('div');
+        //         row.className = 'flex items-center gap-2 py-1 talento-automatico';
+        //         row.innerHTML = `<input type="text" value="${talento}" class="w-full p-1" readonly><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
+        //         talentosList.appendChild(row);
+        //     }
+        // });
+        // const weaponList = document.getElementById('weapon-list');
+        // if (nomeClasse === 'jedi') {
+        //     const currentWeaponInputs = weaponList.querySelectorAll('.weapon-name');
+        //     let allPlaceholders = currentWeaponInputs.length > 0;
+        //     currentWeaponInputs.forEach(input => {
+        //         if (input.value !== '') allPlaceholders = false;
+        //     });
+        //     if (allPlaceholders) weaponList.innerHTML = '';
+        //     adicionarArmaPadrao('sabre-jedi', 'Sabre de Luz', '2d8', 'des');
+        //     adicionarItemPadrao('sabre-jedi', 'Sabre de Luz', 1.0);
+        // } else {
+        //     removerArmaPadrao('sabre-jedi');
+        //     removerItemPadrao('sabre-jedi');
+        //     if (weaponList.children.length === 0) {
+        //         createWeaponRow();
+        //     }
+        // }
     }
 
     // Variáveis e constantes globais
