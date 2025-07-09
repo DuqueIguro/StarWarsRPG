@@ -57,17 +57,15 @@ function initFicha() {
         pontosDestinoInput.value = '1';
     }
 
-    // Verifica se o valor atual foi editado manualmente
+    // Permite edição manual do PV Máximo: só atualiza se igual ao último calculado ou se resetado
     const pvAtualNoInput = parseInt(pvTotalInput.value) || 0;
-
-    // Se o valor no input for igual ao último calculado, atualiza.
-    if (pvAtualNoInput === ultimoPvCalculado || ultimoPvCalculado === 0 || pvAtualNoInput > pvCalculado) {
+    if (pvAtualNoInput === ultimoPvCalculado || ultimoPvCalculado === 0) {
         pvTotalInput.value = pvCalculado;
-        // Se o PV atual era maior que o novo máximo, ou estava no valor padrão de 10, reseta para o máximo.
         if (parseInt(pvAtualInput.value) > pvCalculado || pvAtualInput.value === '10' || pvAtualNoInput === ultimoPvCalculado) {
             pvAtualInput.value = pvCalculado;
         }
     }
+    // Se o usuário aumentou manualmente, não sobrescreve o valor digitado
 
     ultimoPvCalculado = pvCalculado;
 
@@ -282,25 +280,21 @@ function initFicha() {
         document.getElementById('def-classe-fort').value = bonus.fort || 0;
         document.getElementById('def-classe-ref').value = bonus.ref || 0;
         document.getElementById('def-classe-von').value = bonus.von || 0;
+
+        // Corrigido: NÃO sobrescreve talentos manuais ao trocar de classe
         const talentosList = document.getElementById('talentos-list');
-        talentosList.querySelectorAll('.talento-automatico').forEach(el => el.remove());
-        const placeholderInput = talentosList.querySelector('input[placeholder="Novo talento..."]');
-        if (placeholderInput) placeholderInput.parentElement.remove();
+        // Só adiciona talentos automáticos se não existirem (não limpa manualmente)
         const talentos = classeData.talentosIniciais || [];
-        if (talentos.length > 0) {
-            talentos.forEach(talento => {
+        talentos.forEach(talento => {
+            // Só adiciona se não existir já um input readonly com esse valor
+            const exists = Array.from(talentosList.querySelectorAll('input[readonly]')).some(input => input.value === talento);
+            if (!exists) {
                 const row = document.createElement('div');
                 row.className = 'flex items-center gap-2 py-1 talento-automatico';
                 row.innerHTML = `<input type="text" value="${talento}" class="w-full p-1" readonly><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
                 talentosList.appendChild(row);
-            });
-        }
-        if (talentosList.children.length === 0) {
-            const row = document.createElement('div');
-            row.className = 'flex items-center gap-2 py-1';
-            row.innerHTML = `<input type="text" placeholder="Novo talento..." class="w-full p-1"><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
-            talentosList.appendChild(row);
-        }
+            }
+        });
         const weaponList = document.getElementById('weapon-list');
         if (nomeClasse === 'jedi') {
             const currentWeaponInputs = weaponList.querySelectorAll('.weapon-name');
@@ -799,6 +793,26 @@ function saveData() {
             data[`weapon_${weaponId}_notas`] = notasArma.value;
         }
     });
+    // Salva listas dinâmicas corretamente
+    data['talentos-list'] = Array.from(document.querySelectorAll('#talentos-list input')).map(input => input.value);
+    data['poderes-list'] = Array.from(document.querySelectorAll('#poderes-list input')).map(input => input.value);
+    data['idiomas-list'] = Array.from(document.querySelectorAll('#idiomas-list input')).map(input => input.value);
+    data['aptidoes-list'] = Array.from(document.querySelectorAll('#aptidoes-list input')).map(input => input.value);
+
+    // Salva equipamentos corretamente
+    data['equipment-list'] = Array.from(document.querySelectorAll('#equipment-list .grid, #equipment-list .grid.grid-cols-12')).map(row => {
+        const inputs = row.querySelectorAll('input');
+        return {
+            nome: inputs[0]?.value || '',
+            custo: inputs[1]?.value || '',
+            peso: inputs[2]?.value || ''
+        };
+    });
+
+    // Salva anotações
+    const anotacoesEl = document.querySelector('textarea');
+    if (anotacoesEl) data['anotacoes'] = anotacoesEl.value;
+
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
 }
 
@@ -876,6 +890,48 @@ function loadData() {
             if (data.hasOwnProperty(key)) notasArma.value = data[key];
         }
     });
+
+    // Carrega listas dinâmicas corretamente
+    function recreateList(listId, arr, placeholder) {
+        const list = document.getElementById(listId);
+        if (!list) return;
+        list.innerHTML = '';
+        if (arr && arr.length > 0) {
+            arr.forEach(val => {
+                if (val.trim() !== '') {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center gap-2';
+                    row.innerHTML = `<input type="text" value="${val}" class="w-full p-1"><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
+                    list.appendChild(row);
+                }
+            });
+        }
+    }
+    recreateList('talentos-list', data['talentos-list'], 'Novo talento...');
+    recreateList('poderes-list', data['poderes-list'], 'Novo poder da Força...');
+    recreateList('idiomas-list', data['idiomas-list'], 'Novo idioma...');
+    recreateList('aptidoes-list', data['aptidoes-list'], 'Nova aptidão...');
+
+    // Carrega equipamentos corretamente
+    const equipmentList = document.getElementById('equipment-list');
+    if (equipmentList && data['equipment-list']) {
+        equipmentList.innerHTML = '';
+        data['equipment-list'].forEach(item => {
+            const itemRow = document.createElement('div');
+            itemRow.className = 'grid grid-cols-12 gap-2 items-center';
+            itemRow.innerHTML = `
+                <input type="text" value="${item.nome}" class="col-span-6 p-1">
+                <input type="number" value="${item.custo}" class="col-span-3 p-1 text-center">
+                <input type="number" step="0.1" value="${item.peso}" class="col-span-2 p-1 text-center item-weight">
+                <button class="remove-item-btn col-span-1 text-red-500 hover:text-red-400 font-bold text-center text-lg">X</button>
+            `;
+            equipmentList.appendChild(itemRow);
+        });
+    }
+
+    // Carrega anotações
+    const anotacoesEl = document.querySelector('textarea');
+    if (anotacoesEl && data['anotacoes']) anotacoesEl.value = data['anotacoes'];
 
     // ...existing code for generic checkboxes and other fields...
     document.querySelectorAll('input, select, textarea').forEach(el => {

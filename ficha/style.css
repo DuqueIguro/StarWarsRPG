@@ -164,4 +164,8 @@ label {
     flex-shrink: 0;
 }
 
+#hp-control-bar {
+    align-items: center; /* Garante centralização vertical dos botões e do valor de PV */
+}
+
 /* eu gosto de batatas  */
