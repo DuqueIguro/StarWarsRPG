@@ -942,9 +942,12 @@ function initFicha() {
 
     // Função para salvar automaticamente ao alterar qualquer campo
     function bindSaveOnChange() {
-        document.querySelectorAll('input, select, textarea').forEach(el => {
+        document.querySelectorAll('input, select, textarea, window').forEach(el => {
             el.addEventListener('change', saveData);
             el.addEventListener('input', saveData);
+            window.addEventListener('keydown', saveData); // Salva ao pressionar qualquer tecla
+            window.addEventListener('keyup', saveData); // Salva ao pressionar qualquer tecla
+            window.addEventListener('click', saveData); // Salva ao clicar
         });
     }
 

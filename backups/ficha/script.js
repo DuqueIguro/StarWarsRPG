@@ -1,131 +1,124 @@
 let ultimoPvCalculado = 0;
 
-
-
-
-
-
 function initFicha() {
     function updateSheet() {
 
-    console.log('Atualizando ficha...');
-    console.log('TESTE DO UPDATE SHEET');
-    aplicarBonusDeClasse();
-    const nivelEl = document.getElementById('nivel');
-    const classeEl = document.getElementById('classe');
-    const nivel = parseInt(nivelEl.value) || 0;
-    const nomeClasse = classeEl.value.toLowerCase().trim();
-    const babInput = document.getElementById('bab');
-    if (nomeClasse && DADOS_CLASSES[nomeClasse] && nivel >= 1 && nivel <= 20) {
-        const classeData = DADOS_CLASSES[nomeClasse];
-        babInput.value = classeData.bba[nivel - 1];
-    } else {
-        babInput.value = '0';
+        console.log('Atualizando ficha...');
+        console.log('TESTE DO UPDATE SHEET');
+        aplicarBonusDeClasse();
+        const nivelEl = document.getElementById('nivel');
+        const classeEl = document.getElementById('classe');
+        const nivel = parseInt(nivelEl.value) || 0;
+        const nomeClasse = classeEl.value.toLowerCase().trim();
+        const babInput = document.getElementById('bab');
+        if (nomeClasse && DADOS_CLASSES[nomeClasse] && nivel >= 1 && nivel <= 20) {
+            const classeData = DADOS_CLASSES[nomeClasse];
+            babInput.value = classeData.bba[nivel - 1];
+        } else {
+            babInput.value = '0';
+        }
+        ['vig', 'des', 'con', 'int', 'sab', 'car'].forEach(attr => {
+            const baseInput = document.getElementById(`${attr}-base`);
+            const finalEl = document.getElementById(`${attr}-final`);
+            const modEl = document.getElementById(`${attr}-mod`);
+            const baseValue = parseInt(baseInput.value) || 0;
+            const modRacial = modificadoresRaciais[attr] || 0;
+            const finalValue = baseValue + modRacial;
+            const mod = calculateModifier(finalValue);
+            mods[attr] = mod;
+            finalEl.textContent = finalValue;
+            modEl.textContent = mod >= 0 ? `+${mod}` : mod;
+            const rollIcon = modEl.nextElementSibling;
+            if (rollIcon) {
+                rollIcon.dataset.rollModifier = mod;
+                rollIcon.dataset.rollLabel = `Teste de ${baseInput.previousElementSibling.textContent}`;
+            }
+        });
+
+        const pvTotalInput = document.getElementById('pv-total');
+        const pvAtualInput = document.getElementById('pv-atual');
+        const pontosDestinoInput = document.getElementById('pontos-destino');
+
+        // Calcula o PV teórico
+        let pvCalculado = 0;
+        if (nomeClasse && DADOS_CLASSES[nomeClasse] && nivel >= 1) {
+            const classeData = DADOS_CLASSES[nomeClasse];
+            const modCon = mods.con || 0;
+            const vidaMediaPorNivel = Math.floor(classeData.dadoVida / 2) + 1;
+            let totalPv = classeData.pvIniciais;
+            if (nivel > 1) {
+                totalPv += (nivel - 1) * vidaMediaPorNivel;
+            }
+            totalPv += modCon * nivel;
+            pvCalculado = totalPv;
+            pontosDestinoInput.value = nivel;
+        } else {
+            pvCalculado = 10; // Valor base se não houver classe/nível
+            pontosDestinoInput.value = '1';
+        }
+
+        // Permite edição manual do PV Máximo: só atualiza se igual ao último calculado ou se resetado
+        const pvAtualNoInput = parseInt(pvTotalInput.value) || 0;
+        if (pvAtualNoInput === ultimoPvCalculado || ultimoPvCalculado === 0) {
+            pvTotalInput.value = pvCalculado;
+            if (parseInt(pvAtualInput.value) > pvCalculado || pvAtualInput.value === '10' || pvAtualNoInput === ultimoPvCalculado) {
+                pvAtualInput.value = pvCalculado;
+            }
+        }
+        // Se o usuário aumentou manualmente, não sobrescreve o valor digitado
+
+        ultimoPvCalculado = pvCalculado;
+
+        // Garante que o PV atual não seja maior que o total
+        if (parseInt(pvAtualInput.value) > parseInt(pvTotalInput.value)) {
+            pvAtualInput.value = pvTotalInput.value;
+        }
+
+        // Atualiza o display de PV/HP
+        updateHpDisplay();
+
+        calculateCarryingCapacity();
+        updateTotalWeight();
+
+        const bonusClasseFort = parseInt(document.getElementById('def-classe-fort').value) || 0;
+        const bonusClasseRef = parseInt(document.getElementById('def-classe-ref').value) || 0;
+        const bonusClasseVon = parseInt(document.getElementById('def-classe-von').value) || 0;
+        const bonusArmaduraFort = parseInt(document.getElementById('def-armadura-fort').value) || 0;
+        const bonusArmaduraRef = parseInt(document.getElementById('def-armadura-ref').value) || 0;
+        const bonusArmaduraVon = parseInt(document.getElementById('def-armadura-von').value) || 0;
+        const bonusTamanhoRef = parseInt(document.getElementById('def-tamanho-ref').value) || 0;
+        const bonusOutrosFort = parseInt(document.getElementById('def-outros-fort').value) || 0;
+        const bonusOutrosRef = parseInt(document.getElementById('def-outros-ref').value) || 0;
+        const bonusOutrosVon = parseInt(document.getElementById('def-outros-von').value) || 0;
+        const reflexBase = Math.max(nivel, bonusArmaduraRef);
+        document.getElementById('def-fort').textContent = 10 + nivel + (mods.con || 0) + bonusClasseFort + bonusArmaduraFort + bonusOutrosFort;
+        document.getElementById('def-ref').textContent = 10 + reflexBase + (mods.des || 0) + bonusClasseRef + bonusTamanhoRef + bonusOutrosRef;
+        document.getElementById('def-von').textContent = 10 + nivel + (mods.sab || 0) + bonusClasseVon + bonusArmaduraVon + bonusOutrosVon;
+        document.getElementById('dano-limite-total').textContent = (parseInt(document.getElementById('def-fort').textContent) || 0) + (modificadoresTamanho.modDanoLimite || 0);
+        const halfLevel = Math.floor(nivel / 2);
+        document.querySelectorAll('.pericia-item').forEach(item => {
+            const attrName = item.dataset.attr;
+            const attrMod = mods[attrName] || 0;
+            item.querySelector('.half-level').textContent = halfLevel;
+            item.querySelector('.attr-mod').textContent = attrMod >= 0 ? `+${attrMod}` : attrMod;
+            let total = calculateSkillTotal(item);
+            if (item.dataset.skill === 'furtividade') {
+                total += (modificadoresTamanho.modFurtividade || 0);
+            }
+            item.querySelector('.total-skill').textContent = total >= 0 ? `+${total}` : total;
+            const rollIcon = item.querySelector('.rollable');
+            if (rollIcon) {
+                rollIcon.dataset.rollModifier = total;
+                rollIcon.dataset.rollLabel = `Teste de ${item.querySelector('label').textContent.split('(')[0].trim()}`;
+            }
+        });
+        const iniciativaPericiaTotal = calculateSkillTotal(document.querySelector('[data-skill="iniciativa"]'));
+        const iniciativaContainer = document.getElementById('iniciativa-total').parentElement;
+        iniciativaContainer.querySelector('.stat-mod').textContent = `= ${iniciativaPericiaTotal >= 0 ? '+' : ''}${iniciativaPericiaTotal}`;
+        iniciativaContainer.querySelector('.rollable').dataset.rollModifier = iniciativaPericiaTotal;
+        iniciativaContainer.querySelector('.rollable').dataset.rollLabel = 'Teste de Iniciativa';
+        updateAttackBonuses();
     }
-    ['vig', 'des', 'con', 'int', 'sab', 'car'].forEach(attr => {
-        const baseInput = document.getElementById(`${attr}-base`);
-        const finalEl = document.getElementById(`${attr}-final`);
-        const modEl = document.getElementById(`${attr}-mod`);
-        const baseValue = parseInt(baseInput.value) || 0;
-        const modRacial = modificadoresRaciais[attr] || 0;
-        const finalValue = baseValue + modRacial;
-        const mod = calculateModifier(finalValue);
-        mods[attr] = mod;
-        finalEl.textContent = finalValue;
-        modEl.textContent = mod >= 0 ? `+${mod}` : mod;
-        const rollIcon = modEl.nextElementSibling;
-        if (rollIcon) {
-            rollIcon.dataset.rollModifier = mod;
-            rollIcon.dataset.rollLabel = `Teste de ${baseInput.previousElementSibling.textContent}`;
-        }
-    });
-
-    const pvTotalInput = document.getElementById('pv-total');
-    const pvAtualInput = document.getElementById('pv-atual');
-    const pontosDestinoInput = document.getElementById('pontos-destino');
-
-    // Calcula o PV teórico
-    let pvCalculado = 0;
-    if (nomeClasse && DADOS_CLASSES[nomeClasse] && nivel >= 1) {
-        const classeData = DADOS_CLASSES[nomeClasse];
-        const modCon = mods.con || 0;
-        const vidaMediaPorNivel = Math.floor(classeData.dadoVida / 2) + 1;
-        let totalPv = classeData.pvIniciais;
-        if (nivel > 1) {
-            totalPv += (nivel - 1) * vidaMediaPorNivel;
-        }
-        totalPv += modCon * nivel;
-        pvCalculado = totalPv;
-        pontosDestinoInput.value = nivel;
-    } else {
-        pvCalculado = 10; // Valor base se não houver classe/nível
-        pontosDestinoInput.value = '1';
-    }
-
-    // Verifica se o valor atual foi editado manualmente
-    const pvAtualNoInput = parseInt(pvTotalInput.value) || 0;
-
-    // Se o valor no input for igual ao último calculado, atualiza.
-    if (pvAtualNoInput === ultimoPvCalculado || ultimoPvCalculado === 0 || pvAtualNoInput > pvCalculado) {
-        pvTotalInput.value = pvCalculado;
-        // Se o PV atual era maior que o novo máximo, ou estava no valor padrão de 10, reseta para o máximo.
-        if (parseInt(pvAtualInput.value) > pvCalculado || pvAtualInput.value === '10' || pvAtualNoInput === ultimoPvCalculado) {
-            pvAtualInput.value = pvCalculado;
-        }
-    }
-
-    ultimoPvCalculado = pvCalculado;
-
-    // Garante que o PV atual não seja maior que o total
-    if (parseInt(pvAtualInput.value) > parseInt(pvTotalInput.value)) {
-        pvAtualInput.value = pvTotalInput.value;
-    }
-
-    // Atualiza o display de PV/HP
-    updateHpDisplay();
-
-    calculateCarryingCapacity();
-    updateTotalWeight();
-
-    const bonusClasseFort = parseInt(document.getElementById('def-classe-fort').value) || 0;
-    const bonusClasseRef = parseInt(document.getElementById('def-classe-ref').value) || 0;
-    const bonusClasseVon = parseInt(document.getElementById('def-classe-von').value) || 0;
-    const bonusArmaduraFort = parseInt(document.getElementById('def-armadura-fort').value) || 0;
-    const bonusArmaduraRef = parseInt(document.getElementById('def-armadura-ref').value) || 0;
-    const bonusArmaduraVon = parseInt(document.getElementById('def-armadura-von').value) || 0;
-    const bonusTamanhoRef = parseInt(document.getElementById('def-tamanho-ref').value) || 0;
-    const bonusOutrosFort = parseInt(document.getElementById('def-outros-fort').value) || 0;
-    const bonusOutrosRef = parseInt(document.getElementById('def-outros-ref').value) || 0;
-    const bonusOutrosVon = parseInt(document.getElementById('def-outros-von').value) || 0;
-    const reflexBase = Math.max(nivel, bonusArmaduraRef);
-    document.getElementById('def-fort').textContent = 10 + nivel + (mods.con || 0) + bonusClasseFort + bonusArmaduraFort + bonusOutrosFort;
-    document.getElementById('def-ref').textContent = 10 + reflexBase + (mods.des || 0) + bonusClasseRef + bonusTamanhoRef + bonusOutrosRef;
-    document.getElementById('def-von').textContent = 10 + nivel + (mods.sab || 0) + bonusClasseVon + bonusArmaduraVon + bonusOutrosVon;
-    document.getElementById('dano-limite-total').textContent = (parseInt(document.getElementById('def-fort').textContent) || 0) + (modificadoresTamanho.modDanoLimite || 0);
-    const halfLevel = Math.floor(nivel / 2);
-    document.querySelectorAll('.pericia-item').forEach(item => {
-        const attrName = item.dataset.attr;
-        const attrMod = mods[attrName] || 0;
-        item.querySelector('.half-level').textContent = halfLevel;
-        item.querySelector('.attr-mod').textContent = attrMod >= 0 ? `+${attrMod}` : attrMod;
-        let total = calculateSkillTotal(item);
-        if (item.dataset.skill === 'furtividade') {
-            total += (modificadoresTamanho.modFurtividade || 0);
-        }
-        item.querySelector('.total-skill').textContent = total >= 0 ? `+${total}` : total;
-        const rollIcon = item.querySelector('.rollable');
-        if (rollIcon) {
-            rollIcon.dataset.rollModifier = total;
-            rollIcon.dataset.rollLabel = `Teste de ${item.querySelector('label').textContent.split('(')[0].trim()}`;
-        }
-    });
-    const iniciativaPericiaTotal = calculateSkillTotal(document.querySelector('[data-skill="iniciativa"]'));
-    const iniciativaContainer = document.getElementById('iniciativa-total').parentElement;
-    iniciativaContainer.querySelector('.stat-mod').textContent = `= ${iniciativaPericiaTotal >= 0 ? '+' : ''}${iniciativaPericiaTotal}`;
-    iniciativaContainer.querySelector('.rollable').dataset.rollModifier = iniciativaPericiaTotal;
-    iniciativaContainer.querySelector('.rollable').dataset.rollLabel = 'Teste de Iniciativa';
-    updateAttackBonuses();
-}
     // Referências aos elementos da página
     const selectEspecie = document.getElementById('especie');
     const selectTamanho = document.getElementById('tamanho');
@@ -287,25 +280,21 @@ function initFicha() {
         document.getElementById('def-classe-fort').value = bonus.fort || 0;
         document.getElementById('def-classe-ref').value = bonus.ref || 0;
         document.getElementById('def-classe-von').value = bonus.von || 0;
+
+        // Corrigido: NÃO sobrescreve talentos manuais ao trocar de classe
         const talentosList = document.getElementById('talentos-list');
-        talentosList.querySelectorAll('.talento-automatico').forEach(el => el.remove());
-        const placeholderInput = talentosList.querySelector('input[placeholder="Novo talento..."]');
-        if (placeholderInput) placeholderInput.parentElement.remove();
+        // Só adiciona talentos automáticos se não existirem (não limpa manualmente)
         const talentos = classeData.talentosIniciais || [];
-        if (talentos.length > 0) {
-            talentos.forEach(talento => {
+        talentos.forEach(talento => {
+            // Só adiciona se não existir já um input readonly com esse valor
+            const exists = Array.from(talentosList.querySelectorAll('input[readonly]')).some(input => input.value === talento);
+            if (!exists) {
                 const row = document.createElement('div');
                 row.className = 'flex items-center gap-2 py-1 talento-automatico';
                 row.innerHTML = `<input type="text" value="${talento}" class="w-full p-1" readonly><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
                 talentosList.appendChild(row);
-            });
-        }
-        if (talentosList.children.length === 0) {
-            const row = document.createElement('div');
-            row.className = 'flex items-center gap-2 py-1';
-            row.innerHTML = `<input type="text" placeholder="Novo talento..." class="w-full p-1"><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
-            talentosList.appendChild(row);
-        }
+            }
+        });
         const weaponList = document.getElementById('weapon-list');
         if (nomeClasse === 'jedi') {
             const currentWeaponInputs = weaponList.querySelectorAll('.weapon-name');
@@ -334,7 +323,7 @@ function initFicha() {
         'Conhecimento (Tecnologia)': 'int', 'Conhecimento (Tradições Galácticas)': 'int', 'Enganação': 'car', 'Escalar': 'vig',
         'Furtividade': 'des', 'Iniciativa': 'des', 'Mecânica': 'int', 'Montar': 'des', 'Nadar': 'vig', 'Obter Informação': 'car',
         'Percepção': 'sab', 'Persuasão': 'car', 'Pilotar': 'des', 'Resistência': 'con', 'Saltar': 'vig', 'Sobrevivência': 'sab',
-        'Tratar Ferimentos': 'sab', 'Usar a Força': 'car', 'Usar Computadores': 'int'
+        'Tratar Ferimentos': 'sab', 'Usar a Força': 'sab', 'Usar Computadores': 'int'
     };
 
     // Criação dinâmica da lista de perícias
@@ -743,43 +732,224 @@ function initFicha() {
     }
 
     // Chave para o localStorage
-const SAVE_KEY = 'starwarsrpg_ficha_save';
+    const SAVE_KEY = 'starwarsrpg_ficha_save';
 
-// Função para salvar os dados do formulário
-function saveData() {
-    const data = {};
-    document.querySelectorAll('input, select, textarea').forEach(el => {
-        if (el.type === 'checkbox') {
-            data[el.id || el.name || el.className + el.value] = el.checked;
-        } else {
-            data[el.id || el.name || el.className + el.value] = el.value;
-        }
-    });
-    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-}
+    // Função para salvar os dados do formulário
+    function saveData() {
+        const data = {};
+        // Campos dentro de pericia-item
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            // Campos dentro de pericia-item
+            if (
+                el.closest('.pericia-item') &&
+                (
+                    (el.type === 'checkbox' && (el.classList.contains('trained-check') || el.classList.contains('focus-check'))) ||
+                    el.classList.contains('other-bonus')
+                )
+            ) {
+                const pericia = el.closest('.pericia-item').dataset.skill;
+                if (el.type === 'checkbox') {
+                    const tipo = el.classList.contains('trained-check') ? 'trained' : 'focus';
+                    data[`pericia_${pericia}_${tipo}`] = el.checked;
+                } else if (el.classList.contains('other-bonus')) {
+                    data[`pericia_${pericia}_other`] = el.value;
+                }
+            }
+            // Checkboxes genéricas
+            else if (el.type === 'checkbox') {
+                data[el.id || el.name || el.className + el.value] = el.checked;
+            }
+            // Outros campos
+            else {
+                data[el.id || el.name || el.className + el.value] = el.value;
+            }
+        });
+        // Salva todas as armas corretamente, mesmo com múltiplas armas
+        document.querySelectorAll('.weapon-block-container').forEach((container, idx) => {
+            // Use sempre o índice como identificador único para garantir ordem e unicidade
+            const weaponId = idx;
+            const nomeArma = container.querySelector('.weapon-name');
+            if (nomeArma) {
+                data[`weapon_${weaponId}_name`] = nomeArma.value;
+            }
+            const bonusAtaqueArma = container.querySelector('.attack-bonus-display');
+            if (bonusAtaqueArma) {
+                data[`weapon_${weaponId}_bonus`] = bonusAtaqueArma.value;
+            }
+            const tipoAtaqueArma = container.querySelector('.attack-type-select');
+            if (tipoAtaqueArma) {
+                data[`weapon_${weaponId}_type`] = tipoAtaqueArma.value;
+            }
+            const danoArma = container.querySelector('.dano-input');
+            if (danoArma) {
+                data[`weapon_${weaponId}_dano`] = danoArma.value;
+            }
+            // O campo de notas/crítico é o ÚLTIMO input[type="text"] que não é .weapon-name nem .dano-input
+            const allTextInputs = Array.from(container.querySelectorAll('input[type="text"]'));
+            const notasArma = allTextInputs.find(
+                el => !el.classList.contains('weapon-name') && !el.classList.contains('dano-input')
+            );
+            if (notasArma) {
+                data[`weapon_${weaponId}_notas`] = notasArma.value;
+            }
+        });
+        // Salva listas dinâmicas corretamente
+        data['talentos-list'] = Array.from(document.querySelectorAll('#talentos-list input')).map(input => input.value);
+        data['poderes-list'] = Array.from(document.querySelectorAll('#poderes-list input')).map(input => input.value);
+        data['idiomas-list'] = Array.from(document.querySelectorAll('#idiomas-list input')).map(input => input.value);
+        data['aptidoes-list'] = Array.from(document.querySelectorAll('#aptidoes-list input')).map(input => input.value);
 
-// Função para carregar os dados do formulário
-function loadData() {
-    const data = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
-    document.querySelectorAll('input, select, textarea').forEach(el => {
-        const key = el.id || el.name || el.className + el.value;
-        if (data.hasOwnProperty(key)) {
-            if (el.type === 'checkbox') {
-                el.checked = data[key];
-            } else {
-                el.value = data[key];
+        // Salva equipamentos corretamente
+        data['equipment-list'] = Array.from(document.querySelectorAll('#equipment-list .grid, #equipment-list .grid.grid-cols-12')).map(row => {
+            const inputs = row.querySelectorAll('input');
+            return {
+                nome: inputs[0]?.value || '',
+                custo: inputs[1]?.value || '',
+                peso: inputs[2]?.value || ''
+            };
+        });
+
+        // Salva anotações
+        const anotacoesEl = document.querySelector('textarea');
+        if (anotacoesEl) data['anotacoes'] = anotacoesEl.value;
+
+        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    }
+
+    // Função para carregar os dados do formulário
+    function loadData() {
+        const data = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            // Campos dentro de pericia-item
+            if (
+                el.closest('.pericia-item') &&
+                (
+                    (el.type === 'checkbox' && (el.classList.contains('trained-check') || el.classList.contains('focus-check'))) ||
+                    el.classList.contains('other-bonus')
+                )
+            ) {
+                const pericia = el.closest('.pericia-item').dataset.skill;
+                if (el.type === 'checkbox') {
+                    const tipo = el.classList.contains('trained-check') ? 'trained' : 'focus';
+                    const key = `pericia_${pericia}_${tipo}`;
+                    if (data.hasOwnProperty(key)) {
+                        el.checked = data[key];
+                    }
+                } else if (el.classList.contains('other-bonus')) {
+                    const key = `pericia_${pericia}_other`;
+                    if (data.hasOwnProperty(key)) {
+                        el.value = data[key];
+                    }
+                }
+            }
+            // Checkboxes genéricas
+            else if (el.type === 'checkbox') {
+                const key = el.id || el.name || el.className + el.value;
+                if (data.hasOwnProperty(key)) {
+                    el.checked = data[key];
+                }
+            }
+            // Outros campos
+            else {
+                const key = el.id || el.name || el.className + el.value;
+                if (data.hasOwnProperty(key)) {
+                    el.value = data[key];
+                }
+            }
+        });
+        // Carrega todas as armas corretamente, mesmo com múltiplas armas
+        document.querySelectorAll('.weapon-block-container').forEach((container, idx) => {
+            const weaponId = idx;
+            const nomeArma = container.querySelector('.weapon-name');
+            if (nomeArma) {
+                const key = `weapon_${weaponId}_name`;
+                if (data.hasOwnProperty(key)) nomeArma.value = data[key];
+            }
+            const bonusAtaqueArma = container.querySelector('.attack-bonus-display');
+            if (bonusAtaqueArma) {
+                const key = `weapon_${weaponId}_bonus`;
+                if (data.hasOwnProperty(key)) bonusAtaqueArma.value = data[key];
+            }
+            const tipoAtaqueArma = container.querySelector('.attack-type-select');
+            if (tipoAtaqueArma) {
+                const key = `weapon_${weaponId}_type`;
+                if (data.hasOwnProperty(key)) tipoAtaqueArma.value = data[key];
+            }
+            const danoArma = container.querySelector('.dano-input');
+            if (danoArma) {
+                const key = `weapon_${weaponId}_dano`;
+                if (data.hasOwnProperty(key)) danoArma.value = data[key];
+            }
+            // O campo de notas/crítico é o ÚLTIMO input[type="text"] que não é .weapon-name nem .dano-input
+            const allTextInputs = Array.from(container.querySelectorAll('input[type="text"]'));
+            const notasArma = allTextInputs.find(
+                el => !el.classList.contains('weapon-name') && !el.classList.contains('dano-input')
+            );
+            if (notasArma) {
+                const key = `weapon_${weaponId}_notas`;
+                if (data.hasOwnProperty(key)) notasArma.value = data[key];
+            }
+        });
+
+        // Carrega listas dinâmicas corretamente
+        function recreateList(listId, arr, placeholder) {
+            const list = document.getElementById(listId);
+            if (!list) return;
+            list.innerHTML = '';
+            if (arr && arr.length > 0) {
+                arr.forEach(val => {
+                    if (val.trim() !== '') {
+                        const row = document.createElement('div');
+                        row.className = 'flex items-center gap-2';
+                        row.innerHTML = `<input type="text" value="${val}" class="w-full p-1"><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
+                        list.appendChild(row);
+                    }
+                });
             }
         }
-    });
-}
+        recreateList('talentos-list', data['talentos-list'], 'Novo talento...');
+        recreateList('poderes-list', data['poderes-list'], 'Novo poder da Força...');
+        recreateList('idiomas-list', data['idiomas-list'], 'Novo idioma...');
+        recreateList('aptidoes-list', data['aptidoes-list'], 'Nova aptidão...');
 
-// Função para salvar automaticamente ao alterar qualquer campo
-function bindSaveOnChange() {
-    document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.addEventListener('change', saveData);
-        el.addEventListener('input', saveData);
-    });
-}
+        // Carrega equipamentos corretamente
+        const equipmentList = document.getElementById('equipment-list');
+        if (equipmentList && data['equipment-list']) {
+            equipmentList.innerHTML = '';
+            data['equipment-list'].forEach(item => {
+                const itemRow = document.createElement('div');
+                itemRow.className = 'grid grid-cols-12 gap-2 items-center';
+                itemRow.innerHTML = `
+                <input type="text" value="${item.nome}" class="col-span-6 p-1">
+                <input type="number" value="${item.custo}" class="col-span-3 p-1 text-center">
+                <input type="number" step="0.1" value="${item.peso}" class="col-span-2 p-1 text-center item-weight">
+                <button class="remove-item-btn col-span-1 text-red-500 hover:text-red-400 font-bold text-center text-lg">X</button>
+            `;
+                equipmentList.appendChild(itemRow);
+            });
+        }
+
+        // Carrega anotações
+        const anotacoesEl = document.querySelector('textarea');
+        if (anotacoesEl && data['anotacoes']) anotacoesEl.value = data['anotacoes'];
+
+        // ...existing code for generic checkboxes and other fields...
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            // ...existing code for pericia-item...
+            // ...existing code for generic checkboxes and other fields...
+        });
+    }
+
+    // Função para salvar automaticamente ao alterar qualquer campo
+    function bindSaveOnChange() {
+        document.querySelectorAll('input, select, textarea, window').forEach(el => {
+            el.addEventListener('change', saveData);
+            el.addEventListener('input', saveData);
+            window.addEventListener('keydown', saveData); // Salva ao pressionar qualquer tecla
+            window.addEventListener('keyup', saveData); // Salva ao pressionar qualquer tecla
+            window.addEventListener('click', saveData); // Salva ao clicar
+        });
+    }
 
     loadData();
     bindSaveOnChange();
@@ -795,4 +965,3 @@ function bindSaveOnChange() {
 
 // Chama a função de inicialização imediatamente
 initFicha();
-
