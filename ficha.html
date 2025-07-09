@@ -360,9 +360,15 @@
                     <section class="section-container">
                         <h3 class="text-xl mb-4">TALENTOS</h3>
                         <div id="talentos-list" class="space-y-2"></div>
-                        <button id="add-talento-btn"
-                            class="mt-2 px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-xs">Adicionar
-                            Talento</button>
+                        <div class="mt-2 flex items-center gap-2">
+                            <button id="add-talento-btn"
+                                class="px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-xs">Adicionar
+                                Talento</button>
+                            <button id="add-class-talents-btn"
+                                onclick="confirm('você realmente quer adicionar os talentos de classe?')"
+                                class="px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-xs">Adicionar
+                                Talentos de Classe</button>
+                        </div>
                     </section>
                     <!-- Poderes da Força -->
                     <section class="section-container">
@@ -438,8 +444,8 @@
                     </div>
                 </div>
             </div>
-            <div class="mb-4"><label for="creditos">CRÉDITOS</label><input type="number" id="creditos"
-                    value="1000"></div>
+            <div class="mb-4"><label for="creditos">CRÉDITOS</label><input type="number" id="creditos" value="1000">
+            </div>
             <div class="grid grid-cols-12 gap-2 text-xs font-bold text-yellow-400 mb-2">
                 <div class="col-span-6">ITEM</div>
                 <div class="col-span-3 text-center">CUSTO</div>
