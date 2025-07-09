@@ -354,7 +354,7 @@
                     <h3 class="text-xl mb-4">LADO NEGRO</h3><input type="number" id="lado-negro" value="0" min="0">
                 </section>
 
-                <!-- Informações -->
+                <!-- Informações Textuais-->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Talentos -->
                     <section class="section-container">
@@ -389,38 +389,6 @@
                             Aptidão</button>
                     </section>
                 </div>
-
-                <!-- Inventário -->
-                <section class="section-container">
-                    <div class="flex justify-between items-baseline mb-2">
-                        <h3 class="text-xl mb-0">EQUIPAMENTO</h3>
-                        <div class="text-right text-sm">
-                            <label class="text-xs text-gray-400">CARGA ATUAL / MÁXIMA</label>
-                            <div>
-                                <span id="current-weight" class="font-bold text-lg">0</span> kg / <span id="max-weight"
-                                    class="font-bold text-lg">0</span> kg
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4"><label for="creditos">CRÉDITOS</label><input type="number" id="creditos"
-                            value="1000"></div>
-
-                    <div class="grid grid-cols-12 gap-2 text-xs font-bold text-yellow-400 mb-2">
-                        <div class="col-span-6">ITEM</div>
-                        <div class="col-span-3 text-center">CUSTO</div>
-                        <div class="col-span-2 text-center">PESO (kg)</div>
-                        <div class="col-span-1"></div>
-                    </div>
-
-                    <div id="equipment-list" class="space-y-2">
-                    </div>
-
-                    <button id="add-item-btn"
-                        class="mt-4 px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-sm">Adicionar
-                        Item</button>
-                </section>
-
             </div>
 
             <!-- LADO DIREITO -->
@@ -457,6 +425,33 @@
                 </section>
             </div>
         </div>
+
+        <!-- INVENTÁRIO AGORA OCUPA TODA A LARGURA -->
+        <section class="section-container mt-6">
+            <div class="flex justify-between items-baseline mb-2">
+                <h3 class="text-xl mb-0">EQUIPAMENTO</h3>
+                <div class="text-right text-sm">
+                    <label class="text-xs text-gray-400">CARGA ATUAL / MÁXIMA</label>
+                    <div>
+                        <span id="current-weight" class="font-bold text-lg">0</span> kg / <span id="max-weight"
+                            class="font-bold text-lg">0</span> kg
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4"><label for="creditos">CRÉDITOS</label><input type="number" id="creditos"
+                    value="1000"></div>
+            <div class="grid grid-cols-12 gap-2 text-xs font-bold text-yellow-400 mb-2">
+                <div class="col-span-6">ITEM</div>
+                <div class="col-span-3 text-center">CUSTO</div>
+                <div class="col-span-2 text-center">PESO (kg)</div>
+                <div class="col-span-1"></div>
+            </div>
+            <div id="equipment-list" class="space-y-2"></div>
+            <button id="add-item-btn"
+                class="mt-4 px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-sm">Adicionar
+                Item</button>
+        </section>
+
     </div>
 </body>
 
