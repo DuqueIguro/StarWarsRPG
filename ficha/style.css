@@ -167,5 +167,16 @@ label {
 #hp-control-bar {
     align-items: center; /* Garante centralização vertical dos botões e do valor de PV */
 }
+#talentos-button, #add-talento-btn, #add-class-talents-btn{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 3rem;
+    min-width: 10rem;
+}
 
 /* eu gosto de batatas  */

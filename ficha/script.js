@@ -272,6 +272,9 @@ function initFicha() {
     //     updateTotalWeight();
     // }
 
+    
+    
+
     // Função que aplica os bônus da classe
     function aplicarBonusDeClasse() {
         const nomeClasse = document.getElementById('classe').value.toLowerCase().trim();
@@ -280,21 +283,23 @@ function initFicha() {
         document.getElementById('def-classe-fort').value = bonus.fort || 0;
         document.getElementById('def-classe-ref').value = bonus.ref || 0;
         document.getElementById('def-classe-von').value = bonus.von || 0;
-
-        // Corrigido: NÃO sobrescreve talentos manuais ao trocar de classe
-        // const talentosList = document.getElementById('talentos-list');
-        // Só adiciona talentos automáticos se não existirem (não limpa manualmente)
-        // const talentos = classeData.talentosIniciais || [];
-        // talentos.forEach(talento => {
-        //     // Só adiciona se não existir já um input readonly com esse valor
-        //     const exists = Array.from(talentosList.querySelectorAll('input[readonly]')).some(input => input.value === talento);
-        //     if (!exists) {
-        //         const row = document.createElement('div');
-        //         row.className = 'flex items-center gap-2 py-1 talento-automatico';
-        //         row.innerHTML = `<input type="text" value="${talento}" class="w-full p-1" readonly><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
-        //         talentosList.appendChild(row);
-        //     }
-        // });
+        function adicionarTalentosIniciais() {
+            // Corrigido: NÃO sobrescreve talentos manuais ao trocar de classe
+            const talentosList = document.getElementById('talentos-list');
+            // Só adiciona talentos automáticos se não existirem (não limpa manualmente)
+            const talentos = classeData.talentosIniciais || [];
+            talentos.forEach(talento => {
+                // Só adiciona se não existir já um input readonly com esse valor
+                const exists = Array.from(talentosList.querySelectorAll('input[readonly]')).some(input => input.value === talento);
+                if (!exists) {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center gap-2 py-1 talento-automatico';
+                    row.innerHTML = `<input type="text" value="${talento}" class="w-full p-1" readonly><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
+                    talentosList.appendChild(row);
+                }
+            });
+     }
+     document.getElementById("add-class-talents-btn").addEventListener("click", adicionarTalentosIniciais);
         // const weaponList = document.getElementById('weapon-list');
         // if (nomeClasse === 'jedi') {
         //     const currentWeaponInputs = weaponList.querySelectorAll('.weapon-name');
