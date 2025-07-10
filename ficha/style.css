@@ -179,4 +179,30 @@ label {
     min-width: 10rem;
 }
 
+
+
+#notificacao {
+    position: fixed;
+    top: 80px;
+    right: 10px;
+    background-color: rgba(48, 192, 115, 0.5) ; /* verde */
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 5px 5px 20px rgba(0, 255, 170, 0.35);
+    font-weight: bold;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+
+}
+
+.ocultday {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.visivel {
+    opacity: 1;
+}
+
 /* eu gosto de batatas  */

@@ -283,7 +283,7 @@ function initFicha() {
 
         function botaoCTemCtz() {
             var cTemCerteza = false;
-                cTemCerteza = confirm('Você REALMENTE quer adicionar os talentos iniciais da classe? Isso não irá remover talentos manuais já adicionados (esta ação terá consequencias).');
+            cTemCerteza = confirm('Você REALMENTE quer adicionar os talentos iniciais da classe? Isso não irá remover talentos manuais já adicionados (esta ação terá consequencias).');
 
             function adicionarTalentosIniciais() {
                 // Corrigido: NÃO sobrescreve talentos manuais ao trocar de classe
@@ -732,6 +732,18 @@ function initFicha() {
 
     // Função para salvar os dados do formulário
     function saveData() {
+        function notification() {
+            const notificacao = document.getElementById("notificacao");
+            notificacao.classList.remove("ocultday");
+            notificacao.classList.add("visivel");
+
+            // Oculta após 3 segundos
+            setTimeout(() => {
+                notificacao.classList.remove("visivel");
+                notificacao.classList.add("ocultday");
+            }, 1500);
+        }
+        document.getElementById("btn-save").addEventListener("click", notification);
         const data = {};
         // Campos dentro de pericia-item
         document.querySelectorAll('input, select, textarea').forEach(el => {
