@@ -2,9 +2,6 @@ let ultimoPvCalculado = 0;
 
 function initFicha() {
     function updateSheet() {
-
-        console.log('Atualizando ficha...');
-        console.log('TESTE DO UPDATE SHEET');
         aplicarBonusDeClasse();
         const nivelEl = document.getElementById('nivel');
         const classeEl = document.getElementById('classe');
@@ -272,8 +269,8 @@ function initFicha() {
     //     updateTotalWeight();
     // }
 
-    
-    
+
+
 
     // Função que aplica os bônus da classe
     function aplicarBonusDeClasse() {
@@ -283,40 +280,35 @@ function initFicha() {
         document.getElementById('def-classe-fort').value = bonus.fort || 0;
         document.getElementById('def-classe-ref').value = bonus.ref || 0;
         document.getElementById('def-classe-von').value = bonus.von || 0;
-        function adicionarTalentosIniciais() {
-            // Corrigido: NÃO sobrescreve talentos manuais ao trocar de classe
-            const talentosList = document.getElementById('talentos-list');
-            // Só adiciona talentos automáticos se não existirem (não limpa manualmente)
-            const talentos = classeData.talentosIniciais || [];
-            talentos.forEach(talento => {
-                // Só adiciona se não existir já um input readonly com esse valor
-                const exists = Array.from(talentosList.querySelectorAll('input[readonly]')).some(input => input.value === talento);
-                if (!exists) {
-                    const row = document.createElement('div');
-                    row.className = 'flex items-center gap-2 py-1 talento-automatico';
-                    row.innerHTML = `<input type="text" value="${talento}" class="w-full p-1" readonly><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
-                    talentosList.appendChild(row);
-                }
-            });
-     }
-     document.getElementById("add-class-talents-btn").addEventListener("click", adicionarTalentosIniciais);
-        // const weaponList = document.getElementById('weapon-list');
-        // if (nomeClasse === 'jedi') {
-        //     const currentWeaponInputs = weaponList.querySelectorAll('.weapon-name');
-        //     let allPlaceholders = currentWeaponInputs.length > 0;
-        //     currentWeaponInputs.forEach(input => {
-        //         if (input.value !== '') allPlaceholders = false;
-        //     });
-        //     if (allPlaceholders) weaponList.innerHTML = '';
-        //     adicionarArmaPadrao('sabre-jedi', 'Sabre de Luz', '2d8', 'des');
-        //     adicionarItemPadrao('sabre-jedi', 'Sabre de Luz', 1.0);
-        // } else {
-        //     removerArmaPadrao('sabre-jedi');
-        //     removerItemPadrao('sabre-jedi');
-        //     if (weaponList.children.length === 0) {
-        //         createWeaponRow();
-        //     }
-        // }
+
+        function botaoCTemCtz() {
+            var cTemCerteza = false;
+                cTemCerteza = confirm('Você REALMENTE quer adicionar os talentos iniciais da classe? Isso não irá remover talentos manuais já adicionados (esta ação terá consequencias).');
+
+            function adicionarTalentosIniciais() {
+                // Corrigido: NÃO sobrescreve talentos manuais ao trocar de classe
+                const talentosList = document.getElementById('talentos-list');
+                // Só adiciona talentos automáticos se não existirem (não limpa manualmente)
+                const talentos = classeData.talentosIniciais || [];
+                talentos.forEach(talento => {
+                    // Só adiciona se não existir já um input readonly com esse valor
+                    const exists = Array.from(talentosList.querySelectorAll('input[readonly]')).some(input => input.value === talento);
+                    if (!exists) {
+                        const row = document.createElement('div');
+                        row.className = 'flex items-center gap-2 py-1 talento-automatico';
+                        row.innerHTML = `<input type="text" value="${talento}" class="w-full p-1" readonly><button class="remove-btn text-red-500 hover:text-red-400 font-bold text-lg">X</button>`;
+                        talentosList.appendChild(row);
+                    }
+                });
+            }
+            //final função talentos iniciais
+
+            if (cTemCerteza) {
+                adicionarTalentosIniciais();
+            }
+        }
+
+        document.getElementById("add-class-talents-btn").addEventListener("click", botaoCTemCtz);
     }
 
     // Variáveis e constantes globais
@@ -693,7 +685,6 @@ function initFicha() {
             // A própria chamada a updateSheet() vai fazer isso se resetarmos a variável de controle
             ultimoPvCalculado = 0;
             updateSheet();
-            console.log("Cálculo de PV restaurado para automático.");
         });
     }
 

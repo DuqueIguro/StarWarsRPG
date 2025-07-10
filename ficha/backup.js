@@ -83,7 +83,6 @@ function saveData() {
     };
 
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-    console.log("Ficha Salva!");
 }
 
 // Função para CARREGAR todos os dados da ficha do localStorage
@@ -208,7 +207,6 @@ function loadData() {
     // Chama a função para aplicar modificadores e recalcular toda a ficha
     aplicarModificadoresDeTamanho();
     aplicarModificadoresRaciais(); // Isso chamará updateSheet() no final, que por sua vez chamará updateHpDisplay()
-    console.log("Ficha Carregada!");
 }
 
 // Função para vincular a ação de salvar a todos os campos relevantes
