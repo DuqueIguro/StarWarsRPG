@@ -1,0 +1,72 @@
+@font-face {
+    font-family: 'Aurebesh';
+    src: url('inventario/Aurebesh.woff') format('woff');
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #1a110a; /* Cor de fundo escura com tom laranja */
+    color: #f3d1b6; /* Cor de texto clara com tom laranja */
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(251, 146, 60, 0.1) 1px, transparent 0);
+    background-size: 25px 25px;
+}
+
+.font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+}
+
+.font-aurebesh {
+    font-family: 'Aurebesh', sans-serif;
+    text-transform: lowercase;
+}
+
+.glass-pane {
+    background-color: rgba(45, 25, 10, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(251, 146, 60, 0.4);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #2d190a;
+}
+::-webkit-scrollbar-thumb {
+    background: #fb923c; /* orange-400 */
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #f97316; /* orange-500 */
+}
+
+.os-item {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-left: 4px solid #fdba74; /* orange-300 */
+}
+
+.os-item:hover, .os-item.active {
+    background-color: rgba(251, 146, 60, 0.2);
+    border-left-color: #f97316; /* orange-500 */
+    transform: translateX(5px);
+}
+
+.status-aberto {
+    background-color: #2563EB; /* blue-600 */
+    color: white;
+}
+.status-concluido {
+    background-color: #16A34A; /* green-600 */
+    color: white;
+}
+.status-cancelado {
+    background-color: #DC2626; /* red-600 */
+    color: white;
+}
+.status-aguardando-peca {
+    background-color: #FBBF24; /* amber-400 */
+    color: #422006;
+}

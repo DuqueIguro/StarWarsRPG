@@ -1,0 +1,68 @@
+{
+  "ordemDeServico": {
+    "id": "OS-22-ABY-001",
+    "mecanicoResponsavel": "Dur'Toc",
+    "unidadeResponsavel": "R5-T1N",
+    "status": "Concluído",
+    "titulo": "Reparo de Estabilizador - Cargueiro Corelliano",
+    "data": "22:3:5 (ABY)",
+    "cliente": {
+      "nome": "Talon Karrde",
+      "afiliacao": "Organização de Contrabando (Independente)",
+      "contato_holonet": "KARRDE-COM-77"
+    },
+    "relatorio_problema": "O cliente relatou que a nave 'puxa para a esquerda' durante manobras em alta velocidade. Diagnóstico inicial indicou falha no estabilizador de boreste. Ao inspecionar, foi identificado que a peça foi instalada de cabeça para baixo e isolada com fita de cargueiro por um mecânico anterior.",
+    "itens": [
+      {
+        "servico": "Substituir o estabilizador",
+        "tipo": "Serviço Padrão",
+        "detalhes": {
+          "causaDoProblema": "S.R.A. (Síndrome do Reparo Anterior)",
+          "peca": {
+            "nome": "Estabilizador (Normal)",
+            "custo": 1200
+          },
+          "maoDeObra": {
+            "custo": 750
+          }
+        },
+        "subtotal": 1950
+      },
+      {
+        "servico": "Refazer a solda do conversor",
+        "tipo": "Mão de Obra",
+        "detalhes": {
+          "causaDoProblema": "S.R.A. (Síndrome do Reparo Anterior)",
+          "peca": {
+            "nome": "N/A",
+            "custo": 0
+          },
+          "maoDeObra": {
+            "custo": 350
+          }
+        },
+        "subtotal": 350
+      }
+    ],
+    "taxasAdicionais": [
+      {
+        "nome": "Síndrome do Reparo Anterior",
+        "custo": 1100,
+        "justificativa": "O reparo anterior foi tão malfeito que o serviço para desfazê-lo dobrou a complexidade do trabalho.",
+        "percentual_sobre_mao_de_obra": 100,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "S.R.A."
+      }
+    ],
+    "financeiro": {
+      "subtotalPecas": 1200,
+      "subtotalMaoDeObra": 1100,
+      "subtotalTaxasFixas": 0,
+      "subtotalAdicionais": 1100,
+      "moeda": "Créditos Galácticos",
+      "total": 3400
+    },
+    "termos": "Serviço sem garantia devido à natureza do reparo anterior.",
+    "notas_mecanico": "Tive que cobrar o dobro. É um caso clássico de S.R.A. O idiota que mexeu nisso antes deveria ser usado como alvo de treino. Pelo menos o serviço ficou bom. Apliquei uma GAFO no sistema de refrigeração já que estava com a mão na massa. Não cobrei por isso. Considere um brinde."
+  }
+}

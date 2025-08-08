@@ -1,0 +1,54 @@
+{
+  "ordemDeServico": {
+    "id": null,
+    "mecanicoResponsavel": null,
+    "unidadeResponsavel": "R5-T1N",
+    "status": null,
+    
+    "itens": [
+      {
+        "servico": null,
+        "tipo": null,
+        "detalhes": {
+          "causaDoProblema": null,
+          "peca": {
+            "nome": null,
+            "custo": null
+          },
+          "maoDeObra": {
+            "custo": null
+          }
+        },
+        "subtotal": null
+      }
+    ],
+    "taxasAdicionais": [
+      {
+        "nome": null,
+        "custo": null,
+        "justificativa": null,
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": null
+      }
+    ],
+    "financeiro": {
+      "subtotalPecas": null,
+      "subtotalMaoDeObra": null,
+      "subtotalTaxasFixas": null,
+      "subtotalAdicionais": null,
+      "moeda": "Créditos Galácticos",
+      "total": null
+    },
+    "termos": null,
+    "titulo": null,
+    "data": null,
+    "cliente": {
+      "nome": null,
+      "afiliacao": null,
+      "contato_holonet": null
+    },
+    "relatorio_problema": null,
+    "notas_mecanico": null
+  }
+}
