@@ -4,28 +4,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const osDetailsContent = document.getElementById('os-details');
     const osPlaceholder = document.getElementById('os-placeholder');
 
-    // Lista dos seus arquivos JSON de Ordens de Serviço
-    const ordensDeServico = [
-        'ordens_de_servico/os_exemplo.json',
-        // Adicione mais arquivos .json aqui
-    ];
+    // Caminho para o arquivo de manifesto
+    const manifestFile = 'ordens_de_servico/manifesto.json';
 
     async function carregarOrdensDeServico() {
-        for (const osFile of ordensDeServico) {
-            try {
-                const response = await fetch(osFile);
-                if (!response.ok) {
-                    throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
+        try {
+            const manifestResponse = await fetch(manifestFile);
+            const manifestData = await manifestResponse.json();
+            const ordensDeServico = manifestData.ordens;
+
+            for (const osFile of ordensDeServico) {
+                try {
+                    const response = await fetch(osFile);
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    exibirItemDaLista(data.ordemDeServico, osFile);
+                } catch (error) {
+                    console.error('Falha ao carregar e processar a OS:', osFile, error);
+                    const fileName = osFile.split('/').pop();
+                    osListContainer.innerHTML += `<div class="os-item bg-red-900/50 p-3 rounded-md">
+                        <p class="font-bold text-red-300">Erro ao carregar OS</p>
+                        <p class="text-xs text-red-400">${fileName}</p>
+                    </div>`;
                 }
-                const data = await response.json();
-                exibirItemDaLista(data.ordemDeServico, osFile);
-            } catch (error) {
-                console.error('Falha ao carregar e processar a OS:', osFile, error);
-                osListContainer.innerHTML += `<div class="os-item bg-red-900/50 p-3 rounded-md">
-                    <p class="font-bold text-red-300">Erro ao carregar OS</p>
-                    <p class="text-xs text-red-400">${osFile}</p>
-                </div>`;
             }
+        } catch (error) {
+            console.error('Falha ao carregar o arquivo de manifesto:', error);
+            osListContainer.innerHTML = `<div class="os-item bg-red-900/50 p-3 rounded-md">
+                <p class="font-bold text-red-300">Erro Crítico</p>
+                <p class="text-xs text-red-400">Não foi possível carregar o manifesto.json</p>
+            </div>`;
         }
     }
 
@@ -73,45 +83,106 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `).join('');
 
-            let taxasHtml = os.taxasAdicionais.map(taxa => `
-                <li><strong>${taxa.nome} (${taxa.sigla}):</strong> +${taxa.percentual_sobre_mao_de_obra || taxa.percentual_sobre_mao_de_obra_improvisada || 0}% sobre a mão de obra. <em class="text-gray-400 text-sm">(${taxa.justificativa})</em></li>
-            `).join('');
+            // --- INÍCIO DAS ALTERAÇÕES ---
+
+            // 1. Gera o descritivo de Peças
+            let pecasDescricaoHtml = os.itens
+                .filter(item => item.detalhes.peca && item.detalhes.peca.custo > 0)
+                .map(item => `
+                    <div class="text-sm text-gray-400 ml-4">${item.detalhes.peca.nome}: ${item.detalhes.peca.custo.toLocaleString()} créditos</div>
+                `).join('');
+
+            // 2. Gera o descritivo de Mão de Obra
+            let maoDeObraDescricaoHtml = os.itens
+                .filter(item => item.detalhes.maoDeObra && item.detalhes.maoDeObra.custo > 0)
+                .map(item => `
+                    <div class="text-sm text-gray-400 ml-4">${item.servico}: ${item.detalhes.maoDeObra.custo.toLocaleString()} créditos</div>
+                `).join('');
+
+            let taxasFixasDescricaoHtml = '';
+            let adicionaisDescricaoHtml = '';
+
+            if (os.taxasAdicionais && os.taxasAdicionais.length > 0) {
+                const taxasFixasDescricoes = os.taxasAdicionais.filter(taxa => !taxa.percentual_sobre_mao_de_obra && !taxa.percentual_sobre_mao_de_obra_improvisada).map(taxa => 
+                    `<div class="text-sm text-gray-400 ml-4">${taxa.nome} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`
+                ).join('');
+
+                const adicionaisDescricoes = os.taxasAdicionais.filter(taxa => taxa.percentual_sobre_mao_de_obra || taxa.percentual_sobre_mao_de_obra_improvisada).map(taxa => {
+                    const percentual = taxa.percentual_sobre_mao_de_obra || taxa.percentual_sobre_mao_de_obra_improvisada;
+                    const tipo = taxa.percentual_sobre_mao_de_obra ? "Mão de Obra" : "Mão de Obra Impr.";
+                    return `<div class="text-sm text-gray-400 ml-4">+${percentual}% ${tipo} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`;
+                }).join('');
+                
+                if (taxasFixasDescricoes) {
+                    taxasFixasDescricaoHtml = taxasFixasDescricoes;
+                }
+                if (adicionaisDescricoes) {
+                    adicionaisDescricaoHtml = adicionaisDescricoes;
+                }
+            }
+            
+            let pecasSumarioHtml = '';
+            if (os.financeiro.subtotalPecas && os.financeiro.subtotalPecas > 0) {
+                pecasSumarioHtml = `
+                    <div class="text-lg"><strong class="font-orbitron text-orange-300">Subtotal (Peças):</strong> ${os.financeiro.subtotalPecas.toLocaleString()} ${os.financeiro.moeda}</div>
+                    ${pecasDescricaoHtml}
+                `;
+            }
+
+            let maoDeObraSumarioHtml = '';
+            if (os.financeiro.subtotalMaoDeObra && os.financeiro.subtotalMaoDeObra > 0) {
+                 maoDeObraSumarioHtml = `
+                    <div class="text-lg"><strong class="font-orbitron text-orange-300">Subtotal (Mão de Obra):</strong> ${os.financeiro.subtotalMaoDeObra.toLocaleString()} ${os.financeiro.moeda}</div>
+                    ${maoDeObraDescricaoHtml}
+                 `;
+            }
+
+            let taxasFixasSumarioHtml = '';
+            if (os.financeiro.subtotalTaxasFixas && os.financeiro.subtotalTaxasFixas > 0) {
+                taxasFixasSumarioHtml = `
+                    <div class="text-lg"><strong class="font-orbitron text-orange-300">Taxas Fixas:</strong> ${os.financeiro.subtotalTaxasFixas.toLocaleString()} ${os.financeiro.moeda}</div>
+                    ${taxasFixasDescricaoHtml}
+                `;
+            }
+
+            let adicionaisSumarioHtml = '';
+            if (os.financeiro.subtotalAdicionais && os.financeiro.subtotalAdicionais > 0) {
+                 adicionaisSumarioHtml = `
+                    <div class="text-lg"><strong class="font-orbitron text-orange-300">Adicionais:</strong> +${os.financeiro.subtotalAdicionais.toLocaleString()} ${os.financeiro.moeda}</div>
+                    ${adicionaisDescricaoHtml}
+                 `;
+            }
+
+            // --- FIM DAS ALTERAÇÕES ---
+
 
             osDetailsContent.innerHTML = `
                 <h2 class="font-orbitron text-2xl text-orange-300 mb-2">${os.titulo}</h2>
                 <p class="text-sm text-gray-400 mb-4">ID da Ordem: ${os.id} | Data: ${os.data}</p>
-
                 <div class="bg-gray-900/50 p-4 rounded-md mb-4">
                     <h3 class="font-orbitron text-lg text-orange-400 mb-2">Informações do Cliente</h3>
                     <p><strong class="text-orange-300">Nome:</strong> ${os.cliente.nome}</p>
                     <p><strong class="text-orange-300">Afiliação:</strong> ${os.cliente.afiliacao}</p>
                     <p><strong class="text-orange-300">Contato HoloNet:</strong> ${os.cliente.contato_holonet}</p>
                 </div>
-
                 <div class="bg-gray-900/50 p-4 rounded-md mb-4">
                     <h3 class="font-orbitron text-lg text-orange-400 mb-2">Relatório do Problema</h3>
                     <p class="text-gray-300">${os.relatorio_problema}</p>
                 </div>
-
                 <div class="bg-gray-900/50 p-4 rounded-md mb-4">
                     <h3 class="font-orbitron text-lg text-orange-400 mb-2">Serviços Executados</h3>
                     ${servicosHtml}
                 </div>
-
-                <div class="bg-gray-900/50 p-4 rounded-md mb-4">
-                    <h3 class="font-orbitron text-lg text-orange-400 mb-2">Taxas e Modificadores</h3>
-                    <ul class="list-disc list-inside text-gray-300">${taxasHtml.length > 0 ? taxasHtml : '<li>Nenhuma taxa adicional aplicada.</li>'}</ul>
-                </div>
                 
-                <div class="border-t-2 border-orange-500 pt-4 mt-4">
-                    <p class="text-lg"><strong class="font-orbitron text-orange-300">Subtotal (Peças):</strong> ${os.financeiro.subtotalPecas.toLocaleString()} ${os.financeiro.moeda}</p>
-                    <p class="text-lg"><strong class="font-orbitron text-orange-300">Subtotal (Mão de Obra):</strong> ${os.financeiro.subtotalMaoDeObra.toLocaleString()} ${os.financeiro.moeda}</p>
-                    <p class="text-lg"><strong class="font-orbitron text-orange-300">Adicionais:</strong> +${os.financeiro.subtotalAdicionais.toLocaleString()} ${os.financeiro.moeda}</p>
-                    <h3 class="font-orbitron text-2xl text-yellow-400 mt-2">Total a Pagar: ${os.financeiro.total.toLocaleString()} ${os.financeiro.moeda}</h3>
+                <div class="border-t-2 border-orange-500 pt-4 mt-4 space-y-2">
+                    ${pecasSumarioHtml}
+                    ${maoDeObraSumarioHtml}
+                    ${taxasFixasSumarioHtml}
+                    ${adicionaisSumarioHtml}
+                    <h3 class="font-orbitron text-2xl text-yellow-400 mt-4 pt-2 border-t border-orange-800">Total a Pagar: ${os.financeiro.total.toLocaleString()} ${os.financeiro.moeda}</h3>
                 </div>
-
                 <div class="mt-6">
-                    <h3 class="font-orbitron text-lg text-orange-400 mb-2">Notas do Mecânico (Dur'Toc)</h3>
+                    <h3 class="font-orbitron text-lg text-orange-400 mb-2">Notas do Mecânico (${os.mecanicoResponsavel || 'N/A'})</h3>
                     <p class="text-gray-300 italic">"${os.notas_mecanico}"</p>
                 </div>
             `;
