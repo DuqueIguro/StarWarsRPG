@@ -56,9 +56,18 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         itemDiv.addEventListener('click', () => {
-            carregarDetalhesOS(file);
-            document.querySelectorAll('.os-item').forEach(el => el.classList.remove('active'));
-            itemDiv.classList.add('active');
+            // MODIFICAÇÃO: Verifica se o item clicado já está ativo
+            if (itemDiv.classList.contains('active')) {
+                // Se estiver, deseleciona e volta para a tela padrão
+                itemDiv.classList.remove('active');
+                osDetailsContainer.classList.add('hidden');
+                osPlaceholder.classList.remove('hidden');
+            } else {
+                // Caso contrário, carrega os detalhes da OS clicada
+                carregarDetalhesOS(file);
+                document.querySelectorAll('.os-item').forEach(el => el.classList.remove('active'));
+                itemDiv.classList.add('active');
+            }
         });
 
         osListContainer.appendChild(itemDiv);
