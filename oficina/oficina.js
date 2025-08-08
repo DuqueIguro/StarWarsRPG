@@ -5,13 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const osPlaceholder = document.getElementById('os-placeholder');
 
     // Caminho para o arquivo de manifesto
-    const manifestFile = 'ordens_de_servico/manifesto.json';
+    const manifestFile = 'oficina/ordens_de_servico/manifesto.json';
 
     async function carregarOrdensDeServico() {
         try {
             const manifestResponse = await fetch(manifestFile);
             const manifestData = await manifestResponse.json();
-            const ordensDeServico = manifestData.ordens;
+            const ordensDeServico = manifestData.ordens.map(os => 'oficina/' + os);
 
             for (const osFile of ordensDeServico) {
                 try {
