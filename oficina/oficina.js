@@ -152,6 +152,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${adicionaisDescricaoHtml}
                  `;
             }
+            
+            // MODIFICAÇÃO: Cria a seção de termos apenas se os.termos tiver conteúdo
+            let termosHtml = '';
+            if (os.termos) {
+                termosHtml = `
+                <div class="mt-6 border-t border-orange-800 pt-4">
+                    <h3 class="font-orbitron text-lg text-orange-400 mb-2">Termos e Condições</h3>
+                    <p class="text-sm text-orange-200 bg-gray-900/70 p-3 rounded-md italic">
+                        "${os.termos}"
+                    </p>
+                </div>
+                `;
+            }
 
             // --- FIM DAS ALTERAÇÕES ---
 
@@ -179,12 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${maoDeObraSumarioHtml}
                     ${taxasFixasSumarioHtml}
                     ${adicionaisSumarioHtml}
-                    <h3 class="font-orbitron text-2xl text-yellow-400 mt-4 pt-2 border-t border-orange-800">Total a Pagar: ${os.financeiro.total.toLocaleString()} ${os.financeiro.moeda}</h3>
+                    <h3 class="font-orbitron text-2xl text-yellow-400 mt-4 pb-4 border-b border-orange-800">Total a Pagar: ${os.financeiro.total.toLocaleString()} ${os.financeiro.moeda}</h3>
                 </div>
                 <div class="mt-6">
                     <h3 class="font-orbitron text-lg text-orange-400 mb-2">Notas do Mecânico (${os.mecanicoResponsavel || 'N/A'})</h3>
                     <p class="text-gray-300 italic">"${os.notas_mecanico}"</p>
                 </div>
+                ${termosHtml}
             `;
         } catch (error) {
             console.error('Falha ao carregar detalhes da OS:', file, error);
