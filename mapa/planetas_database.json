@@ -2,7 +2,7 @@
   "planetas": [
     {
       "nome": "Tatooine",
-      "descricao": "Um mundo desértico e remoto com dois sóis, conhecido por sua população esparsa e por ser um refúgio para contrabandistas e criminosos. É um planeta de grande importância na saga Skywalker.",
+      "descricao": "Um mundo desértico com dois sóis na Orla Exterior, conhecido como refúgio para contrabandistas. É o planeta natal de Anakin e Luke Skywalker, sendo central na saga.",
       "regiao": "Orla Exterior",
       "setor": "Setor Arkanis",
       "sistema": "Sistema Tatoo",
@@ -14,7 +14,7 @@
     },
     {
       "nome": "Coruscant",
-      "descricao": "Uma ecumenópole, um planeta inteiramente coberto por uma única cidade. Foi a capital da República Galáctica, do Império Galáctico e da Nova República em diferentes épocas.",
+      "descricao": "Uma ecumenópole que serviu como capital da galáxia por milênios. Sede do Senado e do Templo Jedi, seus níveis inferiores escondem um perigoso submundo.",
       "regiao": "Mundos do Núcleo",
       "setor": "Setor Coruscant",
       "sistema": "Sistema Coruscant",
@@ -26,7 +26,7 @@
     },
     {
       "nome": "Naboo",
-      "descricao": "Um planeta pacífico e pitoresco, conhecido por suas planícies verdejantes, pântanos e cidades elegantes. Lar de duas civilizações: os humanos Naboo e os Gungans aquáticos.",
+      "descricao": "Um mundo pacífico de planícies e cidades elegantes, lar dos humanos Naboo e dos Gungans aquáticos. Planeta natal de Padmé Amidala e do Imperador Palpatine.",
       "regiao": "Orla Média",
       "setor": "Setor Chommell",
       "sistema": "Sistema Naboo",
@@ -50,7 +50,7 @@
     },
     {
       "nome": "Kashyyyk",
-      "descricao": "Um planeta de selva densa, coberto por árvores wroshyr gigantescas que formam vários níveis de ecossistemas. Mundo natal dos Wookiees.",
+      "descricao": "Um mundo de selvas densas e árvores wroshyr colossais, conhecido como o planeta natal dos Wookiees. Foi um importante campo de batalha nas Guerras Clônicas.",
       "regiao": "Orla Média",
       "setor": "Setor Mytaranor",
       "sistema": "Sistema Kashyyyk",
@@ -74,7 +74,7 @@
     },
     {
       "nome": "Endor",
-      "descricao": "Na verdade, uma lua florestal que orbita o gigante gasoso de mesmo nome. Coberta por florestas densas e lar dos Ewoks.",
+      "descricao": "Uma lua florestal que abrigava a construção da segunda Estrela da Morte. É coberta por florestas densas e serve como o lar da tribo nativa dos Ewoks.",
       "regiao": "Orla Exterior",
       "setor": "Setor Moddell",
       "sistema": "Sistema Endor",
@@ -86,7 +86,7 @@
     },
     {
       "nome": "Hoth",
-      "descricao": "Um planeta gelado e inóspito, coberto por neve e geleiras. Serviu como base secreta para a Aliança Rebelde.",
+      "descricao": "Um planeta gelado e inóspito, coberto por neve e geleiras. Serviu como base secreta para a Aliança Rebelde antes de ser atacado pelo Império.",
       "regiao": "Orla Exterior",
       "setor": "Setor Anoat",
       "sistema": "Sistema Hoth",
@@ -110,7 +110,7 @@
     },
     {
       "nome": "Mustafar",
-      "descricao": "Um planeta vulcânico e infernal, coberto por rios de lava e céus repletos de cinzas. Importante para os Sith e local de extração de minerais valiosos.",
+      "descricao": "Um mundo vulcânico infernal, coberto por rios de lava e cinzas. Foi o local do duelo entre Obi-Wan e Anakin, e mais tarde tornou-se a fortaleza de Darth Vader.",
       "regiao": "Orla Exterior",
       "setor": "Setor Atravis",
       "sistema": "Sistema Mustafar",
@@ -122,7 +122,7 @@
     },
     {
         "nome": "Kamino",
-        "descricao": "Um planeta aquático com oceanos que cobrem toda a sua superfície. Famoso por suas avançadas tecnologias de clonagem.",
+        "descricao": "Um mundo oceânico assolado por tempestades, conhecido por sua avançada tecnologia de clonagem. Foi o local de origem do exército de clones da República.",
         "regiao": "Espaço Selvagem (Além da Orla Exterior)",
         "setor": "Setor Kamino",
         "sistema": "Sistema Kamino",
@@ -134,7 +134,7 @@
     },
     {
         "nome": "Geonosis",
-        "descricao": "Um planeta rochoso e árido, com anéis planetários. Lar dos Geonosianos e um importante centro de fabricação de dróides para os Separatistas.",
+        "descricao": "Um planeta rochoso e árido, lar dos Geonosianos. Foi um dos principais centros de fabricação de dróides Separatistas e o palco da primeira batalha das Guerras Clônicas.",
         "regiao": "Orla Exterior",
         "setor": "Setor Arkanis",
         "sistema": "Sistema Geonosis",
@@ -146,7 +146,7 @@
     },
     {
         "nome": "Utapau",
-        "descricao": "Um planeta árido com cidades construídas dentro de enormes dolinas. Conhecido por suas fontes de água e por ser um refúgio para aqueles que buscavam evitar o controle da República ou do Império.",
+        "descricao": "Um planeta árido com cidades construídas dentro de gigantescas dolinas. Foi o local do confronto final entre Obi-Wan Kenobi e o General Grievous.",
         "regiao": "Orla Exterior",
         "setor": "Setor Tarabba",
         "sistema": "Sistema Utapau",
@@ -158,7 +158,7 @@
     },
     {
         "nome": "Felucia",
-        "descricao": "Um planeta colorido e exótico, coberto por uma flora gigante e bioluminescente. Um mundo perigoso e de grande importância estratégica.",
+        "descricao": "Um planeta colorido e exótico, coberto por uma flora gigante e bioluminescente. Um mundo perigoso e de grande importância estratégica durante as Guerras Clônicas.",
         "regiao": "Orla Exterior",
         "setor": "Setor Thanium",
         "sistema": "Sistema Felucia",
@@ -170,7 +170,7 @@
     },
     {
         "nome": "Mygeeto",
-        "descricao": "Um mundo gelado e cristalino, importante centro bancário da galáxia. Foi palco de intensos combates durante as Guerras Clônicas.",
+        "descricao": "Um mundo gelado e cristalino, importante centro bancário da galáxia. Foi palco de intensos combates durante as Guerras Clônicas entre a República e os Separatistas.",
         "regiao": "Orla Exterior",
         "setor": "Setor Albarrio",
         "sistema": "Sistema Mygeeto",
@@ -182,7 +182,7 @@
     },
     {
         "nome": "Corellia",
-        "descricao": "Um dos Mundos do Núcleo mais industrializados, conhecido por seus estaleiros e pela produção de naves estelares de alta qualidade.",
+        "descricao": "Um mundo industrializado no Núcleo, famoso por seus estaleiros que produzem naves de alta qualidade. Planeta natal do contrabandista Han Solo.",
         "regiao": "Mundos do Núcleo",
         "setor": "Setor Corelliano",
         "sistema": "Sistema Corelliano",
@@ -194,7 +194,7 @@
     },
     {
         "nome": "Mandalore",
-        "descricao": "Um planeta outrora devastado pela guerra, com uma forte tradição marcial e cultural centrada nos Mandalorianos.",
+        "descricao": "Um planeta outrora devastado pela guerra, com uma forte tradição marcial e cultural centrada nos Mandalorianos e suas armaduras de beskar.",
         "regiao": "Orla Exterior",
         "setor": "Setor Mandalore",
         "sistema": "Sistema Mandalore",
@@ -206,7 +206,7 @@
     },
     {
         "nome": "Dantooine",
-        "descricao": "Um planeta rural e tranquilo, com vastas planícies e savanas. Serviu como a primeira base principal da Aliança Rebelde.",
+        "descricao": "Um planeta rural e tranquilo, com vastas planícies e savanas. Serviu como a primeira base principal conhecida da Aliança Rebelde.",
         "regiao": "Orla Exterior",
         "setor": "Setor Raioballo",
         "sistema": "Sistema Dantooine",
@@ -218,7 +218,7 @@
     },
     {
         "nome": "Ryloth",
-        "descricao": "Um planeta com uma rotação sincronizada, resultando em um lado de luz perpétua e outro de escuridão. Mundo natal dos Twi'leks.",
+        "descricao": "Um planeta com rotação sincronizada, resultando em um lado de luz perpétua e outro de escuridão. É o mundo natal dos Twi'leks.",
         "regiao": "Orla Exterior",
         "setor": "Setor Gaulus",
         "sistema": "Sistema Ryloth",
@@ -230,7 +230,7 @@
     },
     {
         "nome": "Yavin 4",
-        "descricao": "Uma das várias luas que orbitam o gigante gasoso Yavin. Coberta por selvas densas e ruínas antigas, serviu como base principal da Aliança Rebelde.",
+        "descricao": "Uma lua de selva com antigas ruínas Massassi. Serviu como a base principal da Aliança Rebelde durante a Batalha de Yavin, que destruiu a primeira Estrela da Morte.",
         "regiao": "Orla Exterior",
         "setor": "Setor Gordian Reach",
         "sistema": "Sistema Yavin",
@@ -242,7 +242,7 @@
     },
     {
         "nome": "Mon Cala",
-        "descricao": "Um mundo aquático, lar dos Mon Calamari e dos Quarren. Conhecido por suas cidades subaquáticas e por seus estaleiros que produziram naves capitais para a Aliança Rebelde.",
+        "descricao": "Um mundo oceânico, lar dos Mon Calamari e dos Quarren. Seus estaleiros produziram as mais importantes naves capitais para a frota da Aliança Rebelde.",
         "regiao": "Orla Exterior",
         "setor": "Setor Mon Calamari",
         "sistema": "Sistema Calamari",
@@ -254,7 +254,7 @@
     },
     {
         "nome": "Sullust",
-        "descricao": "Um planeta vulcânico inóspito, com uma atmosfera tóxica, forçando sua população a viver em cidades subterrâneas. Importante centro industrial e de produção.",
+        "descricao": "Um planeta vulcânico com atmosfera tóxica e cidades subterrâneas. Foi o ponto de encontro da frota da Aliança Rebelde antes da crucial Batalha de Endor.",
         "regiao": "Orla Exterior",
         "setor": "Setor Sullust",
         "sistema": "Sistema Sullust",
@@ -290,7 +290,7 @@
     },
     {
         "nome": "Scarif",
-        "descricao": "Um planeta tropical paradisíaco que abrigava o principal arquivo imperial e as instalações de construção da Estrela da Morte.",
+        "descricao": "Um planeta tropical que abrigava o complexo de segurança imperial e os arquivos da Estrela da Morte. Foi o local da batalha onde os planos da estação foram roubados.",
         "regiao": "Orla Exterior",
         "setor": "Setor Abrion",
         "sistema": "Sistema Scarif",
@@ -314,7 +314,7 @@
     },
     {
         "nome": "D'Qar",
-        "descricao": "Um planeta verdejante e exuberante localizado na Orla Exterior, que serviu como a base principal da Resistência.",
+        "descricao": "Um planeta verdejante e exuberante localizado na Orla Exterior, que serviu como a base principal da Resistência durante a guerra contra a Primeira Ordem.",
         "regiao": "Orla Exterior",
         "setor": "Setor Ileenium",
         "sistema": "Sistema D'Qar",
@@ -326,7 +326,7 @@
     },
     {
         "nome": "Hosnian Prime",
-        "descricao": "Um planeta cosmopolita que serviu como capital da Nova República antes de sua destruição pela Base Starkiller.",
+        "descricao": "Um planeta cosmopolita que serviu como capital da Nova República antes de sua destruição pela superarma da Primeira Ordem, a Base Starkiller.",
         "regiao": "Mundos do Núcleo",
         "setor": "Setor Hosniano",
         "sistema": "Sistema Hosniano",
@@ -338,7 +338,7 @@
     },
     {
         "nome": "Exegol",
-        "descricao": "Um mundo desértico e sombrio localizado nas Regiões Desconhecidas, um reduto oculto dos Sith.",
+        "descricao": "Um mundo desértico e sombrio localizado nas Regiões Desconhecidas, um reduto oculto dos Sith e local de renascimento do Imperador Palpatine.",
         "regiao": "Regiões Desconhecidas",
         "setor": "Desconhecido",
         "sistema": "Sistema Exegol",
@@ -350,7 +350,7 @@
     },
     {
         "nome": "Ahch-To",
-        "descricao": "Um planeta oceânico com ilhas rochosas, local do primeiro Templo Jedi e o esconderijo de Luke Skywalker.",
+        "descricao": "Um planeta oceânico com ilhas rochosas, local do primeiro Templo Jedi e o esconderijo de Luke Skywalker durante seu exílio autoimposto.",
         "regiao": "Regiões Desconhecidas",
         "setor": "Desconhecido",
         "sistema": "Sistema Ahch-To",
@@ -362,7 +362,7 @@
     },
     {
       "nome": "Kuat",
-      "descricao": "Um dos mais importantes centros de construção naval da galáxia, famoso por seus estaleiros orbitais que produziram naves para a República e o Império.",
+      "descricao": "Um dos principais centros de construção naval da galáxia, conhecido por seus estaleiros orbitais. Foi o principal produtor dos Destróieres Estelares Imperiais.",
       "regiao": "Mundos do Núcleo",
       "setor": "Setor Kuat",
       "sistema": "Sistema Kuat",
@@ -374,7 +374,7 @@
     },
     {
       "nome": "Fondor",
-      "descricao": "Outro importante planeta industrial com vastos estaleiros orbitais, rivalizando com Kuat na produção de naves de guerra.",
+      "descricao": "Um planeta industrial com vastos estaleiros orbitais, rival de Kuat. Famoso por produzir naves de guerra avançadas, como o Super Destróier Estelar Executor.",
       "regiao": "Mundos do Núcleo",
       "setor": "Setor Tapani",
       "sistema": "Sistema Fondor",
@@ -386,7 +386,7 @@
     },
     {
       "nome": "Raxus Prime",
-      "descricao": "Um planeta tóxico e poluído, usado como um gigantesco ferro-velho para a galáxia. Apesar de sua aparência, era um refúgio para foras-da-lei e continha tecnologia valiosa.",
+      "descricao": "Um planeta tóxico que serve como um imenso ferro-velho para a galáxia. É um local perigoso, mas um paraíso para catadores em busca de tecnologia rara.",
       "regiao": "Orla Exterior",
       "setor": "Setor Tion Hegemony",
       "sistema": "Sistema Raxus",
@@ -398,7 +398,7 @@
     },
     {
       "nome": "Christophsis",
-      "descricao": "Um planeta cristalino com cidades imponentes. Foi palco de uma grande batalha no início das Guerras Clônicas.",
+      "descricao": "Um planeta cristalino com cidades imponentes. Foi palco de uma grande e estratégica batalha no início das Guerras Clônicas, defendido por Obi-Wan e Anakin.",
       "regiao": "Orla Exterior",
       "setor": "Setor Savareen",
       "sistema": "Sistema Christoph",
@@ -410,7 +410,7 @@
     },
     {
       "nome": "Umbara",
-      "descricao": "Um planeta sombrio e nebuloso, conhecido como o 'Mundo Sombrio'. Sua flora e fauna são bioluminescentes e perigosas.",
+      "descricao": "Um planeta sombrio e nebuloso, conhecido como o 'Mundo Sombrio'. Sua flora e fauna são bioluminescentes e extremamente perigosas para forasteiros.",
       "regiao": "Expansão Profunda",
       "setor": "Setor Fantasma",
       "sistema": "Sistema Umbara",
@@ -422,7 +422,7 @@
     },
     {
       "nome": "Kessel",
-      "descricao": "Um planeta prisão inóspito, famoso por suas perigosas minas de especiaria. A 'Kessel Run' é uma rota de contrabando notoriamente perigosa.",
+      "descricao": "Um planeta prisão inóspito, famoso por suas perigosas minas de especiaria. A 'Kessel Run' é uma rota de contrabando notoriamente perigosa na galáxia.",
       "regiao": "Orla Exterior",
       "setor": "Setor Kessel",
       "sistema": "Sistema Kessel",
@@ -434,7 +434,7 @@
     },
     {
       "nome": "Malastare",
-      "descricao": "Um planeta conhecido por suas vastas reservas de combustível e por ser o lar dos Dug. Foi palco de testes de armas devastadoras.",
+      "descricao": "Um planeta conhecido por suas vastas reservas de combustível e por ser o lar da espécie Dug. Foi palco de testes de armas devastadoras da República.",
       "regiao": "Orla Média",
       "setor": "Setor Futhark",
       "sistema": "Sistema Malastare",
@@ -458,7 +458,7 @@
     },
     {
       "nome": "Dathomir",
-      "descricao": "Um planeta vermelho e místico, lar das misteriosas Irmãs da Noite e dos ferozes Irmãos da Noite.",
+      "descricao": "Um planeta vermelho e místico, lar das misteriosas Irmãs da Noite e dos ferozes Irmãos da Noite. Um lugar de magia sombria e perigosa.",
       "regiao": "Orla Exterior",
       "setor": "Setor Quelii",
       "sistema": "Sistema Dathomir",
@@ -470,7 +470,7 @@
     },
     {
       "nome": "Ilum",
-      "descricao": "Um mundo gelado e sagrado para os Jedi, conhecido por suas cavernas de cristais kyber, essenciais para a construção de sabres de luz.",
+      "descricao": "Um mundo gelado e sagrado para a Ordem Jedi, famoso por suas cavernas de cristais kyber. O Império o transformou na superarma conhecida como Base Starkiller.",
       "regiao": "Regiões Desconhecidas",
       "setor": "Setor 7G",
       "sistema": "Sistema Ilum",
@@ -482,7 +482,7 @@
     },
     {
       "nome": "Cato Neimoidia",
-      "descricao": "Um mundo-bolsa rico e um dos principais planetas da Federação do Comércio, conhecido por suas cidades suspensas em pontes sobre névoas.",
+      "descricao": "Um rico mundo-bolsa da Federação do Comércio, conhecido por suas opulentas cidades suspensas. Símbolo da riqueza e corrupção Separatista.",
       "regiao": "Colônias",
       "setor": "Setor Kanz",
       "sistema": "Sistema Cato Neimoidia",
@@ -494,7 +494,7 @@
     },
     {
       "nome": "Saleucami",
-      "descricao": "Um planeta árido com grandes caldeiras de meteoros, colonizado por diversas espécies e palco de um longo cerco durante as Guerras Clônicas.",
+      "descricao": "Um planeta árido com caldeiras de meteoros, colonizado por diversas espécies. Foi palco de um longo e brutal cerco durante as Guerras Clônicas.",
       "regiao": "Orla Exterior",
       "setor": "Setor Saleucami",
       "sistema": "Sistema Saleucami",
@@ -530,7 +530,7 @@
     },
     {
       "nome": "Chandrila",
-      "descricao": "Um planeta pacífico e agrícola, um dos mundos fundadores da Aliança Rebelde e a primeira capital da Nova República.",
+      "descricao": "Um planeta pacífico e agrícola, um dos mundos fundadores da Aliança Rebelde e a primeira capital da Nova República, liderada por Mon Mothma.",
       "regiao": "Mundos do Núcleo",
       "setor": "Setor Bormea",
       "sistema": "Sistema Chandrila",
@@ -542,7 +542,7 @@
     },
     {
       "nome": "Ord Mantell",
-      "descricao": "Um planeta conhecido por seu submundo do crime e por ser um centro para caçadores de recompensas e contrabandistas.",
+      "descricao": "Um planeta conhecido por seu submundo do crime e por ser um centro para caçadores de recompensas e contrabandistas, como mencionado por Han Solo.",
       "regiao": "Orla Média",
       "setor": "Setor Bright Jewel",
       "sistema": "Sistema Ord Mantell",
@@ -554,7 +554,7 @@
     },
     {
       "nome": "Kef Bir",
-      "descricao": "Uma lua oceânica no sistema Endor, local onde os destroços da segunda Estrela da Morte caíram.",
+      "descricao": "Uma lua oceânica no sistema Endor, local onde os destroços da segunda Estrela da Morte caíram após a batalha. Guardava segredos dos Sith.",
       "regiao": "Orla Exterior",
       "setor": "Setor Moddell",
       "sistema": "Sistema Endor",
@@ -566,7 +566,7 @@
     },
     {
       "nome": "Pasaana",
-      "descricao": "Um planeta desértico com festivais vibrantes e uma cultura rica, onde a Resistência buscou ajuda em sua luta contra a Primeira Ordem.",
+      "descricao": "Um planeta desértico com uma cultura rica e festivais vibrantes. Foi um dos locais onde a Resistência buscou aliados em sua luta contra a Primeira Ordem.",
       "regiao": "Orla Exterior",
       "setor": "Setor Gavar",
       "sistema": "Sistema Pasaana",
@@ -578,7 +578,7 @@
     },
     {
       "nome": "Nal Hutta",
-      "descricao": "O mundo natal dos Hutts, um pântano poluído e perigoso, capital do espaço Hutt.",
+      "descricao": "O mundo natal dos Hutts, um pântano poluído e perigoso que serve como a capital do vasto e corrupto Espaço Hutt.",
       "regiao": "Espaço Hutt",
       "setor": "Setor Y'Toub",
       "sistema": "Sistema Y'Toub",
@@ -590,7 +590,7 @@
     },
     {
       "nome": "Nar Shaddaa",
-      "descricao": "A 'Lua dos Contrabandistas', uma ecumenópole vertical que orbita Nal Hutta, completamente coberta por cidades e um paraíso para atividades ilegais.",
+      "descricao": "A 'Lua dos Contrabandistas', uma ecumenópole vertical que orbita Nal Hutta. É um dos maiores centros de crime e atividades ilícitas da galáxia.",
       "regiao": "Espaço Hutt",
       "setor": "Setor Y'Toub",
       "sistema": "Sistema Y'Toub",

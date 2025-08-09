@@ -51,16 +51,37 @@ document.addEventListener('DOMContentLoaded', () => {
         planetas.forEach(planeta => {
             const card = document.createElement('div');
             card.className = 'planeta-card';
+
+            const affiliationItems = planeta.afiliacao.split(',').map(item => `<li>${item.trim()}</li>`).join('');
+            const speciesItems = planeta.principais_especies.map(item => `<li>${item.trim()}</li>`).join('');
+
+            // TEMPLATE DO CARD ATUALIZADO COM ÍCONES
             card.innerHTML = `
-                <h2>${planeta.nome}</h2>
+                <h2><i class="fa-solid fa-earth-americas"></i> ${planeta.nome}</h2>
                 <p class="font-aurebesh planeta-aurebesh">${planeta.nome}</p>
                 <p class="regiao">${planeta.regiao} - ${planeta.setor}</p>
-                <p>${planeta.descricao}</p>
+                
+                <div class="description-box">
+                    <p>${planeta.descricao}</p>
+                </div>
+
                 <div class="info-grid">
-                    <div class="info-item"><strong>Sistema:</strong> <span>${planeta.sistema}</span></div>
-                    <div class="info-item"><strong>Governo:</strong> <span>${planeta.governo}</span></div>
-                    <div class="info-item"><strong>Afiliação:</strong> <span>${planeta.afiliacao}</span></div>
-                    <div class="info-item"><strong>Espécies Principais:</strong> <span>${planeta.principais_especies.join(', ')}</span></div>
+                    <div class="info-box">
+                        <strong><i class="fa-solid fa-star"></i> Sistema:</strong>
+                        <span>${planeta.sistema}</span>
+                    </div>
+                    <div class="info-box">
+                        <strong><i class="fa-solid fa-landmark-flag"></i> Governo:</strong>
+                        <span>${planeta.governo}</span>
+                    </div>
+                    <div class="info-box affiliation-box">
+                        <strong><i class="fa-solid fa-user-group"></i> Afiliação:</strong>
+                        <ul>${affiliationItems}</ul>
+                    </div>
+                    <div class="info-box species-box">
+                        <strong><i class="fa-solid fa-users"></i> Espécies Principais:</strong>
+                        <ul>${speciesItems}</ul>
+                    </div>
                 </div>
             `;
             mapaGalactico.appendChild(card);
@@ -80,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return matchPlaneta && matchRegiao && matchSetor;
         });
         
-        // Mantém a ordem alfabética ao filtrar
         planetasFiltrados.sort((a, b) => a.nome.localeCompare(b.nome));
 
         renderizarPlanetas(planetasFiltrados);
