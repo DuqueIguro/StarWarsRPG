@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;700&display=swap');
 
 :root {
-    --cor-fundo: #111827;
-    --cor-painel: #1f2937;
-    --cor-borda: #4b5563;
-    --cor-texto-principal: #d1d5db;
-    --cor-texto-secundario: #9ca3af;
-    --cor-highlight: #e5e7eb;
-    --cor-titulo: #f9fafb;
+    --cor-fundo: #0c2b35; /* Azul-petróleo bem escuro */
+    --cor-painel: #113a47; /* Azul-petróleo escuro */
+    --cor-borda: #2a7c8e; /* Ciano escuro */
+    --cor-texto-principal: #cdeef7; /* Ciano muito claro */
+    --cor-texto-secundario: #8cb6c2; /* Ciano acinzentado */
+    --cor-highlight: #67e8f9; /* Ciano brilhante */
+    --cor-titulo: #a5f3fc; /* Ciano super claro */
 }
 
 body {
@@ -16,7 +16,7 @@ body {
     color: var(--cor-texto-principal);
     margin: 0;
     padding: 2rem;
-    background-image: radial-gradient(circle at 1px 1px, rgba(209, 213, 219, 0.05) 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, rgba(103, 232, 249, 0.07) 1px, transparent 0); /* Ponto de luz ciano */
     background-size: 25px 25px;
 }
 
@@ -24,11 +24,11 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     border: 1px solid var(--cor-borda);
-    background-color: rgba(31, 41, 55, 0.5);
+    background-color: rgba(17, 58, 71, 0.5); /* Fundo do container com transparência */
     backdrop-filter: blur(5px);
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 25px rgba(103, 232, 249, 0.1); /* Sombra ciano */
 }
 
 header {
@@ -45,11 +45,11 @@ h1 {
     letter-spacing: 4px;
     text-transform: uppercase;
     margin: 0;
-    text-shadow: 0 0 10px rgba(249, 250, 251, 0.2);
+    text-shadow: 0 0 10px rgba(103, 232, 249, 0.3); /* Sombra de texto ciano */
 }
 
 .filtros-container {
-    background-color: rgba(17, 24, 39, 0.7);
+    background-color: rgba(8, 28, 36, 0.7); /* Fundo dos filtros mais escuro */
     padding: 1.5rem;
     border-radius: 6px;
     margin-bottom: 2rem;
@@ -57,11 +57,6 @@ h1 {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
     border: 1px solid var(--cor-borda);
-}
-
-.filtro-grupo {
-    display: flex;
-    flex-direction: column;
 }
 
 .filtro-grupo label {
@@ -85,7 +80,7 @@ h1 {
 .filtro-input:focus {
     outline: none;
     border-color: var(--cor-highlight);
-    box-shadow: 0 0 8px rgba(229, 231, 235, 0.3);
+    box-shadow: 0 0 8px rgba(103, 232, 249, 0.4); /* Sombra de foco ciano */
 }
 
 #mapa-galactico {
@@ -97,7 +92,7 @@ h1 {
 .planeta-card {
     background-color: var(--cor-painel);
     border: 1px solid var(--cor-borda);
-    border-left: 5px solid var(--cor-highlight);
+    border-left: 5px solid var(--cor-highlight); /* Borda lateral ciano */
     border-radius: 6px;
     padding: 1.5rem;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s;
@@ -107,14 +102,14 @@ h1 {
 
 .planeta-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-    border-left-color: #fff;
+    box-shadow: 0 10px 20px rgba(103, 232, 249, 0.15); /* Sombra hover ciano */
+    border-left-color: #a5f3fc; /* Ciano mais claro no hover */
 }
 
 .planeta-card h2 {
     font-family: 'Orbitron', sans-serif;
     margin: 0 0 0.5rem 0;
-    color: var(--cor-highlight);
+    color: var(--cor-highlight); /* Título do card ciano */
     font-size: 1.5rem;
 }
 
