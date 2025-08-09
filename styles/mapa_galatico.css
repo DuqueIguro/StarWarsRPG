@@ -53,10 +53,18 @@ h1 {
     padding: 1.5rem;
     border-radius: 6px;
     margin-bottom: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex; /* ALTERADO DE GRID PARA FLEX */
+    flex-wrap: wrap; /* Permite que os filtros quebrem a linha em telas menores */
     gap: 1.5rem;
     border: 1px solid var(--cor-borda);
+    align-items: flex-start; /* Alinha os grupos de filtro no topo */
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column; /* Garante que o label (título) fique em cima do campo */
+    flex: 1; /* Permite que os grupos cresçam e ocupem o espaço */
+    min-width: 200px; /* Largura mínima para cada grupo de filtro */
 }
 
 .filtro-grupo label {
