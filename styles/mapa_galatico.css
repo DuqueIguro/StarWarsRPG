@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;700&display=swap');
 
+/* ADICIONADO: Importação da fonte Aurebesh */
+@font-face {
+    font-family: 'Aurebesh';
+    src: url('../inventario/Aurebesh.woff') format('woff');
+}
+
 :root {
     --cor-fundo: #0c2b35; /* Azul-petróleo bem escuro */
     --cor-painel: #113a47; /* Azul-petróleo escuro */
@@ -18,6 +24,13 @@ body {
     padding: 2rem;
     background-image: radial-gradient(circle at 1px 1px, rgba(103, 232, 249, 0.07) 1px, transparent 0); /* Ponto de luz ciano */
     background-size: 25px 25px;
+}
+
+/* ADICIONADO: Estilo base para a classe da fonte Aurebesh */
+.font-aurebesh {
+    font-family: 'Aurebesh', sans-serif;
+    text-transform: lowercase;
+    letter-spacing: 2px;
 }
 
 .container {
@@ -46,6 +59,13 @@ h1 {
     text-transform: uppercase;
     margin: 0;
     text-shadow: 0 0 10px rgba(103, 232, 249, 0.3); /* Sombra de texto ciano */
+}
+
+/* ADICIONADO: Estilo para o subtítulo em Aurebesh */
+header .font-aurebesh {
+    font-size: 1.2rem;
+    color: var(--cor-texto-secundario);
+    margin-top: 0.5rem;
 }
 
 .filtros-container {
@@ -116,9 +136,17 @@ h1 {
 
 .planeta-card h2 {
     font-family: 'Orbitron', sans-serif;
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.25rem 0; /* Margem ajustada */
     color: var(--cor-highlight); /* Título do card ciano */
     font-size: 1.5rem;
+}
+
+/* ADICIONADO: Estilo para o nome do planeta em Aurebesh */
+.planeta-aurebesh {
+    color: var(--cor-texto-secundario);
+    font-size: 1rem;
+    margin: 0 0 0.75rem 0;
+    line-height: 1;
 }
 
 .planeta-card .regiao {
@@ -133,7 +161,7 @@ h1 {
     font-size: 0.9rem;
     line-height: 1.6;
     margin: 0 0 1rem 0;
-    flex-grow: 1;
+    /* flex-grow: 1; Deixa mais agradavel se estive desativado*/
 }
 
 .info-grid {

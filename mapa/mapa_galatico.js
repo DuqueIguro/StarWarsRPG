@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let planetasData = [];
 
-    // Carregar dados do JSON (COM O CAMINHO CORRIGIDO)
+    // Carregar dados do JSON
     fetch('mapa/planetas_database.json')
         .then(response => {
             if (!response.ok) {
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            // NOVO: Ordena os planetas em ordem alfabética por nome
+            // Ordena os planetas em ordem alfabética por nome na carga inicial
             data.planetas.sort((a, b) => a.nome.localeCompare(b.nome));
             
             planetasData = data.planetas;
@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'planeta-card';
             card.innerHTML = `
                 <h2>${planeta.nome}</h2>
+                <p class="font-aurebesh planeta-aurebesh">${planeta.nome}</p>
                 <p class="regiao">${planeta.regiao} - ${planeta.setor}</p>
                 <p>${planeta.descricao}</p>
                 <div class="info-grid">
@@ -78,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchSetor = planeta.setor.toLowerCase().includes(termoSetor);
             return matchPlaneta && matchRegiao && matchSetor;
         });
-
+        
         // Mantém a ordem alfabética ao filtrar
         planetasFiltrados.sort((a, b) => a.nome.localeCompare(b.nome));
 
