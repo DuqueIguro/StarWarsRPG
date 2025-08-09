@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
+            // NOVO: Ordena os planetas em ordem alfabética por nome
+            data.planetas.sort((a, b) => a.nome.localeCompare(b.nome));
+            
             planetasData = data.planetas;
             popularFiltros(planetasData);
             renderizarPlanetas(planetasData);
@@ -69,12 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const regiaoSelecionada = filtroRegiaoSelect.value;
         const termoSetor = buscaSetorInput.value.toLowerCase();
 
-        const planetasFiltrados = planetasData.filter(planeta => {
+        let planetasFiltrados = planetasData.filter(planeta => {
             const matchPlaneta = planeta.nome.toLowerCase().includes(termoPlaneta);
             const matchRegiao = regiaoSelecionada === '' || planeta.regiao === regiaoSelecionada;
             const matchSetor = planeta.setor.toLowerCase().includes(termoSetor);
             return matchPlaneta && matchRegiao && matchSetor;
         });
+
+        // Mantém a ordem alfabética ao filtrar
+        planetasFiltrados.sort((a, b) => a.nome.localeCompare(b.nome));
 
         renderizarPlanetas(planetasFiltrados);
     }
