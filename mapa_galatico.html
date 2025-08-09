@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal de Cartografia Galáctica</title>
+    <link rel="stylesheet" href="styles/mapa_galatico.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Terminal de Cartografia Galáctica</h1>
+        </header>
+
+        <main>
+            <div class="filtros-container">
+                <div class="filtro-grupo">
+                    <label for="busca-planeta">Nome do Planeta</label>
+                    <input type="text" id="busca-planeta" class="filtro-input" placeholder="Ex: Tatooine...">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtro-regiao">Região</label>
+                    <select id="filtro-regiao" class="filtro-input">
+                        <option value="">Todas as Regiões</option>
+                    </select>
+                </div>
+                <div class="filtro-grupo">
+                    <label for="busca-setor">Setor</label>
+                    <input type="text" id="busca-setor" class="filtro-input" placeholder="Ex: Arkanis...">
+                </div>
+            </div>
+
+            <div id="mapa-galactico">
+                </div>
+            <p id="mensagem-nenhum-resultado" style="display: none;">Nenhum sistema estelar corresponde aos parâmetros de busca.</p>
+        </main>
+    </div>
+
+    <script src="mapa/mapa_galatico.js"></script>
+</body>
+
+</html>

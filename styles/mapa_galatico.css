@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;700&display=swap');
+
+:root {
+    --cor-fundo: #111827;
+    --cor-painel: #1f2937;
+    --cor-borda: #4b5563;
+    --cor-texto-principal: #d1d5db;
+    --cor-texto-secundario: #9ca3af;
+    --cor-highlight: #e5e7eb;
+    --cor-titulo: #f9fafb;
+}
+
+body {
+    font-family: 'Roboto Mono', monospace;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto-principal);
+    margin: 0;
+    padding: 2rem;
+    background-image: radial-gradient(circle at 1px 1px, rgba(209, 213, 219, 0.05) 1px, transparent 0);
+    background-size: 25px 25px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 1px solid var(--cor-borda);
+    background-color: rgba(31, 41, 55, 0.5);
+    backdrop-filter: blur(5px);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--cor-borda);
+    padding-bottom: 1.5rem;
+}
+
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--cor-titulo);
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(249, 250, 251, 0.2);
+}
+
+.filtros-container {
+    background-color: rgba(17, 24, 39, 0.7);
+    padding: 1.5rem;
+    border-radius: 6px;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    border: 1px solid var(--cor-borda);
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+}
+
+.filtro-grupo label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--cor-texto-secundario);
+    text-transform: uppercase;
+}
+
+.filtro-input {
+    background-color: var(--cor-fundo);
+    border: 1px solid var(--cor-borda);
+    color: var(--cor-texto-principal);
+    padding: 0.75rem;
+    border-radius: 4px;
+    font-family: 'Roboto Mono', monospace;
+    transition: all 0.2s ease-in-out;
+}
+
+.filtro-input:focus {
+    outline: none;
+    border-color: var(--cor-highlight);
+    box-shadow: 0 0 8px rgba(229, 231, 235, 0.3);
+}
+
+#mapa-galactico {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.planeta-card {
+    background-color: var(--cor-painel);
+    border: 1px solid var(--cor-borda);
+    border-left: 5px solid var(--cor-highlight);
+    border-radius: 6px;
+    padding: 1.5rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.planeta-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    border-left-color: #fff;
+}
+
+.planeta-card h2 {
+    font-family: 'Orbitron', sans-serif;
+    margin: 0 0 0.5rem 0;
+    color: var(--cor-highlight);
+    font-size: 1.5rem;
+}
+
+.planeta-card .regiao {
+    font-size: 0.9rem;
+    color: var(--cor-texto-secundario);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--cor-borda);
+    padding-bottom: 1rem;
+}
+
+.planeta-card p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+    flex-grow: 1;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.info-item strong {
+    color: var(--cor-texto-secundario);
+    display: block;
+}
+
+#mensagem-nenhum-resultado {
+    text-align: center;
+    color: var(--cor-texto-secundario);
+    padding: 2rem;
+    font-style: italic;
+}
