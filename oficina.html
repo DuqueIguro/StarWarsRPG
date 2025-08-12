@@ -40,17 +40,26 @@
             <p class="text-orange-400 text-lg font-orbitron">Selecione uma Ordem de Serviço para ver os detalhes.</p>
         </div>
 
-        <div class="lg:col-span-1 glass-pane-sigiloso p-4 rounded-lg">
+        <!-- Divisor horizontal acima do adendo -->
+        <div class="col-span-1 lg:col-span-3">
+            <hr class="border-red-700 mb-2">
+            <div class="mb-2 flex items-start gap-3 bg-red-900/30 border border-red-700 rounded-md p-3">
+                <i class="fa-solid fa-triangle-exclamation text-red-400 text-xl mt-1"></i>
+                <span class="text-red-300 text-sm font-orbitron flex items-center gap-2">
+                    <strong>Adendo:</strong>
+                    <span>
+                        Conteúdo restrito ao mestre da campanha para fins de ambientação. As informações aqui presentes não devem ser utilizadas em RP, salvo mediante falha da oficina em ocultar suas atividades do Império. Estes serviços não possuem registro oficial.
+                    </span>
+                    <!-- Ícone que representa sigilo/relacionamento -->
+                    <i class="fa-solid fa-user-secret text-red-400 text-base ml-2" title="Referente aos registros sigilosos"></i>
+                </span>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1 glass-pane-sigiloso p-4 rounded-lg mt-2">
             <h2 class="font-orbitron text-xl text-red-400 mb-4 border-b border-red-800 pb-2">
                 <i class="fa-solid fa-user-secret"></i>Registros Sigilosos
             </h2>
-            <!-- Adendo com ícone de alerta -->
-            <div class="mb-4 flex items-start gap-2 bg-red-900/30 border border-red-700 rounded-md p-3">
-                <i class="fa-solid fa-triangle-exclamation text-red-400 text-xl mt-1"></i>
-                <span class="text-red-300 text-sm font-orbitron">
-                    <strong>Adendo:</strong> Conteúdo restrito ao mestre da campanha para fins de ambientação. As informações aqui presentes não devem ser utilizadas em RP, salvo mediante falha da oficina em ocultar suas atividades do Império. Estes serviços não possuem registro oficial.
-                </span>
-            </div>
             <div id="os-list-sigiloso" class="max-h-[25vh] overflow-y-auto pr-2 space-y-2">
             </div>
         </div>
