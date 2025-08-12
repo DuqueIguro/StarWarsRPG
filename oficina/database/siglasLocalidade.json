@@ -1,0 +1,234 @@
+{
+  "codigos_planetas": [
+    {
+      "planeta": "Ahch-To",
+      "codigo": "AHC"
+    },
+    {
+      "planeta": "Alderaan",
+      "codigo": "ALD"
+    },
+    {
+      "planeta": "Bespin",
+      "codigo": "BES"
+    },
+    {
+      "planeta": "Bracca",
+      "codigo": "BRA"
+    },
+    {
+      "planeta": "Cato Neimoidia",
+      "codigo": "CAT"
+    },
+    {
+      "planeta": "Chandrila",
+      "codigo": "CHA"
+    },
+    {
+      "planeta": "Christophsis",
+      "codigo": "CHR"
+    },
+    {
+      "planeta": "Corellia",
+      "codigo": "CRL"
+    },
+    {
+      "planeta": "Coruscant",
+      "codigo": "COR"
+    },
+    {
+      "planeta": "Crait",
+      "codigo": "CRA"
+    },
+    {
+      "planeta": "D'Qar",
+      "codigo": "DQA"
+    },
+    {
+      "planeta": "Dagobah",
+      "codigo": "DAG"
+    },
+    {
+      "planeta": "Dantooine",
+      "codigo": "DAN"
+    },
+    {
+      "planeta": "Dathomir",
+      "codigo": "DAT"
+    },
+    {
+      "planeta": "Endor",
+      "codigo": "END"
+    },
+    {
+      "planeta": "Exegol",
+      "codigo": "EXE"
+    },
+    {
+      "planeta": "Felucia",
+      "codigo": "FEL"
+    },
+    {
+      "planeta": "Fondor",
+      "codigo": "FON"
+    },
+    {
+      "planeta": "Geonosis",
+      "codigo": "GEO"
+    },
+    {
+      "planeta": "Hosnian Prime",
+      "codigo": "HOS"
+    },
+    {
+      "planeta": "Hoth",
+      "codigo": "HOT"
+    },
+    {
+      "planeta": "Ilum",
+      "codigo": "ILU"
+    },
+    {
+      "planeta": "Jakku",
+      "codigo": "JAK"
+    },
+    {
+      "planeta": "Kamino",
+      "codigo": "KAM"
+    },
+    {
+      "planeta": "Kashyyyk",
+      "codigo": "KAS"
+    },
+    {
+      "planeta": "Kef Bir",
+      "codigo": "KEF"
+    },
+    {
+      "planeta": "Kessel",
+      "codigo": "KES"
+    },
+    {
+      "planeta": "Korriban (Moraband)",
+      "codigo": "KOR"
+    },
+    {
+      "planeta": "Kuat",
+      "codigo": "KUA"
+    },
+    {
+      "planeta": "Lothal",
+      "codigo": "LOT"
+    },
+    {
+      "planeta": "Malastare",
+      "codigo": "MAL"
+    },
+    {
+      "planeta": "Mandalore",
+      "codigo": "MAN"
+    },
+    {
+      "planeta": "Mon Cala",
+      "codigo": "MON"
+    },
+    {
+      "planeta": "Mustafar",
+      "codigo": "MUS"
+    },
+    {
+      "planeta": "Mygeeto",
+      "codigo": "MYG"
+    },
+    {
+      "planeta": "Naboo",
+      "codigo": "NAB"
+    },
+    {
+      "planeta": "Nal Hutta",
+      "codigo": "NAL"
+    },
+    {
+      "planeta": "Nar Shaddaa",
+      "codigo": "NAR"
+    },
+    {
+      "planeta": "Ord Mantell",
+      "codigo": "ORD"
+    },
+    {
+      "planeta": "Pasaana",
+      "codigo": "PAS"
+    },
+    {
+      "planeta": "Raxus Prime",
+      "codigo": "RAX"
+    },
+    {
+      "planeta": "Ryloth",
+      "codigo": "RYL"
+    },
+    {
+      "planeta": "Saleucami",
+      "codigo": "SAL"
+    },
+    {
+      "planeta": "Scarif",
+      "codigo": "SCA"
+    },
+    {
+      "planeta": "Sullust",
+      "codigo": "SUL"
+    },
+    {
+      "planeta": "Tatooine",
+      "codigo": "TAT"
+    },
+    {
+      "planeta": "Umbara",
+      "codigo": "UMB"
+    },
+    {
+      "planeta": "Utapau",
+      "codigo": "UTA"
+    },
+    {
+      "planeta": "Yavin 4",
+      "codigo": "YV4"
+    },
+    {
+      "planeta": "Zeffo",
+      "codigo": "ZEF"
+    }
+  ],
+  "codigos_locais_extras":[
+    {
+        "indentificador": "Engrenagem Mestra",
+        "codigo": "EGM"
+    },
+    {
+        "indentificador": "Desconhecido(Uknown)",
+        "codigo": "UKN"
+    },
+    {
+        "indentificador": "Sigiloso",
+        "codigo": "SIG"
+    },
+    {
+        "indentificador": "Oficina",
+        "codigo": "OFI"
+    },
+    {
+        "indentificador": "Vacuo Espacial",
+        "codigo": "VCE"
+    },
+    {
+        "indentificador": "Underground Coruscant",
+        "codigo": "UND"
+    },
+    {
+        "indentificador": "Estação Espacial",
+        "codigo": "EST"
+    }
+  ]
+}
