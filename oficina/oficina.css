@@ -21,6 +21,11 @@ body {
     text-transform: lowercase;
 }
 
+/* Adicionado para espaçamento dos ícones */
+i.fa-solid {
+    margin-right: 10px;
+}
+
 .glass-pane {
     background-color: rgba(45, 25, 10, 0.6);
     backdrop-filter: blur(10px);

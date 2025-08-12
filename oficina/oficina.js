@@ -141,32 +141,32 @@ document.addEventListener('DOMContentLoaded', () => {
                             tipo = "Total do Serviço";
                         }
                         
-                        return `<div class="text-sm text-gray-400 ml-4">+${percentual}% ${tipo} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`;
-                    }).join('');
+                    return `<div class="text-sm text-gray-400 ml-4">+${percentual}% ${tipo} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`;
+                }).join('');
             }
             
             let pecasSumarioHtml = (os.financeiro.subtotalPecas > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Subtotal (Peças):</strong> ${os.financeiro.subtotalPecas.toLocaleString()} ${os.financeiro.moeda}</div>${pecasDescricaoHtml}` : '';
             let maoDeObraSumarioHtml = (os.financeiro.subtotalMaoDeObra > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Subtotal (Mão de Obra):</strong> ${os.financeiro.subtotalMaoDeObra.toLocaleString()} ${os.financeiro.moeda}</div>${maoDeObraDescricaoHtml}` : '';
             let taxasFixasSumarioHtml = (os.financeiro.subtotalTaxasFixas > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Taxas Fixas:</strong> ${os.financeiro.subtotalTaxasFixas.toLocaleString()} ${os.financeiro.moeda}</div>${taxasFixasDescricaoHtml}` : '';
             let adicionaisSumarioHtml = (os.financeiro.subtotalAdicionais > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Adicionais:</strong> +${os.financeiro.subtotalAdicionais.toLocaleString()} ${os.financeiro.moeda}</div>${adicionaisDescricaoHtml}` : '';
-            let termosHtml = os.termos ? `<div class="mt-6 border-t ${theme.border} pt-4"><h3 class="font-orbitron text-lg ${theme.header} mb-2">Termos e Condições</h3><p class="text-sm text-${theme.main}-200 bg-gray-900/70 p-3 rounded-md italic">"${os.termos}"</p></div>` : '';
+            let termosHtml = os.termos ? `<div class="mt-6 border-t ${theme.border} pt-4"><h3 class="font-orbitron text-lg ${theme.header} mb-2"><i class="fa-solid fa-file-signature"></i>Termos e Condições</h3><p class="text-sm text-${theme.main}-200 bg-gray-900/70 p-3 rounded-md italic">"${os.termos}"</p></div>` : '';
 
 
             contentTarget.innerHTML = `
                 <h2 class="font-orbitron text-2xl ${theme.title} mb-2">${os.titulo}</h2>
                 <p class="text-sm text-gray-400 mb-4">ID da Ordem: ${os.id} | Data: ${os.data}</p>
                 <div class="bg-gray-900/50 p-4 rounded-md mb-4">
-                    <h3 class="font-orbitron text-lg ${theme.header} mb-2">Informações do Cliente</h3>
+                    <h3 class="font-orbitron text-lg ${theme.header} mb-2"><i class="fa-solid fa-user-astronaut"></i>Informações do Cliente</h3>
                     <p><strong class="${theme.strong}">Nome:</strong> ${os.cliente.nome}</p>
                     <p><strong class="${theme.strong}">Afiliação:</strong> ${os.cliente.afiliacao}</p>
                     <p><strong class="${theme.strong}">Contato HoloNet:</strong> ${os.cliente.contato_holonet}</p>
                 </div>
                 <div class="bg-gray-900/50 p-4 rounded-md mb-4">
-                    <h3 class="font-orbitron text-lg ${theme.header} mb-2">Relatório do Problema</h3>
+                    <h3 class="font-orbitron text-lg ${theme.header} mb-2"><i class="fa-solid fa-triangle-exclamation"></i>Relatório do Problema</h3>
                     <p class="text-gray-300">${os.relatorio_problema}</p>
                 </div>
                 <div class="bg-gray-900/50 p-4 rounded-md mb-4">
-                    <h3 class="font-orbitron text-lg ${theme.header} mb-2">Serviços Executados</h3>
+                    <h3 class="font-orbitron text-lg ${theme.header} mb-2"><i class="fa-solid fa-gears"></i>Serviços Executados</h3>
                     ${servicosHtml}
                 </div>
                 <div class="border-t-2 ${theme.borderStrong} pt-4 mt-4 space-y-2">
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="font-orbitron text-2xl text-yellow-400 mt-4 pb-4 border-b ${theme.border} ">Total a Pagar: ${os.financeiro.total.toLocaleString()} ${os.financeiro.moeda}</h3>
                 </div>
                 <div class="mt-6">
-                    <h3 class="font-orbitron text-lg ${theme.header} mb-2">Notas do Mecânico (${os.mecanicoResponsavel || 'N/A'})</h3>
+                    <h3 class="font-orbitron text-lg ${theme.header} mb-2"><i class="fa-solid fa-comment-dots"></i>Notas do Mecânico (${os.mecanicoResponsavel || 'N/A'})</h3>
                     <p class="text-gray-300 italic">"${os.notas_mecanico}"</p>
                 </div>
                 ${termosHtml}
