@@ -1,6 +1,6 @@
 {
   "ordemDeServico": {
-    "id": "OS-22-COR-001",
+    "id": "OS-04-COR-001",
     "mecanicoResponsavel": "Dur'Toc e Faisca",
     "unidadeResponsavel": "R5-T1N",
     "status": "Concluído",
@@ -65,7 +65,7 @@
     },
     "termos": "A solicitação de um serviço categorizado como S.E.V.I.R.A. anula automaticamente qualquer garantia sobre o componente ou sistema reparado. A oficina não se responsabiliza por falhas subsequentes decorrentes da natureza provisória da solução.",
     "titulo": "Exemplo de Ordem de Serviço - Taxas",
-    "data": "22 ABY",
+    "data": "04 ABY",
     "cliente": {
       "nome": "Talon Karrde",
       "afiliacao": "Organização de Contrabando (Independente)",
