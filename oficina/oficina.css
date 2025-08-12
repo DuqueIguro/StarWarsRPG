@@ -27,6 +27,14 @@ body {
     border: 1px solid rgba(251, 146, 60, 0.4);
 }
 
+/* NOVO: Estilo para painéis sigilosos */
+.glass-pane-sigiloso {
+    background-color: rgba(45, 10, 10, 0.6); /* Tonalidade vermelha */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(239, 68, 68, 0.4); /* red-500 com opacidade */
+}
+
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
@@ -66,7 +74,6 @@ body {
     border-left-color: #ef4444; /* red-500 */
     transform: translateX(5px);
 }
-
 
 .status-aberto {
     background-color: #2563EB; /* blue-600 */
