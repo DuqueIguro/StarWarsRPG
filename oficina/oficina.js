@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             detailsToShow.classList.add('hidden');
             placeholderToShow.classList.remove('hidden');
         } else {
-            carregarDetalhesOS(file, contentTarget, theme); // Passa o tema para a função de renderização
+            carregarDetalhesOS(file, contentTarget, theme);
             detailsToShow.classList.remove('hidden');
             placeholderToShow.classList.add('hidden');
             
@@ -114,21 +114,41 @@ document.addEventListener('DOMContentLoaded', () => {
             let maoDeObraDescricaoHtml = os.itens.filter(item => item.detalhes.maoDeObra && item.detalhes.maoDeObra.custo > 0).map(item => `<div class="text-sm text-gray-400 ml-4">${item.servico}: ${item.detalhes.maoDeObra.custo.toLocaleString()} créditos</div>`).join('');
             let taxasFixasDescricaoHtml = '', adicionaisDescricaoHtml = '';
 
+            // LÓGICA CORRIGIDA AQUI
             if (os.taxasAdicionais && os.taxasAdicionais.length > 0) {
-                taxasFixasDescricaoHtml = os.taxasAdicionais.filter(taxa => !taxa.percentual_sobre_mao_de_obra && !taxa.percentual_sobre_mao_de_obra_improvisada).map(taxa => `<div class="text-sm text-gray-400 ml-4">${taxa.nome} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`).join('');
-                adicionaisDescricaoHtml = os.taxasAdicionais.filter(taxa => taxa.percentual_sobre_mao_de_obra || taxa.percentual_sobre_mao_de_obra_improvisada).map(taxa => {
-                    const percentual = taxa.percentual_sobre_mao_de_obra || taxa.percentual_sobre_mao_de_obra_improvisada;
-                    const tipo = taxa.percentual_sobre_mao_de_obra ? "Mão de Obra" : "Mão de Obra Impr.";
-                    return `<div class="text-sm text-gray-400 ml-4">+${percentual}% ${tipo} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`;
-                }).join('');
+                taxasFixasDescricaoHtml = os.taxasAdicionais
+                    .filter(taxa => !taxa.percentual_sobre_mao_de_obra && !taxa.percentual_sobre_mao_de_obra_improvisada && !taxa.percentual_sobre_peca && !taxa.percentual_sobre_servico_total)
+                    .map(taxa => `<div class="text-sm text-gray-400 ml-4">${taxa.nome} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`)
+                    .join('');
+
+                adicionaisDescricaoHtml = os.taxasAdicionais
+                    .filter(taxa => taxa.percentual_sobre_mao_de_obra || taxa.percentual_sobre_mao_de_obra_improvisada || taxa.percentual_sobre_peca || taxa.percentual_sobre_servico_total)
+                    .map(taxa => {
+                        let percentual = 0;
+                        let tipo = '';
+
+                        if (taxa.percentual_sobre_mao_de_obra) {
+                            percentual = taxa.percentual_sobre_mao_de_obra;
+                            tipo = "Mão de Obra";
+                        } else if (taxa.percentual_sobre_mao_de_obra_improvisada) {
+                            percentual = taxa.percentual_sobre_mao_de_obra_improvisada;
+                            tipo = "Mão de Obra Impr.";
+                        } else if (taxa.percentual_sobre_peca) {
+                            percentual = taxa.percentual_sobre_peca;
+                            tipo = "Peça";
+                        } else if (taxa.percentual_sobre_servico_total) {
+                            percentual = taxa.percentual_sobre_servico_total;
+                            tipo = "Total do Serviço";
+                        }
+                        
+                        return `<div class="text-sm text-gray-400 ml-4">+${percentual}% ${tipo} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`;
+                    }).join('');
             }
             
             let pecasSumarioHtml = (os.financeiro.subtotalPecas > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Subtotal (Peças):</strong> ${os.financeiro.subtotalPecas.toLocaleString()} ${os.financeiro.moeda}</div>${pecasDescricaoHtml}` : '';
             let maoDeObraSumarioHtml = (os.financeiro.subtotalMaoDeObra > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Subtotal (Mão de Obra):</strong> ${os.financeiro.subtotalMaoDeObra.toLocaleString()} ${os.financeiro.moeda}</div>${maoDeObraDescricaoHtml}` : '';
-            // LÓGICA RESTAURADA AQUI
             let taxasFixasSumarioHtml = (os.financeiro.subtotalTaxasFixas > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Taxas Fixas:</strong> ${os.financeiro.subtotalTaxasFixas.toLocaleString()} ${os.financeiro.moeda}</div>${taxasFixasDescricaoHtml}` : '';
             let adicionaisSumarioHtml = (os.financeiro.subtotalAdicionais > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Adicionais:</strong> +${os.financeiro.subtotalAdicionais.toLocaleString()} ${os.financeiro.moeda}</div>${adicionaisDescricaoHtml}` : '';
-            
             let termosHtml = os.termos ? `<div class="mt-6 border-t ${theme.border} pt-4"><h3 class="font-orbitron text-lg ${theme.header} mb-2">Termos e Condições</h3><p class="text-sm text-${theme.main}-200 bg-gray-900/70 p-3 rounded-md italic">"${os.termos}"</p></div>` : '';
 
 
@@ -168,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // Inicia o carregamento de ambas as listas
     carregarManifesto(manifestFile, osListContainer, exibirItemNormal, 'os-item');
     carregarManifesto(manifestSigilosoFile, osListSigilosoContainer, exibirItemSigiloso, 'os-item-sigiloso');
 });
