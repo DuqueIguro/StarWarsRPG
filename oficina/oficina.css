@@ -54,6 +54,20 @@ body {
     transform: translateX(5px);
 }
 
+/* NOVOS ESTILOS PARA ITENS SIGILOSOS */
+.os-item-sigiloso {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-left: 4px solid #fca5a5; /* red-300 */
+}
+
+.os-item-sigiloso:hover, .os-item-sigiloso.active {
+    background-color: rgba(220, 38, 38, 0.2); /* red-600 with opacity */
+    border-left-color: #ef4444; /* red-500 */
+    transform: translateX(5px);
+}
+
+
 .status-aberto {
     background-color: #2563EB; /* blue-600 */
     color: white;

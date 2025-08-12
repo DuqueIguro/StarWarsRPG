@@ -1,7 +1,7 @@
 {
   "ordemDeServico": {
     "id": "OS-22-UND-001",
-    "mecanicoResponsavel": null,
+    "mecanicoResponsavel": "Dur'toc",
     "unidadeResponsavel": "R5-T1N",
     "status": "Calculado",
     "itens": [
@@ -52,8 +52,8 @@
       "moeda": "Créditos Galácticos",
       "total": 10675
     },
-    "termos": "O pagamento deve ser feito integralmente e adiantado, em créditos não rastreáveis ou bens de valor equivalente[cite: 787, 788, 789, 790]. Não há qualquer tipo de garantia; a responsabilidade é inteiramente do cliente[cite: 792]. A oficina opera sob política de negação plausível[cite: 795, 796]. Não haverá reembolso sob nenhuma circunstância[cite: 798].",
-    "titulo": "Instalação e Ocultação de Contramedidas Militares",
+    "termos": "O pagamento deve ser feito integralmente e adiantado, em créditos não rastreáveis ou bens de valor equivalente. Não há qualquer tipo de garantia; a responsabilidade é inteiramente do cliente. A oficina opera sob política de negação plausível. Não haverá reembolso sob nenhuma circunstância.",
+    "titulo": "Exemplo de Ordem de Serviço Sigilosa",
     "data": "22:8:11 (ABY)",
     "cliente": {
       "nome": "Kaelen Rask",
