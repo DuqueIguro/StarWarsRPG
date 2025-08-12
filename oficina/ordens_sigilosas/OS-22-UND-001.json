@@ -1,0 +1,66 @@
+{
+  "ordemDeServico": {
+    "id": "OS-22-UND-001",
+    "mecanicoResponsavel": null,
+    "unidadeResponsavel": "R5-T1N",
+    "status": "Calculado",
+    "itens": [
+      {
+        "servico": "Instalar Sistema de Contramedidas",
+        "tipo": "Mão de Obra",
+        "detalhes": {
+          "causaDoProblema": null,
+          "peca": {
+            "nome": "Sistema de Contramedidas Militar Imperial (Fornecido pelo Cliente)",
+            "custo": 4000
+          },
+          "maoDeObra": {
+            "custo": 1500
+          }
+        },
+        "subtotal": 1500
+      }
+    ],
+    "taxasAdicionais": [
+      {
+        "nome": "Taxa COISA",
+        "custo": 4800,
+        "justificativa": "Adicional de +120% sobre o valor estimado da peça ilegal (4.000 créditos) para compensar o risco legal e de segurança.",
+        "percentual_sobre_peca": 120,
+        "sigla": "COISA"
+      },
+      {
+        "nome": "Taxa GHOST",
+        "custo": 3000,
+        "justificativa": "Adicional de +200% sobre a mão de obra para o serviço de ocultação sistêmica da modificação.",
+        "percentual_sobre_mao_de_obra": 200,
+        "sigla": "GHOST"
+      },
+      {
+        "nome": "Taxa CALADO",
+        "custo": 1375,
+        "justificativa": "Adicional de +25% sobre o valor total do serviço (peça+mão de obra) para garantir confidencialidade e operação fora dos registros.",
+        "percentual_sobre_servico_total": 25,
+        "sigla": "CALADO"
+      }
+    ],
+    "financeiro": {
+      "subtotalPecas": 0,
+      "subtotalMaoDeObra": 1500,
+      "subtotalTaxasFixas": 0,
+      "subtotalAdicionais": 9175,
+      "moeda": "Créditos Galácticos",
+      "total": 10675
+    },
+    "termos": "O pagamento deve ser feito integralmente e adiantado, em créditos não rastreáveis ou bens de valor equivalente[cite: 787, 788, 789, 790]. Não há qualquer tipo de garantia; a responsabilidade é inteiramente do cliente[cite: 792]. A oficina opera sob política de negação plausível[cite: 795, 796]. Não haverá reembolso sob nenhuma circunstância[cite: 798].",
+    "titulo": "Instalação e Ocultação de Contramedidas Militares",
+    "data": "22:8:11 (ABY)",
+    "cliente": {
+      "nome": "Kaelen Rask",
+      "afiliacao": "Operador Independente (Contrabandista)",
+      "contato_holonet": "Não Informado"
+    },
+    "relatorio_problema": "Cliente solicita instalação e ocultação de sistema de contramedidas de origem militar imperial em cargueiro leve.",
+    "notas_mecanico": "Nada a Declarar"
+  }
+}

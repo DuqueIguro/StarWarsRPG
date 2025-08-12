@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const osPlaceholder = document.getElementById('os-placeholder');
 
     // Caminho para o arquivo de manifesto
-    const manifestFile = 'oficina/ordens_de_servico/manifesto.json';
+    const manifestFile = 'oficina/manifesto.json';
 
     async function carregarOrdensDeServico() {
         try {
