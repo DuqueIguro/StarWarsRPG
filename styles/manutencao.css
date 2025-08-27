@@ -41,7 +41,7 @@ body {
 .terminal-header {
     background-color: #1a0000;
     color: #ff1a1a;
-    padding: 10px 5px; /* Aumentei o padding para melhor visualização */
+    padding: 10px 5px;
     text-align: center;
     border-bottom: 2px solid #6e0000;
     text-shadow: 0 0 5px #ff1a1a;
@@ -56,7 +56,6 @@ body {
     font-family: 'Orbitron', 'Roboto-Mono', sans-serif;
     color: #ff1a1a; /* Cor mais sutil */
 }
-
 
 .terminal-body {
     flex-grow: 1;
@@ -143,4 +142,28 @@ body {
 
 .form-button:hover {
     background-color: #6e0000;
+}
+
+/* --- BOTÃO VOLTAR --- */
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: rgba(13, 2, 2, 0.8);
+    border: 1px solid #6e0000;
+    color: #ff1a1a;
+    text-decoration: none;
+    font-family: 'Orbitron', 'Arial', sans-serif;
+    font-size: 1rem;
+    text-shadow: 0 0 5px #ff1a1a;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.back-button:hover {
+    background-color: #6e0000;
+    box-shadow: 0 0 10px #ff1a1a;
+    color: #fff;
 }
