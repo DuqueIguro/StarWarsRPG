@@ -67,17 +67,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const commands = {
         'ajuda': 'Comandos disponíveis:\n  faq - Exibe perguntas frequentes.\n  reportar - Inicia o processo de reporte de bug.\n  limpar - Limpa a tela do terminal.\n  creditos - Exibe os créditos.',
+
         'faq': 'Perguntas Frequentes:\n\nQ: Como acesso minha ficha?\nA: Navegue para a página "ficha.html".\n\nQ: Onde posso ver as naves?\nA: Visite o "hangar.html".\n\nQ: Esqueci minha senha.\nA: Contate o Mestre do Jogo diretamente.',
+
         'reportar': () => {
+            print('Iniciando formulário de reporte de bug...');
             showBugReportForm();
-            return 'Iniciando formulário de reporte de bug...';
         },
+
         'limpar': () => {
             output.innerHTML = '';
             // Recria a mensagem de boas vindas para um contexto limpo
             typeWriter(welcomeMessage, true);
             return '';
         },
+        
         'creditos': 'Desenvolvido por Duque Iguro e EidenFox.\nInspirado no universo de Star Wars.',
     };
     
