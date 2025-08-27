@@ -1,0 +1,102 @@
+@font-face {
+    font-family: 'Aurebesh';
+    src: url('../inventario/Aurebesh.woff') format('woff');
+}
+
+body {
+    background-color: #000;
+    color: #ff1a1a;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.terminal-container {
+    width: 90%;
+    height: 90%;
+    max-width: 1000px;
+    max-height: 700px;
+    border: 2px solid #6e0000;
+    background-color: #0d0202;
+    padding: 10px;
+    box-shadow: 0 0 15px #ff1a1a, inset 0 0 15px rgba(255, 26, 26, 0.5);
+    border-radius: 5px;
+}
+
+.terminal {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-header {
+    background-color: #1a0000;
+    color: #ff1a1a;
+    padding: 5px;
+    text-align: center;
+    font-family: 'Aurebesh', 'Arial', sans-serif;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #6e0000;
+    text-shadow: 0 0 5px #ff1a1a;
+}
+
+.terminal-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+#output p {
+    margin: 0;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.input-line {
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    font-weight: bold;
+    text-shadow: 0 0 3px #ff1a1a;
+}
+
+.command-input {
+    background: transparent;
+    border: none;
+    color: #ff1a1a;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    flex-grow: 1;
+    outline: none;
+}
+
+.command-input:focus {
+    animation: blink-caret 1s step-end infinite;
+}
+
+@keyframes blink-caret {
+    from, to { border-right: 2px solid #ff1a1a; }
+    50% { border-right-color: transparent; }
+}
+
+.success {
+    color: #39ff14; /* Verde neon */
+}
+
+.error {
+    color: #ff4d4d;
+}
+
+.info {
+    color: #00bfff; /* Azul deep sky */
+}
