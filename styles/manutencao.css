@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;700&display=swap');
+
 @font-face {
     font-family: 'Aurebesh';
     src: url('../inventario/Aurebesh.woff') format('woff');
@@ -39,13 +41,22 @@ body {
 .terminal-header {
     background-color: #1a0000;
     color: #ff1a1a;
-    padding: 5px;
+    padding: 10px 5px; /* Aumentei o padding para melhor visualização */
     text-align: center;
-    font-family: 'Aurebesh', 'Arial', sans-serif;
-    font-size: 1.2rem;
     border-bottom: 2px solid #6e0000;
     text-shadow: 0 0 5px #ff1a1a;
 }
+
+.aurebesh-title {
+    font-family: 'Aurebesh', sans-serif;
+    color: #ff1a1a; /* Cor mais sutil */
+}
+
+.normal-title {
+    font-family: 'Orbitron', 'Roboto-Mono', sans-serif;
+    color: #ff1a1a; /* Cor mais sutil */
+}
+
 
 .terminal-body {
     flex-grow: 1;
@@ -99,4 +110,37 @@ body {
 
 .info {
     color: #00bfff; /* Azul deep sky */
+}
+
+/* --- ESTILOS PARA O FORMULÁRIO DE BUG --- */
+.form-input, .form-textarea, .form-select {
+    background-color: #1a0000;
+    border: 1px solid #6e0000;
+    color: #ff1a1a;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    width: 90%;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: 1px solid #ff1a1a;
+}
+
+.form-button {
+    background-color: #1a0000;
+    border: 1px solid #6e0000;
+    color: #ff1a1a;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    width: auto;
+    padding: 5px 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.form-button:hover {
+    background-color: #6e0000;
 }
