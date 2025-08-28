@@ -30,7 +30,9 @@ function updateStatusUI(ship, type) {
 }
 
 function setupStatusBar(ship) {
-    ['vida', 'escudo'].forEach(type => {
+    // Se for o moedor, só vida
+    const types = ship === "moedor" ? ["vida"] : ["vida", "escudo"];
+    types.forEach(type => {
         updateStatusUI(ship, type);
 
         // Botões
@@ -40,8 +42,9 @@ function setupStatusBar(ship) {
                 const input = document.getElementById(`${type}-${ship}`);
                 let val = parseInt(input.value) || 0;
                 const max = STATUS_CONFIG[ship][type];
-                if (action === 'inc' && val < max) val++;
-                if (action === 'dec' && val > 0) val--;
+                const step = 5;
+                if (action === 'inc' && val < max) val = Math.min(val + step, max);
+                if (action === 'dec' && val > 0) val = Math.max(val - step, 0);
                 input.value = val;
                 saveStatus(ship, type, val);
                 updateStatusUI(ship, type);

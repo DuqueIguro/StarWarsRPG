@@ -374,9 +374,9 @@ i.fa-solid {
 }
 
 .status-bar.escudo {
-    background: #7c3aed;
+    background: #47c5c9;
     color: #fff;
-    border: 2px solid #e0d0ff;
+    border: 2px solid #b3d1ff;
 }
 
 .status-label {
@@ -401,21 +401,25 @@ i.fa-solid {
 }
 
 .status-input {
-    width: 60px;
+    width: 80px;
     text-align: center;
-    font-size: 1.1em;
-    background: rgba(0,0,0,0.25);
-    border: 1px solid #fff;
+    font-size: 1em;
+    background: transparent;
+    border: none;
     color: #fff;
-    border-radius: 4px;
+    border-radius: 0;
     margin: 0 6px;
+    outline: none;
+    box-shadow: none;
+    appearance: textfield;
+    /* Remove setas no Firefox */
+    -moz-appearance: textfield;
+    /* Remove setas no Chrome/Safari/Edge */
+}
+.status-input::-webkit-outer-spin-button,
+.status-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-.status-max {
-    margin: 0 8px;
-    font-size: 1em;
-    color: #fff;
-    opacity: 0.8;
-    min-width: 40px;
-    display: inline-block;
-}
+/* ...existing code... */
