@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
+    
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hangar - Star Wars RPG</title>
@@ -13,27 +13,8 @@
 <body>
     <div class="terminal">
         <h1 style="text-align: center;"><i class="fa-solid fa-warehouse"></i> Hangar Principal</h1>
-        <h2 style="font-size: 52px; text-align: center;">A Engrenagem Mestra</h2>
-        <p>
-            Obra-prima de Dur'toc, esta nave é a manifestação de seu brilhantismo e fúria. Foi concebida como um
-            cruzador cargueiro totalmente autossuficiente e uma base de operações móvel.
-        </p>
-
-        <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações da Nave</h2>
-        <ul>
-            <li><strong>Classe:</strong> Cruzador Cargueiro de Reparos</li>
-            <li><strong>Comprimento:</strong> 165 metros</li>
-            <li><strong>Largura:</strong> 105 metros</li>
-            <li><strong>Propulsão:</strong> Motor de Hiperespaço Classe 1.2 (Primário), Classe 9 (Reserva)</li>
-            <li><strong>Armamento:</strong> 2 Canhões Iônicos de Disparo Rápido</li>
-            <li><strong>Defesas:</strong> Escudos defletores de alta capacidade e blindagem de casco reforçada.</li>
-            <li><strong>Instalações Notáveis:</strong> Hangares de Reparo Duplos, Oficina de Engenharia Central, Porão
-                de Carga Modular (1.000 toneladas)</li>
-            <li><strong>Tripulação Mínima:</strong> 1 (Dur'toc, auxiliado por droids)</li>
-        </ul>
-
         <section class="terminal" id="fuel-terminal">
-
+            
             <div id="fuel-toggle" class="terminal-header-collapsible">
                 <h2><i class="fa-solid fa-gas-pump"></i> DADOS DE COMBUSTÍVEL</h2>
                 <p class="toggle-prompt">// Iniciar Transmissão...</p>
@@ -105,49 +86,82 @@
                     </div>
                 </div>
                 <button id="save-fuel-btn"><i class="fa-solid fa-floppy-disk"></i> > REGISTRAR NÍVEIS < </button>
-                        <p id="save-feedback"></p>
+                <p id="save-feedback"></p>
             </div>
         </section>
 
+        <div style="text-align: center; margin-top: 40px;">
+            <button id="open-travel-modal-btn" class="main-action-btn"><i class="fa-solid fa-rocket"></i> > FAZER VIAGEM < </button>
+        </div>
+
+        <hr class="section-divider">
+
+        <h2 style="font-size: 52px; text-align: center;">A Engrenagem Mestra</h2>
+        <p>
+            Obra-prima de Dur'toc, esta nave é a manifestação de seu brilhantismo e fúria. Foi concebida como um cruzador cargueiro totalmente autossuficiente e uma base de operações móvel.
+        </p>
+
+        <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações da Nave</h2>
+        <ul>
+            <li><strong>Classe:</strong> Cruzador Cargueiro de Reparos</li>
+            <li><strong>Comprimento:</strong> 165 metros</li>
+            <li><strong>Largura:</strong> 105 metros</li>
+            <li><strong>Propulsão:</strong> Motor de Hiperespaço Classe 1.2 (Primário), Classe 9 (Reserva)</li>
+            <li><strong>Armamento:</strong> 2 Canhões Iônicos de Disparo Rápido</li>
+            <li><strong>Defesas:</strong> Escudos defletores de alta capacidade e blindagem de casco reforçada.</li>
+            <li><strong>Instalações Notáveis:</strong> Hangares de Reparo Duplos, Oficina de Engenharia Central, Porão
+                de Carga Modular (1.000 toneladas)</li>
+            <li><strong>Tripulação Mínima:</strong> 1 (Dur'toc, auxiliado por droids)</li>
+        </ul>
+
         <section class="terminal" id="vehicle-bay">
-            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Veículos Acoplados</h2>
-
-            <h3><i class="fa-solid fa-jet-fighter"></i> O Cinzel</h3>
-            <p>
-                Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit
-                foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a
-                maioria.
-            </p>
-            <ul>
-                <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
-                <li><strong>Comprimento:</strong> 9.8 metros</li>
-                <li><strong>Velocidade Máxima (Atm.):</strong> 1.000 km/h</li>
-                <li><strong>Hyperdrive:</strong> Não possui</li>
-                <li><strong>Armamento:</strong> 2 Canhões Laser de disparo rápido</li>
-                <li><strong>Sistema Dróide:</strong> Integrado a uma unidade astromecânica "Zunido".</li>
-            </ul>
-
-            <hr class="section-divider">
-
-            <h3><i class="fa-solid fa-motorcycle"></i> O Moedor</h3>
-            <p>
-                Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de
-                transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
-            </p>
-            <ul>
-                <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
-                <li><strong>Classe:</strong> Speeder Terrestre</li>
-                <li><strong>Tripulação:</strong> 1 Piloto (ergonomia exclusiva para Dur'toc)</li>
-                <li><strong>Passageiros:</strong> Nenhum, espaço convertido em compartimento de carga.</li>
-                <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
-                <li><strong>Armamento:</strong> Nenhum</li>
-            </ul>
+            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Ficha Técnica Engrenagem Mestra - rpg</h2>
         </section>
 
-        <div style="text-align: center; margin-top: 40px;">
-            <button id="open-travel-modal-btn" class="main-action-btn"><i class="fa-solid fa-rocket"></i> > FAZER VIAGEM
-                < </button>
-        </div>
+        <hr class="section-divider">
+
+        <h2 style="font-size: 52px; text-align: center;"><i class="fa-solid fa-jet-fighter" ></i> O Cinzel</h2>
+        <p>
+            Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit
+            foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a
+            maioria.
+        </p>
+
+        <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações da Nave</h2>
+        <ul>
+            <li><strong>Classe:</strong> Caça Leve de Superioridade Atmosférica e Orbital</li>
+            <li><strong>Comprimento:</strong> 9.8 metros</li>
+            <li><strong>Velocidade Máxima (Atm.):</strong> 1.000 km/h</li>
+            <li><strong>Hyperdrive:</strong> Não possui</li>
+            <li><strong>Armamento:</strong> 2 Canhões Laser de disparo rápido</li>
+            <li><strong>Sistema Dróide:</strong> Integrado a uma unidade astromecânica "Zunido".</li>
+        </ul>
+
+        <section class="terminal" id="vehicle-bay">
+            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Ficha Técnica Cinzel - rpg</h2>
+        </section>
+        
+        <hr class="section-divider">
+
+        <h2 style="font-size: 52px; text-align: center;"><i class="fa-solid fa-motorcycle"></i> O Moedor</h2>
+        <p>
+            Uma Jumpspeeder classe Undicur completamente reconstruída, criada para resolver o irritante problema de
+            transporte terrestre. Seu motor superalimentado produz um som grave e teimoso, um grunhido mecânico.
+        </p>
+
+        <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações do Veículo</h2>
+        <ul>
+            <li><strong>Modelo Base:</strong> Jumpspeeder classe Undicur</li>
+            <li><strong>Classe:</strong> Speeder Terrestre</li>
+            <li><strong>Tripulação:</strong> 1 Piloto (ergonomia exclusiva para Dur'toc)</li>
+            <li><strong>Passageiros:</strong> Nenhum, espaço convertido em compartimento de carga.</li>
+            <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
+            <li><strong>Armamento:</strong> Nenhum</li>
+        </ul>
+        
+        <section class="terminal" id="vehicle-bay">
+            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Ficha Técnica Moedor - rpg</h2>
+        </section>
 
         <div id="travel-modal" class="modal">
             <div class="modal-content terminal">
