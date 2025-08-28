@@ -116,6 +116,24 @@
         <section class="terminal" id="vehicle-bay">
             <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Engrenagem Mestra - rpg</h2>
 
+            <!-- Campos de Vida e Escudos -->
+            <div class="status-bar-container">
+                <div class="status-bar vida" data-ship="cargueiro">
+                    <span class="status-label">VIDA</span>
+                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="cargueiro">&laquo;</button>
+                    <input type="number" class="status-input" id="vida-cargueiro" min="0" max="43">
+                    <span class="status-max" id="vida-cargueiro-max"></span>
+                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="cargueiro">&raquo;</button>
+                </div>
+                <div class="status-bar escudo" data-ship="cargueiro">
+                    <span class="status-label">ESCUDOS</span>
+                    <button class="status-btn" data-type="escudo" data-action="dec" data-ship="cargueiro">&laquo;</button>
+                    <input type="number" class="status-input" id="escudo-cargueiro" min="0" max="70">
+                    <span class="status-max" id="escudo-cargueiro-max"></span>
+                    <button class="status-btn" data-type="escudo" data-action="inc" data-ship="cargueiro">&raquo;</button>
+                </div>
+            </div>
+
             <ul>
                 <li><strong>Nivel de Desafio: </strong>09</li>
                 <li><strong>Defesa: </strong>Ref 16 (desprevenido 12), Fort 30; +12 de armadura </li>
@@ -170,6 +188,23 @@
         <section class="terminal" id="vehicle-bay">
             <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Cinzel - rpg</h2>
 
+            <div class="status-bar-container">
+                <div class="status-bar vida" data-ship="cinzel">
+                    <span class="status-label">VIDA</span>
+                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="cinzel">&laquo;</button>
+                    <input type="number" class="status-input" id="vida-cinzel" min="0" max="34">
+                    <span class="status-max" id="vida-cinzel-max"></span>
+                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="cinzel">&raquo;</button>
+                </div>
+                <div class="status-bar escudo" data-ship="cinzel">
+                    <span class="status-label">ESCUDOS</span>
+                    <button class="status-btn" data-type="escudo" data-action="dec" data-ship="cinzel">&laquo;</button>
+                    <input type="number" class="status-input" id="escudo-cinzel" min="0" max="40">
+                    <span class="status-max" id="escudo-cinzel-max"></span>
+                    <button class="status-btn" data-type="escudo" data-action="inc" data-ship="cinzel">&raquo;</button>
+                </div>
+            </div>
+
             <ul>
                 <li><strong>Nivel de Desafio: </strong>08</li>
                 <li><strong>Defesa: </strong>Ref 19 (desprevenido 12), Fort 22; +4 de armadura</li>
@@ -215,6 +250,23 @@
         
         <section class="terminal" id="vehicle-bay">
             <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Moedor - rpg</h2>
+
+            <div class="status-bar-container">
+                <div class="status-bar vida" data-ship="moedor">
+                    <span class="status-label">VIDA</span>
+                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="moedor">&laquo;</button>
+                    <input type="number" class="status-input" id="vida-moedor" min="0" max="22">
+                    <span class="status-max" id="vida-moedor-max"></span>
+                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="moedor">&raquo;</button>
+                </div>
+                <div class="status-bar escudo" data-ship="moedor">
+                    <span class="status-label">ESCUDOS</span>
+                    <button class="status-btn" data-type="escudo" data-action="dec" data-ship="moedor">&laquo;</button>
+                    <input type="number" class="status-input" id="escudo-moedor" min="0" max="16">
+                    <span class="status-max" id="escudo-moedor-max"></span>
+                    <button class="status-btn" data-type="escudo" data-action="inc" data-ship="moedor">&raquo;</button>
+                </div>
+            </div>
 
             <ul>
                 <li><strong>Nivel de Desafio: </strong>02</li>
@@ -278,6 +330,7 @@
     </div>
 
     <script src="fuel.js"></script>
+    <script src="status.js"></script>
 </body>
 
 </html>

@@ -342,3 +342,80 @@ button {
 i.fa-solid {
     margin-right: 10px;
 }
+
+/* Barra de status de Vida/Escudo */
+.status-bar-container {
+    margin: 25px 0 30px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 420px;
+    max-width: 98%;
+    border-radius: 8px;
+    padding: 8px 0;
+    font-size: 1.3em;
+    font-weight: bold;
+    box-shadow: 0 0 8px 2px rgba(0,0,0,0.2);
+    margin-bottom: 2px;
+    gap: 10px;
+}
+
+.status-bar.vida {
+    background: #a72626;
+    color: #fff;
+    border: 2px solid #fff0f0;
+}
+
+.status-bar.escudo {
+    background: #7c3aed;
+    color: #fff;
+    border: 2px solid #e0d0ff;
+}
+
+.status-label {
+    margin-right: 18px;
+    font-size: 1.1em;
+    letter-spacing: 1px;
+    min-width: 70px;
+    text-align: right;
+}
+
+.status-btn {
+    background: transparent;
+    color: #fff;
+    border: none;
+    font-size: 1.4em;
+    padding: 0 10px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.status-btn:hover {
+    color: #ffd700;
+}
+
+.status-input {
+    width: 60px;
+    text-align: center;
+    font-size: 1.1em;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid #fff;
+    color: #fff;
+    border-radius: 4px;
+    margin: 0 6px;
+}
+
+.status-max {
+    margin: 0 8px;
+    font-size: 1em;
+    color: #fff;
+    opacity: 0.8;
+    min-width: 40px;
+    display: inline-block;
+}
