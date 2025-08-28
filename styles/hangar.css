@@ -403,7 +403,7 @@ i.fa-solid {
 .status-input {
     width: 80px;
     text-align: center;
-    font-size: 1em;
+    font-size: .8em;
     background: transparent;
     border: none;
     color: #fff;
@@ -412,14 +412,16 @@ i.fa-solid {
     outline: none;
     box-shadow: none;
     appearance: textfield;
-    /* Remove setas no Firefox */
     -moz-appearance: textfield;
     /* Remove setas no Chrome/Safari/Edge */
+    text-shadow: 0 0 2px #00FF41, 0 0 2px #00FF41;
+    font-weight: bold;
+    letter-spacing: 2px;
+    transition: none;
 }
-.status-input::-webkit-outer-spin-button,
-.status-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+.status-input:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+    background: transparent;
 }
-
-/* ...existing code... */
