@@ -828,6 +828,8 @@ function initFicha() {
     function loadData() {
         const data = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
         document.querySelectorAll('input, select, textarea').forEach(el => {
+            // Ignora inputs do tipo file
+            if (el.type === 'file') return;
             // Campos dentro de pericia-item
             if (
                 el.closest('.pericia-item') &&
@@ -972,4 +974,104 @@ function initFicha() {
 }
 
 // Chama a função de inicialização imediatamente
+
 initFicha();
+
+// --- Exportação e Importação de Ficha ---
+const EXPORT_BTN = document.getElementById('exportar-ficha-btn');
+const IMPORT_BTN = document.getElementById('importar-ficha-btn');
+const IMPORT_INPUT = document.getElementById('importar-ficha-input');
+
+// Função para coletar todos os dados da ficha (igual ao saveData)
+function coletarDadosFicha() {
+    // Reaproveita a função saveData, mas retorna o objeto ao invés de salvar
+    // Copiado do saveData, mas sem localStorage
+    const data = {};
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.type === 'checkbox') {
+            data[el.id] = el.checked;
+        } else if (el.type === 'number') {
+            data[el.id] = el.value !== '' ? Number(el.value) : '';
+        } else {
+            data[el.id] = el.value;
+        }
+    });
+    // Listas dinâmicas
+    function getList(listId) {
+        return Array.from(document.querySelectorAll(`#${listId} > div > input[type="text"]`)).map(i => i.value);
+    }
+    data['talentos-list'] = getList('talentos-list');
+    data['poderes-list'] = getList('poderes-list');
+    data['idiomas-list'] = getList('idiomas-list');
+    data['aptidoes-list'] = getList('aptidoes-list');
+    // Equipamentos
+    data['equipment-list'] = Array.from(document.querySelectorAll('#equipment-list > div')).map(row => {
+        const inputs = row.querySelectorAll('input');
+        return {
+            nome: inputs[0]?.value || '',
+            custo: inputs[1]?.value || '',
+            peso: inputs[2]?.value || ''
+        };
+    });
+    // Anotações
+    const anotacoesEl = document.querySelector('textarea');
+    if (anotacoesEl) data['anotacoes'] = anotacoesEl.value;
+    return data;
+}
+
+// Exportar Ficha
+if (EXPORT_BTN) {
+    EXPORT_BTN.addEventListener('click', () => {
+        const data = coletarDadosFicha();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ficha-starwars.json';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    });
+}
+
+// Importar Ficha
+if (IMPORT_BTN && IMPORT_INPUT) {
+    IMPORT_BTN.addEventListener('click', () => {
+        IMPORT_INPUT.value = '';
+        IMPORT_INPUT.click();
+    });
+    IMPORT_INPUT.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                const data = JSON.parse(evt.target.result);
+                // Salva no localStorage para persistir
+                if (typeof SAVE_KEY !== 'undefined') {
+                    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+                }
+                // Atualiza tela usando a função já existente
+                if (typeof loadData === 'function') loadData();
+                if (typeof updateSheet === 'function') updateSheet();
+                // Notificação
+                const notif = document.getElementById('notificacao');
+                if (notif) {
+                    notif.textContent = '✅ Ficha importada com sucesso!';
+                    notif.classList.remove('ocultday');
+                    notif.classList.add('visivel');
+                    setTimeout(() => {
+                        notif.classList.remove('visivel');
+                        notif.classList.add('ocultday');
+                    }, 2500);
+                }
+            } catch (err) {
+                alert('Erro ao importar ficha: JSON inválido.');
+            }
+        };
+        reader.readAsText(file);
+    });
+}
