@@ -1,71 +1,94 @@
-// Configurações de máximos para cada nave
-const STATUS_CONFIG = {
-    cargueiro: { vida: 400, escudo: 80 },
-    cinzel:    { vida: 90, escudo: 15 },
-    moedor:    { vida: 50, escudo: 0 }
-};
+document.addEventListener('DOMContentLoaded', () => {
+    // Objeto contendo os dados de vida e escudos para cada nave/droid
+    const shipData = {
+        // Veículos: Autorais do Dur'toc
+        cargueiro: { vida: 400, escudo: 80 },
+        cinzel: { vida: 90, escudo: 40 },
+        moedor: { vida: 50, escudo: null }, // Moedor não tem escudo
+        
+        // Droids: Nenhum droid tem escudo
+        tino: { vida: 29, escudo: null }, // Astromech
+        vok: { vida: 10, escudo: null }, // Protocol
+        comboio: { vida: 5, escudo: null }, // Light Cargo
+        bruto: { vida: 60, escudo: null } // Heavy Cargo
+    };
 
-function getStatusKey(ship, type) {
-    return `status_${ship}_${type}`;
-}
+    // Função para carregar os valores salvos do localStorage
+    const loadStatus = () => {
+        for (const ship in shipData) {
+            // Carregar Vida
+            const vidaInput = document.getElementById(`vida-${ship}`);
+            if (vidaInput) {
+                const savedVida = localStorage.getItem(`vida-${ship}`);
+                vidaInput.value = savedVida !== null ? savedVida : shipData[ship].vida;
+            }
 
-function loadStatus(ship, type) {
-    const max = STATUS_CONFIG[ship][type];
-    const saved = localStorage.getItem(getStatusKey(ship, type));
-    return saved !== null ? Math.max(0, Math.min(max, parseInt(saved))) : max;
-}
+            // Carregar Escudo (se existir)
+            const escudoInput = document.getElementById(`escudo-${ship}`);
+            if (escudoInput) {
+                const savedEscudo = localStorage.getItem(`escudo-${ship}`);
+                escudoInput.value = savedEscudo !== null ? savedEscudo : shipData[ship].escudo;
+            }
+        }
+    };
 
-function saveStatus(ship, type, value) {
-    localStorage.setItem(getStatusKey(ship, type), value);
-}
+    // Função para salvar um valor no localStorage
+    const saveStatus = (ship, type, value) => {
+        localStorage.setItem(`${type}-${ship}`, value);
+    };
 
-function updateStatusUI(ship, type) {
-    const max = STATUS_CONFIG[ship][type];
-    const input = document.getElementById(`${type}-${ship}`);
-    const maxSpan = document.getElementById(`${type}-${ship}-max`);
-    const value = loadStatus(ship, type);
-    input.value = value;
-    input.max = max;
-    maxSpan.textContent = ` / ${max}`;
-}
+    // Função para inicializar os valores máximos e os event listeners
+    const initializeStatusBars = () => {
+        const statusBars = document.querySelectorAll('.status-bar');
 
-function setupStatusBar(ship) {
-    // Se for o moedor, só vida
-    const types = ship === "moedor" ? ["vida"] : ["vida", "escudo"];
-    types.forEach(type => {
-        updateStatusUI(ship, type);
+        statusBars.forEach(bar => {
+            const ship = bar.dataset.ship;
+            
+            if (shipData[ship]) {
+                // Preencher valor máximo de Vida
+                const vidaMaxSpan = document.getElementById(`vida-${ship}-max`);
+                if (vidaMaxSpan) {
+                    vidaMaxSpan.textContent = `/ ${shipData[ship].vida}`;
+                }
+                
+                // Preencher valor máximo de Escudo (se existir)
+                const escudoMaxSpan = document.getElementById(`escudo-${ship}-max`);
+                if (escudoMaxSpan && shipData[ship].escudo !== null) {
+                    escudoMaxSpan.textContent = `/ ${shipData[ship].escudo}`;
+                }
+            }
+        });
 
-        // Botões
-        document.querySelectorAll(`.status-btn[data-ship="${ship}"][data-type="${type}"]`).forEach(btn => {
-            btn.addEventListener('click', () => {
-                const action = btn.getAttribute('data-action');
+        const buttons = document.querySelectorAll('.status-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const ship = button.dataset.ship;
+                const type = button.dataset.type;
+                const action = button.dataset.action;
                 const input = document.getElementById(`${type}-${ship}`);
-                let val = parseInt(input.value) || 0;
-                const max = STATUS_CONFIG[ship][type];
-                const step = 5;
-                if (action === 'inc' && val < max) val = Math.min(val + step, max);
-                if (action === 'dec' && val > 0) val = Math.max(val - step, 0);
-                input.value = val;
-                saveStatus(ship, type, val);
-                updateStatusUI(ship, type);
+                
+                let currentValue = parseInt(input.value, 10);
+                if (action === 'inc') {
+                    currentValue++;
+                } else {
+                    currentValue--;
+                }
+                input.value = currentValue;
+                saveStatus(ship, type, currentValue);
             });
         });
 
-        // Input manual
-        const input = document.getElementById(`${type}-${ship}`);
-        input.addEventListener('input', () => {
-            let val = parseInt(input.value) || 0;
-            const max = STATUS_CONFIG[ship][type];
-            if (val > max) val = max;
-            if (val < 0) val = 0;
-            input.value = val;
-            saveStatus(ship, type, val);
-            updateStatusUI(ship, type);
+        const inputs = document.querySelectorAll('.status-input');
+        inputs.forEach(input => {
+            input.addEventListener('change', () => {
+                const ship = input.id.split('-')[1];
+                const type = input.id.split('-')[0];
+                saveStatus(ship, type, input.value);
+            });
         });
-    });
-}
+    };
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', () => {
-    Object.keys(STATUS_CONFIG).forEach(setupStatusBar);
+    // Inicialização
+    initializeStatusBars();
+    loadStatus();
 });

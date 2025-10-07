@@ -90,6 +90,13 @@
             </div>
         </section>
 
+        <section class="terminal">
+            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Codigos de Entrada e Saida do Hiperespaço</h2>
+
+            <p><strong>Código de Saida para o Hiperespaço: </strong>CAPI-MR-IMC14427G-OUTGOING</p>
+            <p><strong>Código de Entrada para a Orbita: </strong>CARI-LOG-IMC14427G-INBOUND`</p>
+        </section>
+
         <div style="text-align: center; margin-top: 40px;">
             <button id="open-travel-modal-btn" class="main-action-btn"><i class="fa-solid fa-rocket"></i> > FAZER VIAGEM < </button>
         </div>
@@ -157,13 +164,6 @@
                     <strong>> 2x Canhões de Íons: </strong>+8 (-12* contra alvos menores que Colossal), <strong>Dano:</strong> 4d10×2 <br>
                 </li>
             </ul>
-        </section>
-
-        <section class="terminal">
-            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Codigos de Entrada e Saida do Hiperespaço</h2>
-
-            <p><strong>Código de Saida para o Hiperespaço: </strong>CAPI-MR-IMC14427G-OUTGOING</p>
-            <p><strong>Código de Entrada para a Orbita: </strong>CARI-LOG-IMC14427G-INBOUND`</p>
         </section>
 
         <hr class="section-divider">
@@ -281,7 +281,7 @@
 
         <hr class="section-divider">
 
-        <h1 class="section-title"><i class="fa-solid fa-robot"></i> Droids</h1>
+        <h2 class="section-title"><i class="fa-solid fa-robot"></i> Droids</h2>
 
         <h2 style="font-size: 52px; text-align: center;">R5-T1N (Tino)</h2>
         <p>
@@ -297,10 +297,19 @@
 
         <section class="terminal" id="vehicle-bay">
             <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica R5-T1N - rpg</h2>
+            <div class="status-bar-container">
+                <div class="status-bar vida" data-ship="tino">
+                    <span class="status-label">VIDA</span>
+                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="tino">&laquo;</button>
+                    <input type="number" class="status-input" id="vida-tino" min="0" max="29">
+                    <span class="status-max" id="vida-tino-max"></span>
+                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="tino">&raquo;</button>
+                </div>
+            </div>
             <ul>
                 <li><strong>Nivel de Desafio: </strong>04</li>
                 <li><strong>Defesa: </strong>Ref 20 (desprevenido 17), Fort 13, Von 16</li>
-                <li><strong>PV: </strong>29; <strong>Limiar: </strong>13</li>
+                <li><strong>Limiar: </strong>13</li>
                 <li><strong>Velocidade: </strong>6 quadrados (com rodas), 4 quadrados (andarilho), 9 quadrados (vôo)</li>
                 <li><strong>Ataque Físico: </strong>sonda de eletro-choque +3 (1d8-1 ion)</li>
                 <li><strong>Atributos: </strong>Vig 8, Des 16, Con -, Int 17, Sab 13, Car 10</li>
@@ -325,10 +334,19 @@
 
         <section class="terminal" id="vehicle-bay">
             <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica C3-VOK - rpg</h2>
+            <div class="status-bar-container">
+                <div class="status-bar vida" data-ship="vok">
+                    <span class="status-label">VIDA</span>
+                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="vok">&laquo;</button>
+                    <input type="number" class="status-input" id="vida-vok" min="0" max="10">
+                    <span class="status-max" id="vida-vok-max"></span>
+                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="vok">&raquo;</button>
+                </div>
+            </div>
             <ul>
                 <li><strong>Nivel de Desafio: </strong>01</li>
                 <li><strong>Defesa: </strong>Ref 10 (desprevenido 10), Fort 8, Von 12</li>
-                <li><strong>PV: </strong>10; <strong>Limiar: </strong>8</li>
+                <li><strong>Limiar: </strong>8</li>
                 <li><strong>Velocidade: </strong>6 quadrados (andarilho)</li>
                 <li><strong>Ataque Físico: </strong>desarmado +1 (1d3-2)</li>
                 <li><strong>Atributos: </strong>Vig 7, Des 10, Con -, Int 13, Sab 14, Car 13</li>
@@ -353,10 +371,19 @@
 
         <section class="terminal" id="vehicle-bay">
             <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica USM-07 - rpg</h2>
+            <div class="status-bar-container">
+                <div class="status-bar vida" data-ship="comboio">
+                    <span class="status-label">VIDA</span>
+                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="comboio">&laquo;</button>
+                    <input type="number" class="status-input" id="vida-comboio" min="0" max="5">
+                    <span class="status-max" id="vida-comboio-max"></span>
+                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="comboio">&raquo;</button>
+                </div>
+            </div>
             <ul>
                 <li><strong>Nivel de Desafio: </strong>0</li>
                 <li><strong>Defesa: </strong>Ref 15 (desprevenido 12), Fort 11, Von 10</li>
-                <li><strong>PV: </strong>5; <strong>Limiar: </strong>11</li>
+                <li><strong><strong>Limiar: </strong>11</li>
                 <li><strong>Velocidade: </strong>4 quadrados (com rodas)</li>
                 <li><strong>Ataque Físico: </strong>Nenhum</li>
                 <li><strong>Atributos: </strong>Vig 13, Des 16, Con -, Int 7, Sab 10, Car 5</li>
@@ -381,10 +408,19 @@
 
         <section class="terminal" id="vehicle-bay">
             <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica CL-R - rpg</h2>
+            <div class="status-bar-container">
+                <div class="status-bar vida" data-ship="bruto">
+                    <span class="status-label">VIDA</span>
+                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="bruto">&laquo;</button>
+                    <input type="number" class="status-input" id="vida-bruto" min="0" max="60">
+                    <span class="status-max" id="vida-bruto-max"></span>
+                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="bruto">&raquo;</button>
+                </div>
+            </div>
             <ul>
                 <li><strong>Nivel de Desafio: </strong>01</li>
                 <li><strong>Defesa: </strong>Ref 7 (desprevenido 7), Fort 17, Von 10</li>
-                <li><strong>PV: </strong>60; <strong>RD: </strong>5; <strong>Limiar: </strong>22</li>
+                <li><strong>RD: </strong>5; <strong>Limiar: </strong>22</li>
                 <li><strong>Velocidade: </strong>6 quadrados (andarilho)</li>
                 <li><strong>Ataque Físico: </strong>pancada +9 (1d6+7)</li>
                 <li><strong>Atributos: </strong>Vig 25, Des 7, Con -, Int 8, Sab 11, Car 6</li>
