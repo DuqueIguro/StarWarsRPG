@@ -984,38 +984,59 @@ const IMPORT_INPUT = document.getElementById('importar-ficha-input');
 
 // Função para coletar todos os dados da ficha (igual ao saveData)
 function coletarDadosFicha() {
-    // Reaproveita a função saveData, mas retorna o objeto ao invés de salvar
-    // Copiado do saveData, mas sem localStorage
-    const data = {};
-    document.querySelectorAll('input, select, textarea').forEach(el => {
-        if (el.type === 'checkbox') {
-            data[el.id] = el.checked;
-        } else if (el.type === 'number') {
-            data[el.id] = el.value !== '' ? Number(el.value) : '';
-        } else {
-            data[el.id] = el.value;
-        }
-    });
-    // Listas dinâmicas
-    function getList(listId) {
-        return Array.from(document.querySelectorAll(`#${listId} > div > input[type="text"]`)).map(i => i.value);
-    }
-    data['talentos-list'] = getList('talentos-list');
-    data['poderes-list'] = getList('poderes-list');
-    data['idiomas-list'] = getList('idiomas-list');
-    data['aptidoes-list'] = getList('aptidoes-list');
-    // Equipamentos
-    data['equipment-list'] = Array.from(document.querySelectorAll('#equipment-list > div')).map(row => {
-        const inputs = row.querySelectorAll('input');
-        return {
-            nome: inputs[0]?.value || '',
-            custo: inputs[1]?.value || '',
-            peso: inputs[2]?.value || ''
-        };
-    });
-    // Anotações
-    const anotacoesEl = document.querySelector('textarea');
-    if (anotacoesEl) data['anotacoes'] = anotacoesEl.value;
+    // Exporta no formato compatível com backup.js
+    const data = {
+        nome: document.getElementById('nome').value,
+        jogador: document.getElementById('jogador').value,
+        classe: document.getElementById('classe').value,
+        nivel: document.getElementById('nivel').value,
+        especie: document.getElementById('especie').value,
+        tamanho: document.getElementById('tamanho').value,
+        idade: document.getElementById('idade').value,
+        sexo: document.getElementById('sexo').value,
+        peso: document.getElementById('peso').value,
+        altura: document.getElementById('altura').value,
+        destino: document.getElementById('destino').value,
+        atributos: {
+            vig: document.getElementById('vig-base').value,
+            des: document.getElementById('des-base').value,
+            con: document.getElementById('con-base').value,
+            int: document.getElementById('int-base').value,
+            sab: document.getElementById('sab-base').value,
+            car: document.getElementById('car-base').value,
+        },
+        defesasOutros: {
+            fort: document.getElementById('def-outros-fort').value,
+            ref: document.getElementById('def-outros-ref').value,
+            von: document.getElementById('def-outros-von').value,
+        },
+        combate: {
+            pvAtual: document.getElementById('pv-atual').value,
+            pvTotal: document.getElementById('pv-total').value,
+            velocidade: document.getElementById('velocidade').value,
+            bab: document.getElementById('bab').value,
+            pontosForca: document.getElementById('pontos-forca').value,
+        },
+        creditos: document.getElementById('creditos').value,
+        condicao: document.getElementById('condicao').value,
+        ladoNegro: document.getElementById('lado-negro').value,
+        pontosDestino: document.getElementById('pontos-destino').value,
+        danoLimite: document.getElementById('dano-limite').value || '',
+        anotacoes: document.querySelector('textarea') ? document.querySelector('textarea').value : '',
+        // Listas dinâmicas
+        talentos: Array.from(document.querySelectorAll('#talentos-list > div > input[type="text"]')).map(i => i.value),
+        poderes: Array.from(document.querySelectorAll('#poderes-list > div > input[type="text"]')).map(i => i.value),
+        idiomas: Array.from(document.querySelectorAll('#idiomas-list > div > input[type="text"]')).map(i => i.value),
+        aptidoes: Array.from(document.querySelectorAll('#aptidoes-list > div > input[type="text"]')).map(i => i.value),
+        equipamentos: Array.from(document.querySelectorAll('#equipment-list > div')).map(row => {
+            const inputs = row.querySelectorAll('input');
+            return {
+                nome: inputs[0]?.value || '',
+                custo: inputs[1]?.value || '',
+                peso: inputs[2]?.value || ''
+            };
+        })
+    };
     return data;
 }
 
@@ -1049,6 +1070,7 @@ if (IMPORT_BTN && IMPORT_INPUT) {
         const reader = new FileReader();
         reader.onload = function(evt) {
             try {
+                console.log('Conteúdo lido do arquivo para importação:', evt.target.result);
                 const data = JSON.parse(evt.target.result);
                 // Salva no localStorage para persistir
                 if (typeof SAVE_KEY !== 'undefined') {
@@ -1070,6 +1092,7 @@ if (IMPORT_BTN && IMPORT_INPUT) {
                 }
             } catch (err) {
                 alert('Erro ao importar ficha: JSON inválido.');
+                console.error('Erro ao importar ficha:', err);
             }
         };
         reader.readAsText(file);
