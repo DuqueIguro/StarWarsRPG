@@ -121,49 +121,51 @@
         </ul>
 
         <section class="terminal" id="vehicle-bay">
-            <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Engrenagem Mestra - rpg</h2>
-
-            <!-- Campos de Vida e Escudos -->
-            <div class="status-bar-container">
-                <div class="status-bar vida" data-ship="cargueiro">
-                    <span class="status-label">VIDA</span>
-                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="cargueiro">&laquo;</button>
-                    <input type="number" class="status-input" id="vida-cargueiro" min="0" max="43">
-                    <span class="status-max" id="vida-cargueiro-max"></span>
-                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="cargueiro">&raquo;</button>
-                </div>
-                <div class="status-bar escudo" data-ship="cargueiro">
-                    <span class="status-label">ESCUDOS</span>
-                    <button class="status-btn" data-type="escudo" data-action="dec" data-ship="cargueiro">&laquo;</button>
-                    <input type="number" class="status-input" id="escudo-cargueiro" min="0" max="70">
-                    <span class="status-max" id="escudo-cargueiro-max"></span>
-                    <button class="status-btn" data-type="escudo" data-action="inc" data-ship="cargueiro">&raquo;</button>
-                </div>
+            <div class="terminal-header-collapsible">
+                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Engrenagem Mestra - rpg</h2>
+                <p class="toggle-prompt">// Exibir Dados...</p>
             </div>
-
-            <ul>
-                <li><strong>Nivel de Desafio: </strong>09</li>
-                <li><strong>Defesa: </strong>Ref 16 (desprevenido 12), Fort 30; +12 de armadura </li>
-                <li><strong>Velocidade: </strong>vôo 12 quadrados (velocidade max. 800 km/h), vôo 3 quadrados (escala de nave interestelar);</li>
-                <li><strong>Espaço de Luta: </strong>2 quadrados (escala de nave interestelar);</li>
-                <li>
-                    <strong>Cobertura: </strong>Total;
-                    <strong>ATK Base: </strong>+2;
-                    <strong>Agarrar: </strong>+43;
-                </li>
-                <li><strong>Atributos: </strong>Vig 43, Des 16, Con -, Int 16</li>
-                <li><strong>Perícias: </strong>Iniciativa +5, Mecânica +9(+16*), Percepção +6, Pilotar +1(+8*), Usar Computador +9(+16*)</li>
-                <li><strong>Tripulação: </strong>8 (Habilidos)</li>
-                <li><strong>Passageiros: </strong>Até 13(Totalizando 20)</li>
-                <li><strong>Consumivéis: </strong>6 Meses</li>
-                <li><strong>Veiculos Carregados: </strong>Até 2 Caças Estelares</li>
-                <li><strong>HiperDrive: </strong>Classe 1.2 (Primário), Classe 9 (Reserva)</li>
-                <li><strong>Disponibilidade: </strong>Unica; <strong>Custo: </strong>Não disponivél para Venda</li>
-                <li><strong>Armamento: </strong> <br>
-                    <strong>> 2x Canhões de Laser Duplos: </strong>+8 (-12* contra alvos menores que Colossal), <strong>Dano:</strong> 5d10×2 <br>
-                    <strong>> 2x Canhões de Íons: </strong>+8 (-12* contra alvos menores que Colossal), <strong>Dano:</strong> 4d10×2 <br>
-                </li>
-            </ul>
+            <div class="collapsible-content collapsed">
+                <div class="status-bar-container">
+                    <div class="status-bar vida" data-ship="cargueiro">
+                        <span class="status-label">VIDA</span>
+                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="cargueiro">&laquo;</button>
+                        <input type="number" class="status-input" id="vida-cargueiro" min="0" max="43">
+                        <span class="status-max" id="vida-cargueiro-max"></span>
+                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="cargueiro">&raquo;</button>
+                    </div>
+                    <div class="status-bar escudo" data-ship="cargueiro">
+                        <span class="status-label">ESCUDOS</span>
+                        <button class="status-btn" data-type="escudo" data-action="dec" data-ship="cargueiro">&laquo;</button>
+                        <input type="number" class="status-input" id="escudo-cargueiro" min="0" max="70">
+                        <span class="status-max" id="escudo-cargueiro-max"></span>
+                        <button class="status-btn" data-type="escudo" data-action="inc" data-ship="cargueiro">&raquo;</button>
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Nivel de Desafio: </strong>09</li>
+                    <li><strong>Defesa: </strong>Ref 16 (desprevenido 12), Fort 30; +12 de armadura </li>
+                    <li><strong>Velocidade: </strong>vôo 12 quadrados (velocidade max. 800 km/h), vôo 3 quadrados (escala de nave interestelar);</li>
+                    <li><strong>Espaço de Luta: </strong>2 quadrados (escala de nave interestelar);</li>
+                    <li>
+                        <strong>Cobertura: </strong>Total;
+                        <strong>ATK Base: </strong>+2;
+                        <strong>Agarrar: </strong>+43;
+                    </li>
+                    <li><strong>Atributos: </strong>Vig 43, Des 16, Con -, Int 16</li>
+                    <li><strong>Perícias: </strong>Iniciativa +5, Mecânica +9(+16*), Percepção +6, Pilotar +1(+8*), Usar Computador +9(+16*)</li>
+                    <li><strong>Tripulação: </strong>8 (Habilidos)</li>
+                    <li><strong>Passageiros: </strong>Até 13(Totalizando 20)</li>
+                    <li><strong>Consumivéis: </strong>6 Meses</li>
+                    <li><strong>Veiculos Carregados: </strong>Até 2 Caças Estelares</li>
+                    <li><strong>HiperDrive: </strong>Classe 1.2 (Primário), Classe 9 (Reserva)</li>
+                    <li><strong>Disponibilidade: </strong>Unica; <strong>Custo: </strong>Não disponivél para Venda</li>
+                    <li><strong>Armamento: </strong> <br>
+                        <strong>> 2x Canhões de Laser Duplos: </strong>+8 (-12* contra alvos menores que Colossal), <strong>Dano:</strong> 5d10×2 <br>
+                        <strong>> 2x Canhões de Íons: </strong>+8 (-12* contra alvos menores que Colossal), <strong>Dano:</strong> 4d10×2 <br>
+                    </li>
+                </ul>
+            </div>
         </section>
 
         <hr class="section-divider">
@@ -186,48 +188,51 @@
         </ul>
 
         <section class="terminal" id="vehicle-bay">
-            <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Cinzel - rpg</h2>
-
-            <div class="status-bar-container">
-                <div class="status-bar vida" data-ship="cinzel">
-                    <span class="status-label">VIDA</span>
-                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="cinzel">&laquo;</button>
-                    <input type="number" class="status-input" id="vida-cinzel" min="0" max="34">
-                    <span class="status-max" id="vida-cinzel-max"></span>
-                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="cinzel">&raquo;</button>
-                </div>
-                <div class="status-bar escudo" data-ship="cinzel">
-                    <span class="status-label">ESCUDOS</span>
-                    <button class="status-btn" data-type="escudo" data-action="dec" data-ship="cinzel">&laquo;</button>
-                    <input type="number" class="status-input" id="escudo-cinzel" min="0" max="40">
-                    <span class="status-max" id="escudo-cinzel-max"></span>
-                    <button class="status-btn" data-type="escudo" data-action="inc" data-ship="cinzel">&raquo;</button>
-                </div>
+            <div class="terminal-header-collapsible">
+                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Cinzel - rpg</h2>
+                <p class="toggle-prompt">// Exibir Dados...</p>
             </div>
-
-            <ul>
-                <li><strong>Nivel de Desafio: </strong>08</li>
-                <li><strong>Defesa: </strong>Ref 19 (desprevenido 12), Fort 22; +4 de armadura</li>
-                <li><strong>Velocidade: </strong>vôo 16 quadrados (velocidade max. 1.000 km/h), vôo 5 quadrados (escala de nave interestelar)</li>
-                <li><strong>Espaço de Luta: </strong>3x3 ou 1 quadrado (escala de nave interestelar)</li>
-                <li>
-                    <strong>Cobertura: </strong>Total;
-                    <strong>ATK Base: </strong>+9;
-                    <strong>Agarrar: </strong>+46;
-                </li>
-                <li><strong>Atributos: </strong>Vig 34, Des 24, Con –, Int 16</li>
-                <li><strong>Perícias: </strong>Iniciativa +12, Mecânica +12, Percepção +8, Pilotar +16, Usar Computador +12</li>
-                <li><strong>Tripulação: </strong>1 Piloto (Dur'toc) e 1 dróide assistente;</li>
-                <li><strong>Passageiros: </strong>Nenhum</li>
-                <li><strong>Armazenamento:</strong> <br>
-                    <strong>> Compartimento de Carga:</strong> 150 quilos <br>
-                    <strong>> Consumivéis: 2 dias</strong>
-                </li>
-                <li><strong>Disponibilidade: </strong>Unica; <strong>Custo: </strong>Não disponivél para Venda</li>
-                <li><strong>Armamento: </strong> <br>
-                    <strong>> 2x Canhões de Laser : </strong>+10, <strong>Dano:</strong> 5d10×2 <br>
-                </li>
-            </ul>
+            <div class="collapsible-content collapsed">
+                <div class="status-bar-container">
+                    <div class="status-bar vida" data-ship="cinzel">
+                        <span class="status-label">VIDA</span>
+                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="cinzel">&laquo;</button>
+                        <input type="number" class="status-input" id="vida-cinzel" min="0" max="34">
+                        <span class="status-max" id="vida-cinzel-max"></span>
+                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="cinzel">&raquo;</button>
+                    </div>
+                    <div class="status-bar escudo" data-ship="cinzel">
+                        <span class="status-label">ESCUDOS</span>
+                        <button class="status-btn" data-type="escudo" data-action="dec" data-ship="cinzel">&laquo;</button>
+                        <input type="number" class="status-input" id="escudo-cinzel" min="0" max="40">
+                        <span class="status-max" id="escudo-cinzel-max"></span>
+                        <button class="status-btn" data-type="escudo" data-action="inc" data-ship="cinzel">&raquo;</button>
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Nivel de Desafio: </strong>08</li>
+                    <li><strong>Defesa: </strong>Ref 19 (desprevenido 12), Fort 22; +4 de armadura</li>
+                    <li><strong>Velocidade: </strong>vôo 16 quadrados (velocidade max. 1.000 km/h), vôo 5 quadrados (escala de nave interestelar)</li>
+                    <li><strong>Espaço de Luta: </strong>3x3 ou 1 quadrado (escala de nave interestelar)</li>
+                    <li>
+                        <strong>Cobertura: </strong>Total;
+                        <strong>ATK Base: </strong>+9;
+                        <strong>Agarrar: </strong>+46;
+                    </li>
+                    <li><strong>Atributos: </strong>Vig 34, Des 24, Con –, Int 16</li>
+                    <li><strong>Perícias: </strong>Iniciativa +12, Mecânica +12, Percepção +8, Pilotar +16, Usar Computador +12</li>
+                    <li><strong>Tripulação: </strong>1 Piloto (Dur'toc) e 1 dróide assistente;</li>
+                    <li><strong>Passageiros: </strong>Nenhum</li>
+                    <li><strong>Armazenamento:</strong> <br>
+                        <strong>> Compartimento de Carga:</strong> 150 quilos <br>
+                        <strong>> Consumivéis: 2 dias</strong>
+                    </li>
+                    <li><strong>Disponibilidade: </strong>Unica; <strong>Custo: </strong>Não disponivél para Venda</li>
+                    <li><strong>Armamento: </strong> <br>
+                        <strong>> 2x Canhões de Laser : </strong>+10, <strong>Dano:</strong> 5d10×2 <br>
+                    </li>
+                </ul>
+            </div>
         </section>
         
         <hr class="section-divider">
@@ -249,34 +254,36 @@
         </ul>
         
         <section class="terminal" id="vehicle-bay">
-            <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Moedor - rpg</h2>
-
-            <div class="status-bar-container">
-                <div class="status-bar vida" data-ship="moedor">
-                    <span class="status-label">VIDA</span>
-                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="moedor">&laquo;</button>
-                    <input type="number" class="status-input" id="vida-moedor" min="0" max="50">
-                    <span class="status-max" id="vida-moedor-max"></span>
-                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="moedor">&raquo;</button>
-                </div>
+            <div class="terminal-header-collapsible">
+                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Moedor - rpg</h2>
+                <p class="toggle-prompt">// Exibir Dados...</p>
             </div>
-
-            <ul>
-                <li><strong>Nivel de Desafio: </strong>02</li>
-                <li><strong>Defesa: </strong>Ref 14 (desprevenido 10), Fort 16; +3 de armadura</li>
-                <li><strong>Velocidade: </strong>14 quadrados (velocidade max. 350 km/h)</li>
-                <li><strong>Espaço de Luta: </strong>2x2;</li>
-                <li>
-                    <strong>Cobertura: </strong>Nenhuma;
-                    <strong>ATK Base: </strong>N/A;
-                    <strong>Agarrar: </strong>+16;
-                </li>
-                <li><strong>Atributos: </strong>Vig 22, Des 16, Con –, Int 12</li>
-                <li><strong>Perícias: </strong>Iniciativa +10, Percepção +6, Pilotar +14</li>
-                <li><strong>Consumivéis: </strong>Até 1 dia</li>
-                <li><strong>Disponibilidade: </strong>Unica; <strong>Custo: </strong>Não disponivél para Venda</li>
-                
-            </ul>
+            <div class="collapsible-content collapsed">
+                <div class="status-bar-container">
+                    <div class="status-bar vida" data-ship="moedor">
+                        <span class="status-label">VIDA</span>
+                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="moedor">&laquo;</button>
+                        <input type="number" class="status-input" id="vida-moedor" min="0" max="50">
+                        <span class="status-max" id="vida-moedor-max"></span>
+                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="moedor">&raquo;</button>
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Nivel de Desafio: </strong>02</li>
+                    <li><strong>Defesa: </strong>Ref 14 (desprevenido 10), Fort 16; +3 de armadura</li>
+                    <li><strong>Velocidade: </strong>14 quadrados (velocidade max. 350 km/h)</li>
+                    <li><strong>Espaço de Luta: </strong>2x2;</li>
+                    <li>
+                        <strong>Cobertura: </strong>Nenhuma;
+                        <strong>ATK Base: </strong>N/A;
+                        <strong>Agarrar: </strong>+16;
+                    </li>
+                    <li><strong>Atributos: </strong>Vig 22, Des 16, Con –, Int 12</li>
+                    <li><strong>Perícias: </strong>Iniciativa +10, Percepção +6, Pilotar +14</li>
+                    <li><strong>Consumivéis: </strong>Até 1 dia</li>
+                    <li><strong>Disponibilidade: </strong>Unica; <strong>Custo: </strong>Não disponivél para Venda</li>
+                </ul>
+            </div>
         </section>
 
         <hr class="section-divider">
@@ -296,26 +303,31 @@
         </ul>
 
         <section class="terminal" id="vehicle-bay">
-            <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica R5-T1N - rpg</h2>
-            <div class="status-bar-container">
-                <div class="status-bar vida" data-ship="tino">
-                    <span class="status-label">VIDA</span>
-                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="tino">&laquo;</button>
-                    <input type="number" class="status-input" id="vida-tino" min="0" max="29">
-                    <span class="status-max" id="vida-tino-max"></span>
-                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="tino">&raquo;</button>
-                </div>
+            <div class="terminal-header-collapsible">
+                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica R5-T1N - rpg</h2>
+                <p class="toggle-prompt">// Exibir Dados...</p>
             </div>
-            <ul>
-                <li><strong>Nivel de Desafio: </strong>04</li>
-                <li><strong>Defesa: </strong>Ref 20 (desprevenido 17), Fort 13, Von 16</li>
-                <li><strong>Limiar: </strong>13</li>
-                <li><strong>Velocidade: </strong>6 quadrados (com rodas), 4 quadrados (andarilho), 9 quadrados (vôo)</li>
-                <li><strong>Ataque Físico: </strong>sonda de eletro-choque +3 (1d8-1 ion)</li>
-                <li><strong>Atributos: </strong>Vig 8, Des 16, Con -, Int 17, Sab 13, Car 10</li>
-                <li><strong>Perícias: </strong>Iniciativa +11, Mecânica +16, Percepção +9, Pilotar +11, Furtividade +16, Usar Computador +16</li>
-                <li><strong>Talentos: </strong>Foco em Perícia (Mecânica), Foco em Perícia (Usar Computador), Treinamento em Perícia (Pilotar)</li>
-            </ul>
+            <div class="collapsible-content collapsed">
+                <div class="status-bar-container">
+                    <div class="status-bar vida" data-ship="tino">
+                        <span class="status-label">VIDA</span>
+                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="tino">&laquo;</button>
+                        <input type="number" class="status-input" id="vida-tino" min="0" max="29">
+                        <span class="status-max" id="vida-tino-max"></span>
+                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="tino">&raquo;</button>
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Nivel de Desafio: </strong>04</li>
+                    <li><strong>Defesa: </strong>Ref 20 (desprevenido 17), Fort 13, Von 16</li>
+                    <li><strong>PV: </strong>29; <strong>Limiar: </strong>13</li>
+                    <li><strong>Velocidade: </strong>6 quadrados (com rodas), 4 quadrados (andarilho), 9 quadrados (vôo)</li>
+                    <li><strong>Ataque Físico: </strong>sonda de eletro-choque +3 (1d8-1 ion)</li>
+                    <li><strong>Atributos: </strong>Vig 8, Des 16, Con -, Int 17, Sab 13, Car 10</li>
+                    <li><strong>Perícias: </strong>Iniciativa +11, Mecânica +16, Percepção +9, Pilotar +11, Furtividade +16, Usar Computador +16</li>
+                    <li><strong>Talentos: </strong>Foco em Perícia (Mecânica), Foco em Perícia (Usar Computador), Treinamento em Perícia (Pilotar)</li>
+                </ul>
+            </div>
         </section>
 
         <hr class="section-divider">
@@ -333,26 +345,31 @@
         </ul>
 
         <section class="terminal" id="vehicle-bay">
-            <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica C3-VOK - rpg</h2>
-            <div class="status-bar-container">
-                <div class="status-bar vida" data-ship="vok">
-                    <span class="status-label">VIDA</span>
-                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="vok">&laquo;</button>
-                    <input type="number" class="status-input" id="vida-vok" min="0" max="10">
-                    <span class="status-max" id="vida-vok-max"></span>
-                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="vok">&raquo;</button>
-                </div>
+            <div class="terminal-header-collapsible">
+                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica C3-VOK - rpg</h2>
+                <p class="toggle-prompt">// Exibir Dados...</p>
             </div>
-            <ul>
-                <li><strong>Nivel de Desafio: </strong>01</li>
-                <li><strong>Defesa: </strong>Ref 10 (desprevenido 10), Fort 8, Von 12</li>
-                <li><strong>Limiar: </strong>8</li>
-                <li><strong>Velocidade: </strong>6 quadrados (andarilho)</li>
-                <li><strong>Ataque Físico: </strong>desarmado +1 (1d3-2)</li>
-                <li><strong>Atributos: </strong>Vig 7, Des 10, Con -, Int 13, Sab 14, Car 13</li>
-                <li><strong>Perícias: </strong>Conhecimento (burocracia) +8, Conhecimento (tradições galácticas) +8, Iniciativa +2, Percepção +4, Persuasão +13</li>
-                <li><strong>Talentos: </strong>Foco em Perícia (Persuasão), Lingüística, Treinamento em Perícia (Conhecimento [burocracia]), Treinamento em Perícia (Conhecimento [tradições galácticas])</li>
-            </ul>
+            <div class="collapsible-content collapsed">
+                <div class="status-bar-container">
+                    <div class="status-bar vida" data-ship="vok">
+                        <span class="status-label">VIDA</span>
+                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="vok">&laquo;</button>
+                        <input type="number" class="status-input" id="vida-vok" min="0" max="10">
+                        <span class="status-max" id="vida-vok-max"></span>
+                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="vok">&raquo;</button>
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Nivel de Desafio: </strong>01</li>
+                    <li><strong>Defesa: </strong>Ref 10 (desprevenido 10), Fort 8, Von 12</li>
+                    <li><strong>PV: </strong>10; <strong>Limiar: </strong>8</li>
+                    <li><strong>Velocidade: </strong>6 quadrados (andarilho)</li>
+                    <li><strong>Ataque Físico: </strong>desarmado +1 (1d3-2)</li>
+                    <li><strong>Atributos: </strong>Vig 7, Des 10, Con -, Int 13, Sab 14, Car 13</li>
+                    <li><strong>Perícias: </strong>Conhecimento (burocracia) +8, Conhecimento (tradições galácticas) +8, Iniciativa +2, Percepção +4, Persuasão +13</li>
+                    <li><strong>Talentos: </strong>Foco em Perícia (Persuasão), Lingüística, Treinamento em Perícia (Conhecimento [burocracia]), Treinamento em Perícia (Conhecimento [tradições galácticas])</li>
+                </ul>
+            </div>
         </section>
 
         <hr class="section-divider">
@@ -370,26 +387,31 @@
         </ul>
 
         <section class="terminal" id="vehicle-bay">
-            <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica USM-07 - rpg</h2>
-            <div class="status-bar-container">
-                <div class="status-bar vida" data-ship="comboio">
-                    <span class="status-label">VIDA</span>
-                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="comboio">&laquo;</button>
-                    <input type="number" class="status-input" id="vida-comboio" min="0" max="5">
-                    <span class="status-max" id="vida-comboio-max"></span>
-                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="comboio">&raquo;</button>
-                </div>
+            <div class="terminal-header-collapsible">
+                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica USM-07 - rpg</h2>
+                <p class="toggle-prompt">// Exibir Dados...</p>
             </div>
-            <ul>
-                <li><strong>Nivel de Desafio: </strong>0</li>
-                <li><strong>Defesa: </strong>Ref 15 (desprevenido 12), Fort 11, Von 10</li>
-                <li><strong><strong>Limiar: </strong>11</li>
-                <li><strong>Velocidade: </strong>4 quadrados (com rodas)</li>
-                <li><strong>Ataque Físico: </strong>Nenhum</li>
-                <li><strong>Atributos: </strong>Vig 13, Des 16, Con -, Int 7, Sab 10, Car 5</li>
-                <li><strong>Perícias: </strong>Acrobacia +9, Furtividade +19, Iniciativa +4, Percepção +1</li>
-                <li><strong>Talentos: </strong>Treinamento em Perícia (Acrobacia), Treinamento em Perícia (Furtividade), Vitalidade</li>
-            </ul>
+            <div class="collapsible-content collapsed">
+                <div class="status-bar-container">
+                    <div class="status-bar vida" data-ship="comboio">
+                        <span class="status-label">VIDA</span>
+                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="comboio">&laquo;</button>
+                        <input type="number" class="status-input" id="vida-comboio" min="0" max="5">
+                        <span class="status-max" id="vida-comboio-max"></span>
+                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="comboio">&raquo;</button>
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Nivel de Desafio: </strong>0</li>
+                    <li><strong>Defesa: </strong>Ref 15 (desprevenido 12), Fort 11, Von 10</li>
+                    <li><strong>PV: </strong>5; <strong>Limiar: </strong>11</li>
+                    <li><strong>Velocidade: </strong>4 quadrados (com rodas)</li>
+                    <li><strong>Ataque Físico: </strong>Nenhum</li>
+                    <li><strong>Atributos: </strong>Vig 13, Des 16, Con -, Int 7, Sab 10, Car 5</li>
+                    <li><strong>Perícias: </strong>Acrobacia +9, Furtividade +19, Iniciativa +4, Percepção +1</li>
+                    <li><strong>Talentos: </strong>Treinamento em Perícia (Acrobacia), Treinamento em Perícia (Furtividade), Vitalidade</li>
+                </ul>
+            </div>
         </section>
 
         <hr class="section-divider">
@@ -407,26 +429,31 @@
         </ul>
 
         <section class="terminal" id="vehicle-bay">
-            <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica CL-R - rpg</h2>
-            <div class="status-bar-container">
-                <div class="status-bar vida" data-ship="bruto">
-                    <span class="status-label">VIDA</span>
-                    <button class="status-btn" data-type="vida" data-action="dec" data-ship="bruto">&laquo;</button>
-                    <input type="number" class="status-input" id="vida-bruto" min="0" max="60">
-                    <span class="status-max" id="vida-bruto-max"></span>
-                    <button class="status-btn" data-type="vida" data-action="inc" data-ship="bruto">&raquo;</button>
-                </div>
+            <div class="terminal-header-collapsible">
+                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica CL-R - rpg</h2>
+                <p class="toggle-prompt">// Exibir Dados...</p>
             </div>
-            <ul>
-                <li><strong>Nivel de Desafio: </strong>01</li>
-                <li><strong>Defesa: </strong>Ref 7 (desprevenido 7), Fort 17, Von 10</li>
-                <li><strong>RD: </strong>5; <strong>Limiar: </strong>22</li>
-                <li><strong>Velocidade: </strong>6 quadrados (andarilho)</li>
-                <li><strong>Ataque Físico: </strong>pancada +9 (1d6+7)</li>
-                <li><strong>Atributos: </strong>Vig 25, Des 7, Con -, Int 8, Sab 11, Car 6</li>
-                <li><strong>Perícias: </strong>Iniciativa -1, Percepção +1, Tolerância +18</li>
-                <li><strong>Talentos: </strong>Ataque Poderoso, Foco em Perícia (Tolerância), Vitalidade</li>
-            </ul>
+            <div class="collapsible-content collapsed">
+                <div class="status-bar-container">
+                    <div class="status-bar vida" data-ship="bruto">
+                        <span class="status-label">VIDA</span>
+                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="bruto">&laquo;</button>
+                        <input type="number" class="status-input" id="vida-bruto" min="0" max="60">
+                        <span class="status-max" id="vida-bruto-max"></span>
+                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="bruto">&raquo;</button>
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Nivel de Desafio: </strong>01</li>
+                    <li><strong>Defesa: </strong>Ref 7 (desprevenido 7), Fort 17, Von 10</li>
+                    <li><strong>PV: </strong>60; <strong>RD: </strong>5; <strong>Limiar: </strong>22</li>
+                    <li><strong>Velocidade: </strong>6 quadrados (andarilho)</li>
+                    <li><strong>Ataque Físico: </strong>pancada +9 (1d6+7)</li>
+                    <li><strong>Atributos: </strong>Vig 25, Des 7, Con -, Int 8, Sab 11, Car 6</li>
+                    <li><strong>Perícias: </strong>Iniciativa -1, Percepção +1, Tolerância +18</li>
+                    <li><strong>Talentos: </strong>Ataque Poderoso, Foco em Perícia (Tolerância), Vitalidade</li>
+                </ul>
+            </div>
         </section>
 
         <div id="travel-modal" class="modal">
@@ -474,6 +501,7 @@
 
     <script src="fuel.js"></script>
     <script src="status.js"></script>
+    <script src="fichas.js"></script>
 </body>
 
 </html>
