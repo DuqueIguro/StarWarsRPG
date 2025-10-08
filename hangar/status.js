@@ -2,15 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Objeto contendo os dados de vida e escudos para cada nave/droid
     const shipData = {
         // Veículos: Autorais do Dur'toc
-        cargueiro: { vida: 400, escudo: 80 },
-        cinzel: { vida: 90, escudo: 40 },
-        moedor: { vida: 50, escudo: null }, // Moedor não tem escudo
+        cargueiro: { vida: 1200, escudo: 160 }, // Nave Mãe
+        cinzel: { vida: 180, escudo: 80 }, // Caça
+        moedor: { vida: 100, escudo: null }, // Speeder Sem escudo
         
         // Droids: Nenhum droid tem escudo
-        tino: { vida: 29, escudo: null }, // Astromech
-        vok: { vida: 10, escudo: null }, // Protocol
-        comboio: { vida: 5, escudo: null }, // Light Cargo
-        bruto: { vida: 60, escudo: null } // Heavy Cargo
+        tino: { vida: 60, escudo: null }, // Astromech
+        vok: { vida: 20, escudo: null }, // Protocol
+        comboio: { vida: 10, escudo: null }, // Light Cargo
+        bruto: { vida: 120, escudo: null } // Heavy Cargo
     };
 
     // Função para carregar os valores salvos do localStorage
