@@ -1,0 +1,53 @@
+[
+  {
+    "version": "v1.2.0",
+    "date": "2025-10-26",
+    "patchNotes": [
+      {
+        "title": "Nova Página de Releases!",
+        "description": "Adicionada a página de Log de Releases para manter todos os usuários atualizados sobre as novidades, correções e futuras implementações do sistema."
+      },
+      {
+        "title": "Melhorias na Interface do Hangar",
+        "description": "Otimizamos a visualização das naves no Hangar para uma navegação mais fluida e responsiva em terminais de baixa resolução."
+      }
+    ],
+    "bugFixes": [
+      {
+        "title": "[#BUG-101] Carga do Inventário",
+        "description": "Corrigido um problema crítico onde itens do inventário não eram exibidos corretamente após um salto para o hiperespaço."
+      },
+      {
+        "title": "[#BUG-102] Cálculo de Combustível",
+        "description": "Ajustado o algoritmo de consumo de combustível para naves da classe YT, que estava calculando o consumo de forma incorreta."
+      }
+    ],
+    "upcomingFeatures": [
+      {
+        "title": "Sistema de Missões",
+        "description": "Implementação de um novo painel no terminal para visualização e acompanhamento de missões ativas e concluídas."
+      },
+      {
+        "title": "Chat de Comunicação Segura",
+        "description": "Desenvolvimento de um sistema de comunicação criptografada para comunicação segura entre os membros da equipe."
+      }
+    ]
+  },
+  {
+    "version": "v1.1.5",
+    "date": "2025-09-15",
+    "patchNotes": [
+      {
+        "title": "Atualização de Segurança",
+        "description": "Implementados novos protocolos de segurança para proteger os dados das fichas de personagem contra acesso não autorizado."
+      }
+    ],
+    "bugFixes": [
+      {
+        "title": "[#BUG-098] Erro de Autenticação",
+        "description": "Corrigido um erro que impedia o login de usuários com nomes contendo caracteres especiais."
+      }
+    ],
+    "upcomingFeatures": []
+  }
+]

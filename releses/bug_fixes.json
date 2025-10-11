@@ -1,0 +1,18 @@
+[
+  {
+    "title": "[#BUG-101] Bonûs de Atributo pela Raça",
+    "description": "Corrigir o bônus de atributo concedido pelas raças, que atualmente não está permanecendo aplicado corretamente."
+  },
+  {
+    "title": "[#BUG-102] Cálculo das Defesas do Personagem",
+    "description": "Ajustar o cálculo das defesas do personagem para garantir que os bônus de equipamentos e habilidades sejam aplicados corretamente."
+  },
+  {
+    "title": "[#BUG-103] Problema na Somatória de Bônus nas Perícias",
+    "description": "Resolver o problema onde os bônus de perícias não estão sendo somados corretamente, afetando o desempenho do personagem."
+  },
+  {
+    "title": "[#BUG-104] Problema com os Atributos utilizado nos Ataques das Armas",
+    "description": "Corrigir o problema onde os atributos não estão sendo aplicados corretamente nos cálculos de ataque das armas."
+  }
+]

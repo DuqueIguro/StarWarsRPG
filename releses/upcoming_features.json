@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Sistema de Exportação e Importação de Fichas",
+    "description": "Implementação de uma funcionalidade que permita aos usuários exportar suas fichas em formatos como JSON e futuramente até em PDF, bem como importar fichas previamente salvas."
+  },
+  {
+    "title": "Sistema de Integração de Reports de Bugs",
+    "description": "Desenvolvimento de um sistema integrado para que os usuários possam reportar bugs diretamente pela plataforma, facilitando a comunicação com a equipe de desenvolvimento."
+  },
+  {
+    "title": "Implementação de um sistema de Login/Signup",
+    "description": "Criação de um sistema de autenticação que permita aos usuários criar contas, fazer login e gerenciar suas informações pessoais."
+  }
+]

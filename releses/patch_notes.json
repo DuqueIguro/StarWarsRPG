@@ -1,0 +1,26 @@
+[
+  {
+    "version": "v1.2.0",
+    "date": "11-10-2025",
+    "notes": [
+      {
+        "title": "Nova Página de Releases!",
+        "description": "Adicionada a página de Log de Releases para manter todos atualizados sobre as novidades do sistema."
+      },
+      {
+        "title": "Melhorias na Interface do Hangar",
+        "description": "Otimizamos a visualização das naves no Hangar para uma navegação mais fluida."
+      }
+    ]
+  },
+  {
+    "version": "v1.1.X",
+    "date": "00-00-202X",
+    "notes": [
+      {
+        "title": "Modelo de Atualização",
+        "description": "Implementação de um modelo de atualização contínua para melhorias regulares e introdução de novas funcionalidades."
+      }
+    ]
+  }
+]

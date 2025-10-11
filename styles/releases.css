@@ -1,0 +1,99 @@
+/* styles/releases.css */
+
+/* Adicionado para dar espaço no topo da página após remover a nav */
+.release-container {
+    padding-top: 50px; 
+    padding-bottom: 50px;
+    width: 90%;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.main-title {
+    text-align: center;
+    color: #ffe81f; /* Amarelo Star Wars */
+    font-size: 2.5em;
+    text-shadow: 0 0 10px #ffe81f, 0 0 20px #000;
+    margin-bottom: 40px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.releases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.release-column {
+    background-color: rgba(10, 20, 30, 0.85);
+    border: 1px solid #324a5f;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.3); /* Sombra azul neon */
+    display: flex;
+    flex-direction: column;
+}
+
+.column-title {
+    color: #4fc3f7; /* Azul claro */
+    font-size: 1.5em;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(79, 195, 247, 0.5);
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+/* Estilo específico para o cabeçalho do Patch Notes */
+.patch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.patch-version {
+    color: #ffe81f;
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+.patch-date {
+    color: #b0b0b0;
+    font-style: italic;
+}
+
+.item-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.item-list li {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-left: 3px solid #ffe81f;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.item-list li:hover {
+    background-color: rgba(255, 232, 31, 0.1);
+}
+
+.item-title {
+    font-weight: bold;
+    color: #e0e0e0;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.item-description {
+    color: #a0a0a0;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
