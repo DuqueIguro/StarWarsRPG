@@ -5,11 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
     Promise.all([
         fetch('releses/patch_notes.json').then(res => res.json()),
         fetch('releses/bug_fixes.json').then(res => res.json()),
-        fetch('releses/upcoming_features.json').then(res => res.json())
-    ]).then(([patchData, bugData, featureData]) => {
+        fetch('releses/upcoming_features.json').then(res => res.json()),
+        fetch('releses/features.json').then(res => res.json())
+    ]).then(([patchData, bugData, upcomingData, featuresData]) => {
         loadPatchNotes(patchData);
         loadItemList(bugData, 'bug-fixes-list');
-        loadItemList(featureData, 'upcoming-features-list');
+        loadItemList(upcomingData, 'upcoming-features-list');
+        loadItemList(featuresData, 'features-list');
     }).catch(error => {
         console.error('Falha ao carregar os dados de release:', error);
         const grid = document.querySelector('.releases-grid');
@@ -23,32 +25,32 @@ function loadPatchNotes(data) {
     const container = document.getElementById('patch-notes-container');
     if (!container || !data || data.length === 0) return;
 
-    // Pega sempre a release mais recente (a primeira da lista)
-    const latestRelease = data[0];
-
-    // Cria o cabeçalho da versão
-    const header = document.createElement('div');
-    header.classList.add('patch-header');
-    header.innerHTML = `
-        <span class="patch-version">${latestRelease.version}</span>
-        <span class="patch-date">${latestRelease.date}</span>
-    `;
-    
-    // Cria a lista de notas
-    const list = document.createElement('ul');
-    list.classList.add('item-list');
-    latestRelease.notes.forEach(item => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            <span class="item-title">${item.title}</span>
-            <span class="item-description">${item.description}</span>
+    container.innerHTML = '';
+    data.forEach(release => {
+        // Cabeçalho da versão
+        const header = document.createElement('div');
+        header.classList.add('patch-header');
+        header.innerHTML = `
+            <span class="patch-version">${release.version}</span>
+            <span class="patch-date">${release.date}</span>
         `;
-        list.appendChild(listItem);
-    });
 
-    // Adiciona o cabeçalho e a lista ao container
-    container.appendChild(header);
-    container.appendChild(list);
+        // Lista de notas
+        const list = document.createElement('ul');
+        list.classList.add('item-list');
+        release.notes.forEach(item => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <span class="item-title">${item.title}</span>
+                <span class="item-description">${item.description}</span>
+            `;
+            list.appendChild(listItem);
+        });
+
+        // Adiciona ao container
+        container.appendChild(header);
+        container.appendChild(list);
+    });
 }
 
 function loadItemList(data, listId) {
