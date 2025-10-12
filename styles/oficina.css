@@ -84,6 +84,10 @@ i.fa-solid {
     background-color: #2563EB; /* blue-600 */
     color: white;
 }
+.status-em-progresso {
+    background-color: #FBBF24; /* amber-400 */
+    color: white;
+}
 .status-concluido {
     background-color: #16A34A; /* green-600 */
     color: white;
@@ -93,6 +97,6 @@ i.fa-solid {
     color: white;
 }
 .status-aguardando-peca {
-    background-color: #FBBF24; /* amber-400 */
+    background-color: #F97316; /* orange-500 */
     color: #422006;
 }
