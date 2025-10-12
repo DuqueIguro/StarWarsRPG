@@ -86,7 +86,7 @@ i.fa-solid {
 }
 .status-em-progresso {
     background-color: #FBBF24; /* amber-400 */
-    color: white;
+    color: #422006;
 }
 .status-concluido {
     background-color: #16A34A; /* green-600 */
