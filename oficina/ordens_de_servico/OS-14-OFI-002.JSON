@@ -1,54 +1,69 @@
 {
   "ordemDeServico": {
-    "id": "OS-14-XXX-000",
+    "id": "OS-14-OFI-002",
     "mecanicoResponsavel": "Dur'Toc",
     "unidadeResponsavel": "R5-T1N",
-    "status": null,
+    "status": "Aberto",
     
     "itens": [
       {
-        "servico": null,
-        "tipo": null,
+        "servico": "Susbistição de Vocabulador",
+        "tipo": "Peça e Mão de Obra",
         "detalhes": {
-          "causaDoProblema": null,
+          "causaDoProblema": "Vocabulador com Defeito de Trasmissão",
           "peca": {
-            "nome": null,
-            "custo": null
+            "nome": "Vocabulador (Normal)",
+            "custo": 50
           },
           "maoDeObra": {
-            "custo": null
+            "custo": 300
           }
         },
-        "subtotal": null
-      }
+        "subtotal": 350
+      },
+        {
+            "servico": "Lubrificação e Ajuste Fino",
+            "tipo": "Mão de Obra",
+            "detalhes": {
+            "causaDoProblema": "Engrenagens Secas e Desalinhadas",
+            "peca": {
+                "nome": "Nenhuma",
+                "custo": 0
+            },
+            "maoDeObra": {
+                "custo": 150
+            }
+            },
+            "subtotal": 150
+        }
     ],
     "taxasAdicionais": [
-      {
-        "nome": null,
-        "custo": null,
-        "justificativa": null,
-        "percentual_sobre_mao_de_obra": null,
-        "percentual_sobre_mao_de_obra_improvisada": null,
-        "sigla": null
-      }
-    ],
+            {
+                "nome": "Taxa de Diagnóstico Padrão",
+                "custo": 150,
+                "justificativa": "Aplicada para identificação precisa da causa-raiz do defeito.",
+                "percentual_sobre_mao_de_obra": null,
+                "percentual_sobre_mao_de_obra_improvisada": null,
+                "sigla": "T.D.P"
+            }
+        ],
     "financeiro": {
-      "subtotalPecas": null,
-      "subtotalMaoDeObra": null,
-      "subtotalTaxasFixas": null,
+      "subtotalPecas": 50,
+      "subtotalMaoDeObra": 450,
+      "subtotalTaxasFixas": 150,
       "subtotalAdicionais": null,
       "moeda": "Créditos Galácticos",
-      "total": null
+      "total": 650
     },
     "termos": "Sem termos adicionais.",
     "titulo": "Não Declarado",
     "data": "14 ABY",
     "cliente": {
-      "nome": "Não informado",
-      "afiliacao": "Não informada",
-      "contato_holonet": "Não informado"
+      "nome": "Maly Tazi",
+      "afiliacao": "Transportador Independente",
+      "contato_holonet": "M4ly_T4zi#9981"
     },
-    "relatorio_problema": null,
-    "notas_mecanico": "Nada a declarar."
+    "relatorio_problema": "O fornecedor trouxe uma droid garçonete que está com problemas no sistema de locomoção, ela não anda direito e as vezes cai, parece que está com problema na articulação e está com problemas na fala, as vezes ela fala coisas sem sentido.",
+    "notas_mecanico": "Concerto a articulação e fiz a lubrificação e ajuste fino, troquei o vocabulador que estava com defeito, agora está tudo funcionando perfeitamente."
   }
 }
