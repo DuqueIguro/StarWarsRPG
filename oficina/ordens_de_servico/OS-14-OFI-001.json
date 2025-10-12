@@ -1,0 +1,143 @@
+{
+    "ordemDeServico": {
+        "id": "OS-14-OFI-001",
+        "mecanicoResponsavel": "Dur'Toc",
+        "unidadeResponsavel": "R5-T1N",
+        "status": "Em Progresso",
+        "itens": [
+            {
+                "servico": "Susbistição dos Sensores Opticos",
+                "tipo": "Peça e Mão de Obra",
+                "detalhes": {
+                    "causaDoProblema": "Sensores Ópticos Danificados",
+                    "peca": {
+                        "nome": "Sensores Ópticos (Normal)",
+                        "custo": 500
+                    },
+                    "maoDeObra": {
+                        "custo": 280
+                    }
+                },
+                "subtotal": 780
+            },
+            {
+                "servico": "Desmagnetização da Engrenagens",
+                "tipo": "Mão de Obra",
+                "detalhes": {
+                    "causaDoProblema": "Engrenagens excessivamentes Magnetizadas",
+                    "peca": {
+                        "nome": "Nenhuma",
+                        "custo": 0
+                    },
+                    "maoDeObra": {
+                        "custo": 500
+                    }
+                },
+                "subtotal": 500
+            },
+            {
+                "servico": "Bypass e Atualização de Firmware",
+                "tipo": "Mão de Obra",
+                "detalhes": {
+                    "causaDoProblema": "Chip de Inibição Ausente",
+                    "peca": {
+                        "nome": "Nenhuma",
+                        "custo": 0
+                    },
+                    "maoDeObra": {
+                        "custo": "750+700"
+                    }
+                },
+                "subtotal": 1450
+            },
+            {
+                "servico": "Reprogramação da Unidade Motivadora",
+                "tipo": "Mão de Obra",
+                "detalhes": {
+                    "causaDoProblema": "Unidade Motivadora Descalibrada",
+                    "peca": {
+                        "nome": "Nenhuma",
+                        "custo": 0
+                    },
+                    "maoDeObra": {
+                        "custo": 450
+                    }
+                },
+                "subtotal": 450
+            },
+            {
+                "servico": "Troca de Fusíveis Térmicos Queimados",
+                "tipo": "Mão de Obra",
+                "detalhes": {
+                    "causaDoProblema": "Fusíveis Térmicos Queimados ou Danificados",
+                    "peca": {
+                        "nome": "Nenhuma",
+                        "custo": 0
+                    },
+                    "maoDeObra": {
+                        "custo": "300+300"
+                    }
+                },
+                "subtotal": 600
+            },
+            {
+                "servico": "Realinhamento da Matriz de Ignição, Desentupimento da Válvula de Escape e recarregamento da Célula de Energia",
+                "tipo": "Mão de Obra e Energia",
+                "detalhes": {
+                    "causaDoProblema": "Problemas no Motor e Célula de Energia Fraca",
+                    "peca": {
+                        "nome": "Nenhuma",
+                        "custo": 0
+                    },
+                    "maoDeObra": {
+                        "custo": "500+500+15"
+                    }
+                },
+                "subtotal": 1015
+            },
+            {
+                "servico": "Recalibração do Motor e recarregamento da Célula de Energia",
+                "tipo": "Mão de Obra e Energia",
+                "detalhes": {
+                    "causaDoProblema": "Motor Descalibrado e Célula de Energia Descarregada",
+                    "peca": {
+                        "nome": "Nenhuma",
+                        "custo": 0
+                    },
+                    "maoDeObra": {
+                        "custo": "1400+15"
+                    }
+                },
+                "subtotal": 1415
+            }
+        ],
+        "taxasAdicionais": [
+            {
+                "nome": "7x Taxa de Diagnóstico Padrão",
+                "custo": 1050,
+                "justificativa": "Aplicada para identificação precisa da causa-raiz do defeito.",
+                "percentual_sobre_mao_de_obra": null,
+                "percentual_sobre_mao_de_obra_improvisada": null,
+                "sigla": "T.D.P"
+            }
+        ],
+        "financeiro": {
+            "subtotalPecas": 500,
+            "subtotalMaoDeObra": 5710,
+            "subtotalTaxasFixas": 1050,
+            "subtotalAdicionais": null,
+            "moeda": "Créditos Galácticos",
+            "total": 7260
+        },
+        "termos": "Sem termos adicionais.",
+        "titulo": "Carregamento de Serviços Múltiplos - Krussk",
+        "data": "14 ABY",
+        "cliente": {
+            "nome": "Krussk",
+            "afiliacao": "Transportador Independente",
+            "contato_holonet": "Não informado"
+        },
+        "relatorio_problema": "Ele trouxe algumas coisas da parte baixa para eu concertar, cinco droid e duas Speeders, um dos Astromecânicos está com problema nos Sensores Opticos, o outro astromecanico parece estar com as engrenagem magnetizadas, um dos droids Lava Roupas está sem o chip de inibição, os outros dois droids Lava Roupas parecem problemas mais simples, já os Speeders parecem estar com problemas no motor.",
+        "notas_mecanico": "Fiz a troca dos Sensores do Primeiro Astromecânico, Desmagnetização da engrenagem do Segundo Astromecânico, o droid lava a roupas que estava sem o chip de inibição, deu mais trabalho que os demais, eu tive que atualizar o Firmware e fazer um Bypass no circuito principal, por causa da falta do chip, os outros Lava Roupas, foram mais simples, só a reprogamação da unidade Motivadora, não precisei trocar de peça então vou cobrar só a mão de obra, e no outro foi só uma troca de alguns fusiveis, como eu imaginei os Speeders estavam com problemas no motor, Realinhei a Matriz de Igniçãom, desentupi a valvula de escape, recalibrei o motor e recarreguei as células de Energia de ambos os Speeders."
+    }
+}
