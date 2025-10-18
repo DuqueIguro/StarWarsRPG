@@ -1,9 +1,9 @@
 {
   "ordemDeServico": {
     "id": "OS-14-OFI-002",
-    "mecanicoResponsavel": "Dur'Toc",
+    "mecanicoResponsavel": "Dur'Toc e Faísca",
     "unidadeResponsavel": "R5-T1N",
-    "status": "Aberto",
+    "status": "Em Progresso",
     
     "itens": [
       {
