@@ -31,10 +31,10 @@
                 "custo": 0
             },
             "maoDeObra": {
-                "custo": 150
+                "custo": 300
             }
             },
-            "subtotal": 150
+            "subtotal": 300
         }
     ],
     "taxasAdicionais": [
@@ -49,11 +49,11 @@
         ],
     "financeiro": {
       "subtotalPecas": 50,
-      "subtotalMaoDeObra": 450,
+      "subtotalMaoDeObra": 600,
       "subtotalTaxasFixas": 150,
       "subtotalAdicionais": null,
       "moeda": "Créditos Galácticos",
-      "total": 650
+      "total": 800
     },
     "termos": "Sem termos adicionais.",
     "titulo": "Serviço de Manutenção em Droid Garçonete - Maly Tazi",
@@ -64,6 +64,6 @@
       "contato_holonet": "M4ly_T4zi#9981"
     },
     "relatorio_problema": "O fornecedor trouxe uma droid garçonete que está com problemas no sistema de locomoção, ela não anda direito e as vezes cai, parece que está com problema na articulação e está com problemas na fala, as vezes ela fala coisas sem sentido.",
-    "notas_mecanico": "Concerto a articulação e fiz a lubrificação e ajuste fino, troquei o vocabulador que estava com defeito, agora está tudo funcionando perfeitamente."
+    "notas_mecanico": "Concertamos a articulação e fizemos a lubrificação e ajuste fino, trocamos o vocabulador que estava com defeito, agora está tudo funcionando perfeitamente."
   }
 }
