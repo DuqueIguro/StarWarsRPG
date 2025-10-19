@@ -1,0 +1,121 @@
+{
+  "ordemDeServico": {
+    "id": "OS-14-EGM-001",
+    "mecanicoResponsavel": "Dur'Toc e Vasctor",
+    "unidadeResponsavel": "R5-T1N",
+    "status": "Em Aberto",
+    "itens": [
+      {
+        "servico": "Recalibração do Motor",
+        "tipo": "Mão de Obra",
+        "detalhes": {
+          "causaDoProblema": "Motor Avariado devido a Impacto",
+          "peca": {
+            "nome": "Nenhuma",
+            "custo": 0
+          },
+          "maoDeObra": {
+            "custo": "1400"
+          }
+        },
+        "subtotal": 1400
+      },
+      {
+        "servico": "Realinhamento da Matriz de Ignição",
+        "tipo": "Mão de Obra",
+        "detalhes": {
+          "causaDoProblema": "Matriz de Ignição Descalibrada",
+          "peca": {
+            "nome": "Nenhuma",
+            "custo": 0
+          },
+          "maoDeObra": {
+            "custo": "500"
+          }
+        },
+        "subtotal": 500
+      },
+      {
+        "servico": "Funilaria e Reparo dos Cascos",
+        "tipo": "Mão de Obra",
+        "detalhes": {
+          "causaDoProblema": "Cascos Danificados no Impacto",
+          "peca": {
+            "nome": "Nenhuma",
+            "custo": 0
+          },
+          "maoDeObra": {
+            "custo": "800"
+          }
+        },
+        "subtotal": 800
+      },
+      {
+        "servico": "Desentupimento do Sistema de Refrigeração",
+        "tipo": "Mão de Obra",
+        "detalhes": {
+          "causaDoProblema": "Sistema de Refrigeração Entupido",
+          "peca": {
+            "nome": "Nenhuma",
+            "custo": 0
+          },
+          "maoDeObra": {
+            "custo": "600"
+          }
+        },
+        "subtotal": 600
+      },
+      {
+        "servico": "Manuntenção Preventiva Geral",
+        "tipo": "Mão de Obra",
+        "detalhes": {
+          "causaDoProblema": "Nenhuma",
+          "peca": {
+            "nome": "Nenhuma",
+            "custo": 0
+          },
+          "maoDeObra": {
+            "custo": "600"
+          }
+        },
+        "subtotal": 600
+      }
+    ],
+    "taxasAdicionais": [
+      {
+        "nome": "Taxa de Diagnóstico Padrão",
+        "custo": 150,
+        "justificativa": "Aplicada para identificação precisa da causa-raiz do defeito.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "T.D.P"
+      },
+      {
+        "nome": "Selo de Qualidade GAFO",
+        "custo": 780,
+        "justificativa": "Custo adicional de +20% sobre o valor total do serviço.",
+        "percentual_sobre_mao_de_obra": 20,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "GAFO"
+      }
+    ],
+    "financeiro": {
+      "subtotalPecas": null,
+      "subtotalMaoDeObra": 3900,
+      "subtotalTaxasFixas": 150,
+      "subtotalAdicionais": 780,
+      "moeda": "Créditos Galácticos",
+      "total": 4830
+    },
+    "termos": "Sem termos adicionais.",
+    "titulo": "Concerto de Speeder Avariado por Impacto e Falhas no Motor - Tenente Constantine",
+    "data": "14 ABY",
+    "cliente": {
+      "nome": "Tenente Constantine",
+      "afiliacao": "Império Galáctico",
+      "contato_holonet": "Não informado"
+    },
+    "relatorio_problema": "O Tenente trouxe um Speeder avariado no meio da noite, relatando que o veículo começou a apresentar falhas no motor e perda de controle durante o retorno a sua Nave, além o Speeder sofreu danos na queda e Impacto, e precisará de reparos nos cascos. Ele solicitou uma inspeção completa para identificar a causa dos problemas.",
+    "notas_mecanico": "Veículo apresentou danos significativos no motor e nos cascos devido ao impacto. Recomenda-se uma manutenção completa para evitar futuros problemas."
+  }
+}

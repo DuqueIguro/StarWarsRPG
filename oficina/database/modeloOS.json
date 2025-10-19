@@ -3,8 +3,7 @@
     "id": "OS-14-XXX-000",
     "mecanicoResponsavel": "Dur'Toc",
     "unidadeResponsavel": "R5-T1N",
-    "status": null,
-    
+    "status": "Em Progresso",
     "itens": [
       {
         "servico": null,
@@ -24,18 +23,18 @@
     ],
     "taxasAdicionais": [
       {
-        "nome": null,
-        "custo": null,
-        "justificativa": null,
+        "nome": "Taxa de Diagnóstico Padrão",
+        "custo": 150,
+        "justificativa": "Aplicada para identificação precisa da causa-raiz do defeito.",
         "percentual_sobre_mao_de_obra": null,
         "percentual_sobre_mao_de_obra_improvisada": null,
-        "sigla": null
+        "sigla": "T.D.P"
       }
     ],
     "financeiro": {
       "subtotalPecas": null,
       "subtotalMaoDeObra": null,
-      "subtotalTaxasFixas": null,
+      "subtotalTaxasFixas": 150,
       "subtotalAdicionais": null,
       "moeda": "Créditos Galácticos",
       "total": null
@@ -48,7 +47,7 @@
       "afiliacao": "Não informada",
       "contato_holonet": "Não informado"
     },
-    "relatorio_problema": null,
+    "relatorio_problema": "Não informado.",
     "notas_mecanico": "Nada a declarar."
   }
 }
