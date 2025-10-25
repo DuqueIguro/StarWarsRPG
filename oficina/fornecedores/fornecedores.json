@@ -1,0 +1,652 @@
+{
+  "fornecedores": {
+    "ruins": [
+      {
+        "nome": "Kreech",
+        "raca": "Jawa",
+        "planeta": "Tatooine",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Funcional? 'Funcional' é que não explode no primeiro uso! Bom negócio!"
+      },
+      {
+        "nome": "Tragg Noot",
+        "raca": "Nikto",
+        "planeta": "Nar Shaddaa",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Se não funcionar, você provavelmente usou errado."
+      },
+      {
+        "nome": "Della \"Três Dedos\"",
+        "raca": "Humana",
+        "planeta": "Ord Mantell",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Metade das peças, metade do preço. Negócio justo!"
+      },
+      {
+        "nome": "Hurrn Vol",
+        "raca": "Weequay",
+        "planeta": "Florrum",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Sobrou de pirata, serve pra você."
+      },
+      {
+        "nome": "Shurra Kaal",
+        "raca": "Rodiana",
+        "planeta": "Ryloth",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Se acender luz vermelha, é só bater com força."
+      },
+      {
+        "nome": "Mork Lunn",
+        "raca": "Ugnaught",
+        "planeta": "Bespin",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Reciclado é quase novo, depende do ponto de vista."
+      },
+      {
+        "nome": "Vek Tross",
+        "raca": "Twi'lek",
+        "planeta": "Ryloth",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Barato o suficiente pra você não reclamar quando quebrar."
+      },
+      {
+        "nome": "Jorin Val",
+        "raca": "Humano",
+        "planeta": "Lothal",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Não é roubo se ninguém sente falta."
+      },
+      {
+        "nome": "Groll Mekk",
+        "raca": "Trandoshan",
+        "planeta": "Trandosha",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Funciona. Por um tempo."
+      },
+      {
+        "nome": "Pex Ollor",
+        "raca": "Gran",
+        "planeta": "Malastare",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Peças novas, mas armazenadas na lama."
+      },
+      {
+        "nome": "Kiira Vonn",
+        "raca": "Mirialana",
+        "planeta": "Jakku",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Se achar defeito, chama de personalização."
+      },
+      {
+        "nome": "Brokk Den",
+        "raca": "Aqualish",
+        "planeta": "Mon Cala",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Imperial não gosta de mim. Bom sinal, não acha?"
+      },
+      {
+        "nome": "Nazz Uto",
+        "raca": "Sullustano",
+        "planeta": "Sullust",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Derreteu? Então não era pra calor."
+      },
+      {
+        "nome": "Drex Murn",
+        "raca": "Dug",
+        "planeta": "Malastare",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Não confio nas minhas próprias soldas, mas o preço compensa."
+      },
+      {
+        "nome": "Vorra Nesk",
+        "raca": "Jawa",
+        "planeta": "Arvala-7",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Funciona até parar de funcionar."
+      },
+      {
+        "nome": "Pira Loon",
+        "raca": "Togruta",
+        "planeta": "Taris",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Não é ilegal se o Império ainda não descobriu."
+      },
+      {
+        "nome": "Hark Vello",
+        "raca": "Klatooiniano",
+        "planeta": "Nal Hutta",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Roubo não, reaproveitamento criativo."
+      },
+      {
+        "nome": "Zekk Tull",
+        "raca": "Pantorano",
+        "planeta": "Pantora",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Compre dois, porque um vai falhar."
+      },
+      {
+        "nome": "Drogo Merl",
+        "raca": "Humano",
+        "planeta": "Ferrix",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Peças boas demais pra irem pro lixo, então vieram pra mim."
+      },
+      {
+        "nome": "Lirr Dokk",
+        "raca": "Ortolan",
+        "planeta": "Orto",
+        "qualidade": "Ruim",
+        "preco": "Muito Barato",
+        "frase_principal": "Mais barato que sucata? Difícil, mas consigo."
+      }
+    ],
+    "normais": [
+      {
+        "nome": "Rilo Gorn",
+        "raca": "Duros",
+        "planeta": "Lothal",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Funciona, e é só isso que importa. Sem perguntas, sem garantia."
+      },
+      {
+        "nome": "Fenra Dorr",
+        "raca": "Humana",
+        "planeta": "Coruscant (níveis médios)",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Entregamos no prazo, se o Império não interceptar antes."
+      },
+      {
+        "nome": "Kro Binn",
+        "raca": "Rodiano",
+        "planeta": "Rodia",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Metade legal, metade... tolerada."
+      },
+      {
+        "nome": "Huun Kreel",
+        "raca": "Duros",
+        "planeta": "Lothal",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "O que vendo funciona, e isso é o que importa."
+      },
+      {
+        "nome": "Lira Fen",
+        "raca": "Twi'lek",
+        "planeta": "Ryloth",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Negócios honestos... quando dá."
+      },
+      {
+        "nome": "Mottir Grev",
+        "raca": "Nikto",
+        "planeta": "Nar Shaddaa",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Serviço direto, sem conversa fiada."
+      },
+      {
+        "nome": "Vett Lorr",
+        "raca": "Gran",
+        "planeta": "Malastare",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Compensa pelo preço, não pela beleza."
+      },
+      {
+        "nome": "Sena Mar",
+        "raca": "Humana",
+        "planeta": "Chandrila",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Tudo dentro dos regulamentos... os meus."
+      },
+      {
+        "nome": "Gurr Tal",
+        "raca": "Aqualish",
+        "planeta": "Mon Cala",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Funciona bem o bastante pra ninguém morrer."
+      },
+      {
+        "nome": "Ovar Dreel",
+        "raca": "Togruta",
+        "planeta": "Coruscant (níveis baixos)",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Não é bonito, mas entrega o que promete."
+      },
+      {
+        "nome": "Kinn Vox",
+        "raca": "Human",
+        "planeta": "Ferrix",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Peças simples, trabalho de gente dura."
+      },
+      {
+        "nome": "Vex Rudd",
+        "raca": "Sullustano",
+        "planeta": "Sullust",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "O Império compra comigo. E você?"
+      },
+      {
+        "nome": "Rorra Tinn",
+        "raca": "Bothan",
+        "planeta": "Bothawui",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Discrição incluída no preço."
+      },
+      {
+        "nome": "Merr Tuv",
+        "raca": "Zabrak",
+        "planeta": "Iridonia",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Durabilidade média, preço médio, satisfação média."
+      },
+      {
+        "nome": "Halla Veer",
+        "raca": "Humana",
+        "planeta": "Naboo",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Entregas pontuais, se os stormtroopers deixarem."
+      },
+      {
+        "nome": "Jorrik Naan",
+        "raca": "Togruta",
+        "planeta": "Shili",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Não confunda simplicidade com incompetência."
+      },
+      {
+        "nome": "Zorr Tyne",
+        "raca": "Humano",
+        "planeta": "Lothal",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Padrão rebelde: funciona na hora que mais precisa."
+      },
+      {
+        "nome": "Drenn Jor",
+        "raca": "Mirialano",
+        "planeta": "Coruscant (níveis médios)",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Se o Império não aprovou, melhor ainda."
+      },
+      {
+        "nome": "Kerr Bolo",
+        "raca": "Nikto",
+        "planeta": "Nal Hutta",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Reparo rápido, garantia duvidosa."
+      },
+      {
+        "nome": "Soral Mekk",
+        "raca": "Human",
+        "planeta": "Ord Mantell",
+        "qualidade": "Normal",
+        "preco": "Razoável",
+        "frase_principal": "Peças testadas em campo, sem frescura."
+      }
+    ],
+    "bons": [
+      {
+        "nome": "Liana Voral",
+        "raca": "Humana (Alderaaniana)",
+        "planeta": "Alderaan",
+        "qualidade": "Boa (Corporativa, certificada)",
+        "preco": "Caro",
+        "frase_principal": "Tudo aqui é certificado, registrado e tem garantia. Operamos estritamente dentro dos regulamentos imperiais."
+      },
+      {
+        "nome": "Arna Vell",
+        "raca": "Humana",
+        "planeta": "Chandrila",
+        "qualidade": "Boa (Corporativa, certificada)",
+        "preco": "Caro",
+        "frase_principal": "Produção regulamentada, confiável e aprovada pelo Ministério Imperial de Comércio."
+      },
+      {
+        "nome": "Talis Meru",
+        "raca": "Twi'lek",
+        "planeta": "Ryloth",
+        "qualidade": "Boa (Exportação)",
+        "preco": "Caro",
+        "frase_principal": "Trabalho local de precisão, feito com paciência e respeito à tradição."
+      },
+      {
+        "nome": "Hessa Korr",
+        "raca": "Humana",
+        "planeta": "Naboo",
+        "qualidade": "Boa (Padrão civil)",
+        "preco": "Caro",
+        "frase_principal": "Elegância e eficiência. Cada peça é uma obra de arte funcional."
+      },
+      {
+        "nome": "Garan Thol",
+        "raca": "Bothan",
+        "planeta": "Bothawui",
+        "qualidade": "Boa (Discreto)",
+        "preco": "Caro",
+        "frase_principal": "Ninguém precisa saber o que você comprou, só que funciona."
+      },
+      {
+        "nome": "Seline Orra",
+        "raca": "Humana",
+        "planeta": "Alderaan",
+        "qualidade": "Boa (Certificada)",
+        "preco": "Caro",
+        "frase_principal": "Tudo que passa por nossas mãos tem registro e selo de qualidade imperial."
+      },
+      {
+        "nome": "Varo Kint",
+        "raca": "Mon Calamari",
+        "planeta": "Mon Cala",
+        "qualidade": "Boa (Náutica e eletrônica)",
+        "preco": "Caro",
+        "frase_principal": "Engenharia anfíbia adaptada para resistir até no vácuo."
+      },
+      {
+        "nome": "Neri Taal",
+        "raca": "Mirialana",
+        "planeta": "Mirial",
+        "qualidade": "Boa (Bioengenharia)",
+        "preco": "Caro",
+        "frase_principal": "Integração biônica completa com garantias de compatibilidade."
+      },
+      {
+        "nome": "Kess Orin",
+        "raca": "Duros",
+        "planeta": "Lothal",
+        "qualidade": "Boa (Industrial)",
+        "preco": "Caro",
+        "frase_principal": "Peças ajustadas e testadas em campo. Confiança de fábrica."
+      },
+      {
+        "nome": "Jaha Venn",
+        "raca": "Arkaniano",
+        "planeta": "Brentaal",
+        "qualidade": "Boa (Corporativa)",
+        "preco": "Caro",
+        "frase_principal": "Nossas máquinas trabalham com mais precisão que qualquer operário."
+      },
+      {
+        "nome": "Morra Lest",
+        "raca": "Sullustano",
+        "planeta": "Sullust",
+        "qualidade": "Boa (Propulsão e térmica)",
+        "preco": "Caro",
+        "frase_principal": "Projetado para não explodir, mesmo que você queira."
+      },
+      {
+        "nome": "Fen Kalo",
+        "raca": "Togruta",
+        "planeta": "Shili",
+        "qualidade": "Boa (Eletrônica e sensores)",
+        "preco": "Caro",
+        "frase_principal": "Cada peça calibrada à mão, com foco em estabilidade e alcance."
+      },
+      {
+        "nome": "Daran Mekk",
+        "raca": "Trandoshan",
+        "planeta": "Trandosha",
+        "qualidade": "Boa (Estrutural reforçada)",
+        "preco": "Caro",
+        "frase_principal": "Durabilidade garantida. Quebre, se conseguir."
+      },
+      {
+        "nome": "Elyr Vonn",
+        "raca": "Humana",
+        "planeta": "Chandrila",
+        "qualidade": "Boa (Executiva e regulada)",
+        "preco": "Caro",
+        "frase_principal": "Qualidade aprovada em inspeções imperiais. Nada menos que perfeito."
+      },
+      {
+        "nome": "Haryn Sol",
+        "raca": "Zabrak",
+        "planeta": "Iridonia",
+        "qualidade": "Boa (Energia e circuitos)",
+        "preco": "Caro",
+        "frase_principal": "Energia estável. Confiabilidade em ambiente hostil."
+      },
+      {
+        "nome": "Lysa Bren",
+        "raca": "Humana",
+        "planeta": "Dantooine",
+        "qualidade": "Boa (Pesquisa e protótipo)",
+        "preco": "Caro",
+        "frase_principal": "Protótipos confiáveis, prontos para produção ou campo."
+      },
+      {
+        "nome": "Kor Vesk",
+        "raca": "Nikto",
+        "planeta": "Nal Hutta",
+        "qualidade": "Boa (Mecânica pesada)",
+        "preco": "Caro",
+        "frase_principal": "Trabalho sujo feito por quem entende de sujeira."
+      },
+      {
+        "nome": "Meru Taal",
+        "raca": "Aqualish",
+        "planeta": "Malastare",
+        "qualidade": "Boa (Combustão e motores)",
+        "preco": "Caro",
+        "frase_principal": "Motores ajustados com precisão. Queimamos o mínimo, rendemos o máximo."
+      },
+      {
+        "nome": "Sora Hest",
+        "raca": "Twi'lek",
+        "planeta": "Ryloth",
+        "qualidade": "Boa (Manufatura local)",
+        "preco": "Caro",
+        "frase_principal": "Produtos feitos à mão com disciplina e cuidado."
+      },
+      {
+        "nome": "Kellen Vriss",
+        "raca": "Humana",
+        "planeta": "Kuat",
+        "qualidade": "Boa (Industrial e naval)",
+        "preco": "Caro",
+        "frase_principal": "Componentes aprovados em testes de estaleiro. Sem margem para erro."
+      }
+    ],
+    "excelentes": [
+      {
+        "nome": "Vora Vorr",
+        "raca": "Arkaniano",
+        "planeta": "Brentaal",
+        "qualidade": "Excelente",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Eu não sou um vendedor, sou um artista. E só atendo quem entende a diferença."
+      },
+      {
+        "nome": "Voren Cala",
+        "raca": "Humana",
+        "planeta": "Kuat",
+        "qualidade": "Excelente (Estaleiro de elite)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Projetado e construído como se o próprio Império fosse usar."
+      },
+      {
+        "nome": "Ilyra Sen",
+        "raca": "Twi'lek",
+        "planeta": "Ryloth",
+        "qualidade": "Excelente (Tecnologia de precisão)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Cada circuito, uma assinatura de perfeição artesanal."
+      },
+      {
+        "nome": "Talon Rekk",
+        "raca": "Humana",
+        "planeta": "Fondor",
+        "qualidade": "Excelente (Fabricação de ponta)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Nenhum detalhe é pequeno demais quando se busca excelência."
+      },
+      {
+        "nome": "Arvek Solun",
+        "raca": "Mon Calamari",
+        "planeta": "Mon Cala",
+        "qualidade": "Excelente (Náutica avançada)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Criado sob pressão, funciona até nas profundezas ou no espaço."
+      },
+      {
+        "nome": "Hestira Lorn",
+        "raca": "Mirialana",
+        "planeta": "Coruscant (níveis executivos)",
+        "qualidade": "Excelente (Sistemas corporativos)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Certificação tripla, eficiência inquestionável."
+      },
+      {
+        "nome": "Qor Venn",
+        "raca": "Arkaniano",
+        "planeta": "Brentaal",
+        "qualidade": "Excelente (Luxo técnico)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Engenharia de elite. Entregamos inovação, não só produtos."
+      },
+      {
+        "nome": "Nysa Korr",
+        "raca": "Togruta",
+        "planeta": "Naboo",
+        "qualidade": "Excelente (Óptica e arte)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Lentes calibradas por artistas, aprovadas por generais."
+      },
+      {
+        "nome": "Bral Thek",
+        "raca": "Wookiee",
+        "planeta": "Kashyyyk",
+        "qualidade": "Excelente (Força e estrutura)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Construção com resistência natural, coisas que sobrevivem a combate."
+      },
+      {
+        "nome": "Elyn Vor",
+        "raca": "Humana",
+        "planeta": "Chandrila",
+        "qualidade": "Excelente (Engenharia avançada)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Projetos testados sob padrões militares e científicos."
+      },
+      {
+        "nome": "Mael Riss",
+        "raca": "Bothan",
+        "planeta": "Bothawui",
+        "qualidade": "Excelente (Logística furtiva)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Entrega silenciosa. Nenhum registro, nenhum vestígio."
+      },
+      {
+        "nome": "Kyrra Den",
+        "raca": "Zabrak",
+        "planeta": "Iridonia",
+        "qualidade": "Excelente (Equipamento tático)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Cada arma testada pessoalmente em combate real."
+      },
+      {
+        "nome": "Othar Kess",
+        "raca": "Duros",
+        "planeta": "Lothal",
+        "qualidade": "Excelente (Ambientes e naves leves)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Aerodinâmica perfeita, sem desperdício de energia."
+      },
+      {
+        "nome": "Lira Voss",
+        "raca": "Humana",
+        "planeta": "Dantooine",
+        "qualidade": "Excelente (Pesquisa aplicada)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "O que projetamos hoje, o Império copia amanhã."
+      },
+      {
+        "nome": "Hek Torr",
+        "raca": "Trandoshan",
+        "planeta": "Trandosha",
+        "qualidade": "Excelente (Blindagem)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Feito para quem espera ser atingido, e continuar de pé."
+      },
+      {
+        "nome": "Sela Kint",
+        "raca": "Gran",
+        "planeta": "Malastare",
+        "qualidade": "Excelente (Propulsão experimental)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Motor testado no limite. Tudo que não explodiu, foi aprovado."
+      },
+      {
+        "nome": "Orin Vela",
+        "raca": "Humana",
+        "planeta": "Naboo",
+        "qualidade": "Excelente (Eletrônica de elite)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Circuitos tão limpos que parecem vivos."
+      },
+      {
+        "nome": "Meris Hal",
+        "raca": "Humana",
+        "planeta": "Coruscant (Distrito Imperial)",
+        "qualidade": "Excelente (Integração militar)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "O mesmo padrão usado nos Star Destroyers. E o mesmo sigilo."
+      },
+      {
+        "nome": "Yssa Rell",
+        "raca": "Humana",
+        "planeta": "Kuat",
+        "qualidade": "Excelente (Acabamento de luxo)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Peças polidas até refletirem o poder de quem as possui."
+      },
+      {
+        "nome": "Zara Kell",
+        "raca": "Humana",
+        "planeta": "Fondor",
+        "qualidade": "Excelente (Artesanato e prototipagem)",
+        "preco": "Absurdamente Caro",
+        "frase_principal": "Prototipagem de elite, para quem não aceita meia medida."
+      }
+    ]
+  }
+}
