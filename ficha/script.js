@@ -404,9 +404,6 @@ function initFicha() {
         const otherBonus = parseInt(skillElement.querySelector('.other-bonus').value) || 0;
         const trainedBonus = isTrained ? 5 : 0;
         const focusBonus = hasFocus ? 5 : 0;
-        if (skillElement.dataset.skill === 'iniciativa') {
-            return attrMod + trainedBonus + focusBonus + otherBonus;
-        }
         return halfLevel + attrMod + trainedBonus + focusBonus + otherBonus;
     }
 
