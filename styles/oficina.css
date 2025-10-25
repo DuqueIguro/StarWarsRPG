@@ -100,3 +100,18 @@ i.fa-solid {
     background-color: #984000; /* orange-500 */
     color: #422006;
 }
+
+/* Estilos específicos para o botão 'Fornecedores' */
+#btn-fornecedores {
+    min-width: 160px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    #btn-fornecedores {
+        min-width: 140px;
+        padding-left: 12px;
+        padding-right: 12px;
+        font-size: 0.9rem;
+    }
+}

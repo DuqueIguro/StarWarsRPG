@@ -109,11 +109,6 @@ function initFicha() {
                 rollIcon.dataset.rollLabel = `Teste de ${item.querySelector('label').textContent.split('(')[0].trim()}`;
             }
         });
-        const iniciativaPericiaTotal = calculateSkillTotal(document.querySelector('[data-skill="iniciativa"]'));
-        const iniciativaContainer = document.getElementById('iniciativa-total').parentElement;
-        iniciativaContainer.querySelector('.stat-mod').textContent = `= ${iniciativaPericiaTotal >= 0 ? '+' : ''}${iniciativaPericiaTotal}`;
-        iniciativaContainer.querySelector('.rollable').dataset.rollModifier = iniciativaPericiaTotal;
-        iniciativaContainer.querySelector('.rollable').dataset.rollLabel = 'Teste de Iniciativa';
         updateAttackBonuses();
     }
     // Referências aos elementos da página
