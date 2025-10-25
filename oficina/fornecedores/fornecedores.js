@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             const { ruins, normais, bons, excelentes } = data.fornecedores;
             todosFornecedores = [...ruins, ...normais, ...bons, ...excelentes];
+
+            // Ordena a lista principal em ordem alfabética pelo nome
+            todosFornecedores.sort((a, b) => a.nome.localeCompare(b.nome));
             exibirFornecedores(todosFornecedores);
         })
         .catch(error => {
