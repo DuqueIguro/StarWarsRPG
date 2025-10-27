@@ -3,7 +3,7 @@
     "id": "OS-14-EGM-001",
     "mecanicoResponsavel": "Dur'Toc e Vasctor",
     "unidadeResponsavel": "R5-T1N",
-    "status": "Em Progressso",
+    "status": "Concluído",
     "itens": [
       {
         "servico": "Recalibração do Motor",
@@ -97,15 +97,23 @@
         "percentual_sobre_mao_de_obra": 20,
         "percentual_sobre_mao_de_obra_improvisada": null,
         "sigla": "GAFO"
+      },
+      {
+        "nome": "Gorjeta",
+        "custo": 170,
+        "justificativa": "Gorjeta do Cliente",
+        "percentual_sobre_mao_de_obra": 4.3,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "Gorjeta"
       }
     ],
     "financeiro": {
       "subtotalPecas": null,
       "subtotalMaoDeObra": 3900,
       "subtotalTaxasFixas": 150,
-      "subtotalAdicionais": 780,
+      "subtotalAdicionais": 950,
       "moeda": "Créditos Galácticos",
-      "total": 4830
+      "total": 5000
     },
     "termos": "Sem termos adicionais.",
     "titulo": "Concerto de Speeder Avariado por Impacto e Falhas no Motor - Tenente Constantine",

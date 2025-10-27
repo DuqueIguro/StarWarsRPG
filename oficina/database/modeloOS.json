@@ -26,8 +26,10 @@
         "nome": "Taxa de Diagnóstico Padrão",
         "custo": 150,
         "justificativa": "Aplicada para identificação precisa da causa-raiz do defeito.",
+        "percentual_sobre_peca": null,
         "percentual_sobre_mao_de_obra": null,
         "percentual_sobre_mao_de_obra_improvisada": null,
+        "percentual_sobre_servico_total": null,
         "sigla": "T.D.P"
       }
     ],
