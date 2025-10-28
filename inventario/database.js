@@ -112,7 +112,7 @@ let itemDatabase = [
     { name: "Célula de Energia de Força Viva (Tecnologia Ithoriana)", category: "Peças de Naves", quality: "Lendária", price: 40000, description: "Uma bateria orgânica que se regenera lentamente. Uma fusão bizarra e poderosa de tecnologia e natureza." },
     { name: "Sistema de Controle de Enxame de Dróides", category: "Peças de Naves", quality: "Lendária", price: 180000, description: "Permite que um único piloto controle uma pequena esquadra de caças dróides como uma extensão de sua própria nave." },
     
-    // -- PEÇAS DE NAVES / IMPERIAL
+// -- PEÇAS DE NAVES / IMPERIAL
     { name: "Bobina de hiperespaço (Padrão-Destróier)", category: "Peças de Naves", quality: "Imperial", price: 6400, description: "Bobina padrão-militar, robusta e confiável, projetada para as longas patrulhas dos Destróieres Estelares." },
     { name: "Conversor de energia (Nível Militar)", category: "Peças de Naves", quality: "Imperial", price: 2200, description: "Conversor de energia de nível militar projetado para lidar com as enormes demandas de energia dos sistemas de armas imperiais." },
     { name: "Estabilizador de voo (Padrão-Nave Capital)", category: "Peças de Naves", quality: "Imperial", price: 4800, description: "Estabilizador pesado projetado para manter a estabilidade de naves capitais durante o bombardeio orbital." },
@@ -134,7 +134,7 @@ let itemDatabase = [
     { name: "Cadeira Ejetora de Piloto TIE", category: "Peças de Naves", quality: "Imperial", price: 7500, description: "Sistema de ejeção de último recurso para pilotos de TIE, que os lança no vácuo com um pequeno suprimento de oxigénio." },
     { name: "Sistema de Suporte de Vida de Stormtrooper", category: "Peças de Naves", quality: "Imperial", price: 15000, description: "Pode ser instalado em naves sem atmosfera, permitindo que stormtroopers operem no vácuo." },
     
-    // -- PEÇAS DE DRÓIDES / LENDÁRIA
+// -- PEÇAS DE DRÓIDES / LENDÁRIA
     { name: "Processador Heurístico Avançado", category: "Peças de Dróides", quality: "Lendária", price: 16000, description: "Um processador com matriz de aprendizado senciente, tão avançado que beira a consciência. O dróide não apenas aprende, ele evolui." },
     { name: "Unidade Motivadora de Precisão", category: "Peças de Dróides", quality: "Lendária", price: 6400, description: "Servos com fibras de músculo sintético que permitem movimentos tão fluidos e silenciosos que podem enganar um Jedi." },
     { name: "Sensor Óptico de Alta Resolução", category: "Peças de Dróides", quality: "Lendária", price: 4000, description: "Um olho cibernético capaz de análises de microexpressões, prevendo a intenção de um oponente antes mesmo que ele se mova." },
@@ -156,7 +156,7 @@ let itemDatabase = [
     { name: "Núcleo de Processamento de Batalha HK (Reativado)", category: "Peças de Dróides", quality: "Lendária", price: 200000, description: "O processador de um infame dróide assassino da Antiga República, reativado e pronto para servir a um novo mestre." },
     { name: "Injetor de Veneno de Kouhun", category: "Peças de Dróides", quality: "Lendária", price: 35000, description: "Um apêndice oculto que pode injetar o veneno mortal dos artrópodes de Indona, uma arma silenciosa e temida." },
     
-    // -- PEÇAS DE DRÓIDES / IMPERIAL
+// -- PEÇAS DE DRÓIDES / IMPERIAL
     { name: "Processador Heurístico (Lealdade Imperial)", category: "Peças de Dróides", quality: "Imperial", price: 8000, description: "Processador heurístico com programação de lealdade imperial, garantindo que a criatividade do dróide nunca se desvie dos objetivos do Império." },
     { name: "Processador Básico (Dróide de Batalha)", category: "Peças de Dróides", quality: "Imperial", price: 2000, description: "Processador básico de alta velocidade, usado em dróides de batalha e de segurança para execução de ordens sem questionamento." },
     { name: "Unidade Motivadora (Nível Militar)", category: "Peças de Dróides", quality: "Imperial", price: 3200, description: "Unidade motivadora de nível militar, projetada para durabilidade em condições de combate." },
@@ -178,7 +178,7 @@ let itemDatabase = [
     { name: "Roldanas Magnéticas (Dróide Rato MSE-6)", category: "Peças de Dróides", quality: "Imperial", price: 1800, description: "Rodas magnéticas que permitem que o dróide se mova ao longo dos corredores metálicos de uma nave capital." },
     { name: "Módulo de Interrogação (Dróide IT-O)", category: "Peças de Dróides", quality: "Imperial", price: 10000, description: "Um conjunto de ferramentas e dispositivos de tortura projetados para extrair informações de prisioneiros." },
     
-    // -- NAVES PRONTAS / LENDÁRIA
+// -- NAVES PRONTAS / LENDÁRIA
     { name: "Cargueiro Leve YT-1300 (Millennium Falcon)", category: "Naves Prontas", quality: "Lendária", price: 800000, description: "O original. Uma nave lendária que fez a Corrida de Kessel em menos de 12 parsecs. Modificada com sistemas ilegais e um computador com uma personalidade própria." },
     { name: "Transporte de Patrulha Firespray-31 (Slave I)", category: "Naves Prontas", quality: "Lendária", price: 1200000, description: "A infame nave de Jango e Boba Fett. Carregada com um arsenal oculto, sistemas de rastreamento avançados e um histórico de capturas bem-sucedidas." },
     { name: "Caça Estelar Z-95 (Edição 'Asas Abertas')", category: "Naves Prontas", quality: "Lendária", price: 720000, description: "Um modelo Z-95 modificado pessoalmente por um ás da Rebelião, com motores e armas que superam muitos caças modernos. Uma peça de história viva." },
@@ -200,7 +200,7 @@ let itemDatabase = [
     { name: "Célula de Energia de Força Viva (Tecnologia Ithoriana Nave)", category: "Naves Prontas", quality: "Lendária", price: 40000, description: "Uma bateria orgânica que se regenera lentamente. Uma fusão bizarra e poderosa de tecnologia e natureza." },
     { name: "Sistema de Controle de Enxame de Dróides (Nave)", category: "Naves Prontas", quality: "Lendária", price: 180000, description: "Permite que um único piloto controle uma pequena esquadra de caças dróides como uma extensão de sua própria nave." },
     
-    // -- NAVES PRONTAS / IMPERIAL
+// -- NAVES PRONTAS / IMPERIAL
     { name: "Caça TIE/LN", category: "Naves Prontas", quality: "Imperial", price: 60000, description: "O icónico e ágil caça do Império. Rápido, barato de produzir e projetado para sobrecarregar o inimigo com números." },
     { name: "Interceptor TIE/IN", category: "Naves Prontas", quality: "Imperial", price: 120000, description: "Uma versão mais rápida e mais bem armada do TIE padrão, projetada para duelos com os melhores caças da Rebelião." },
     { name: "Bombardeiro TIE/sa", category: "Naves Prontas", quality: "Imperial", price: 145000, description: "Um bombardeiro de casco duplo, lento mas resistente, que carrega uma carga útil devastadora de torpedos e bombas." },
@@ -222,7 +222,7 @@ let itemDatabase = [
     { name: "Plataforma de Armas Móvel TIE Mauler", category: "Naves Prontas", quality: "Imperial", price: 65000, description: "Um pequeno tanque com esteiras, armado com canhões laser, projetado para apoio à infantaria em terreno difícil." },
     { name: "Iate Pessoal do Diretor Krennic", category: "Naves Prontas", quality: "Imperial", price: 1000000, description: "Uma nave de transporte classe Delta modificada, com um design angular e ameaçador, blindagem preta e sistemas de comunicação avançados." },
     
-    // -- DRÓIDES PRONTOS / LENDÁRIA
+// -- DRÓIDES PRONTOS / LENDÁRIA
     { name: "Droide de Protocolo (Modelo de Espionagem)", category: "Dróides Prontos", quality: "Lendária", price: 48000, description: "Um 3PO modificado com gravadores ocultos, fatiador de dados e um vocabulador capaz de imitar vozes perfeitamente." },
     { name: "Droide Astromecânico (Sombra)", category: "Dróides Prontos", quality: "Lendária", price: 72000, description: "Uma unidade R2 pintada com material absorvente de radar e programada para invasão de sistemas. Um fantasma na máquina." },
     { name: "Droide Médico (Necro-cirurgião)", category: "Dróides Prontos", quality: "Lendária", price: 68800, description: "Projetado para operar em soldados caídos, este dróide pode realizar implantes cibernéticos complexos no meio do campo de batalha." },
@@ -244,7 +244,7 @@ let itemDatabase = [
     { name: "Droide de Demolição (Implosor)", category: "Dróides Prontos", quality: "Lendária", price: 110000, description: "Armado com um implosor sónico que desintegra a matéria a nível molecular, deixando para trás apenas um vácuo silencioso." },
     { name: "Droide de Protocolo (Guardião de Segredos)", category: "Dróides Prontos", quality: "Lendária", price: 85000, description: "A sua memória é protegida por um labirinto quântico, tornando impossível extrair a informação que contém sem a sua permissão." },
     
-    // -- DRÓIDES PRONTOS / IMPERIAL
+// -- DRÓIDES PRONTOS / IMPERIAL
     { name: "Dróide Sonda Viper", category: "Dróides Prontos", quality: "Imperial", price: 18500, description: "A principal ferramenta do Império para reconhecimento de longo alcance e caça a bases rebeldes. Rápido, furtivo e auto-suficiente." },
     { name: "Dróide de Interrogatório IT-O", category: "Dróides Prontos", quality: "Imperial", price: 12000, description: "Um ícone do medo Imperial. Projetado para extrair informação de prisioneiros através de intimidação psicológica e física." },
     { name: "Dróide de Segurança Série KX", category: "Dróides Prontos", quality: "Imperial", price: 15000, description: "Um dróide de segurança imponente e forte, frequentemente usado para guardar instalações de alta segurança e para subjugar motins." },
@@ -266,7 +266,7 @@ let itemDatabase = [
     { name: "Dróide de Navegação Imperial", category: "Dróides Prontos", quality: "Imperial", price: 9800, description: "Um dróide astromecânico programado exclusivamente com rotas hiperespaciais militares e protocolos navais imperiais." },
     { name: "Dróide de Propaganda Série P-100", category: "Dróides Prontos", quality: "Imperial", price: 4200, description: "Um dróide de relações públicas que vagueia pelas cidades, transmitindo propaganda imperial e monitorizando o sentimento público." },
 
-    // -- PEÇAS DE NAVES / EXCELENTE
+// -- PEÇAS DE NAVES / EXCELENTE
     { name: "Bobina de hiperespaço de precisão (Exc)", category: "Peças de Naves", quality: "Excelente", price: 4800, description: "Fabricada com cristais supercondutores puros, esta bobina garante os saltos mais rápidos e estáveis que o dinheiro pode comprar." },
     { name: "Conversor de energia de fluxo otimizado (Exc)", category: "Peças de Naves", quality: "Excelente", price: 1650, description: "Uma unidade de conversão de energia de última geração que maximiza a eficiência energética, permitindo que armas e escudos operem em seu pico." },
     { name: "Estabilizador de voo giroscópico (Exc)", category: "Peças de Naves", quality: "Excelente", price: 3600, description: "Equipado com giroscópios de precisão quântica, este estabilizador oferece controle de voo absoluto nas manobras mais extremas." },
@@ -287,7 +287,7 @@ let itemDatabase = [
     { name: "Projetor de Raio Trator de Campo Amplo", category: "Peças de Naves", quality: "Excelente", price: 60000, description: "Um projetor de raio trator tão poderoso que pode segurar múltiplos caças ou um cargueiro leve com facilidade." },
     { name: "Projetor de Poço de Gravidade", category: "Peças de Naves", quality: "Excelente", price: 150000, description: "Tecnologia rara e de alto consumo de energia que gera sombras de massa artificiais, capaz de arrancar naves do hiperespaço." },
     
-    // -- PEÇAS DE NAVES / BOA
+// -- PEÇAS DE NAVES / BOA
     { name: "Bobina de hiperespaço (Boa)", category: "Peças de Naves", quality: "Boa", price: 3200, description: "Uma bobina de alta performance que garante saltos no hiperespaço mais rápidos e com menor risco de erros de cálculo." },
     { name: "Conversor de energia (Boa)", category: "Peças de Naves", quality: "Boa", price: 1100, description: "Um conversor de energia eficiente, garantindo que a potência do reator seja distribuída de forma otimizada para todos os sistemas." },
     { name: "Estabilizador de voo (Boa)", category: "Peças de Naves", quality: "Boa", price: 2400, description: "Um estabilizador de nível superior que oferece maior controle e resposta em manobras de combate." },
@@ -308,7 +308,7 @@ let itemDatabase = [
     { name: "Anel de Transporte de Hiperpropulsão (Boa)", category: "Peças de Naves", quality: "Boa", price: 140000, description: "Um anel de hiperespaço confiável e bem conservado, perfeito para caças Jedi." },
     { name: "Projetor de Raio Trator (Boa)", category: "Peças de Naves", quality: "Boa", price: 40000, description: "Um projetor de raio trator padrão, capaz de capturar naves do tamanho de um cargueiro." },
     
-    // -- PEÇAS DE NAVES / NORMAL
+// -- PEÇAS DE NAVES / NORMAL
     { name: "Bobina de hiperespaço (Normal)", category: "Peças de Naves", quality: "Normal", price: 1600, description: "Componente padrão responsável por gerar o campo para o salto no hiperespaço." },
     { name: "Conversor de energia (Normal)", category: "Peças de Naves", quality: "Normal", price: 550, description: "Peça padrão que realiza a transferência de energia entre os sistemas da nave." },
     { name: "Estabilizador de voo (Normal)", category: "Peças de Naves", quality: "Normal", price: 1200, description: "Dispositivo que mantém a estabilidade da nave durante voo e manobras." },
@@ -329,7 +329,7 @@ let itemDatabase = [
     { name: "Anel de Transporte de Hiperpropulsão (Normal)", category: "Peças de Naves", quality: "Normal", price: 70000, description: "Módulo externo para caças que não possuem um hiperpropulsor interno." },
     { name: "Projetor de Raio Trator (Normal)", category: "Peças de Naves", quality: "Normal", price: 20000, description: "Componente chave de cruzadores para capturar naves." },
     
-    // -- PEÇAS DE NAVES / BAIXA
+// -- PEÇAS DE NAVES / BAIXA
     { name: "Bobina de hiperespaço (Recuperada)", category: "Peças de Naves", quality: "Baixa", price: 950, description: "Tirada de um cargueiro que se 'aposentou' abruptamente. Faz um barulho estranho ao ser ativada, mas geralmente te leva aonde você precisa ir. Ou perto." },
     { name: "Conversor de energia (Remendado)", category: "Peças de Naves", quality: "Baixa", price: 300, description: "Cheio de soldas duvidosas e peças não originais. Às vezes, desvia um pouco de energia para o sistema de som, causando estática." },
     { name: "Estabilizador de voo (Usado)", category: "Peças de Naves", quality: "Baixa", price: 700, description: "Claramente já viu dias melhores. A nave pode tremer um pouco em curvas fechadas, mas é melhor do que voar de lado." },
@@ -350,7 +350,7 @@ let itemDatabase = [
     { name: "Anel de Transporte de Hiperpropulsão (Antigo)", category: "Peças de Naves", quality: "Baixa", price: 40000, description: "Esteve parado em um cemitério de naves por uma década. A maioria da ferrugem foi removida." },
     { name: "Projetor de Raio Trator (Fraco)", category: "Peças de Naves", quality: "Baixa", price: 12000, description: "Consegue segurar uma nave, mas qualquer motor mais forte pode escapar. Melhor usá-lo em naves já danificadas." },
     
-    // -- PEÇAS DE DRÓIDES / EXCELENTE
+// -- PEÇAS DE DRÓIDES / EXCELENTE
     { name: "Processador Heurístico Avançado (Dróide)", category: "Peças de Dróides", quality: "Excelente", price: 6000, description: "Com capacidade de aprendizado quântico e sub-rotinas adaptativas, este processador permite que o dróide não apenas pense, mas inove." },
     { name: "Processador Básico de Nível Executivo", category: "Peças de Dróides", quality: "Excelente", price: 1500, description: "Mesmo sendo básico, este processador opera com velocidade e confiabilidade impecáveis, livre de falhas ou atrasos. Ideal para dróides de serviço em ambientes corporativos." },
     { name: "Unidade Motivadora de Precisão (Dróide)", category: "Peças de Dróides", quality: "Excelente", price: 2400, description: "Garante movimento fluido e resposta instantânea, transformando um dróide comum em um automato ágil e gracioso." },
@@ -371,7 +371,7 @@ let itemDatabase = [
     { name: "Sistema de Autodestruição Termal (Dróide)", category: "Peças de Dróides", quality: "Excelente", price: 2160, description: "Uma carga de detonita limpa e potente que garante a desintegração completa do dróide." },
     { name: "Bateria Secundária (Dróide)", category: "Peças de Dróides", quality: "Excelente", price: 1200, description: "Uma fonte de energia de reserva compacta e de alta densidade, garantindo que o dróide permaneça operacional." },
     
-    // -- PEÇAS DE DRÓIDES / BOA
+// -- PEÇAS DE DRÓIDES / BOA
     { name: "Processador Heurístico (Dróide) (Boa)", category: "Peças de Dróides", quality: "Boa", price: 4000, description: "Um processador rápido e capaz, permitindo que o dróide aprenda com suas experiências e tome decisões lógicas complexas." },
     { name: "Processador Básico (Dróide) (Boa)", category: "Peças de Dróides", quality: "Boa", price: 1000, description: "Um processador básico de alta velocidade, executando suas tarefas programadas com eficiência e sem erros." },
     { name: "Unidade Motivadora (Dróide) (Boa)", category: "Peças de Dróides", quality: "Boa", price: 1600, description: "Software de controle de movimento que oferece boa resposta e precisão nos movimentos do dróide." },
@@ -392,7 +392,7 @@ let itemDatabase = [
     { name: "Sistema de Autodestruição (Boa)", category: "Peças de Dróides", quality: "Boa", price: 1440, description: "Uma carga explosiva padrão para inutilizar um dróide em caso de captura." },
     { name: "Bateria Secundária (Boa)", category: "Peças de Dróides", quality: "Boa", price: 800, description: "Uma bateria de apoio de alta capacidade que dobra a autonomia operacional do dróide." },
     
-    // -- PEÇAS DE DRÓIDES / NORMAL
+// -- PEÇAS DE DRÓIDES / NORMAL
     { name: "Processador Heurístico (Dróide) (Normal)", category: "Peças de Dróides", quality: "Normal", price: 2000, description: "Permite que o dróide aprenda com suas experiências." },
     { name: "Processador Básico (Dróide) (Normal)", category: "Peças de Dróides", quality: "Normal", price: 500, description: "Programado para tarefas específicas, interpreta instruções literalmente." },
     { name: "Unidade Motivadora (Dróide) (Normal)", category: "Peças de Dróides", quality: "Normal", price: 800, description: "Software que controla o motor ou sistema de movimento de um dróide." },
@@ -413,7 +413,7 @@ let itemDatabase = [
     { name: "Sistema de Autodestruição (Normal)", category: "Peças de Dróides", quality: "Normal", price: 720, description: "Carga explosiva interna." },
     { name: "Bateria Secundária (Normal)", category: "Peças de Dróides", quality: "Normal", price: 400, description: "Permite ao dróide operar pelo dobro do tempo normal." },
     
-    // -- PEÇAS DE DRÓIDES / BAIXA
+// -- PEÇAS DE DRÓIDES / BAIXA
     { name: "Processador Heurístico (Com Tiques)", category: "Peças de Dróides", quality: "Baixa", price: 1100, description: "Este processador pensa por si mesmo, com certeza. O problema é que, às vezes, seus pensamentos incluem desenvolver um medo irracional de portas automáticas ou uma afinidade por cantar hinos Hutteses." },
     { name: "Processador Básico (Lento)", category: "Peças de Dróides", quality: "Baixa", price: 250, description: "Executa as tarefas, eventualmente. Há um pequeno atraso entre o comando e a ação. Não use em situações de vida ou morte." },
     { name: "Unidade Motivadora (Teimosa)", category: "Peças de Dróides", quality: "Baixa", price: 450, description: "Às vezes, simplesmente decide que não quer mais andar para a esquerda. Um bom chute costuma resolver, mas a paciência é uma virtude." },
@@ -434,7 +434,7 @@ let itemDatabase = [
     { name: "Sistema de Autodestruição (Sensível)", category: "Peças de Dróides", quality: "Baixa", price: 350, description: "O timer é um pouco sensível. Pode ser acionado por uma batida mais forte ou um espirro muito alto. Use com cautela." },
     { name: "Bateria Secundária (Viciada)", category: "Peças de Dróides", quality: "Baixa", price: 200, description: "Dura a metade do tempo prometido e demora o dobro para carregar." },
 
-    // -- NAVES PRONTAS / EXCELENTE
+// -- NAVES PRONTAS / EXCELENTE
     { name: "Cargueiro Leve YT-1300 (Customizado)", category: "Naves Prontas", quality: "Excelente", price: 400000, description: "Um YT-1300 completamente remodelado com motores de nível militar, escudos reforçados e um interior de luxo. Rápido, discreto e confortável." },
     { name: "Iate Espacial 3000 de Luxo", category: "Naves Prontas", quality: "Excelente", price: 1800000, description: "O auge do luxo pessoal. Equipado com piscina, spa, um bar completo e os mais avançados sistemas de entretenimento." },
     { name: "Caça Estelar Z-95 Headhunter (Edição de Colecionador)", category: "Naves Prontas", quality: "Excelente", price: 360000, description: "Uma réplica perfeita e totalmente funcional de um Z-95 da era das Guerras Clónicas, restaurado com tecnologia moderna." },
@@ -455,7 +455,7 @@ let itemDatabase = [
     { name: "Transporte Pessoal classe Wayfarer (O Explorador) (Exc)", category: "Naves Prontas", quality: "Excelente", price: 880000, description: "Esta nave mapeou setores inteiros das Regiões Desconhecidas. O seu navicomputador contém dados estelares de valor incalculável." },
     { name: "Cargueiro Leve YT-1000 (O Náufrago) (Exc)", category: "Naves Prontas", quality: "Excelente", price: 900000, description: "Uma nave antiga encontrada à deriva, com tecnologia desconhecida no seu interior. Os sistemas são alienígenas e imprevisíveis." },
     
-    // -- NAVES PRONTAS / BOA
+// -- NAVES PRONTAS / BOA
     { name: "Cargueiro Leve YT-1300 (Boa)", category: "Naves Prontas", quality: "Boa", price: 200000, description: "Um modelo bem conservado, com todos os sistemas a funcionar perfeitamente. Um excelente ponto de partida para qualquer contrabandista." },
     { name: "Cargueiro Leve YT-2400 (Boa)", category: "Naves Prontas", quality: "Boa", price: 250000, description: "Um cargueiro rápido e ágil, popular entre mercenários que precisam de uma nave que consiga lutar e fugir." },
     { name: "Corveta Corelliana CR90 (Boa)", category: "Naves Prontas", quality: "Boa", price: 7000000, description: "Uma antiga nave da marinha planetária, convertida para uso civil. Mantém a sua velocidade e robustez." },
@@ -477,7 +477,7 @@ let itemDatabase = [
     { name: "Cargueiro Médio classe YV-666 (Boa)", category: "Naves Prontas", quality: "Boa", price: 270000, description: "Um cargueiro com um design robusto e um porão de carga espaçoso, em boas condições de funcionamento." },
     { name: "Tanque de Assalto Flutuante (AAT) (Boa)", category: "Naves Prontas", quality: "Boa", price: 130000, description: "Um tanque Separatista capturado e desmilitarizado, mas com a blindagem e os motores em excelente estado." },
     
-    // -- NAVES PRONTAS / NORMAL
+// -- NAVES PRONTAS / NORMAL
     { name: "Cargueiro Leve YT-1300 (Normal)", category: "Naves Prontas", quality: "Normal", price: 100000, description: "Um cargueiro corelliano icónico, famoso pela sua durabilidade e potencial de modificação. O modelo de fábrica é fiável, mas implora por melhorias." },
     { name: "Cargueiro Leve YT-2400 (Normal)", category: "Naves Prontas", quality: "Normal", price: 125000, description: "Um modelo mais compacto e orientado para o combate que o YT-1300, com um cockpit central e melhor armamento de fábrica. Favorecido por mercenários." },
     { name: "Corveta Corelliana CR90 (Normal)", category: "Naves Prontas", quality: "Normal", price: 3500000, description: "Conhecida como 'Blockade Runner', esta nave capital versátil pode ser configurada como transporte de tropas, cargueiro ou escolta diplomática." },
@@ -499,7 +499,7 @@ let itemDatabase = [
     { name: "Cargueiro Médio classe YV-666 (Normal)", category: "Naves Prontas", quality: "Normal", price: 135000, description: "Um cargueiro com um design incomum de cockpit lateral, preferido por caçadores de prémios e mercenários como Bossk." },
     { name: "Tanque de Assalto Flutuante (AAT) (Normal)", category: "Naves Prontas", quality: "Normal", price: 65000, description: "Um tanque repulsorlift Separatista das Guerras Clónicas, agora vendido como excedente. É lento, mas fortemente armado e blindado." },
     
-    // -- NAVES PRONTAS / BAIXA
+// -- NAVES PRONTAS / BAIXA
     { name: "Cargueiro Leve YT-1300 (Enferrujado)", category: "Naves Prontas", quality: "Baixa", price: 50000, description: "Esteve em algumas... situações. O cheiro a wookiee molhado no cockpit é cortesia da casa. O hiperpropulsor às vezes engasga." },
     { name: "Cargueiro Leve YT-2400 (Marcas de Batalha)", category: "Naves Prontas", quality: "Baixa", price: 62500, description: "As marcas de blaster no casco são apenas 'modificações estéticas'. Ignora o alarme do gerador de escudos, ele faz isso o tempo todo." },
     { name: "Corveta Corelliana CR90 (Excedente)", category: "Naves Prontas", quality: "Baixa", price: 1750000, description: "Uma antiga nave de guerra que foi 'desmilitarizada'. A maioria dos sistemas de armas foi removida. A maioria." },
@@ -521,7 +521,7 @@ let itemDatabase = [
     { name: "Cargueiro Médio classe YV-666 (Assombrado)", category: "Naves Prontas", quality: "Baixa", price: 67500, description: "A tripulação anterior desapareceu misteriosamente. O dróide de bordo fala de trás para a frente. O preço é negociável." },
     { name: "Tanque de Assalto Flutuante (AAT) (Sucata de Guerra)", category: "Naves Prontas", quality: "Baixa", price: 32500, description: "Um veterano das Guerras Clónicas. Metade dos sistemas não funciona e tem um buraco no casco, mas ainda intimida." },
     
-    // -- DRÓIDES PRONTOS / EXCELENTE
+// -- DRÓIDES PRONTOS / EXCELENTE
     { name: "Droide de Protocolo Série 3PO (Modelo Diplomático)", category: "Dróides Prontos", quality: "Excelente", price: 24000, description: "Programado com os protocolos de mais de sete milhões de formas de comunicação, incluindo dialetos antigos e códigos encriptados da nobreza." },
     { name: "Droide Astromecânico Série R2 (Modelo de Elite)", category: "Dróides Prontos", quality: "Excelente", price: 36000, description: "Uma unidade R2 com ferramentas de precisão, um processador heurístico melhorado e um pequeno projetor de escudo de emergência." },
     { name: "Droide Médico Série 2-1B (Cirurgião Chefe)", category: "Dróides Prontos", quality: "Excelente", price: 34400, description: "Equipado com os mais avançados instrumentos cirúrgicos e um banco de dados médicos que é atualizado em tempo real com as últimas descobertas galácticas." },
@@ -543,7 +543,7 @@ let itemDatabase = [
     { name: "Droide de Segurança com Campo de Força", category: "Dróides Prontos", quality: "Excelente", price: 65000, description: "Um dróide de segurança que pode projetar um pequeno campo de força pessoal para se proteger de ataques." },
     { name: "Droide Piloto de Corridas", category: "Dróides Prontos", quality: "Excelente", price: 70000, description: "Programado com os reflexos e a agressividade necessários para competir e vencer nas perigosas corridas de speeders." },
     
-    // -- DRÓIDES PRONTOS / BOA
+// -- DRÓIDES PRONTOS / BOA
     { name: "Droide de Protocolo Série 3PO (Boa)", category: "Dróides Prontos", quality: "Boa", price: 6000, description: "Um modelo novo, fluente em todas as principais línguas comerciais e diplomáticas. Polido e profissional." },
     { name: "Droide Astromecânico Série R2 (Boa)", category: "Dróides Prontos", quality: "Boa", price: 9000, description: "Uma unidade R2 fiável e cheia de recursos, pronta para servir como co-piloto ou técnico de campo." },
     { name: "Droide Astromecânico Série R4 (Boa)", category: "Dróides Prontos", quality: "Boa", price: 7600, description: "Uma unidade R4 com programação especializada para caças estelares, favorecida por esquadrões de defesa planetária." },
@@ -565,7 +565,7 @@ let itemDatabase = [
     { name: "Droide de Demolição Série T-1 (Boa)", category: "Dróides Prontos", quality: "Boa", price: 7600, description: "Um dróide de demolição com programação para criar explosões controladas e precisas." },
     { name: "Droide Tutor Pessoal", category: "Dróides Prontos", quality: "Boa", price: 5000, description: "Um dróide programado com o currículo padrão da academia, para ajudar os jovens a estudar para os exames." },
     
-    // -- DRÓIDES PRONTOS / NORMAL
+// -- DRÓIDES PRONTOS / NORMAL
     { name: "Droide de Protocolo Série 3PO (Normal)", category: "Dróides Prontos", quality: "Normal", price: 3000, description: "Um dróide de protocolo fluente em mais de seis milhões de formas de comunicação. Essencial para a diplomacia e negócios." },
     { name: "Droide Astromecânico Série R2 (Normal)", category: "Dróides Prontos", quality: "Normal", price: 4500, description: "Um dróide astromecânico versátil e engenhoso. Repara naves, calcula saltos no hiperespaço e é um excelente co-piloto." },
     { name: "Droide Astromecânico Série R4 (Normal)", category: "Dróides Prontos", quality: "Normal", price: 3800, description: "Uma versão mais barata do R2, popular entre forças militares planetárias." },
@@ -587,7 +587,7 @@ let itemDatabase = [
     { name: "Droide de Segurança Prowler 1000 (Normal)", category: "Dróides Prontos", quality: "Normal", price: 5500, description: "Um dróide de reconhecimento furtivo, projetado para patrulhas silenciosas e vigilância." },
     { name: "Droide de Demolição Série T-1 (Normal)", category: "Dróides Prontos", quality: "Normal", price: 3800, description: "Um dróide operário especializado em demolição controlada, equipado com cargas explosivas e um casco reforçado." },
     
-    // -- DRÓIDES PRONTOS / BAIXA
+// -- DRÓIDES PRONTOS / BAIXA
     { name: "Droide de Protocolo Série 3PO (Poliglota Ansioso)", category: "Dróides Prontos", quality: "Baixa", price: 1500, description: "Fala seis milhões de línguas, mas entra em pânico em 5.9 milhões delas. O seu vocabulador tem um ligeiro zumbido." },
     { name: "Droide Astromecânico Série R2 (Temperamental)", category: "Dróides Prontos", quality: "Baixa", price: 2250, description: "Repara a nave, mas apenas depois de uma série de assobios e bipes de desaprovação. Pode eletrocutá-lo - 'acidentalmente'." },
     { name: "Droide Astromecânico Série R5 (Com Defeito)", category: "Dróides Prontos", quality: "Baixa", price: 1250, description: "A sua reputação precede-o. Este modelo específico tem um motivador notoriamente defeituoso. Boa sorte." },

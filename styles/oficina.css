@@ -80,7 +80,7 @@ i.fa-solid {
     transform: translateX(5px);
 }
 
-.status-aberto {
+.status-em-aberto {
     background-color: #002f94; /* blue-600 */
     color: white;
 }
