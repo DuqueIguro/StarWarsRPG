@@ -1,0 +1,129 @@
+{
+  "ordemDeServico": {
+    "id": "OS-14-JAK-001",
+    "mecanicoResponsavel": "Equipe MCMT",
+    "unidadeResponsavel": "R5-T1N",
+    "status": "Em progressso",
+    "itens": [
+      {
+        "servico": "Troca do tanque de combustível",
+        "tipo": "Protocolo S.E.V.I.R.A.",
+        "detalhes": {
+          "causaDoProblema": "Falha crítica",
+          "peca": {
+            "nome": "Tanque de combustível subluz",
+            "custo": 1210
+          },
+          "maoDeObra": {
+            "custo": 200
+          }
+        },
+        "subtotal": 1410
+      },
+      {
+        "servico": "Recalibração do motor",
+        "tipo": "Protocolo S.E.V.I.R.A.",
+        "detalhes": {
+          "causaDoProblema": "Falha de desempenho",
+          "peca": {
+            "nome": null,
+            "custo": null
+          },
+          "maoDeObra": {
+            "custo": 700
+          }
+        },
+        "subtotal": 700
+      },
+      {
+        "servico": "Desentupir válvula de escape",
+        "tipo": "Protocolo S.E.V.I.R.A.",
+        "detalhes": {
+          "causaDoProblema": "Obstrução",
+          "peca": {
+            "nome": null,
+            "custo": null
+          },
+          "maoDeObra": {
+            "custo": 250
+          }
+        },
+        "subtotal": 250
+      },
+      {
+        "servico": "Refazer solda do conversor",
+        "tipo": "Protocolo S.E.V.I.R.A.",
+        "detalhes": {
+          "causaDoProblema": "Conexão rompida",
+          "peca": {
+            "nome": null,
+            "custo": null
+          },
+          "maoDeObra": {
+            "custo": 360
+          }
+        },
+        "subtotal": 360
+      },
+      {
+        "servico": "Realinhar matriz de ignição",
+        "tipo": "Protocolo S.E.V.I.R.A.",
+        "detalhes": {
+          "causaDoProblema": "Desalinhamento",
+          "peca": {
+            "nome": null,
+            "custo": null
+          },
+          "maoDeObra": {
+            "custo": 250
+          }
+        },
+        "subtotal": 250
+      }
+    ],
+    "taxasAdicionais": [
+      {
+        "nome": "Taxa de Diagnóstico Padrão",
+        "custo": 150,
+        "justificativa": "Aplicada para identificação precisa da causa-raiz do defeito.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "T.D.P"
+      },
+      {
+        "nome": "Taxa FMEA (Faz Milagre E Agradece)",
+        "custo": 2000,
+        "justificativa": "Aplicada a reparos em equipamentos extremamente danificados que voltam a funcionar sem explicação lógica.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "FMEA"
+      },
+      {
+        "nome": "Adicional S.E.V.I.R.A.",
+        "custo": 294,
+        "justificativa": "Taxa de +15% sobre a mão de obra improvisada devido à solicitação de solução rápida e recusa do reparo adequado.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": 15,
+        "sigla": "S.E.V.I.R.A."
+      }
+    ],
+    "financeiro": {
+      "subtotalPecas": 1210,
+      "subtotalMaoDeObra": 1760,
+      "subtotalTaxasFixas": 2150,
+      "subtotalAdicionais": 264,
+      "moeda": "Créditos Galácticos",
+      "total": 5384
+    },
+    "termos": "A solicitação de um serviço categorizado como S.E.V.I.R.A. anula automaticamente qualquer garantia sobre o componente ou sistema reparado. A oficina não se responsabiliza por falhas subsequentes decorrentes da natureza provisória da solução.",
+    "titulo": "Reparo de Emergência em Nave Nubiana",
+    "data": "14 (ABY)",
+    "cliente": {
+      "nome": "Não Informado",
+      "afiliacao": "Possivelmente Contrabandista",
+      "contato_holonet": "Não informado"
+    },
+    "relatorio_problema": "Nubiana completamente defeituosa, com todos os sistemas em falha quase crítica, senão crítica. Cliente negou protocolos recomendados e, no tempo adequado, solicitou apenas funcionalidade mínima para deslocamento.",
+    "notas_mecanico": "Reator operando em 40% da capacidade máxima para evitar rompimentos maiores das barreiras anti-radiação. Recomenda-se revisão completa e substituição de componentes conforme protocolos padrão assim que possível."
+  }
+}
