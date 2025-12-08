@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         commandInput.disabled = true; // Desabilita o input principal
         const formContainer = document.createElement('div');
         formContainer.id = 'bug-report-form';
+        
 
         const formHTML = `
             <p>Seu nome:</p>
@@ -42,16 +43,68 @@ document.addEventListener('DOMContentLoaded', () => {
         terminalBody.scrollTop = terminalBody.scrollHeight;
 
         document.getElementById('submit-bug-report').addEventListener('click', () => {
+            const submitBtn = document.getElementById('submit-bug-report');
             const reporterName = document.getElementById('reporter-name').value;
             const dev = document.getElementById('dev-select').value;
             const bugPage = document.getElementById('bug-page').value;
             const bugDescription = document.getElementById('bug-description').value;
 
+            let FORMSPREE_ENDPOINT;
+
+            if (dev === "EidenFox") {
+                FORMSPREE_ENDPOINT = "https://formspree.io/f/mjknojqq";
+            } else {
+                FORMSPREE_ENDPOINT = "https://formspree.io/f/mrbnlwyl";  
+            }
+
             if (reporterName && dev && bugPage && bugDescription) {
-                print(`\n<span class="success">Bug reportado com sucesso!</span>\nObrigado, ${reporterName}. O Dev ${dev} foi notificado.`, 'success');
-                formContainer.remove();
-                commandInput.disabled = false;
-                commandInput.focus();
+
+                submitBtn.innerText = "Enviando...";
+                submitBtn.disabled = true;
+
+                const data = {
+                Nome: reporterName,
+                _subject: `Bug Report - ${bugPage} (${dev})`,
+                DEV: dev,
+                Pagina: bugPage,
+                Descrição: bugDescription
+                };
+
+
+
+                fetch(FORMSPREE_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+                })
+                .then(response => {
+                if (response.ok) {
+                    print(`\n<span class="success">Bug reportado com sucesso!</span>\nObrigado, ${reporterName}. Report enviado para o Dev ${dev}.`, 'success');
+                    formContainer.remove();
+                    commandInput.disabled = false;
+                    commandInput.focus();
+                } else {
+                    return response.json().then(data => {
+                        if (Object.hasOwn(data, 'errors')) {
+                            const errorMsg = data.errors.map(error => error["message"]).join(", ");
+                            throw new Error(errorMsg);
+                        } else {
+                            throw new Error('Ocorreu um erro no servidor.');
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                print(`\n<span class="error">Erro ao enviar: ${error.message}</span>`, 'error');
+                submitBtn.innerText = "Tentar Novamente";
+                submitBtn.disabled = false;
+            });
+
+
+
             } else {
                 print('\n<span class="error">Erro: Por favor, preencha todos os campos.</span>', 'error');
             }
@@ -64,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             commandInput.focus();
         });
     }
+    ///////////////////////////
 
     const commands = {
         'ajuda': 'Comandos disponíveis:\n  faq - Exibe perguntas frequentes.\n  reportar - Inicia o processo de reporte de bug.\n  limpar - Limpa a tela do terminal.\n  creditos - Exibe os créditos.',
