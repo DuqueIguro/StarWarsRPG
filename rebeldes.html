@@ -4,61 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISB - Grupos Subversivos</title>
-    <link rel="stylesheet" href="styles/rebeldes.css">
+    <title>ISB - Dados Subversivos</title>
     
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/rebeldes.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-        
     <link rel="icon" type="image/x-icon" href="img/Death_Star.ico">
 </head>
 
 <body>
 
-    <div class="imperial-container">
-        
-        <header class="imperial-header">
-            <div class="header-left">
-                <i class="fa-brands fa-empire fa-2x"></i>
-                <div class="header-text">
-                    <h1>IMPERIAL SECURITY BUREAU</h1>
-                    <span>DEPARTAMENTO DE MANUTENÇÃO DA ORDEM</span>
+    <div class="main-container">
+
+        <div class="top-bar">
+            <div class="system-info">
+                <span>CONEXÃO: HOLONET IMPERIAL [ENCRIPTADO]</span>
+                <span>USUÁRIO: ACESSO_RESTRITO_N4</span>
+            </div>
+            <div class="system-status">
+                <span class="status-indicator online"></span><span>REDE SEGURA</span>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+
+
+            <main class="main-content">
+                
+                <div class="imperial-header-module">
+                    <i class="fa-brands fa-empire fa-3x"></i>
+                    <div class="header-titles">
+                        <h1>IMPERIAL SECURITY BUREAU</h1>
+                        <span>LISTA DE PROCURADOS E ORGANIZAÇÕES SUBVERSIVAS</span>
+                    </div>
                 </div>
-            </div>
-            <div class="header-right">
-                <span class="clearance-level">ACESSO: NÍVEL 4 (RESTRITO)</span>
-                <span class="system-date">DATA ESTELAR: 14.7 ABY</span>
-            </div>
-        </header>
 
-        <main class="content-area">
-            
-            <div class="page-title">
-                <h2><i class="fa-solid fa-crosshairs"></i> ORGANIZAÇÕES SUBVERSIVAS IDENTIFICADAS</h2>
-                <p>Abaixo consta a lista de grupos terroristas ativos. O conhecimento destas informações é mandatório para oficiais de segurança.</p>
-            </div>
+                <div id="rebel-groups-container" class="cards-list">
+                    </div>
 
-            <div id="rebel-groups-container" class="cards-container">
+                <div class="imperial-alert-footer">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <div>
+                        <strong>DEVER CÍVICO:</strong> Cidadãos com informações devem contactar a guarnição local. A omissão é traição.
+                    </div>
                 </div>
 
-        </main>
+            </main>
 
-        <footer class="imperial-footer">
-            <div class="alert-box">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <div class="alert-message">
-                    <h3>DEVER CÍVICO OBRIGATÓRIO</h3>
-                    <p>Cidadãos que possuírem informações sobre a localização ou membros destes grupos devem contactar a guarnição imperial mais próxima imediatamente.</p>
-                    <p>A omissão de informações é considerada traição sob o Código Penal Galáctico, Seção 14, Parágrafo 9.</p>
-                </div>
-                <button class="report-btn" onclick="alert('Canal de denúncia criptografado aberto. Transmitindo coordenadas...')">REPORTAR AGORA</button>
-            </div>
-            <div class="footer-bottom">
-                <span>GLÓRIA AO IMPÉRIO</span>
-                <a href="index.html" class="return-link"><i class="fa-solid fa-arrow-left"></i> VOLTAR AO HUB CENTRAL</a>
-            </div>
-        </footer>
+        </div>
+
+        <div class="bottom-bar">
+            <span>© ABY 05 - IMPÉRIO GALÁCTICO | ISB DATABASE</span>
+            <span class="system-time">DADOS SINCRONIZADOS</span>
+        </div>
 
     </div>
 

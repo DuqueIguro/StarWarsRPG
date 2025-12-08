@@ -1,337 +1,218 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-
+/* Variáveis locais para sobrescrever o padrão apenas nesta página */
 :root {
-    --imperial-blue: #0076a3; /* Azul "Painel de Dados" */
-    --imperial-dark: #0b1016; /* Fundo muito escuro */
-    --alert-red: #cf2222;     /* Vermelho Alerta/Sith */
-    --warning-gold: #ffd700;  /* Amarelo para ameaça média */
-    --text-grey: #c0c0c0;
-    --hologram-cyan: #00f0ff;
+    --alert-red: #cf2222;
+    --imperial-white: #f0f0f0;
+    --dark-overlay: rgba(20, 0, 0, 0.6);
 }
 
-body {
-    background-color: #050505;
-    /* Ajuste o caminho da imagem conforme sua estrutura de pastas */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.92)), url('../img/bg.png'); 
-    color: var(--text-grey);
-    font-family: 'Orbitron', sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-}
-
-.imperial-container {
-    width: 95%;
-    max-width: 1200px;
-    background: rgba(11, 16, 22, 0.95);
-    border-left: 5px solid var(--alert-red);
-    border-right: 5px solid var(--imperial-blue);
-    min-height: 100vh;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
-    display: flex;
-    flex-direction: column;
-}
-
-/* ======== HEADER ======== */
-.imperial-header {
-    background: linear-gradient(90deg, #1a1a1a 0%, #0d1a26 100%);
-    padding: 20px 30px;
-    border-bottom: 2px solid var(--alert-red);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-left {
+/* Header Interno com logo do Império */
+.imperial-header-module {
     display: flex;
     align-items: center;
-    gap: 15px;
-    color: #fff;
-}
-
-.header-text h1 {
-    margin: 0;
-    font-size: 1.5em;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #fff;
-}
-
-.header-text span {
-    font-size: 0.7em;
-    color: var(--alert-red);
-    letter-spacing: 4px;
-    font-weight: bold;
-}
-
-.header-right {
-    text-align: right;
-    font-size: 0.8em;
-    color: var(--imperial-blue);
-}
-
-.clearance-level {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--alert-red);
-    font-weight: bold;
-}
-
-/* ======== CONTEÚDO ======== */
-.content-area {
-    padding: 30px;
-    flex-grow: 1;
-}
-
-.page-title {
-    text-align: center;
-    margin-bottom: 40px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 20px;
-}
-
-.page-title h2 {
-    color: var(--alert-red);
-    font-size: 2em;
-    text-shadow: 0 0 10px rgba(207, 34, 34, 0.4);
-    margin-bottom: 10px;
-}
-
-.page-title p {
-    font-size: 0.9em;
-    color: #888;
-}
-
-/* ======== CARDS ======== */
-.cards-container {
-    display: flex;
-    flex-direction: column;
     gap: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--alert-red);
+    color: var(--imperial-white);
 }
 
+.imperial-header-module i {
+    color: var(--alert-red);
+    text-shadow: 0 0 15px var(--alert-red);
+}
+
+.header-titles h1 {
+    margin: 0;
+    font-size: 1.8em;
+    color: var(--imperial-white);
+    text-shadow: none;
+    text-align: left; /* Sobrescreve o center do h1 padrão */
+}
+
+.header-titles span {
+    font-size: 0.8em;
+    letter-spacing: 3px;
+    color: var(--alert-red);
+    font-weight: bold;
+}
+
+/* Container da Lista */
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Estilização dos Cards - Baseado no .module-card do style.css mas modificado */
 .group-card {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid var(--imperial-blue);
-    border-left: 5px solid var(--imperial-blue);
-    margin-bottom: 10px;
-    transition: all 0.3s ease;
+    background: linear-gradient(90deg, rgba(40, 10, 10, 0.8) 0%, rgba(30, 50, 80, 0.4) 100%);
+    border: 1px solid #444;
+    border-left: 4px solid var(--alert-red); /* Borda vermelha indicando inimigo */
+    border-radius: 5px;
+    padding: 15px 20px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     position: relative;
     overflow: hidden;
 }
 
 .group-card:hover {
-    border-color: var(--hologram-cyan);
-    box-shadow: 0 0 15px rgba(0, 118, 163, 0.3);
+    transform: translateX(5px);
+    box-shadow: 0 0 15px rgba(207, 34, 34, 0.3);
+    border-color: var(--alert-red);
 }
 
+/* Header do Card */
 .card-header {
-    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(90deg, rgba(0,118,163,0.1) 0%, rgba(0,0,0,0) 100%);
+    color: var(--imperial-white);
 }
 
 .group-name {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #fff;
     display: flex;
     align-items: center;
     gap: 15px;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
-.threat-level {
-    font-size: 0.8em;
-    padding: 5px 10px;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid #555;
-    color: #fff;
-    text-transform: uppercase;
-    min-width: 100px;
+.group-name i {
+    color: #aaa; /* Ícone cinza até ser hover */
+    width: 25px;
     text-align: center;
 }
 
-/* Níveis de Ameaça Cores */
-.threat-level.extreme {
-    border-color: var(--alert-red);
+.group-card:hover .group-name i {
     color: var(--alert-red);
-    background: rgba(207, 34, 34, 0.1);
-    animation: pulse 2s infinite;
 }
 
-.threat-level.high {
-    border-color: #ff8c00;
+/* Badges de Ameaça */
+.threat-badge {
+    font-size: 0.75em;
+    padding: 4px 8px;
+    border: 1px solid #555;
+    background: rgba(0,0,0,0.5);
+    text-transform: uppercase;
+    margin-right: 15px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.threat-badge.extreme {
+    color: var(--alert-red);
+    border-color: var(--alert-red);
+    box-shadow: 0 0 5px var(--alert-red) inset;
+    animation: blinkRed 2s infinite;
+}
+
+.threat-badge.high {
     color: #ff8c00;
+    border-color: #ff8c00;
 }
 
-.threat-level.medium {
-    border-color: var(--warning-gold);
-    color: var(--warning-gold);
+.threat-badge.medium {
+    color: #ffd700;
+    border-color: #ffd700;
 }
 
-.expand-icon {
-    color: var(--imperial-blue);
-    transition: transform 0.3s;
-}
-
-/* Estado Expandido */
-.group-card.active .expand-icon {
-    transform: rotate(180deg);
-}
-
-.group-card.active {
-    border-left-color: var(--alert-red);
-    background: rgba(10, 15, 20, 0.95);
-}
-
+/* Área de Detalhes (Expandível) */
 .card-details {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease-out, padding 0.3s ease;
+    transition: max-height 0.4s ease-out, opacity 0.3s ease;
+    opacity: 0;
     border-top: 1px solid transparent;
+    margin-top: 0;
+}
+
+.group-card.active {
+    background: rgba(20, 0, 0, 0.9); /* Fundo mais escuro quando ativo */
+    border-left-width: 6px;
 }
 
 .group-card.active .card-details {
-    max-height: 800px; 
-    padding: 25px;
-    border-top: 1px solid var(--imperial-blue);
+    max-height: 1000px; /* Valor seguro */
+    opacity: 1;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(207, 34, 34, 0.3);
 }
 
+.group-card.active .expand-icon {
+    transform: rotate(180deg);
+    color: var(--alert-red);
+}
+
+/* Grid de Informações */
 .detail-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
 }
 
-.detail-item {
-    display: flex;
-    flex-direction: column;
-}
-
-.detail-item strong {
-    color: var(--imperial-blue);
-    font-size: 0.75em;
-    margin-bottom: 5px;
+.info-block label {
+    display: block;
+    font-size: 0.7em;
+    color: var(--alert-red);
+    margin-bottom: 3px;
     letter-spacing: 1px;
 }
 
-.detail-item span {
-    color: #fff;
-    font-size: 1em;
-}
-
-.description-text {
-    grid-column: 1 / -1;
-    line-height: 1.8;
-    color: #dcdcdc;
-    border-top: 1px dashed #333;
-    padding-top: 20px;
-    margin-top: 10px;
-    text-align: justify;
-    font-family: 'Verdana', sans-serif; /* Fonte secundária para leitura longa, se desejar manter Orbitron remova esta linha */
-    font-size: 0.95em;
-}
-
-/* ======== FOOTER ======== */
-.imperial-footer {
-    margin-top: auto;
-    background: #0d0d0d;
-    border-top: 3px solid var(--alert-red);
-}
-
-.alert-box {
-    padding: 30px;
-    background: repeating-linear-gradient(
-        45deg,
-        #1a0505,
-        #1a0505 10px,
-        #240a0a 10px,
-        #240a0a 20px
-    );
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    border-bottom: 1px solid #333;
-}
-
-.alert-box i {
-    font-size: 3em;
-    color: var(--alert-red);
-}
-
-.alert-message h3 {
-    margin: 0 0 10px 0;
-    color: var(--alert-red);
-}
-
-.alert-message p {
-    margin: 5px 0;
+.info-block span {
+    color: #ddd;
     font-size: 0.9em;
 }
 
-.report-btn {
-    margin-left: auto;
-    background: var(--alert-red);
-    color: #fff;
-    border: none;
-    padding: 15px 30px;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: bold;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.2s;
+.description-box {
+    grid-column: 1 / -1;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: #ccc;
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-left: 2px solid #555;
+    text-align: justify;
 }
 
-.report-btn:hover {
-    background: transparent;
-    border-color: var(--alert-red);
-    color: var(--alert-red);
-    box-shadow: 0 0 15px var(--alert-red);
-}
-
-.footer-bottom {
+/* Footer de Alerta */
+.imperial-alert-footer {
+    margin-top: 30px;
+    background: rgba(207, 34, 34, 0.1);
+    border: 1px solid var(--alert-red);
     padding: 15px;
-    text-align: center;
-    font-size: 0.8em;
     display: flex;
-    justify-content: space-between;
-    padding: 15px 40px;
+    align-items: center;
+    gap: 20px;
+    color: #ffcccc;
+    font-size: 0.9em;
 }
 
-.return-link {
-    color: var(--imperial-blue);
-    text-decoration: none;
-    transition: color 0.2s;
+.imperial-alert-footer i {
+    font-size: 1.5em;
+    color: var(--alert-red);
 }
 
-.return-link:hover {
-    color: #fff;
-    text-shadow: 0 0 5px var(--imperial-blue);
-}
-
-@keyframes pulse {
+@keyframes blinkRed {
     0% { opacity: 1; }
     50% { opacity: 0.6; }
     100% { opacity: 1; }
 }
 
+/* Ajuste Mobile */
 @media (max-width: 768px) {
-    .detail-grid {
-        grid-template-columns: 1fr;
-    }
-    .alert-box {
+    .card-header {
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
+        gap: 10px;
     }
-    .report-btn {
+    .threat-badge {
         margin-left: 0;
-        width: 100%;
-    }
-    .group-name {
-        font-size: 1em;
     }
 }
