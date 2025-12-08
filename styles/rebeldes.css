@@ -6,13 +6,44 @@
 }
 
 /* Ajuste de Layout (Sem Sidebar) */
-/* Como removemos a sidebar, o .main-content ocupará 100%. 
-   Vamos limitar a largura máxima para leitura confortável */
 .main-content {
     max-width: 1000px;
-    margin: 0 auto; /* Centraliza horizontalmente */
+    margin: 0 auto;
     width: 100%;
 }
+
+/* ======== ESTILO DO BOTÃO VOLTAR (NOVO) ======== */
+.top-left-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.back-btn {
+    text-decoration: none;
+    color: #778899; /* Cor base do tema */
+    font-size: 0.9em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.back-btn:hover {
+    color: var(--imperial-white);
+    background-color: var(--alert-red);
+    box-shadow: 0 0 10px var(--alert-red);
+    border-color: var(--alert-red);
+}
+
+.back-btn i {
+    font-size: 1.1em;
+}
+/* =============================================== */
 
 /* Header Interno com logo do Império */
 .imperial-header-module {
@@ -255,5 +286,11 @@
     }
     .main-content {
         padding: 0 10px;
+    }
+    /* Ajuste para mobile para não quebrar a barra superior */
+    .top-left-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
     }
 }
