@@ -4,13 +4,15 @@
     --imperial-blue: #0076a3; /* Azul "Painel de Dados" */
     --imperial-dark: #0b1016; /* Fundo muito escuro */
     --alert-red: #cf2222;     /* Vermelho Alerta/Sith */
+    --warning-gold: #ffd700;  /* Amarelo para ameaça média */
     --text-grey: #c0c0c0;
     --hologram-cyan: #00f0ff;
 }
 
 body {
     background-color: #050505;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)), url('../img/bg.png'); /* Caminho ajustado para voltar uma pasta */
+    /* Certifique-se que o caminho da imagem está correto relativo à pasta styles */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)), url('../img/bg.png'); 
     color: var(--text-grey);
     font-family: 'Orbitron', sans-serif;
     margin: 0;
@@ -146,6 +148,7 @@ body {
     text-transform: uppercase;
 }
 
+/* Níveis de Ameaça */
 .threat-level.extreme {
     border-color: var(--alert-red);
     color: var(--alert-red);
@@ -156,6 +159,11 @@ body {
 .threat-level.high {
     border-color: #ff8c00;
     color: #ff8c00;
+}
+
+.threat-level.medium {
+    border-color: var(--warning-gold);
+    color: var(--warning-gold);
 }
 
 .expand-icon {
@@ -169,7 +177,7 @@ body {
 }
 
 .group-card.active {
-    border-left-color: var(--alert-red); /* Muda para vermelho quando aberto */
+    border-left-color: var(--alert-red);
     background: rgba(10, 15, 20, 0.95);
 }
 
@@ -181,7 +189,7 @@ body {
 }
 
 .group-card.active .card-details {
-    max-height: 500px; /* Valor seguro para o conteúdo */
+    max-height: 800px; /* Aumentado para caber o texto de hierarquia */
     padding: 20px;
     border-top: 1px solid var(--imperial-blue);
 }

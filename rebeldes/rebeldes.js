@@ -1,16 +1,86 @@
-// Base de dados dos Grupos Rebeldes
+// Base de dados dos Grupos Rebeldes (Completa)
 const rebelGroups = [
     {
-        id: "alliance",
-        name: "Aliança para Restauração da República",
-        leader: "Mon Mothma / Bail Organa",
+        id: "massassi",
+        name: "Grupo Massassi",
+        leader: "General Jan Dodonna",
         threatLevel: "Extremo",
-        threatClass: "extreme", // classe CSS
-        icon: "fa-brands fa-rebel",
-        base: "Desconhecida (Móvel)",
-        activity: "Setores Múltiplos",
-        description: "Uma coalizão ilegal de células dissidentes que visa derrubar a Nova Ordem. Altamente organizada e equipada com caças estelares de nível militar roubados. Responsáveis por inúmeros ataques a instalações imperiais de mineração e logística."
+        threatClass: "extreme", 
+        icon: "fa-solid fa-jet-fighter",
+        base: "Yavin 4",
+        activity: "Orla Exterior / Setor Gordian",
+        description: `
+            <strong>OBJETIVO PRIMÁRIO:</strong> Criar uma força militar organizada contra o Império.<br><br>
+            <strong>ESTRUTURA HIERÁRQUICA:</strong><br>
+            • General<br>
+            • Comandantes de Célula<br>
+            • Oficiais de Operações e Inteligência<br>
+            • SpecForce<br>
+            • Esquadrões de Caça<br><br>
+            <strong>OBSERVAÇÃO IMPERIAL:</strong> Grupo altamente perigoso e bem armado. Operam com disciplina militar.
+        `
     },
+    {
+        id: "orion",
+        name: "Diretiva Orion",
+        leader: "Cmdt. Arven Korr",
+        threatLevel: "Alto",
+        threatClass: "high",
+        icon: "fa-solid fa-burst",
+        base: "Raxus Prime",
+        activity: "Logística Imperial",
+        description: `
+            <strong>OBJETIVO PRIMÁRIO:</strong> Sabotar a estrutura logística do Império, criando falhas sistêmicas e colapsos de suprimento.<br><br>
+            <strong>ESTRUTURA HIERÁRQUICA:</strong><br>
+            • Comandante de Célula<br>
+            • Oficial de Inteligência<br>
+            • Oficial de Operações<br>
+            • Quartel-Mestre<br>
+            • Núcleo Técnico e Médico<br><br>
+            <strong>OBSERVAÇÃO IMPERIAL:</strong> Especialistas em sabotagem industrial. Monitorar instalações de lixo e reciclagem em Raxus Prime.
+        `
+    },
+    {
+        id: "astara",
+        name: "Movimento Astara",
+        leader: "Cmdt. Astara Lumon",
+        threatLevel: "Médio",
+        threatClass: "medium", 
+        icon: "fa-solid fa-users-rays", 
+        base: "Chandrila",
+        activity: "Mundos do Núcleo / Política",
+        description: `
+            <strong>OBJETIVO PRIMÁRIO:</strong> Enfraquecer o domínio imperial através de influência política clandestina, informação e organização civil.<br><br>
+            <strong>ESTRUTURA HIERÁRQUICA:</strong><br>
+            • Comandante de Célula<br>
+            • Coordenador de Comunicações<br>
+            • Oficial de Inteligência<br>
+            • Núcleo de Logística<br>
+            • Rede de Agentes Locais<br><br>
+            <strong>OBSERVAÇÃO IMPERIAL:</strong> Atividade subversiva sutil. Foco em propaganda e incitação civil.
+        `
+    },
+    {
+        id: "hiddenpath_custom",
+        name: "O Caminho",
+        leader: "Descentralizado",
+        threatLevel: "Prioridade Inquisitorial",
+        threatClass: "high",
+        icon: "fa-solid fa-compass",
+        base: "Móvel (Jabiim / Mapuzo)",
+        activity: "Rotas do Hiperespaço",
+        description: `
+            <strong>OBJETIVO PRIMÁRIO:</strong> Esconder, transportar e proteger usuários da Força e Jedi sobreviventes.<br><br>
+            <strong>ESTRUTURA HIERÁRQUICA:</strong><br>
+            • Guias<br>
+            • Protetores Locais<br>
+            • Condutores de Rota<br>
+            • Guardiões de Casas Seguras<br>
+            • Contatadores<br><br>
+            <strong>OBSERVAÇÃO IMPERIAL:</strong> Alvos prioritários para o Inquisitorius. Onde houver usuários da força, eles estarão.
+        `
+    },
+    // Grupos canônicos extras para preencher a lista
     {
         id: "partisans",
         name: "Os Partisans",
@@ -18,42 +88,20 @@ const rebelGroups = [
         threatLevel: "Extremo",
         threatClass: "extreme",
         icon: "fa-solid fa-bomb",
-        base: "Jedha (Antigamente)",
-        activity: "Orla Exterior",
-        description: "Extremistas violentos que não hesitam em causar danos colaterais civis. Utilizam táticas de guerrilha assimétrica e terrorismo direto. Gerrera é considerado um dos homens mais perigosos da galáxia."
+        base: "Jedha (Anteriormente)",
+        activity: "Setores Múltiplos",
+        description: "Extremistas violentos que utilizam táticas de terrorismo direto. Gerrera rompeu com outras células rebeldes devido à sua brutalidade."
     },
     {
         id: "phoenix",
-        name: "Célula Fênix (Esquadrão Phoenix)",
+        name: "Esquadrão Phoenix",
         leader: "Hera Syndulla",
         threatLevel: "Alto",
         threatClass: "high",
-        icon: "fa-solid fa-fire",
-        base: "Nave Capital da Classe Pelta",
+        icon: "fa-brands fa-phoenix-squadron",
+        base: "Nave Capital",
         activity: "Setor Lothal",
-        description: "Grupo ágil focado em ataques a comboios de suprimentos e sabotagem industrial. Operam com uma frota pequena, mas eficaz. Conexões confirmadas com a antiga Ordem Jedi."
-    },
-    {
-        id: "hiddenpath",
-        name: "O Caminho Oculto",
-        leader: "Desconhecido",
-        threatLevel: "Médio",
-        threatClass: "high",
-        icon: "fa-solid fa-map-location-dot",
-        base: "Descentralizada",
-        activity: "Rotas do Hiperespaço",
-        description: "Rede de contrabando dedicada a esconder e transportar traidores do Império e sensitivos à Força sobreviventes. Não possuem poderio militar significativo, mas representam risco à segurança ideológica."
-    },
-    {
-        id: "cloudriders",
-        name: "Cavaleiros das Nuvens (Cloud-Riders)",
-        leader: "Enfys Nest",
-        threatLevel: "Médio",
-        threatClass: "high",
-        icon: "fa-solid fa-mask",
-        base: "Nômade",
-        activity: "Setores Industriais",
-        description: "Piratas saqueadores que frequentemente atacam transportes de Coaxium e refinarias. Embora pareçam criminosos comuns, demonstram motivações políticas contra a nacionalização de recursos pelo Império."
+        description: "Célula rebelde naval altamente móvel. Responsável por ataques a comboios e libertação de prisioneiros."
     }
 ];
 
@@ -63,12 +111,12 @@ function renderRebelGroups() {
     container.innerHTML = ''; // Limpa container
 
     rebelGroups.forEach(group => {
-        // Cria o elemento do card
         const card = document.createElement('div');
         card.classList.add('group-card');
         card.setAttribute('data-id', group.id);
 
-        // HTML interno do card
+        let threatDisplay = group.threatLevel;
+
         card.innerHTML = `
             <div class="card-header">
                 <div class="group-name">
@@ -76,7 +124,7 @@ function renderRebelGroups() {
                     ${group.name.toUpperCase()}
                 </div>
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <span class="threat-level ${group.threatClass}">Ameaça: ${group.threatLevel}</span>
+                    <span class="threat-level ${group.threatClass}">Nível: ${threatDisplay}</span>
                     <i class="fa-solid fa-chevron-down expand-icon"></i>
                 </div>
             </div>
@@ -91,18 +139,16 @@ function renderRebelGroups() {
                         <span>${group.activity}</span>
                     </div>
                     <div class="detail-item">
-                        <strong>BASE SUSPEITA:</strong>
+                        <strong>PLANETA-BASE / LOCAL:</strong>
                         <span>${group.base}</span>
                     </div>
                     <div class="description-text">
-                        <strong>ANÁLISE DE INTELIGÊNCIA:</strong>
                         ${group.description}
                     </div>
                 </div>
             </div>
         `;
 
-        // Adiciona evento de clique para expandir/fechar
         card.addEventListener('click', () => {
             toggleCard(card);
         });
@@ -113,22 +159,18 @@ function renderRebelGroups() {
 
 // Função de Toggle (Acordeão)
 function toggleCard(clickedCard) {
-    // Fecha outros cards abertos (opcional - remova se quiser permitir múltiplos abertos)
     const allCards = document.querySelectorAll('.group-card');
+    
     allCards.forEach(card => {
         if (card !== clickedCard && card.classList.contains('active')) {
             card.classList.remove('active');
         }
     });
 
-    // Alterna o card clicado
     clickedCard.classList.toggle('active');
 }
 
-// Inicializa quando a página carrega
 document.addEventListener('DOMContentLoaded', () => {
     renderRebelGroups();
-    
-    // Efeito sonoro simples de UI (opcional, apenas visual no log por enquanto)
-    console.log("ISB Database: Conexão Segura Estabelecida.");
+    console.log("ISB Database: Atualização de manifesto rebelde concluída.");
 });
