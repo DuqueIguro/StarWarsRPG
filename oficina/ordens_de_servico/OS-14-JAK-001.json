@@ -3,7 +3,7 @@
     "id": "OS-14-JAK-001",
     "mecanicoResponsavel": "Equipe MCMT",
     "unidadeResponsavel": "R5-T1N",
-    "status": "Em progressso",
+    "status": "Concluído",
     "itens": [
       {
         "servico": "Troca do tanque de combustível",
@@ -105,15 +105,23 @@
         "percentual_sobre_mao_de_obra": null,
         "percentual_sobre_mao_de_obra_improvisada": 15,
         "sigla": "S.E.V.I.R.A."
+      },
+      {
+        "nome": "Gorjeta",
+        "custo": 1760,
+        "justificativa": "Gorjeta do Cliente",
+        "percentual_sobre_mao_de_obra": 2.0,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "Gorjeta"
       }
     ],
     "financeiro": {
       "subtotalPecas": 1210,
       "subtotalMaoDeObra": 1760,
       "subtotalTaxasFixas": 2150,
-      "subtotalAdicionais": 264,
+      "subtotalAdicionais": 2054,
       "moeda": "Créditos Galácticos",
-      "total": 5384
+      "total": 7174
     },
     "termos": "A solicitação de um serviço categorizado como S.E.V.I.R.A. anula automaticamente qualquer garantia sobre o componente ou sistema reparado. A oficina não se responsabiliza por falhas subsequentes decorrentes da natureza provisória da solução.",
     "titulo": "Reparo de Emergência em Nave Nubiana",
