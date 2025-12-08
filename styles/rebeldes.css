@@ -11,8 +11,8 @@
 
 body {
     background-color: #050505;
-    /* Certifique-se que o caminho da imagem está correto relativo à pasta styles */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)), url('../img/bg.png'); 
+    /* Ajuste o caminho da imagem conforme sua estrutura de pastas */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.92)), url('../img/bg.png'); 
     color: var(--text-grey);
     font-family: 'Orbitron', sans-serif;
     margin: 0;
@@ -99,6 +99,11 @@ body {
     margin-bottom: 10px;
 }
 
+.page-title p {
+    font-size: 0.9em;
+    color: #888;
+}
+
 /* ======== CARDS ======== */
 .cards-container {
     display: flex;
@@ -136,7 +141,7 @@ body {
     color: #fff;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .threat-level {
@@ -146,9 +151,11 @@ body {
     border: 1px solid #555;
     color: #fff;
     text-transform: uppercase;
+    min-width: 100px;
+    text-align: center;
 }
 
-/* Níveis de Ameaça */
+/* Níveis de Ameaça Cores */
 .threat-level.extreme {
     border-color: var(--alert-red);
     color: var(--alert-red);
@@ -189,31 +196,44 @@ body {
 }
 
 .group-card.active .card-details {
-    max-height: 800px; /* Aumentado para caber o texto de hierarquia */
-    padding: 20px;
+    max-height: 800px; 
+    padding: 25px;
     border-top: 1px solid var(--imperial-blue);
 }
 
 .detail-grid {
     display: grid;
     grid-template-columns: 1fr 2fr;
-    gap: 20px;
+    gap: 25px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
 }
 
 .detail-item strong {
     color: var(--imperial-blue);
-    display: block;
-    font-size: 0.8em;
+    font-size: 0.75em;
     margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.detail-item span {
+    color: #fff;
+    font-size: 1em;
 }
 
 .description-text {
     grid-column: 1 / -1;
-    line-height: 1.6;
-    color: #ddd;
+    line-height: 1.8;
+    color: #dcdcdc;
     border-top: 1px dashed #333;
-    padding-top: 15px;
+    padding-top: 20px;
     margin-top: 10px;
+    text-align: justify;
+    font-family: 'Verdana', sans-serif; /* Fonte secundária para leitura longa, se desejar manter Orbitron remova esta linha */
+    font-size: 0.95em;
 }
 
 /* ======== FOOTER ======== */
@@ -295,7 +315,7 @@ body {
 
 @keyframes pulse {
     0% { opacity: 1; }
-    50% { opacity: 0.7; }
+    50% { opacity: 0.6; }
     100% { opacity: 1; }
 }
 
@@ -310,5 +330,8 @@ body {
     .report-btn {
         margin-left: 0;
         width: 100%;
+    }
+    .group-name {
+        font-size: 1em;
     }
 }

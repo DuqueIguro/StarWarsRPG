@@ -1,86 +1,16 @@
-// Base de dados dos Grupos Rebeldes (Completa)
+// Base de dados dos Grupos Rebeldes - Ordenada por Prioridade de Ameaça
 const rebelGroups = [
     {
         id: "massassi",
         name: "Grupo Massassi",
         leader: "General Jan Dodonna",
         threatLevel: "Extremo",
-        threatClass: "extreme", 
+        threatClass: "extreme", // Vermelho piscante
         icon: "fa-solid fa-jet-fighter",
         base: "Yavin 4",
         activity: "Orla Exterior / Setor Gordian",
-        description: `
-            <strong>OBJETIVO PRIMÁRIO:</strong> Criar uma força militar organizada contra o Império.<br><br>
-            <strong>ESTRUTURA HIERÁRQUICA:</strong><br>
-            • General<br>
-            • Comandantes de Célula<br>
-            • Oficiais de Operações e Inteligência<br>
-            • SpecForce<br>
-            • Esquadrões de Caça<br><br>
-            <strong>OBSERVAÇÃO IMPERIAL:</strong> Grupo altamente perigoso e bem armado. Operam com disciplina militar.
-        `
+        description: "Classificado como Nível de Ameaça Extrema, o Grupo Massassi representa a maior afronta militar à ordem imperial. Operando a partir da lua de Yavin 4 sob o comando do General Jan Dodonna, seu objetivo primário é consolidar uma força bélica organizada capaz de engajar nossa frota em combate aberto. Sua estrutura é rigorosamente militar e hierarquizada, dividindo-se entre o Alto Comando, Comandantes de Célula, Oficiais de Inteligência e Operações. O grupo conta ainda com unidades de elite como a SpecForce e esquadrões de caça estelar veteranos, tornando-os alvos de eliminação imediata."
     },
-    {
-        id: "orion",
-        name: "Diretiva Orion",
-        leader: "Cmdt. Arven Korr",
-        threatLevel: "Alto",
-        threatClass: "high",
-        icon: "fa-solid fa-burst",
-        base: "Raxus Prime",
-        activity: "Logística Imperial",
-        description: `
-            <strong>OBJETIVO PRIMÁRIO:</strong> Sabotar a estrutura logística do Império, criando falhas sistêmicas e colapsos de suprimento.<br><br>
-            <strong>ESTRUTURA HIERÁRQUICA:</strong><br>
-            • Comandante de Célula<br>
-            • Oficial de Inteligência<br>
-            • Oficial de Operações<br>
-            • Quartel-Mestre<br>
-            • Núcleo Técnico e Médico<br><br>
-            <strong>OBSERVAÇÃO IMPERIAL:</strong> Especialistas em sabotagem industrial. Monitorar instalações de lixo e reciclagem em Raxus Prime.
-        `
-    },
-    {
-        id: "astara",
-        name: "Movimento Astara",
-        leader: "Cmdt. Astara Lumon",
-        threatLevel: "Médio",
-        threatClass: "medium", 
-        icon: "fa-solid fa-users-rays", 
-        base: "Chandrila",
-        activity: "Mundos do Núcleo / Política",
-        description: `
-            <strong>OBJETIVO PRIMÁRIO:</strong> Enfraquecer o domínio imperial através de influência política clandestina, informação e organização civil.<br><br>
-            <strong>ESTRUTURA HIERÁRQUICA:</strong><br>
-            • Comandante de Célula<br>
-            • Coordenador de Comunicações<br>
-            • Oficial de Inteligência<br>
-            • Núcleo de Logística<br>
-            • Rede de Agentes Locais<br><br>
-            <strong>OBSERVAÇÃO IMPERIAL:</strong> Atividade subversiva sutil. Foco em propaganda e incitação civil.
-        `
-    },
-    {
-        id: "hiddenpath_custom",
-        name: "O Caminho",
-        leader: "Descentralizado",
-        threatLevel: "Prioridade Inquisitorial",
-        threatClass: "high",
-        icon: "fa-solid fa-compass",
-        base: "Móvel (Jabiim / Mapuzo)",
-        activity: "Rotas do Hiperespaço",
-        description: `
-            <strong>OBJETIVO PRIMÁRIO:</strong> Esconder, transportar e proteger usuários da Força e Jedi sobreviventes.<br><br>
-            <strong>ESTRUTURA HIERÁRQUICA:</strong><br>
-            • Guias<br>
-            • Protetores Locais<br>
-            • Condutores de Rota<br>
-            • Guardiões de Casas Seguras<br>
-            • Contatadores<br><br>
-            <strong>OBSERVAÇÃO IMPERIAL:</strong> Alvos prioritários para o Inquisitorius. Onde houver usuários da força, eles estarão.
-        `
-    },
-    // Grupos canônicos extras para preencher a lista
     {
         id: "partisans",
         name: "Os Partisans",
@@ -90,7 +20,29 @@ const rebelGroups = [
         icon: "fa-solid fa-bomb",
         base: "Jedha (Anteriormente)",
         activity: "Setores Múltiplos",
-        description: "Extremistas violentos que utilizam táticas de terrorismo direto. Gerrera rompeu com outras células rebeldes devido à sua brutalidade."
+        description: "Liderados pelo terrorista Saw Gerrera, os Partisans são extremistas violentos que rejeitam qualquer forma de diplomacia. Diferente de outras células rebeldes, este grupo não hesita em causar baixas civis ou danos colaterais massivos para atingir alvos imperiais. Operam de forma descentralizada e brutal, utilizando táticas de terrorismo direto. Devido à sua imprevisibilidade e selvageria, a neutralização de Gerrera é considerada crítica para a estabilidade regional."
+    },
+    {
+        id: "hiddenpath_custom",
+        name: "O Caminho",
+        leader: "Descentralizado",
+        threatLevel: "Prioridade Inquisitorial",
+        threatClass: "high", // Laranja/Alto
+        icon: "fa-solid fa-compass",
+        base: "Móvel (Jabiim / Mapuzo)",
+        activity: "Rotas do Hiperespaço",
+        description: "Uma rede clandestina dedicada a esconder e transportar traidores da Ordem 66 e sensitivos à Força. Embora não possua poderio bélico convencional, sua existência desafia a pureza ideológica do Império e representa um risco espiritual inaceitável. Operam através de uma hierarquia oculta composta por Guias, Condutores de Rota, Protetores Locais e Guardiões de Casas Seguras. A aniquilação desta rede e a captura de seus protegidos é prioridade absoluta para o Inquisitorius."
+    },
+    {
+        id: "orion",
+        name: "Diretiva Orion",
+        leader: "Cmdt. Arven Korr",
+        threatLevel: "Alto",
+        threatClass: "high",
+        icon: "fa-solid fa-burst",
+        base: "Raxus Prime",
+        activity: "Logística Imperial / Lixões Industriais",
+        description: "Sob a liderança do Comandante de Célula Arven Korr em Raxus Prime, esta organização foca na sabotagem sistêmica da infraestrutura logística do Império. Seus agentes visam criar falhas de suprimento e colapsos industriais. A célula é estruturada com eficiência técnica, contando com um Quartel-Mestre, Oficiais de Operações e núcleos médicos e de engenharia dedicados. Eles utilizam o ambiente hostil dos lixões industriais como cobertura para seus atos de sabotagem."
     },
     {
         id: "phoenix",
@@ -99,9 +51,20 @@ const rebelGroups = [
         threatLevel: "Alto",
         threatClass: "high",
         icon: "fa-brands fa-phoenix-squadron",
-        base: "Nave Capital",
+        base: "Nave Capital da Classe Pelta",
         activity: "Setor Lothal",
-        description: "Célula rebelde naval altamente móvel. Responsável por ataques a comboios e libertação de prisioneiros."
+        description: "Uma célula rebelde naval altamente móvel e resiliente, liderada pela Twi'lek Hera Syndulla. Especializados em ataques rápidos contra comboios de suprimentos e operações de resgate, eles utilizam uma frota nômade que dificulta o rastreamento imperial. O grupo possui conexões confirmadas com antigos Jedi e demonstra capacidade de coordenar ataques em múltiplos sistemas, exigindo vigilância constante da Marinha Imperial."
+    },
+    {
+        id: "astara",
+        name: "Movimento Astara",
+        leader: "Cmdt. Astara Lumon",
+        threatLevel: "Médio",
+        threatClass: "medium", // Amarelo/Médio
+        icon: "fa-solid fa-users-rays",
+        base: "Chandrila",
+        activity: "Mundos do Núcleo / Política",
+        description: "Localizado no mundo do núcleo de Chandrila e liderado por Astara Lumon, este grupo atua na subversão política e social. Seu foco principal não é o combate direto, mas o enfraquecimento do domínio imperial através de influência política clandestina, desinformação e organização civil. Sua estrutura baseia-se em células de inteligência, coordenadores de comunicação, logística e uma vasta rede de agentes locais infiltrados na sociedade civil."
     }
 ];
 
@@ -172,5 +135,5 @@ function toggleCard(clickedCard) {
 
 document.addEventListener('DOMContentLoaded', () => {
     renderRebelGroups();
-    console.log("ISB Database: Atualização de manifesto rebelde concluída.");
+    console.log("ISB Database: Manifesto atualizado e ordenado por prioridade.");
 });
