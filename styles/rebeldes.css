@@ -2,7 +2,16 @@
 :root {
     --alert-red: #cf2222;
     --imperial-white: #f0f0f0;
-    --dark-overlay: rgba(20, 0, 0, 0.6);
+    --imperial-dark-blue: #0b1016;
+}
+
+/* Ajuste de Layout (Sem Sidebar) */
+/* Como removemos a sidebar, o .main-content ocupará 100%. 
+   Vamos limitar a largura máxima para leitura confortável */
+.main-content {
+    max-width: 1000px;
+    margin: 0 auto; /* Centraliza horizontalmente */
+    width: 100%;
 }
 
 /* Header Interno com logo do Império */
@@ -26,7 +35,9 @@
     font-size: 1.8em;
     color: var(--imperial-white);
     text-shadow: none;
-    text-align: left; /* Sobrescreve o center do h1 padrão */
+    text-align: left;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
 }
 
 .header-titles span {
@@ -34,6 +45,7 @@
     letter-spacing: 3px;
     color: var(--alert-red);
     font-weight: bold;
+    text-transform: uppercase;
 }
 
 /* Container da Lista */
@@ -41,28 +53,28 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    overflow-y: auto;
-    padding-right: 5px;
+    padding-bottom: 20px;
 }
 
-/* Estilização dos Cards - Baseado no .module-card do style.css mas modificado */
+/* Estilização dos Cards */
 .group-card {
-    background: linear-gradient(90deg, rgba(40, 10, 10, 0.8) 0%, rgba(30, 50, 80, 0.4) 100%);
+    background: linear-gradient(90deg, rgba(20, 5, 5, 0.9) 0%, rgba(15, 25, 40, 0.7) 100%);
     border: 1px solid #444;
-    border-left: 4px solid var(--alert-red); /* Borda vermelha indicando inimigo */
-    border-radius: 5px;
-    padding: 15px 20px;
+    border-left: 4px solid var(--alert-red);
+    border-radius: 4px;
+    padding: 15px 25px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     position: relative;
     overflow: hidden;
 }
 
 .group-card:hover {
     transform: translateX(5px);
-    box-shadow: 0 0 15px rgba(207, 34, 34, 0.3);
+    box-shadow: 0 0 20px rgba(207, 34, 34, 0.2);
     border-color: var(--alert-red);
+    background: linear-gradient(90deg, rgba(30, 10, 10, 0.95) 0%, rgba(20, 35, 50, 0.8) 100%);
 }
 
 /* Header do Card */
@@ -77,15 +89,17 @@
     display: flex;
     align-items: center;
     gap: 15px;
-    font-size: 1.1em;
+    font-size: 1.2em;
     font-weight: bold;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .group-name i {
-    color: #aaa; /* Ícone cinza até ser hover */
-    width: 25px;
+    color: #777;
+    width: 30px;
     text-align: center;
+    transition: color 0.3s;
 }
 
 .group-card:hover .group-name i {
@@ -95,20 +109,22 @@
 /* Badges de Ameaça */
 .threat-badge {
     font-size: 0.75em;
-    padding: 4px 8px;
+    padding: 5px 10px;
     border: 1px solid #555;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.6);
     text-transform: uppercase;
-    margin-right: 15px;
-    min-width: 80px;
+    margin-right: 20px;
+    min-width: 100px;
     text-align: center;
+    font-weight: bold;
+    letter-spacing: 0.5px;
 }
 
 .threat-badge.extreme {
     color: var(--alert-red);
     border-color: var(--alert-red);
-    box-shadow: 0 0 5px var(--alert-red) inset;
-    animation: blinkRed 2s infinite;
+    box-shadow: 0 0 8px rgba(207, 34, 34, 0.4) inset;
+    animation: pulseRed 3s infinite;
 }
 
 .threat-badge.high {
@@ -121,27 +137,26 @@
     border-color: #ffd700;
 }
 
-/* Área de Detalhes (Expandível) */
+/* Área de Detalhes */
 .card-details {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease;
+    transition: max-height 0.5s ease-out, opacity 0.3s ease;
     opacity: 0;
-    border-top: 1px solid transparent;
     margin-top: 0;
 }
 
 .group-card.active {
-    background: rgba(20, 0, 0, 0.9); /* Fundo mais escuro quando ativo */
     border-left-width: 6px;
+    background: rgba(10, 5, 5, 0.95);
 }
 
 .group-card.active .card-details {
-    max-height: 1000px; /* Valor seguro */
+    max-height: 1000px;
     opacity: 1;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(207, 34, 34, 0.3);
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(207, 34, 34, 0.4);
 }
 
 .group-card.active .expand-icon {
@@ -152,67 +167,93 @@
 /* Grid de Informações */
 .detail-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
 }
 
 .info-block label {
     display: block;
-    font-size: 0.7em;
+    font-size: 0.75em;
     color: var(--alert-red);
-    margin-bottom: 3px;
-    letter-spacing: 1px;
+    margin-bottom: 5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
 .info-block span {
-    color: #ddd;
-    font-size: 0.9em;
+    color: #fff;
+    font-size: 1.1em;
+    font-family: 'Orbitron', sans-serif;
 }
 
 .description-box {
     grid-column: 1 / -1;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 20px;
+    border-left: 3px solid #555;
+    border-radius: 0 5px 5px 0;
+}
+
+.description-box strong {
+    color: var(--alert-red);
+    display: block;
+    margin-bottom: 10px;
     font-size: 0.9em;
-    line-height: 1.6;
-    color: #ccc;
-    background: rgba(0,0,0,0.3);
-    padding: 10px;
-    border-left: 2px solid #555;
+    letter-spacing: 1px;
+}
+
+.description-box p {
+    margin: 0;
+    line-height: 1.8;
+    color: #d0d0d0;
     text-align: justify;
+    font-size: 1em;
 }
 
 /* Footer de Alerta */
 .imperial-alert-footer {
-    margin-top: 30px;
-    background: rgba(207, 34, 34, 0.1);
+    margin-top: 40px;
+    background: linear-gradient(45deg, rgba(50, 0, 0, 0.3), rgba(20, 0, 0, 0.3));
     border: 1px solid var(--alert-red);
-    padding: 15px;
+    padding: 20px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
     color: #ffcccc;
-    font-size: 0.9em;
+    border-radius: 4px;
 }
 
 .imperial-alert-footer i {
-    font-size: 1.5em;
+    font-size: 2em;
     color: var(--alert-red);
+    animation: flash 2s infinite;
 }
 
-@keyframes blinkRed {
-    0% { opacity: 1; }
-    50% { opacity: 0.6; }
-    100% { opacity: 1; }
+@keyframes pulseRed {
+    0% { box-shadow: 0 0 5px rgba(207, 34, 34, 0.2) inset; }
+    50% { box-shadow: 0 0 15px rgba(207, 34, 34, 0.6) inset; }
+    100% { box-shadow: 0 0 5px rgba(207, 34, 34, 0.2) inset; }
 }
 
-/* Ajuste Mobile */
+@keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
     .card-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        gap: 15px;
     }
     .threat-badge {
         margin-left: 0;
+        width: 100%;
+        margin-right: 0;
+    }
+    .main-content {
+        padding: 0 10px;
     }
 }
