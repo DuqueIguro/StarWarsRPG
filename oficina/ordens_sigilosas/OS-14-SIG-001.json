@@ -1,0 +1,83 @@
+{
+  "ordemDeServico": {
+    "id": "OS-14-SIG-001",
+    "mecanicoResponsavel": "Dur'Toc",
+    "unidadeResponsavel": "R5-T1N",
+    "status": "Aberto",
+    "itens": [
+      {
+        "servico": "Serviço de Transporte e Logística (Multi-paradas)",
+        "tipo": "Transporte Especializado",
+        "detalhes": {
+          "causaDoProblema": "Missão de resgate/transporte em zona de risco",
+          "peca": {
+            "nome": "Logística Operacional (Combustível/Suprimentos)",
+            "custo": 25000
+          },
+          "maoDeObra": {
+            "custo": 0
+          }
+        },
+        "subtotal": 25000
+      },
+      {
+        "servico": "Adicional por Tripulação MCMT (3 Membros)",
+        "tipo": "Mão de Obra Especializada",
+        "detalhes": {
+          "causaDoProblema": "Alocação de Dur'toc, Loras e Faísca",
+          "peca": {
+            "nome": null,
+            "custo": null
+          },
+          "maoDeObra": {
+            "custo": 6000
+          }
+        },
+        "subtotal": 6000
+      },
+      {
+        "servico": "Taxa de Periculosidade",
+        "tipo": "Adicional de Risco",
+        "detalhes": {
+          "causaDoProblema": "Missão classificada como difícil",
+          "peca": {
+            "nome": null,
+            "custo": null
+          },
+          "maoDeObra": {
+            "custo": 5000
+          }
+        },
+        "subtotal": 5000
+      }
+    ],
+    "taxasAdicionais": [
+      {
+        "nome": "Protocolo CALADO",
+        "custo": 9000,
+        "justificativa": "Cobre o risco administrativo e a complexidade de operar fora dos canais normais.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "CALADO"
+      }
+    ],
+    "financeiro": {
+      "subtotalPecas": 25000,
+      "subtotalMaoDeObra": 11000,
+      "subtotalTaxasFixas": 0,
+      "subtotalAdicionais": 9000,
+      "moeda": "Créditos Galácticos",
+      "total": 45000
+    },
+    "termos": "O pagamento deve ser feito integralmente e adiantado, em créditos não rastreáveis. Não há garantia. A oficina opera sob negação plausível. Sem reembolso.",
+    "titulo": "Transporte Sigiloso e Busca de Pessoal",
+    "data": "14 (ABY)",
+    "cliente": {
+      "nome": "REDIGIDO",
+      "afiliacao": "REDIGIDO",
+      "contato_holonet": "Protocolo CALADO Ativo"
+    },
+    "relatorio_problema": "Solicitação de transporte de carga e busca de passageiros (amigos do comandante) com paradas na Orla Exterior e proximidades dos Mundos do Núcleo. Missão classificada como difícil pelo cliente.",
+    "notas_mecanico": "Tripulação alocada: Dur'toc, Loras e Faísca (R5-T1N incluso como equipamento de apoio). O cálculo base foi ajustado para cobrir custos operacionais equivalentes a LOG Nível 3 (Regional/Perigoso). Valor total ajustado com +25% referente ao Protocolo CALADO sobre a soma dos serviços."
+  }
+}
