@@ -1,0 +1,77 @@
+{
+  "ordemDeServico": {
+    "id": "OS-04-COR-001",
+    "mecanicoResponsavel": "Dur'Toc e Faisca",
+    "unidadeResponsavel": "R5-T1N",
+    "status": "Concluído",
+    "itens": [
+      {
+        "servico": "Protocolo S.E.V.I.R.A.",
+        "tipo": "Mão de Obra Improvisada",
+        "detalhes": {
+          "causaDoProblema": "S.R.A. / C.I.C.",
+          "peca": {
+            "nome": "Nenhuma peça nova utilizada",
+            "custo": 0
+          },
+          "maoDeObra": {
+            "custo": 175
+          }
+        },
+        "subtotal": 175
+      }
+    ],
+    "taxasAdicionais": [
+      {
+        "nome": "Taxa de Diagnóstico Padrão",
+        "custo": 150,
+        "justificativa": "Aplicada para identificação precisa da causa-raiz do defeito.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "T.D.P"
+      },
+      {
+        "nome": "Adicional Protocolo S.E.V.I.R.A.",
+        "custo": 27,
+        "justificativa": "Custo adicional de +15% sobre o valor da mão de obra do serviço improvisado.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": 15,
+        "sigla": "S.E.V.I.R.A."
+      },
+      {
+        "nome": "Taxa S.R.A. (Síndrome do Reparo Anterior)",
+        "custo": 175,
+        "justificativa": "Custo adicional de +100% sobre a mão de obra devido à complexidade gerada por um reparo anterior malfeito.",
+        "percentual_sobre_mao_de_obra": 100,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "S.R.A."
+      },
+      {
+        "nome": "Taxa C.I.C. (Circuito de Incompatibilidade Crônica)",
+        "custo": 44,
+        "justificativa": "Custo adicional de +25% sobre a mão de obra para desenvolver solução de compatibilidade temporária.",
+        "percentual_sobre_mao_de_obra": 25,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "C.I.C."
+      }
+    ],
+    "financeiro": {
+      "subtotalPecas": 0,
+      "subtotalMaoDeObra": 175,
+      "subtotalTaxasFixas": 150,
+      "subtotalAdicionais": 246,
+      "moeda": "Créditos Galácticos",
+      "total": 571
+    },
+    "termos": "A solicitação de um serviço categorizado como S.E.V.I.R.A. anula automaticamente qualquer garantia sobre o componente ou sistema reparado. A oficina não se responsabiliza por falhas subsequentes decorrentes da natureza provisória da solução.",
+    "titulo": "Exemplo de Ordem de Serviço - Taxas",
+    "data": "04 ABY",
+    "cliente": {
+      "nome": "Talon Karrde",
+      "afiliacao": "Organização de Contrabando (Independente)",
+      "contato_holonet": "KARRDE-COM-77"
+    },
+    "relatorio_problema": "Falha crítica no conversor de torque. Causa: Reparo anterior mal executado (S.R.A.) e uso de componente incompatível (C.I.C.). Cliente recusou o reparo adequado, solicitando intervenção mínima (S.E.V.I.R.A.).",
+    "notas_mecanico": "Nós fizemos o que conseguimos, mas não podemos garantir nada. O cliente recusou o reparo adequado e pediu uma solução improvisada. A responsabilidade é dele."
+  }
+}

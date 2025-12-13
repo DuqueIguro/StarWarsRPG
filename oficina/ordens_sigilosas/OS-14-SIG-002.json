@@ -1,0 +1,61 @@
+{
+  "ordemDeServico": {
+    "id": "OS-14-SIG-002",
+    "mecanicoResponsavel": "Dur'Toc",
+    "unidadeResponsavel": "R5-T1N",
+    "status": "Em Progresso (Contrato de Longo Prazo)",
+    "itens": [
+      {
+        "servico": "Gestão de Canais de Comunicação Criptografados e Repasse de Dados (9 Anos)",
+        "tipo": "Serviço de Inteligência e Criptografia",
+        "detalhes": {
+          "causaDoProblema": "Demanda por fluxo de dados imperiais via canais não rastreáveis.",
+          "peca": {
+            "nome": "Custo Operacional Mensal (10.000c x 108 meses)",
+            "custo": 1080000
+          },
+          "maoDeObra": {
+            "custo": 0
+          }
+        },
+        "subtotal": 1080000
+      }
+    ],
+    "taxasAdicionais": [
+      {
+        "nome": "Protocolo CALADO",
+        "custo": 0,
+        "justificativa": "Aplicado devido à natureza confidencial e alto risco administrativo da operação. Custo diluído no valor mensal.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "CALADO"
+      },
+      {
+        "nome": "Protocolo GHOST",
+        "custo": 0,
+        "justificativa": "Necessário para ocultação sistêmica dos canais de transmissão contra varreduras imperiais.",
+        "percentual_sobre_mao_de_obra": null,
+        "percentual_sobre_mao_de_obra_improvisada": null,
+        "sigla": "GHOST"
+      }
+    ],
+    "financeiro": {
+      "subtotalPecas": 1080000,
+      "subtotalMaoDeObra": 0,
+      "subtotalTaxasFixas": 0,
+      "subtotalAdicionais": 0,
+      "moeda": "Créditos Galácticos (Conta Descentralizada)",
+      "total": 1080000
+    },
+    "termos": "Pagamento mensal de 10.000c em conta descentralizada não associada à oficina. Sigilo absoluto restrito ao binário Mestre-Droide. Negação plausível ativa. Sem registros oficiais.",
+    "titulo": "Contrato de Longo Prazo: Transmissão de Dados Sigilosos",
+    "data": "14 (ABY) - Inicio do Contrato",
+    "cliente": {
+      "nome": "Célula Rebelde (Contrabandistas de Alto Nível)",
+      "afiliacao": "Anti-Imperial",
+      "contato_holonet": "Canais Criptografados (GHOST)"
+    },
+    "relatorio_problema": "Solicitação de serviço contínuo (9 anos) para repasse de informações imperiais sensíveis. Cliente exige canais indetectáveis.",
+    "notas_mecanico": "Operação classificada como Risco Extremo. Conhecimento da operação restrito a Dur'toc e R5-T1N. Monitoramento constante dos canais de criptografia necessário para manter o protocolo GHOST ativo."
+  }
+}
