@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let planetasData = [];
 
     // Carregar dados do JSON
-    fetch('mapa/planetas_database.json')
+    fetch('../data/planetas_database.json')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Erro na rede: ${response.statusText}`);

@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: 'Aurebesh';
-    src: url('../inventario/Aurebesh.woff') format('woff');
+    src: url('../data/Aurebesh.woff') format('woff');
 }
 
 :root {

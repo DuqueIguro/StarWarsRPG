@@ -3,10 +3,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Carrega todos os JSONs em paralelo para mais eficiência
     Promise.all([
-        fetch('releses/patch_notes.json').then(res => res.json()),
-        fetch('releses/bug_fixes.json').then(res => res.json()),
-        fetch('releses/upcoming_features.json').then(res => res.json()),
-        fetch('releses/features.json').then(res => res.json())
+        fetch('patch_notes.json').then(res => res.json()),
+        fetch('bug_fixes.json').then(res => res.json()),
+        fetch('upcoming_features.json').then(res => res.json()),
+        fetch('features.json').then(res => res.json())
     ]).then(([patchData, bugData, upcomingData, featuresData]) => {
         loadPatchNotes(patchData);
         loadItemList(bugData, 'bug-fixes-list');

@@ -10,7 +10,7 @@ function checkPassword() {
         feedback.style.color = '#00FF41';
         feedback.textContent = '> CHAVE VÁLIDA. ACESSO CONCEDIDO. REDIRECIONANDO...';
         setTimeout(() => {
-            window.location.href = 'hangar/hangarAutorizado.html';
+            window.location.href = '../hangar/hangarAutorizado.html';
         }, 500); // Espera 0.5 segundos antes de redirecionar
     } else {
         feedback.style.color = '#FF4141';
