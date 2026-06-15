@@ -33,7 +33,9 @@ StarWarsRPG
 │  └─ status.js
 ├─ Hieararquia.md
 ├─ img
+│  ├─ astraa.png
 │  ├─ bg.png
+│  ├─ caminho.png
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
 │  ├─ error-404.ico
@@ -41,7 +43,9 @@ StarWarsRPG
 │  ├─ imperio.png
 │  ├─ mandalorian.ico
 │  ├─ mandaloriano.png
+│  ├─ massassi.png
 │  ├─ nave.ico
+│  ├─ orion.png
 │  ├─ r2d2.ico
 │  ├─ rebelde.png
 │  └─ sabres.ico

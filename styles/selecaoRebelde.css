@@ -1,0 +1,234 @@
+:root {
+    --primary-glow: #00ffcc;
+    --bg-dark: #0a0e14;
+    --card-bg: rgba(16, 23, 34, 0.85);
+    --border-color: rgba(0, 255, 204, 0.3);
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: #e2e8f0;
+    font-family: 'Courier New', Courier, monospace; /* Visual clássico de terminal */
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+header {
+    margin-bottom: 50px;
+}
+
+.text-glow {
+    font-size: 2.5rem;
+    color: var(--primary-glow);
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: #8a99ad;
+    font-size: 1.1rem;
+}
+
+/* Grid de Organizações */
+.grid-celulas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 30px;
+    padding: 10px;
+}
+
+.card-celula {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.card-celula:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-glow);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+}
+
+.img-wrapper {
+    width: 100%;
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.img-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(0, 255, 204, 0.3));
+    transition: filter 0.3s ease;
+}
+
+.card-celula:hover .img-wrapper img {
+    filter: drop-shadow(0 0 10px var(--primary-glow));
+}
+
+.card-celula h2 {
+    font-size: 1.3rem;
+    margin: 10px 0;
+    color: #ffffff;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 40px 12px;
+    font-size: 0.8rem;
+    background: rgba(255, 51, 51, 0.15);
+    border: 1px solid #ff3333;
+    color: #ff5555;
+    border-radius: 20px;
+    padding: 4px 12px;
+    text-transform: uppercase;
+}
+
+.card-celula:hover .status-badge {
+    background: rgba(0, 255, 204, 0.15);
+    border-color: var(--primary-glow);
+    color: var(--primary-glow);
+    content: "Acessar";
+}
+
+/* Estilo do Modal de Senha */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(5, 7, 10, 0.85);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #0e141f;
+    border: 2px solid var(--primary-glow);
+    border-radius: 16px;
+    padding: 30px;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
+}
+
+.modal-content input {
+    width: 85%;
+    padding: 12px;
+    margin: 20px 0 10px 0;
+    background: #05070a;
+    border: 1px solid var(--border-color);
+    color: var(--primary-glow);
+    font-family: monospace;
+    font-size: 1.1rem;
+    text-align: center;
+    border-radius: 6px;
+}
+
+.modal-content input:focus {
+    outline: none;
+    border-color: var(--primary-glow);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 15px;
+}
+
+button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.btn-cancelar {
+    background: transparent;
+    border: 1px solid #ff3333;
+    color: #ff3333;
+}
+
+.btn-cancelar:hover {
+    background: rgba(255, 51, 51, 0.1);
+}
+
+.btn-confirmar {
+    background: var(--primary-glow);
+    border: 1px solid var(--primary-glow);
+    color: #05070a;
+}
+
+.btn-confirmar:hover {
+    box-shadow: 0 0 15px var(--primary-glow);
+    transform: scale(1.02);
+}
+
+.erro-txt {
+    height: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+/* Modificadores para cards desativados */
+.card-celula.desativado {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: rgba(138, 153, 173, 0.2);
+}
+
+.card-celula.desativado:hover {
+    transform: none;
+    border-color: rgba(138, 153, 173, 0.2);
+    box-shadow: none;
+}
+
+.grayscale {
+    filter: grayscale(100%) cubic-bezier(0.1, 0.8, 0.2, 1);
+    opacity: 0.3;
+}
+
+.badge-bloqueado {
+    background: rgba(138, 153, 173, 0.1);
+    border-color: #556575;
+    color: #8a99ad;
+}
+
+/* Animações */
+.shake {
+    animation: shakeAnim 0.4s ease-in-out;
+}
+
+@keyframes shakeAnim {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}

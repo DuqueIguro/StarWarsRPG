@@ -1,0 +1,44 @@
+{
+  "astraa": {
+    "nome": "Célula Astraa",
+    "senha": "ALIANCA_ASTRAA_4B",
+    "url": "../rebeldes/astraa.html",
+    "ativo": true
+  },
+  "caminho": {
+    "nome": "Célula O Caminho",
+    "senha": "X_WING_SQUADRON",
+    "url": "../rebeldes/caminho.html",
+    "ativo": true
+  },
+  "massassi": {
+    "nome": "Grupo Massassi",
+    "senha": "YAVIN_VITAL_BASE",
+    "url": "../rebeldes/massassi.html",
+    "ativo": true
+  },
+  "orion": {
+    "nome": "Rede Orion",
+    "senha": "ORION_PROPHECY_7",
+    "url": "../rebeldes/orion.html",
+    "ativo": true
+  },
+  "partisans": {
+    "nome": "Os Partisans (Saw Gerrera)",
+    "senha": "",
+    "url": "",
+    "ativo": false
+  },
+  "spectres": {
+    "nome": "Rede dos Espectros (Lothal)",
+    "senha": "",
+    "url": "",
+    "ativo": false
+  },
+  "antares": {
+    "nome": "Aliança Antares",
+    "senha": "",
+    "url": "",
+    "ativo": false
+  }
+}
