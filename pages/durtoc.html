@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dossiê Imperial - General Dur'toc</title>
+    <title>Holonet Central - Dossiê de Engenharia IMP-994-DT</title>
     <link rel="stylesheet" href="../styles/style.css">
     <link rel="stylesheet" href="../styles/durtoc.css">
 </head>
 <body>
-    <!-- Linhas de varredura tática e grade holográfica -->
     <div class="holonet-overlay"></div>
 
     <button class="btn-voltar" onclick="window.location.href='../index.html'">◀ Desconectar Terminal</button>
@@ -19,67 +18,93 @@
                 <img src="../img/imperio.png" alt="Império Galáctico">
             </div>
             <div class="header-titles">
-                <h1 class="blink-title">SISTEMA DE SEGURANÇA DA HOLONET</h1>
-                <h2>DOSSIÊ DE ALTA CONFIDENCIALIDADE: IMP-994-DT</h2>
+                <h1 class="blink-title">DIRETÓRIO DE INTELIGÊNCIA MILITAR E INDÚSTRIA</h1>
+                <h2>REGISTRO TÁTICO: GENERAL ENGENHEIRO DUR'TOC</h2>
             </div>
         </header>
 
-        <!-- Seletor de Uniforme/Linha do Tempo -->
+        <!-- Seletor de Vertente para Transição de Época -->
         <div class="timeline-selector">
-            <button class="tab-btn active" onclick="alternarVertente('mecnico')">Vertente: Mecânico (Nível Baixo)</button>
-            <button class="tab-btn" onclick="alternarVertente('general')">Vertente: General (Lothal / TIE Defender)</button>
+            <button class="tab-btn active" onclick="alternarVertente('mecnico')">Acessar Arquivos Históricos: Período Coruscant Baixo</button>
+            <button class="tab-btn" onclick="alternarVertente('general')">Acessar Canal Atual: Engenheiro Chefe e General (Lothal)</button>
         </div>
 
         <div class="dossie-grid">
-            <!-- Painel Esquerdo: Imagens e Identificação Básica -->
+            <!-- Painel Esquerdo: Imagens e Biometria Detalhada -->
             <section class="panel-left border-glow">
                 <div class="avatar-display">
-                    <!-- Foto de Corpo Inteiro -->
                     <div class="img-box full-body">
-                        <img id="fotoCorpo" src="../img/DurtocMec.png" alt="Dur'toc Corpo">
+                        <img id="fotoCorpo" src="../img/DurtocMec.png" alt="Dur'toc">
                     </div>
-                    <!-- Foto de Documento -->
                     <div class="img-box doc-photo">
                         <img id="fotoDoc" src="../img/DurtocDocumento.png" alt="Dur'toc Documento">
                     </div>
                 </div>
                 
                 <div class="data-box sub-panel">
-                    <h3>DADOS BIOMÉTRICOS</h3>
-                    <p><strong>NOME:</strong> Dur'Toc</p>
-                    <p><strong>ESPÉCIE:</strong> Twi'lek</p>
-                    <p><strong>IDADE:</strong> <span id="txtIdade">25 Anos</span></p>
-                    <p><strong>ESTATURA:</strong> 100 cm (Baixa Estatura Incomum)</p>
-                    <p><strong>LEKKU:</strong> 2 (Proporções padrão, arrastados sob protesto)</p>
-                    <p><strong>TEMPERAMENTO:</strong> Extremamente Explosivo / Crítico</p>
+                    <h3>PERFIL BIOMÉTRICO IMPERIAL</h3>
+                    <p><strong>CÓDIGO DE IDENTIFICAÇÃO:</strong> IND-9942-DT</p>
+                    <p><strong>CLASSIFICAÇÃO DE ESPÉCIE:</strong> Twi'lek (Subtipo Rylothiano)</p>
+                    <p><strong>IDADE CRONOLÓGICA:</strong> <span id="txtIdade">25 Anos</span></p>
+                    <p><strong>MENSURAÇÃO FÍSICA:</strong> 100 cm (Baixa estatura severa / Vantagem Ergonômica)</p>
+                    <p><strong>ESTRUTURA CEFÁLICA:</strong> Dois Lekku funcionais. Relatórios indicam irritação crônica do indivíduo ao manuseá-los em ambientes com alta concentração de graxa e fuligem industrial.</p>
+                    <p><strong>DIAGNÓSTICO PSICOLÓGICO:</strong> Temperamento explosivo de alto risco, impaciente com intermediários orgânicos e propenso a agressões verbais contra ferramentas de torque e hardware autômato.</p>
                 </div>
             </section>
 
-            <!-- Painel Direito: Lore, Fábricas e Cargos -->
+            <!-- Painel Direito: Textos Longos, Permissões e Fábricas -->
             <section class="panel-right border-glow">
                 <div class="data-box sub-panel">
-                    <h3>PATENTE E LOCAÇÃO ATUAL</h3>
-                    <p class="highlight-text" id="txtPatente">Mecânico Autônomo da Linha Cinzenta</p>
-                    <p><strong>Setor de Operação:</strong> <span id="txtSetor">Níveis inferiores/médios de Coruscant</span></p>
+                    <h3>DESIGNAÇÃO OPERACIONAL E PATENTE</h3>
+                    <p class="highlight-text" id="txtPatente">Mecânico Autônomo da Zona Cinzenta</p>
+                    <p><strong>JURISDIÇÃO TÁTICA:</strong> <span id="txtSetor">Setores de transição entre a parte alta e baixa de Coruscant</span></p>
+                    <p><strong>GRAU DE AUTORIZAÇÃO:</strong> <span id="txtAutorizacao">Acesso Civil Restrito (Monitoramento de Subversão)</span></p>
                 </div>
 
                 <div class="data-box sub-panel">
-                    <h3>HISTÓRICO OPERACIONAL & LORE</h3>
-                    <p id="txtLore">Mecânico ríspido e genial que opera na divisa dos níveis de Coruscant. Conhecido por gritar com ferramentas teimosas e reconstruir droids e naves a partir de sucatas (Criador da nave 'A Engrenagem Mestra' e do caça 'O Cinzel'). Perdeu a relíquia mecânica de sua família, o Kalicore, para guarnições imperiais.</p>
+                    <h3>ANÁLISE BIOGRÁFICA E EVOLUÇÃO DE CARGO</h3>
+                    <p id="txtLore" class="long-text">
+                        Nascido em Ryloth e moldado pelas complexidades urbanas de Coruscant, Dur'toc iniciou seu aprendizado na renomada oficina de manutenção de naves da Ordem Jedi de seu pai, na porção superior da ecumenópole. Com a reestruturação da galáxia para o Império Galáctico e o subsequente desaparecimento de seu pai e do artefato Kalicore, Dur'toc refugiou-se nas entranhas da cidade. Estabeleceu uma oficina autônoma e de prestígio técnico impecável na linha cinzenta de Coruscant, prestando serviços velados a pilotos freelancers, contrabandistas e oficiais imperiais discretos. Sua excelência na engenharia reversa e modificação estrutural de propulsões iônicas o destacou das fundições comuns da Orla Exterior.
+                    </p>
                 </div>
 
-                <div class="data-box sub-panel, hidden" id="painelFabricas">
-                    <h3>INSTALAÇÕES SOB JURISDIÇÃO (LOTHAL CAPITAL)</h3>
-                    <ul class="factory-list">
-                        <li><strong>Fábrica Alpha (Projeto Secreto):</strong> Desenvolvimento e testes avançados do protótipo de caça <em>TIE Defender</em>.</li>
-                        <li><strong>Fábrica Beta:</strong> Produção em massa de droids industriais de logística pesada (Classe CL-R).</li>
-                        <li><strong>Fábrica Gamma:</strong> Linha de montagem pesada de speeders terrestres (Classe Moedor) e blindagem de veículos.</li>
-                    </ul>
+                <!-- Painel Massivo de Fábricas e Comando Industrial (Exibido via JS) -->
+                <div class="data-box sub-panel hidden" id="painelFabricas">
+                    <h3>COMPLEXO INDUSTRIAL DE LOTHAL - DIRETIVAS DO ENGENHEIRO CHEFE</h3>
+                    <p class="long-text">
+                        Na presente data, Dur'toc atua oficialmente como o <strong>Engenheiro Mecânico Chefe de Produção</strong> de todas as instalações automatizadas imperiais na Cidade Capital de Lothal. Sua autoridade industrial é absoluta, respondendo taticamente apenas ao Grande Moff Tarkin, Grão Almirante Thrawn e Moff Arihnda Pryce, e supervisionando diretamente a produção de armamentos, veículos e sistemas de defesa para a guarnição militar local. O complexo industrial sob seu comando é dividido em três setores principais, cada um especializado em uma vertente distinta de manufatura militar:
+                    <div class="factory-details">
+                        <div class="factory-card">
+                            <h4>FÁBRICA ALPHA: JURISDIÇÃO PROTÓTIPO (SISTEMAS TIE DEFENDER)</h4>
+                            <p>Instalação de segurança máxima voltada para o desenvolvimento mecânico, montagem milimétrica e calibração de sistemas do novo projeto de superioridade espacial: o <em>TIE Defender</em>. Dur'toc supervisiona pessoalmente o encaixe dos motores iônicos triplos e a integração dos novos emissores de escudo defletor de alta capacidade.</p>
+                        </div>
+                        <div class="factory-card">
+                            <h4>FÁBRICA BETA: DIVISÃO AUTÔMATA (LOGÍSTICA E REPAROS PESADOS)</h4>
+                            <p>Linha de montagem pesada voltada para a manufatura de droids e guinchos de tração. Concentra o desenvolvimento de carregadores industriais adaptados (pseudo-criações inspiradas na robustez mecânica imperial, classe CL-R) e recondicionamento de processadores heurísticos avançados para apoio logístico militar.</p>
+                        </div>
+                        <div class="factory-card">
+                            <h4>FÁBRICA GAMMA: MATRIZ TERRESTRE E SINALIZAÇÃO DE SENSORES</h4>
+                            <p>Complexo industrial focado na blindagem e superalimentação de repulsorlifts, motores de transporte planetário e modificação de jumpspeeders. Responsável pelo abastecimento logístico terrestre de veículos táticos pesados para a guarnição militar instalada em Lothal.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="data-box sub-panel">
-                    <h3>REGISTRO DE OBSERVAÇÕES TÉCNICAS</h3>
-                    <p>Classifica falhas cometidas por subordinados com o jargão <strong>"BIOS"</strong> (<em>Bicho Ignorante Operando o Sistema</em>). Demonstra admiração puramente técnica pela engenharia e maquinário imperial, desconsiderando inclinações ideológicas.</p>
+                    <h3>PROTOCOLO DE PERMISSÕES, DIRETRIZES E CÓDIGOS INTERNOS</h3>
+                    <div class="permissions-grid">
+                        <div>
+                            <h4>DIRETRIZ DE LOGÍSTICA (T.D.P / LOG)</h4>
+                            <p>Autorização para acionamento imediato de transporte interestelar para aquisição de ligas metálicas, Coaxium ou cristais de foco militar em sistemas adjacentes através da Taxa Logística Galáctica (Nível 3).</p>
+                        </div>
+                        <div>
+                            <h4>SISTEMA DE SEGURANÇA S.I.B.O.</h4>
+                            <p>O Engenheiro Chefe detém a prerrogativa imperial de ignorar os protocolos burocráticos ordinários do Sistema Imperial Burocrático Obligo (SIBO) para acelerar reparações mecânicas emergenciais classificadas como <strong>"PARAFUSO"</strong>.</p>
+                        </div>
+                        <div>
+                            <h4>CÓDIGO DE FALHAS (BIOS)</h4>
+                            <p>Registros do terminal indicam que o General Engenheiro arquiva rotineiramente erros de operação cometidos por pilotos e stormtroopers comuns sob a sigla <strong>"BIOS"</strong> (<em>Bicho Ignorante Operando o Sistema</em>), punindo falhas com turnos duplos de manutenção nos radiadores térmicos.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
