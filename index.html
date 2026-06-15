@@ -33,11 +33,11 @@
                 <div class="sidebar-module">
                     <h3 class="sidebar-title">NAVEGAÇÃO RÁPIDA</h3>
                     <ul class="nav-links">
-                        <li><a href="hangar"><i class="fa-solid fa-warehouse"></i> HANGAR</a></li>
-                        <li><a href="mapa_galatico"><i class="fa-solid fa-globe"></i> MAPA GALÁCTICO</a></li>
-                        <!-- <li><a href="releases.html"><i class="fa-solid fa-list"></i> ATUALIZAÇÕES</a></li> -->
-                        <li><a href="manutencao"><i class="fa-solid fa-wrench"></i> MANUTENÇÃO</a></li>
-                        <li><a href="comunicacao"><i class="fa-solid fa-satellite-dish"></i> COMUNICAÇÃO</a></li>
+                        <li><a href="pages/hangar"><i class="fa-solid fa-warehouse"></i> HANGAR</a></li>
+                        <li><a href="pages/mapa_galatico"><i class="fa-solid fa-globe"></i> MAPA GALÁCTICO</a></li>
+                        <!-- <li><a href="pages/releases.html"><i class="fa-solid fa-list"></i> ATUALIZAÇÕES</a></li> -->
+                        <li><a href="pages/manutencao"><i class="fa-solid fa-wrench"></i> MANUTENÇÃO</a></li>
+                        <li><a href="pages/comunicacao"><i class="fa-solid fa-satellite-dish"></i> COMUNICAÇÃO</a></li>
                     </ul>
                 </div>
 
@@ -91,7 +91,7 @@
                             liquidação de pagamentos. Dados incorretos podem resultar em falha de protocolo.
                         </p>
                         <div class="card-footer">
-                            <a href="ficha.html" class="access-button">ACESSAR</a>
+                            <a href="pages/ficha" class="access-button">ACESSAR</a>
                             <span class="data-status ok"></span>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                             nave. Todas as transações são criptografadas e registradas.
                         </p>
                         <div class="card-footer">
-                            <a href="inventario.html" class="access-button">EXPLORAR</a>
+                            <a href="pages/inventario" class="access-button">EXPLORAR</a>
                             <span class="data-status ok"></span>
                         </div>
                     </div>
@@ -119,6 +119,22 @@
 
                 <div class="activity-log" id="activity-log">
                     <h3 class="log-title">LOG DE ATIVIDADES DO SISTEMA</h3>
+                    <div class="log-content">
+                        <p>> Conexão estabelecida com o servidor CORELLIAN v5.0...</p>
+                        <p class="log-success">> Autenticação do PILOTO_07 bem-sucedida.</p>
+                        <p>> Carregando módulos de acesso rápido...</p>
+                        <p class="log-warning">> Alerta: Flutuação de energia detectada no setor 4.</p>
+                        <p>> Módulo #47-GAMMA carregado. Status: OK.</p>
+                        <p>> Módulo #12-DELTA carregado. Status: INSTÁVEL.</p>
+                        <p>> Verificando protocolos de segurança...</p>
+                        <p class="log-success">> Protocolos confirmados. Conexão segura.</p>
+                        <p>> Aguardando comando do usuário...</p>
+                    </div>
+                </div>
+
+                <!-- Painel de Atividades do Sistema - Holonet -->
+                <!-- <div class="activity-log" id="activity-log">
+                    <h3 class="log-title">Holonet</h3>
                     <div class="log-content">
                         <p>> Conexão estabelecida com o servidor CORELLIAN v3.2...</p>
                         <p class="log-success">> Autenticação do PILOTO_07 bem-sucedida.</p>
@@ -130,7 +146,7 @@
                         <p class="log-success">> Protocolos confirmados. Conexão segura.</p>
                         <p>> Aguardando comando do usuário...</p>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="system-readout-panel">
                     <h3 class="readout-title">ANÁLISE DE FLUXO DE DADOS</h3>
@@ -167,7 +183,7 @@
         <div class="bottom-bar">
             <span onclick="window.location.href='oficina'"
                 style="background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;cursor:default;outline:none;text-decoration:none;"
-                tabindex="0">© ABY 04 - FROTA ESTELAR LOCAL | SETOR ARKANIS</span>
+                tabindex="0">© ABY 04 - FROTA ESTELAR LOCAL | SETOR LOTHAL</span>
             <span class="system-time">HORA DO SISTEMA: 13:37:00</span>
         </div>
 
