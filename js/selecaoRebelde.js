@@ -1,6 +1,11 @@
 let celulaSelecionada = "";
 let bancoSenhas = null;
 
+// Função para o botão voltar no canto superior esquerdo
+function voltarParaIndex() {
+    window.location.href = "../index.html"; // Retorna para a página principal (ajuste o caminho se necessário)
+}
+
 async function carregarBancoSenhas() {
     try {
         const response = await fetch('../data/senhasRebeldes.json');
@@ -8,26 +13,17 @@ async function carregarBancoSenhas() {
         bancoSenhas = await response.json();
     } catch (error) {
         console.error('Erro no Holonet:', error);
-        alert('Erro ao conectar com a rede de dados da Aliança Rebelde.');
     }
 }
 
 function abrirAutenticacao(idCelula) {
-    if (!bancoSenhas) {
-        alert("A rede de dados ainda está sincronizando. Aguarde um instante.");
-        return;
-    }
+    if (!bancoSenhas) return;
     
     const celulaData = bancoSenhas[idCelula];
-    
-    // Proteção extra via código caso tentem burlar o clique
-    if (!celulaData || !celulaData.ativo) {
-        alert("Aviso: Este canal de transmissão está fora de alcance ou foi desativado pela Aliança.");
-        return;
-    }
+    if (!celulaData || !celulaData.ativo) return;
 
     celulaSelecionada = idCelula;
-    document.getElementById('modalTitulo').innerText = `Autenticar: ${celulaData.nome}`;
+    document.getElementById('modalTitulo').innerText = `Decodificar: ${celulaData.nome}`;
     document.getElementById('inputSenha').value = "";
     document.getElementById('mensagemErro').innerText = "";
     document.getElementById('modalSenha').style.display = 'flex';
@@ -44,19 +40,18 @@ function verificarAcesso() {
     const erroDiv = document.getElementById('mensagemErro');
     
     if (!celulaSelecionada || !bancoSenhas[celulaSelecionada]) return;
-
     const dadosCelula = bancoSenhas[celulaSelecionada];
 
     if (senhaDigitada === dadosCelula.senha) {
-        erroDiv.style.color = "#00ffcc";
-        erroDiv.innerText = "Acesso concedido. Abrindo canal seguro...";
+        erroDiv.style.color = "#ff6666";
+        erroDiv.innerText = "Chave aceita. Estabelecendo conexão estável...";
         
         setTimeout(() => {
             window.location.href = dadosCelula.url;
         }, 1200);
     } else {
         erroDiv.style.color = "#ff3333";
-        erroDiv.innerText = "CÓDIGO INCORRETO. Varredura imperial detectada!";
+        erroDiv.innerText = "CÓDIGO INVÁLIDO. Alerta de intrusão disparado!";
         const input = document.getElementById('inputSenha');
         input.classList.add('shake');
         setTimeout(() => input.classList.remove('shake'), 500);

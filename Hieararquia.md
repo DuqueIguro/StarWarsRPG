@@ -33,19 +33,27 @@ StarWarsRPG
 │  └─ status.js
 ├─ Hieararquia.md
 ├─ img
-│  ├─ astraa.png
+│  ├─ astara.png
+│  ├─ astaraLogo.png
 │  ├─ bg.png
 │  ├─ caminho.png
+│  ├─ caminhoLogo.png
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
+│  ├─ DurtocDocumento.png
+│  ├─ DurtocGenDocumento.png
+│  ├─ DurtocGeneral.png
+│  ├─ DurtocMec.png
 │  ├─ error-404.ico
 │  ├─ HNN.ico
 │  ├─ imperio.png
 │  ├─ mandalorian.ico
 │  ├─ mandaloriano.png
 │  ├─ massassi.png
+│  ├─ massassiLogo.png
 │  ├─ nave.ico
 │  ├─ orion.png
+│  ├─ orionLogo.png
 │  ├─ r2d2.ico
 │  ├─ rebelde.png
 │  └─ sabres.ico
@@ -56,13 +64,15 @@ StarWarsRPG
 │  ├─ dadosRacasFicha.js
 │  ├─ dadosTamanhosFicha.js
 │  ├─ databaseInventario.js
+│  ├─ durtoc.js
 │  ├─ ficha.js
 │  ├─ hangar.js
 │  ├─ inventario.js
 │  ├─ inventarioOficina.js
 │  ├─ manutencao.js
 │  ├─ mapa_galatico.js
-│  └─ rebeldes.js
+│  ├─ rebeldes.js
+│  └─ selecaoRebelde.js
 ├─ oficina
 │  ├─ database
 │  │  ├─ modeloOS.json
@@ -88,6 +98,7 @@ StarWarsRPG
 │     └─ OS-14-SIG-002.json
 ├─ pages
 │  ├─ comunicacao.html
+│  ├─ durtoc.html
 │  ├─ ficha.html
 │  ├─ hangar.html
 │  ├─ inventario.html
@@ -99,6 +110,10 @@ StarWarsRPG
 │  └─ selecaoRebelde.html
 ├─ README.md
 ├─ rebeldes
+│  ├─ astara.html
+│  ├─ caminho.html
+│  ├─ massassi.html
+│  └─ orion.html
 └─ styles
    ├─ 404.css
    ├─ comunicacao.css

@@ -1,0 +1,28 @@
+{
+  "registro_militar": "IMP-994-DT",
+  "nome_oficial": "Dur'toc",
+  "alcunha_operacional": "Marrentinho (Termo Estritamente Proibido em Registros)",
+  "especie": "Twi'lek",
+  "idade_atual": 34,
+  "patente": "General de Divisão Industrial",
+  "lotacao": "Cidade Capital, Lothal (Setor Orla Exterior)",
+  "historico_cronologico": {
+    "origem": "Nascido em Ryloth, criado na parte alta de Coruscant na oficina de manutenção Jedi de seu pai.",
+    "exilio": "Fuga para os níveis inferiores após a purga Jedi. Prisão do pai e perda do Kalicore original.",
+    "reconstrucao": "Fundação da oficina mecânica discreta na zona cinzenta entre os níveis de Coruscant. Criação da nave-base 'A Engrenagem Mestra' e do grupo 'Brigada das Catracas'.",
+    "expansao_coruscant": "Após melhorias massivas em droids, naves e ferramentas, adquiriu capital suficiente para comprar e reabrir uma segunda oficina na seleta parte alta de Coruscant."
+  },
+  "status_atual_imperio": {
+    "convocacao": "Convocado pelo Alto Comando Imperial para atuar secretamente no protótipo de desenvolvimento de superioridade espacial: o projeto TIE Defender.",
+    "autoridade": "Autoridade militar total e patente de General dentro do planeta Lothal.",
+    "fábricas_sob_comando": {
+      "total": 3,
+      "divisao": [
+        { "id": "F-01", "funcao": "Desenvolvimento e testes secretos do protótipo TIE Defender (Projeto Thrawn)." },
+        { "id": "F-02", "funcao": "Manufatura de droids utilitários pesados e peças sobressalentes militares." },
+        { "id": "F-03", "funcao": "Manutenção, blindagem e logística de speeders e veículos terrestres." }
+      ]
+    }
+  },
+  "jargao_assinatura": "BIOS (Bicho Ignorante Operando o Sistema) - Aplicado repetidamente a pilotos e stormtroopers."
+}

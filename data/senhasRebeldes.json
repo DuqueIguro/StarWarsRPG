@@ -1,12 +1,12 @@
 {
   "astraa": {
-    "nome": "Célula Astraa",
-    "senha": "ALIANCA_ASTRAA_4B",
-    "url": "../rebeldes/astraa.html",
+    "nome": "Movimento Astara",
+    "senha": "ALIANCA_ASTARA_4B",
+    "url": "../rebeldes/astara.html",
     "ativo": true
   },
   "caminho": {
-    "nome": "Célula O Caminho",
+    "nome": "O Caminho",
     "senha": "X_WING_SQUADRON",
     "url": "../rebeldes/caminho.html",
     "ativo": true
@@ -18,7 +18,7 @@
     "ativo": true
   },
   "orion": {
-    "nome": "Rede Orion",
+    "nome": "Diretiva Orion",
     "senha": "ORION_PROPHECY_7",
     "url": "../rebeldes/orion.html",
     "ativo": true

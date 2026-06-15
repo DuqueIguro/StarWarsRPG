@@ -3,90 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transmissão Criptografada - Aliança Rebelde</title>
+    <title>Holonet - Frequências de Redes Seguras</title>
     <link rel="stylesheet" href="../styles/style.css">
     <link rel="stylesheet" href="../styles/selecaoRebelde.css">
 </head>
 <body>
-    <div class="stars"></div>
-    
+    <button class="btn-voltar" onclick="window.location.href='../index'">◀ Voltar ao Terminal</button>
+
     <div class="container">
         <header>
-            <h1 class="text-glow">Rede de Células Rebeldes</h1>
-            <p class="subtitle">Selecione uma organização ativa na Holonet para tentar autenticação de canal</p>
+            <h1 class="text-glow">Diretório de Nós da Rede</h1>
+            <p class="subtitle">Sincronizando interceptações criptografadas da Holonet Galáctica</p>
         </header>
 
         <main class="grid-celulas">
-            <!-- CANAIS ATIVOS (Abordados no Projeto) -->
             <div class="card-celula" onclick="abrirAutenticacao('astraa')">
                 <div class="img-wrapper">
-                    <img src="../img/rebelde.png" alt="Símbolo Rebelde">
+                    <img src="../img/astaraLogo.png" alt="Símbolo Rebelde">
                 </div>
-                <h2>Célula Astraa</h2>
-                <span class="status-badge">Criptografado</span>
+                <h2>Movimento Astara</h2>
+                <span class="status-badge">Sinal Encriptado</span>
             </div>
 
             <div class="card-celula" onclick="abrirAutenticacao('caminho')">
                 <div class="img-wrapper">
-                    <img src="../img/rebelde.png" alt="Símbolo Rebelde">
+                    <img src="../img/caminhoLogo.png" alt="Símbolo Rebelde">
                 </div>
                 <h2>O Caminho</h2>
-                <span class="status-badge">Criptografado</span>
+                <span class="status-badge">Sinal Encriptado</span>
             </div>
 
             <div class="card-celula" onclick="abrirAutenticacao('massassi')">
                 <div class="img-wrapper">
-                    <img src="../img/rebelde.png" alt="Símbolo Rebelde">
+                    <img src="../img/massassiLogo.png" alt="Símbolo Rebelde">
                 </div>
                 <h2>Grupo Massassi</h2>
-                <span class="status-badge">Criptografado</span>
+                <span class="status-badge">Sinal Encriptado</span>
             </div>
 
             <div class="card-celula" onclick="abrirAutenticacao('orion')">
                 <div class="img-wrapper">
-                    <img src="../img/rebelde.png" alt="Símbolo Rebelde">
+                    <img src="../img/orionLogo.png" alt="Símbolo Rebelde">
                 </div>
-                <h2>Rede Orion</h2>
-                <span class="status-badge">Criptografado</span>
+                <h2>Diretiva Orion</h2>
+                <span class="status-badge">Sinal Encriptado</span>
             </div>
 
-            <!-- CANAIS INATIVOS / FORA DE ALCANCE -->
             <div class="card-celula desativado">
                 <div class="img-wrapper">
-                    <img src="../img/rebelde.png" alt="Símbolo Rebelde" class="grayscale">
+                    <img src="../img/HNN.ico" alt="Símbolo Rebelde">
                 </div>
                 <h2>Os Partisans</h2>
-                <span class="status-badge badge-bloqueado">Sem Sinal</span>
+                <span class="status-badge badge-bloqueado">Sem Comunicação</span>
             </div>
 
             <div class="card-celula desativado">
                 <div class="img-wrapper">
-                    <img src="../img/rebelde.png" alt="Símbolo Rebelde" class="grayscale">
+                    <img src="../img/HNN.ico" alt="Símbolo Rebelde">
                 </div>
                 <h2>Rede Espectro</h2>
-                <span class="status-badge badge-bloqueado">Sem Sinal</span>
+                <span class="status-badge badge-bloqueado">Sem Comunicação</span>
             </div>
 
             <div class="card-celula desativado">
                 <div class="img-wrapper">
-                    <img src="../img/rebelde.png" alt="Símbolo Rebelde" class="grayscale">
+                    <img src="../img/HNN.ico" alt="Símbolo Rebelde">
                 </div>
                 <h2>Aliança Antares</h2>
-                <span class="status-badge badge-bloqueado">Sem Sinal</span>
+                <span class="status-badge badge-bloqueado">Sem Comunicação</span>
             </div>
         </main>
     </div>
 
-    <!-- Modal de Autenticação -->
     <div id="modalSenha" class="modal">
         <div class="modal-content">
-            <h3 id="modalTitulo">Inserir Código de Acesso</h3>
-            <p>Insira a contrassenha de segurança para acessar este canal:</p>
-            <input type="password" id="inputSenha" placeholder="CONTRASENHA_DE_SEGURANCA" autocomplete="off">
+            <h3 id="modalTitulo">Inserir Código de Transmissão</h3>
+            <p>Insira a chave criptográfica para descriptografar o canal de dados:</p>
+            <input type="password" id="inputSenha" placeholder="CHAVE_HOLONET_DE_ACESSO" autocomplete="off">
             <div id="mensagemErro" class="erro-txt"></div>
             <div class="modal-buttons">
-                <button class="btn-cancelar" onclick="fecharAutenticacao()">Cancelar</button>
-                <button class="btn-confirmar" onclick="verificarAcesso()">Autenticar</button>
+                <button class="btn-cancelar" onclick="fecharAutenticacao()">Abortar</button>
+                <button class="btn-confirmar" onclick="verificarAcesso()">Decodificar</button>
             </div>
         </div>
     </div>

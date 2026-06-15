@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossiê Imperial - General Dur'toc</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/durtoc.css">
+</head>
+<body>
+    <!-- Linhas de varredura tática e grade holográfica -->
+    <div class="holonet-overlay"></div>
+
+    <button class="btn-voltar" onclick="window.location.href='../index.html'">◀ Desconectar Terminal</button>
+
+    <div class="terminal-container">
+        <header class="terminal-header">
+            <div class="logo-imperio">
+                <img src="../img/imperio.png" alt="Império Galáctico">
+            </div>
+            <div class="header-titles">
+                <h1 class="blink-title">SISTEMA DE SEGURANÇA DA HOLONET</h1>
+                <h2>DOSSIÊ DE ALTA CONFIDENCIALIDADE: IMP-994-DT</h2>
+            </div>
+        </header>
+
+        <!-- Seletor de Uniforme/Linha do Tempo -->
+        <div class="timeline-selector">
+            <button class="tab-btn active" onclick="alternarVertente('mecnico')">Vertente: Mecânico (Nível Baixo)</button>
+            <button class="tab-btn" onclick="alternarVertente('general')">Vertente: General (Lothal / TIE Defender)</button>
+        </div>
+
+        <div class="dossie-grid">
+            <!-- Painel Esquerdo: Imagens e Identificação Básica -->
+            <section class="panel-left border-glow">
+                <div class="avatar-display">
+                    <!-- Foto de Corpo Inteiro -->
+                    <div class="img-box full-body">
+                        <img id="fotoCorpo" src="../img/DurtocMec.png" alt="Dur'toc Corpo">
+                    </div>
+                    <!-- Foto de Documento -->
+                    <div class="img-box doc-photo">
+                        <img id="fotoDoc" src="../img/DurtocDocumento.png" alt="Dur'toc Documento">
+                    </div>
+                </div>
+                
+                <div class="data-box sub-panel">
+                    <h3>DADOS BIOMÉTRICOS</h3>
+                    <p><strong>NOME:</strong> Dur'Toc</p>
+                    <p><strong>ESPÉCIE:</strong> Twi'lek</p>
+                    <p><strong>IDADE:</strong> <span id="txtIdade">25 Anos</span></p>
+                    <p><strong>ESTATURA:</strong> 100 cm (Baixa Estatura Incomum)</p>
+                    <p><strong>LEKKU:</strong> 2 (Proporções padrão, arrastados sob protesto)</p>
+                    <p><strong>TEMPERAMENTO:</strong> Extremamente Explosivo / Crítico</p>
+                </div>
+            </section>
+
+            <!-- Painel Direito: Lore, Fábricas e Cargos -->
+            <section class="panel-right border-glow">
+                <div class="data-box sub-panel">
+                    <h3>PATENTE E LOCAÇÃO ATUAL</h3>
+                    <p class="highlight-text" id="txtPatente">Mecânico Autônomo da Linha Cinzenta</p>
+                    <p><strong>Setor de Operação:</strong> <span id="txtSetor">Níveis inferiores/médios de Coruscant</span></p>
+                </div>
+
+                <div class="data-box sub-panel">
+                    <h3>HISTÓRICO OPERACIONAL & LORE</h3>
+                    <p id="txtLore">Mecânico ríspido e genial que opera na divisa dos níveis de Coruscant. Conhecido por gritar com ferramentas teimosas e reconstruir droids e naves a partir de sucatas (Criador da nave 'A Engrenagem Mestra' e do caça 'O Cinzel'). Perdeu a relíquia mecânica de sua família, o Kalicore, para guarnições imperiais.</p>
+                </div>
+
+                <div class="data-box sub-panel, hidden" id="painelFabricas">
+                    <h3>INSTALAÇÕES SOB JURISDIÇÃO (LOTHAL CAPITAL)</h3>
+                    <ul class="factory-list">
+                        <li><strong>Fábrica Alpha (Projeto Secreto):</strong> Desenvolvimento e testes avançados do protótipo de caça <em>TIE Defender</em>.</li>
+                        <li><strong>Fábrica Beta:</strong> Produção em massa de droids industriais de logística pesada (Classe CL-R).</li>
+                        <li><strong>Fábrica Gamma:</strong> Linha de montagem pesada de speeders terrestres (Classe Moedor) e blindagem de veículos.</li>
+                    </ul>
+                </div>
+
+                <div class="data-box sub-panel">
+                    <h3>REGISTRO DE OBSERVAÇÕES TÉCNICAS</h3>
+                    <p>Classifica falhas cometidas por subordinados com o jargão <strong>"BIOS"</strong> (<em>Bicho Ignorante Operando o Sistema</em>). Demonstra admiração puramente técnica pela engenharia e maquinário imperial, desconsiderando inclinações ideológicas.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="../js/durtoc.js"></script>
+</body>
+</html>

@@ -1,169 +1,231 @@
 :root {
-    --primary-glow: #00ffcc;
-    --bg-dark: #0a0e14;
-    --card-bg: rgba(16, 23, 34, 0.85);
-    --border-color: rgba(0, 255, 204, 0.3);
+    --primary-glow: #ff3333; /* Vermelho Holonet Intenso */
+    --primary-dim: rgba(255, 51, 51, 0.15);
+    --primary-border: rgba(255, 51, 51, 0.4);
+    --bg-dark: #080303; /* Fundo quase preto com tom avermelhado sutil */
+    --card-bg: rgba(20, 10, 10, 0.75);
+    --text-main: #ffcccc;
 }
 
 body {
     background-color: var(--bg-dark);
-    color: #e2e8f0;
-    font-family: 'Courier New', Courier, monospace; /* Visual clássico de terminal */
+    color: var(--text-main);
+    font-family: 'Courier New', Courier, monospace;
     margin: 0;
     overflow-x: hidden;
+    position: relative;
+}
+
+/* Efeito de Scanline Holográfico cobrando a tela */
+body::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0), rgba(0, 0, 255, 0.03));
+    z-index: 9999;
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+}
+
+/* Botão Voltar (Canto Superior Esquerdo) */
+.btn-voltar {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background: transparent;
+    border: 1px solid var(--primary-border);
+    color: var(--primary-glow);
+    padding: 10px 18px;
+    font-family: monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 8px var(--primary-dim);
+    z-index: 100;
+}
+
+.btn-voltar:hover {
+    background: var(--primary-dim);
+    border-color: var(--primary-glow);
+    box-shadow: 0 0 15px var(--primary-glow);
+    transform: translateX(-3px);
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 60px 20px 40px 20px;
     text-align: center;
 }
 
-header {
-    margin-bottom: 50px;
-}
-
+/* Título com Brilho e Efeito Estilo Holonet */
 .text-glow {
-    font-size: 2.5rem;
+    font-size: 2.6rem;
     color: var(--primary-glow);
-    text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+    text-shadow: 0 0 12px rgba(255, 51, 51, 0.7), 0 0 2px rgba(255, 51, 51, 0.9);
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 4px;
+    animation: holonetFlicker 4s infinite;
 }
 
 .subtitle {
-    color: #8a99ad;
-    font-size: 1.1rem;
+    color: #b38f8f;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Grid de Organizações */
+/* Grid Holográfico */
 .grid-celulas {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 30px;
-    padding: 10px;
+    margin-top: 50px;
 }
 
+/* Cards das Células */
 .card-celula {
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 20px;
+    border: 1px solid var(--primary-border);
+    border-radius: 8px;
+    padding: 30px 20px;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
     position: relative;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: inset 0 0 15px rgba(255, 51, 51, 0.05);
 }
 
 .card-celula:hover {
     transform: translateY(-5px);
     border-color: var(--primary-glow);
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+    box-shadow: 0 0 25px rgba(255, 51, 51, 0.35), inset 0 0 20px rgba(255, 51, 51, 0.1);
 }
 
+/* Ajuste nos Ícones para parecerem projeções */
 .img-wrapper {
-    width: 100%;
-    height: 180px;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #000;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px auto;
 }
 
 .img-wrapper img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 5px rgba(0, 255, 204, 0.3));
-    transition: filter 0.3s ease;
-}
-
-.card-celula:hover .img-wrapper img {
-    filter: drop-shadow(0 0 10px var(--primary-glow));
+    /* Torna o ícone uma silhueta vermelha brilhante e holográfica */
+    filter: drop-shadow(0 0 8px var(--primary-glow)) brightness(1.2);
 }
 
 .card-celula h2 {
+    margin: 15px 0 10px 0;
     font-size: 1.3rem;
-    margin: 10px 0;
-    color: #ffffff;
+    letter-spacing: 1px;
+    color: #ff9999;
 }
 
 .status-badge {
     display: inline-block;
-    padding: 40px 12px;
-    font-size: 0.8rem;
-    background: rgba(255, 51, 51, 0.15);
-    border: 1px solid #ff3333;
-    color: #ff5555;
-    border-radius: 20px;
     padding: 4px 12px;
+    font-size: 0.8rem;
+    border-radius: 4px;
     text-transform: uppercase;
-}
-
-.card-celula:hover .status-badge {
-    background: rgba(0, 255, 204, 0.15);
-    border-color: var(--primary-glow);
+    font-weight: bold;
+    background: rgba(255, 51, 51, 0.1);
+    border: 1px solid var(--primary-border);
     color: var(--primary-glow);
-    content: "Acessar";
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.2);
 }
 
-/* Estilo do Modal de Senha */
+/* Cards Desativados (Outras Organizações) */
+.card-celula.desativado {
+    opacity: 0.35;
+    cursor: not-allowed;
+    border-color: rgba(255, 51, 51, 0.1);
+    background: rgba(10, 5, 5, 0.5);
+}
+
+.card-celula.desativado:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(255, 51, 51, 0.1);
+}
+
+.card-celula.desativado .img-wrapper img {
+    filter: grayscale(100%) opacity(0.4);
+}
+
+.badge-bloqueado {
+    background: transparent;
+    border-color: #402020;
+    color: #733c3c;
+    box-shadow: none;
+}
+
+/* Modal de Autenticação Holonet */
 .modal {
     display: none;
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(5, 7, 10, 0.85);
-    backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
+    background: rgba(5, 2, 2, 0.85);
+    backdrop-filter: blur(4px);
     z-index: 1000;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
-    background: #0e141f;
+    background: #0f0505;
     border: 2px solid var(--primary-glow);
-    border-radius: 16px;
-    padding: 30px;
+    box-shadow: 0 0 30px rgba(255, 51, 51, 0.3);
+    padding: 35px;
+    border-radius: 6px;
     width: 90%;
     max-width: 450px;
     text-align: center;
-    box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
+    position: relative;
+}
+
+.modal-content h3 {
+    color: var(--primary-glow);
+    text-shadow: 0 0 8px rgba(255, 51, 51, 0.5);
+    margin-top: 0;
+    text-transform: uppercase;
 }
 
 .modal-content input {
-    width: 85%;
+    width: 100%;
     padding: 12px;
-    margin: 20px 0 10px 0;
-    background: #05070a;
-    border: 1px solid var(--border-color);
+    background: #1a0a0a;
+    border: 1px solid var(--primary-border);
     color: var(--primary-glow);
     font-family: monospace;
-    font-size: 1.1rem;
     text-align: center;
-    border-radius: 6px;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    margin: 15px 0;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
 }
 
 .modal-content input:focus {
     outline: none;
     border-color: var(--primary-glow);
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    box-shadow: 0 0 12px rgba(255, 51, 51, 0.4);
 }
 
 .modal-buttons {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
     gap: 15px;
+    margin-top: 20px;
 }
 
-button {
+.modal-buttons button {
     flex: 1;
     padding: 12px;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     font-family: monospace;
     font-weight: bold;
@@ -173,8 +235,8 @@ button {
 
 .btn-cancelar {
     background: transparent;
-    border: 1px solid #ff3333;
-    color: #ff3333;
+    border: 1px solid #992222;
+    color: #ff6666;
 }
 
 .btn-cancelar:hover {
@@ -184,7 +246,7 @@ button {
 .btn-confirmar {
     background: var(--primary-glow);
     border: 1px solid var(--primary-glow);
-    color: #05070a;
+    color: #050101;
 }
 
 .btn-confirmar:hover {
@@ -192,43 +254,24 @@ button {
     transform: scale(1.02);
 }
 
-.erro-txt {
-    height: 20px;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
+/* Animações de Interferência e Instabilidade Típicas de RPG Sci-fi */
+@keyframes holonetFlicker {
+    0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+        opacity: 0.99;
+        filter: hue-rotate(0deg);
+    }
+    20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+        opacity: 0.4;
+        filter: hue-rotate(10deg);
+    }
 }
 
-/* Modificadores para cards desativados */
-.card-celula.desativado {
-    opacity: 0.5;
-    cursor: not-allowed;
-    border-color: rgba(138, 153, 173, 0.2);
-}
-
-.card-celula.desativado:hover {
-    transform: none;
-    border-color: rgba(138, 153, 173, 0.2);
-    box-shadow: none;
-}
-
-.grayscale {
-    filter: grayscale(100%) cubic-bezier(0.1, 0.8, 0.2, 1);
-    opacity: 0.3;
-}
-
-.badge-bloqueado {
-    background: rgba(138, 153, 173, 0.1);
-    border-color: #556575;
-    color: #8a99ad;
-}
-
-/* Animações */
 .shake {
     animation: shakeAnim 0.4s ease-in-out;
 }
 
 @keyframes shakeAnim {
     0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-8px); }
-    40%, 80% { transform: translateX(8px); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
 }

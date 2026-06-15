@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const osPlaceholderSigiloso = document.getElementById('os-placeholder-sigiloso');
 
     // Caminhos para os manifestos
-    const manifestFile = 'oficina/manifesto.json';
-    const manifestSigilosoFile = 'oficina/manifestoSigiloso.json';
+    const manifestFile = '../oficina/manifesto.json';
+    const manifestSigilosoFile = '../oficina/manifestoSigiloso.json';
 
     // Função genérica para carregar um manifesto e popular sua lista
     async function carregarManifesto(manifestPath, container, itemRenderer, itemClass) {
