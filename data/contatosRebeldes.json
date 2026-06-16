@@ -1,6 +1,6 @@
 {
     "astara": {
-        "nome": "Célula Astara",
+        "nome": "Movimewnto Astara",
         "logo": "../img/astaraLogo.png",
         "isOculta": false,
         "lider": {
@@ -11,6 +11,7 @@
         "base": "Setor Corporativo / Base Móvel",
         "frequencia": "982.4 MHz (Criptografia de Pulso)",
         "contato_emergencia": "Senadora Elara Vance",
+        "foto_emergencia": "../img/contatoAstara.png",
         "noticias": [
             "Vigilância Imperial duplicada nos arredores do Senado em Coruscant.",
             "Cargas de suprimentos médicos desviadas com sucesso para a Orla Média."
@@ -43,6 +44,7 @@
         "base": "Yavin 4 / Antigos Templos Massassi",
         "frequencia": "114.7 MHz (Frequência Militar)",
         "contato_emergencia": "Esquadrão Labareda (Dona Eu'nisse San-Tos, Dona Vanya O'liv-Eira, Dona N'eyde Sou-Zaa, Dona Kleonixe Pe'Reira, Dona Kreu-Zah Costcha)",
+        "foto_emergencia": "../img/contatoMassassi.png",
         "noticias": [
             "Patrulhas de Caças TIE limparam o setor orbital 3.",
             "Sensores de varredura profunda captaram anomalias no espaço real."
@@ -64,7 +66,7 @@
         }
     },
     "orion": {
-        "nome": "Rede Orion",
+        "nome": "Diretiva Orion",
         "logo": "../img/orionLogo.png",
         "isOculta": false,
         "lider": {
@@ -74,7 +76,8 @@
         },
         "base": "Estação Orbital Escondida / Setor Crait",
         "frequencia": "443.9 MHz (Espectro Assíncrono)",
-        "contato_emergencia": "Especialista Jaxon \"Jax\" Thorne",
+        "contato_emergencia": "Especialista Jaxon 'Jax' Thorne",
+        "foto_emergencia": "../img/contatoOrion.png",
         "noticias": [
             "Interceptação de Holomensagem Imperial descriptografada com sucesso.",
             "Varreduras de longo alcance sugerem movimentos de frotas na Orla Exterior."
@@ -107,6 +110,7 @@
         "base": "Rede Oculta Interplanetária / Sem Base Fixa",
         "frequencia": "Frequências Variáveis Rotativas de Curto Alcance",
         "contato_emergencia": "Condutora Zara Ven Nordan",
+        "foto_emergencia": "../img/contatoCaminho.png",
         "noticias": [
             "Múltiplos sensitivos à Força evacuados com sucesso através da rede segura.",
             "Aviso: Inquisidores imperiais rastreando portos fantasmas na Orla Exterior."

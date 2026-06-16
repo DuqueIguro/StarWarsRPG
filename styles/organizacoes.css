@@ -82,13 +82,13 @@ body {
     letter-spacing: 1px;
 }
 
-/* Navegação por Abas */
 .tabs-navigation {
     display: flex;
     gap: 10px;
     border-bottom: 1px solid rgba(0,240,255,0.1);
     padding-bottom: 10px;
     margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
 button {
@@ -109,7 +109,7 @@ button:hover, .tab-btn.active {
     box-shadow: 0 0 12px var(--neon-cyan);
 }
 
-/* Container de Perfil do Líder */
+/* Container do Líder */
 .profile-card img {
     width: 100%;
     max-height: 280px;
@@ -125,7 +125,57 @@ button:hover, .tab-btn.active {
     font-size: 1.2rem;
 }
 
-/* Layout Especial do Caminho */
+/* Rodapé Tático */
+.tactical-footer {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.footer-card {
+    flex: 1;
+    min-width: 250px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-cyan);
+    padding: 15px;
+    text-align: left;
+}
+
+.footer-card h5 { margin: 0 0 6px 0; color: var(--neon-cyan); }
+.footer-card p { margin: 0; font-size: 0.9rem; }
+.cyan-highlight { color: #50e3c2; font-weight: bold; }
+.alert-highlight { color: #ff6b6b; }
+
+/* Bloco Exclusivo de Foto de Contato de Emergência */
+.contact-profile-card {
+    min-width: 290px;
+}
+
+.contact-flex {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.contact-mini-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 1px solid var(--border-cyan);
+    background: #020617;
+    border-radius: 4px;
+    box-shadow: 0 0 8px var(--neon-dim);
+}
+
+.contact-flex p {
+    flex: 1;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Layout Exclusivo de O Caminho */
 .caminho-profile {
     display: flex;
     gap: 20px;
@@ -134,13 +184,13 @@ button:hover, .tab-btn.active {
     margin-bottom: 20px;
     align-items: center;
     border: 1px solid var(--border-cyan);
+    text-align: left;
 }
 
 .caminho-profile img {
     width: 80px;
     height: 80px;
     object-fit: cover;
-    border-radius: 50%;
     border: 1px solid var(--neon-cyan);
 }
 
@@ -157,32 +207,10 @@ button:hover, .tab-btn.active {
     text-align: left;
 }
 
-.route-item h5 {
-    margin: 0 0 5px 0;
-    color: #fff;
-    font-size: 1rem;
-}
+.route-item h5 { margin: 0 0 5px 0; color: #fff; font-size: 1rem; }
+.route-item p { margin: 0; font-size: 0.85rem; line-height: 1.4; color: #94a3b8; }
 
-/* Rodapé Tático */
-.tactical-footer {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-}
-
-.footer-card {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-cyan);
-    padding: 15px;
-    text-align: left;
-}
-
-.footer-card h5 { margin: 0 0 6px 0; color: var(--neon-cyan); }
-.footer-card p { margin: 0; font-size: 0.9rem; }
-.cyan-highlight { color: #50e3c2; font-weight: bold; }
-.alert-highlight { color: #ff6b6b; }
-
-/* Menu Lateral Gaveta (Inventário) */
+/* Gaveta Lateral de Logística */
 .sidebar {
     position: fixed;
     top: 0; right: -320px;
@@ -195,18 +223,18 @@ button:hover, .tab-btn.active {
 }
 .sidebar.open { right: 0; }
 .btn-close-sidebar { width: 100%; margin-bottom: 25px; }
-
 .sidebar-group { margin-bottom: 20px; text-align: left;}
 .sidebar-group h4 { color: var(--neon-cyan); margin-bottom: 8px;}
 .sidebar-group ul { list-style: none; padding-left: 0; }
 .sidebar-group li { padding: 4px 0; font-size: 0.9rem;}
 
+/* Listas */
 .agents-list, .news-ticker, .mission-ul { list-style: none; padding-left: 0; text-align: left;}
 .agents-list li, .news-ticker li, .mission-ul li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.empty-txt, .no-mission { font-style: italic; color: #64748b; font-size: 0.9rem; }
 
 .hidden { display: none !important; }
 
 @media (max-width: 900px) {
-    .grid-dashboard { grid-template-columns: 1fr; }
-    .routes-grid { grid-template-columns: 1fr; }
+    .grid-dashboard, .routes-grid { grid-template-columns: 1fr; }
 }

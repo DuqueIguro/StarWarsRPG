@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="../styles/style.css">
     <link rel="stylesheet" href="../styles/organizacoes.css">
 </head>
+<!-- AJUSTE ESTE ATRIBUTO PARA CADA ARQUIVO: "astara", "caminho", "massassi" ou "orion" -->
 <body data-alianca="astara">
 
     <div class="holonet-scanlines"></div>
 
+    <!-- Barra Lateral de Logística Expansível -->
     <aside id="sidebarLogistica" class="sidebar">
         <button class="btn-close-sidebar" onclick="toggleSidebar()">FECHAR PAINEL ◀</button>
         <div class="sidebar-content">
@@ -27,23 +29,28 @@
     </aside>
 
     <div class="interface-container">
+        <!-- Topo da Página: Brasão, Nome e Gatilho do Painel Lateral -->
         <header class="interface-header">
             <button class="btn-voltar" onclick="window.location.href='../pages/selecaoRebelde.html'">◀ Sair do Canal</button>
             <div class="central-branding">
                 <img id="brasaoAlianca" src="" alt="Brasão" class="brasao-icon">
                 <h1 id="nomeAlianca" class="neon-text-cyan">Conectando...</h1>
             </div>
-            <button id="btnToggleSidebar" class="btn-open-sidebar" onclick="toggleSidebar()">GAVETA DE RECURSOS ▶</button>
+            <button id="btnToggleSidebar" class="btn-open-sidebar" onclick="toggleSidebar()">LOGÍSTICA / FROTA ▶</button>
         </header>
 
         <div class="grid-dashboard">
+            <!-- Painel Esquerdo: Notícias e Conteúdo Principal (Missões ou Rotas) -->
             <main class="left-column">
+                <!-- Canal de Notícias (Pseudo Holonet) -->
                 <section class="panel-section">
                     <h3>TRANSMISSÕES RECENTES DA HOLONET</h3>
                     <ul id="feedNoticias" class="news-ticker"></ul>
                 </section>
 
+                <!-- Área Dinâmica: Missões COMUNS ou Rotas de Fuga (O CAMINHO) -->
                 <section class="panel-section main-content-area">
+                    <!-- Bloco de Missões em Abas -->
                     <div id="containerMissoes">
                         <div class="tabs-navigation">
                             <button class="tab-btn active" onclick="mudarAbaMissao(event, 'convocados')">Convocados</button>
@@ -55,29 +62,36 @@
                         <div id="conteudoMissao" class="mission-display-box"></div>
                     </div>
 
+                    <!-- Bloco de Rotas (Exclusivo de O Caminho) -->
                     <div id="containerRotas" class="hidden">
                         <h3>DIRETÓRIO DE ROTAS SEGURO E PLANETAS DE FUGA</h3>
                         <div id="listaRotas" class="routes-container"></div>
                     </div>
                 </section>
 
+                <!-- Informações do Rodapé Tático -->
                 <section class="tactical-footer">
                     <div class="footer-card">
-                        <h5>SÉDE / LOCALIZAÇÃO</h5>
+                        <h5>SEDE / LOCALIZAÇÃO</h5>
                         <p id="infoBase">-</p>
                     </div>
                     <div class="footer-card">
                         <h5>FREQUÊNCIA OPERACIONAL</h5>
                         <p id="infoFrequencia" class="cyan-highlight">-</p>
                     </div>
-                    <div class="footer-card">
+                    <div class="footer-card contact-profile-card">
                         <h5>CONTATO DE EMERGÊNCIA</h5>
-                        <p id="infoEmergencia" class="alert-highlight">-</p>
+                        <div class="contact-flex">
+                            <img id="fotoContatoEmergencia" src="" alt="Contato" class="contact-mini-img">
+                            <p id="infoEmergencia" class="alert-highlight">-</p>
+                        </div>
                     </div>
                 </section>
             </main>
 
+            <!-- Painel Direito: Fotos dos Líderes Reais e Agentes -->
             <aside class="right-column">
+                <!-- Seção do Líder -->
                 <section id="panelLider" class="panel-section profile-section">
                     <h3>COMANDO DA CÉLULA</h3>
                     <div class="profile-card">
@@ -89,6 +103,7 @@
                     </div>
                 </section>
 
+                <!-- Seção de Agentes -->
                 <section id="panelAgentes" class="panel-section">
                     <h3>AGENTES REGISTADOS</h3>
                     <ul id="listaAgentes" class="agents-list"></ul>

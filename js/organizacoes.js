@@ -1,3 +1,8 @@
+/**
+ * Holonet Rebelde - Motor de Gerenciamento das Organizações
+ * Desenvolvido exclusivamente para as páginas da pasta /rebeldes/
+ */
+
 let dadosAliancaAtual = null;
 
 async function inicializarPaginaAlianca() {
@@ -27,23 +32,25 @@ function renderizarInterface(data) {
     document.getElementById("infoBase").innerText = data.base;
     document.getElementById("infoFrequencia").innerText = data.frequencia;
     document.getElementById("infoEmergencia").innerText = data.contato_emergencia;
+    
+    // Injeta foto do contato de emergência no rodapé tático
+    document.getElementById("fotoContatoEmergencia").src = data.foto_emergencia;
 
     if (data.isOculta) {
-        // "O Caminho": Esconde estrutura com líderes normais, inventários e abas comuns
+        // "O Caminho": Esconde os blocos convencionais
         document.getElementById("containerMissoes").classList.add("hidden");
         document.getElementById("panelLider").classList.add("hidden");
         document.getElementById("panelAgentes").classList.add("hidden");
         document.getElementById("btnToggleSidebar").classList.add("hidden");
 
-        // Ativa e renderiza as 4 rotas detalhadas com a imagem da condutora
+        // Ativa e renderiza as rotas estruturadas
         const containerRotas = document.getElementById("containerRotas");
         containerRotas.classList.remove("hidden");
 
-        // Mostra a foto da condutora acima das rotas para manter a imagem visível na página
         const listaRotas = document.getElementById("listaRotas");
         listaRotas.innerHTML = `
             <div class="caminho-profile border-neon">
-                <img src="${data.lider.foto}" alt="Condutora Zara">
+                <img src="${data.lider.foto}" alt="Líder do Caminho">
                 <div class="caminho-desc">
                     <h4>REDE OCULTA DE FUGA</h4>
                     <p><strong>Operadora Principal:</strong> ${data.contato_emergencia}</p>
@@ -59,7 +66,7 @@ function renderizarInterface(data) {
             </div>
         `;
     } else {
-        // Estrutura padrão para as outras 3 organizações
+        // Estrutura padrão para as outras 3 organizações (Astara, Massassi, Orion)
         document.getElementById("fotoLider").src = data.lider.foto;
         document.getElementById("nomeLider").innerText = data.lider.nome;
         document.getElementById("cargoLider").innerText = data.lider.cargo;
