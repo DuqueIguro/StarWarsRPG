@@ -1,18 +1,12 @@
-/**
- * Holonet Rebelde - Motor de Gerenciamento das Organizações
- * Desenvolvido exclusivamente para as páginas da pasta /rebeldes/
- */
-
 let dadosAliancaAtual = null;
 
 async function inicializarPaginaAlianca() {
-    // Identifica a organização pelo atributo configurado na tag body do HTML
     const idAlianca = document.body.getAttribute("data-alianca");
     if (!idAlianca) return;
 
     try {
         const response = await fetch('../data/contatosRebeldes.json');
-        if (!response.ok) throw new Error('Falha de sincronização com o banco de dados.');
+        if (!response.ok) throw new Error('Erro ao carregar banco de contatos.');
         const bancoContatos = await response.json();
         
         dadosAliancaAtual = bancoContatos[idAlianca];
@@ -20,95 +14,86 @@ async function inicializarPaginaAlianca() {
             renderizarInterface(dadosAliancaAtual);
         }
     } catch (error) {
-        console.error('Erro na Holonet:', error);
+        console.error('Erro na sincronização Holonet:', error);
     }
 }
 
 function renderizarInterface(data) {
-    // Carrega Identificadores Visuais Básicos
     document.getElementById("nomeAlianca").innerText = data.nome;
     document.getElementById("brasaoAlianca").src = data.logo;
-    document.body.style.backgroundImage = `url('${data.fundo}')`;
 
-    // Carrega Feed de Transmissões Importantes / Notícias
-    const feedNoticias = document.getElementById("feedNoticias");
-    feedNoticias.innerHTML = data.noticias.map(noticia => `<li>⚠️ ${noticia}</li>`).join('');
-
-    // Carrega Painel de Informações de Localidade e Contato
+    // Injeta canais de notícias e rodapé tático
+    document.getElementById("feedNoticias").innerHTML = data.noticias.map(n => `<li>📡 ${n}</li>`).join('');
     document.getElementById("infoBase").innerText = data.base;
     document.getElementById("infoFrequencia").innerText = data.frequencia;
     document.getElementById("infoEmergencia").innerText = data.contato_emergencia;
 
-    // FLUXO DE EXCEÇÃO: IDENTIFICAÇÃO DE "O CAMINHO"
     if (data.isOculta) {
-        // Oculta elementos de células com liderança padrão
+        // "O Caminho": Esconde estrutura com líderes normais, inventários e abas comuns
         document.getElementById("containerMissoes").classList.add("hidden");
         document.getElementById("panelLider").classList.add("hidden");
         document.getElementById("panelAgentes").classList.add("hidden");
         document.getElementById("btnToggleSidebar").classList.add("hidden");
 
-        // Ativa e renderiza o mapeamento de Rotas e Planetas de Fuga
+        // Ativa e renderiza as 4 rotas detalhadas com a imagem da condutora
         const containerRotas = document.getElementById("containerRotas");
         containerRotas.classList.remove("hidden");
 
+        // Mostra a foto da condutora acima das rotas para manter a imagem visível na página
         const listaRotas = document.getElementById("listaRotas");
-        listaRotas.innerHTML = data.rotas.map(rota => `
-            <div class="route-card">
-                <h5>${rota.planeta}</h5>
-                <p>${rota.desc}</p>
+        listaRotas.innerHTML = `
+            <div class="caminho-profile border-neon">
+                <img src="${data.lider.foto}" alt="Condutora Zara">
+                <div class="caminho-desc">
+                    <h4>REDE OCULTA DE FUGA</h4>
+                    <p><strong>Operadora Principal:</strong> ${data.contato_emergencia}</p>
+                </div>
             </div>
-        `).join('');
-
+            <div class="routes-grid">
+                ${data.rotas.map(r => `
+                    <div class="route-item">
+                        <h5>${r.planeta}</h5>
+                        <p>${r.desc}</p>
+                    </div>
+                `).join('')}
+            </div>
+        `;
     } else {
-        // PROCESSO PADRÃO: PARA AS OUTRAS 3 CÉLULAS REBELDES COMUNS
-        // Injeta dados de Liderança Executiva
+        // Estrutura padrão para as outras 3 organizações
         document.getElementById("fotoLider").src = data.lider.foto;
         document.getElementById("nomeLider").innerText = data.lider.nome;
         document.getElementById("cargoLider").innerText = data.lider.cargo;
 
-        // Injeta lista de Agentes ativos
-        const listaAgentes = document.getElementById("listaAgentes");
-        listaAgentes.innerHTML = data.agents.map(agente => `
-            <li><strong>${agente.nome}</strong> - <span>${agente.cargo}</span></li>
+        document.getElementById("listaAgentes").innerHTML = data.agentes.map(a => `
+            <li><strong>${a.nome}</strong> - <span>${a.cargo}</span></li>
         `).join('');
 
-        // Injeta Inventário e Frota na barra lateral expansível
-        const sideNaves = document.getElementById("sideNaves");
-        sideNaves.innerHTML = data.inventario.naves.map(nave => `<li>🚀 ${nave}</li>`).join('');
+        document.getElementById("sideNaves").innerHTML = data.inventario.naves.map(n => `<li>🚀 ${n}</li>`).join('');
+        document.getElementById("sideItens").innerHTML = data.inventario.itens.map(i => `<li>📦 ${i}</li>`).join('');
 
-        const sideItens = document.getElementById("sideItens");
-        sideItens.innerHTML = data.inventario.itens.map(item => `<li>📦 ${item}</li>`).join('');
-
-        // Ativa por padrão a primeira aba do menu de missões
-        const primeiroBotaoMissao = document.querySelector(".tab-link");
-        if (primeiroBotaoMissao) primeiroBotaoMissao.click();
+        const primeiroBotao = document.querySelector(".tab-btn");
+        if (primeiroBotao) primeiroBotao.click();
     }
 }
 
-// Controle do Menu de Abas de Missão (Disponíveis, Concluídas, etc)
 function mudarAbaMissao(evt, statusMissao) {
     if (!dadosAliancaAtual || !dadosAliancaAtual.missoes) return;
 
-    const linksAbas = document.querySelectorAll(".tab-link");
-    linksAbas.forEach(link => link.classList.remove("active"));
-
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     evt.currentTarget.classList.add("active");
 
-    const conteudoBox = document.getElementById("conteudoMissao");
-    const listaMissoes = dadosAliancaAtual.missoes[statusMissao] || [];
+    const lista = dadosAliancaAtual.missoes[statusMissao] || [];
+    const box = document.getElementById("conteudoMissao");
 
-    if (listaMissoes.length === 0) {
-        conteudoBox.innerHTML = `<p class="no-mission">Nenhuma diretiva tática nesta aba.</p>`;
+    if (lista.length === 0) {
+        box.innerHTML = `<p class="empty-txt">Sem registos operacionais nesta categoria.</p>`;
     } else {
-        conteudoBox.innerHTML = `<ul class="mission-list">${listaMissoes.map(mis => `<li>🛰️ ${mis}</li>`).join('')}</ul>`;
+        box.innerHTML = `<ul class="mission-ul">${lista.map(m => `<li>🛰️ ${m}</li>`).join('')}</ul>`;
     }
 }
 
-// Controle de Expansão da Gaveta Lateral de Logística
 function toggleSidebar() {
-    const sidebar = document.getElementById("sidebarLogistica");
-    sidebar.classList.toggle("open");
+    document.getElementById("sidebarLogistica").classList.toggle("open");
 }
 
-// Inicializador da captura de dados
 document.addEventListener("DOMContentLoaded", inicializarPaginaAlianca);

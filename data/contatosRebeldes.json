@@ -2,12 +2,11 @@
     "astara": {
         "nome": "Célula Astara",
         "logo": "../img/astaraLogo.png",
-        "fundo": "../img/astara.png",
         "isOculta": false,
         "lider": {
             "nome": "Senadora Elara Vance",
             "cargo": "Líder Operacional e Articuladora Política",
-            "foto": "../img/contatoAstara.png"
+            "foto": "../img/astara.png"
         },
         "base": "Setor Corporativo / Base Móvel",
         "frequencia": "982.4 MHz (Criptografia de Pulso)",
@@ -35,12 +34,11 @@
     "massassi": {
         "nome": "Grupo Massassi",
         "logo": "../img/massassiLogo.png",
-        "fundo": "../img/massassi.png",
         "isOculta": false,
         "lider": {
             "nome": "General Jan Dodonna",
             "cargo": "Comandante Supremo do Setor Massassi",
-            "foto": "../img/contatoMassassi.png"
+            "foto": "../img/massassi.png"
         },
         "base": "Yavin 4 / Antigos Templos Massassi",
         "frequencia": "114.7 MHz (Frequência Militar)",
@@ -68,12 +66,11 @@
     "orion": {
         "nome": "Rede Orion",
         "logo": "../img/orionLogo.png",
-        "fundo": "../img/orion.png",
         "isOculta": false,
         "lider": {
-            "nome": "Especialista Jaxon 'Jax' Thorne",
+            "nome": "Comandante Arven Korr",
             "cargo": "Diretor de Operações Táticas e Inteligência Sônica",
-            "foto": "../img/contatoOrion.png"
+            "foto": "../img/orion.png"
         },
         "base": "Estação Orbital Escondida / Setor Crait",
         "frequencia": "443.9 MHz (Espectro Assíncrono)",
@@ -101,12 +98,11 @@
     "caminho": {
         "nome": "O Caminho",
         "logo": "../img/caminhoLogo.png",
-        "fundo": "../img/caminho.png",
         "isOculta": true,
         "lider": {
             "nome": "",
             "cargo": "",
-            "foto": "../img/contatoCaminho.png"
+            "foto": "../img/caminho.png"
         },
         "base": "Rede Oculta Interplanetária / Sem Base Fixa",
         "frequencia": "Frequências Variáveis Rotativas de Curto Alcance",
@@ -129,7 +125,7 @@
             },
             {
                 "planeta": "Tanalorr",
-                "desc": "Um planeta místico escondido em uma anomalia espacial. O sonho de many membros do Caminho era usar Tanalorr como o refúgio definitivo, inalcançável pelo Império."
+                "desc": "Um planeta místico escondido em uma anomalia espacial. O sonho de muitos membros do Caminho era usar Tanalorr como o refúgio definitivo, inalcançável pelo Império."
             },
             {
                 "planeta": "Jedha",

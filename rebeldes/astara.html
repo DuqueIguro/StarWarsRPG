@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canal Seguro - Aliança Rebelde</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/organizacoes.css">
+</head>
+<body data-alianca="astara">
+
+    <div class="holonet-scanlines"></div>
+
+    <aside id="sidebarLogistica" class="sidebar">
+        <button class="btn-close-sidebar" onclick="toggleSidebar()">FECHAR PAINEL ◀</button>
+        <div class="sidebar-content">
+            <h3>LOGÍSTICA DA UNIDADE</h3>
+            <div class="sidebar-group">
+                <h4>FROTA REBELDE</h4>
+                <ul id="sideNaves"></ul>
+            </div>
+            <div class="sidebar-group">
+                <h4>SUPRIMENTOS E ARMAS</h4>
+                <ul id="sideItens"></ul>
+            </div>
+        </div>
+    </aside>
+
+    <div class="interface-container">
+        <header class="interface-header">
+            <button class="btn-voltar" onclick="window.location.href='../pages/selecaoRebelde.html'">◀ Sair do Canal</button>
+            <div class="central-branding">
+                <img id="brasaoAlianca" src="" alt="Brasão" class="brasao-icon">
+                <h1 id="nomeAlianca" class="neon-text-cyan">Conectando...</h1>
+            </div>
+            <button id="btnToggleSidebar" class="btn-open-sidebar" onclick="toggleSidebar()">GAVETA DE RECURSOS ▶</button>
+        </header>
+
+        <div class="grid-dashboard">
+            <main class="left-column">
+                <section class="panel-section">
+                    <h3>TRANSMISSÕES RECENTES DA HOLONET</h3>
+                    <ul id="feedNoticias" class="news-ticker"></ul>
+                </section>
+
+                <section class="panel-section main-content-area">
+                    <div id="containerMissoes">
+                        <div class="tabs-navigation">
+                            <button class="tab-btn active" onclick="mudarAbaMissao(event, 'convocados')">Convocados</button>
+                            <button class="tab-btn" onclick="mudarAbaMissao(event, 'disponiveis')">Disponíveis</button>
+                            <button class="tab-btn" onclick="mudarAbaMissao(event, 'andamento')">Em Andamento</button>
+                            <button class="tab-btn" onclick="mudarAbaMissao(event, 'concluidas')">Concluídas</button>
+                            <button class="tab-btn" onclick="mudarAbaMissao(event, 'falhas')">Falhas</button>
+                        </div>
+                        <div id="conteudoMissao" class="mission-display-box"></div>
+                    </div>
+
+                    <div id="containerRotas" class="hidden">
+                        <h3>DIRETÓRIO DE ROTAS SEGURO E PLANETAS DE FUGA</h3>
+                        <div id="listaRotas" class="routes-container"></div>
+                    </div>
+                </section>
+
+                <section class="tactical-footer">
+                    <div class="footer-card">
+                        <h5>SÉDE / LOCALIZAÇÃO</h5>
+                        <p id="infoBase">-</p>
+                    </div>
+                    <div class="footer-card">
+                        <h5>FREQUÊNCIA OPERACIONAL</h5>
+                        <p id="infoFrequencia" class="cyan-highlight">-</p>
+                    </div>
+                    <div class="footer-card">
+                        <h5>CONTATO DE EMERGÊNCIA</h5>
+                        <p id="infoEmergencia" class="alert-highlight">-</p>
+                    </div>
+                </section>
+            </main>
+
+            <aside class="right-column">
+                <section id="panelLider" class="panel-section profile-section">
+                    <h3>COMANDO DA CÉLULA</h3>
+                    <div class="profile-card">
+                        <img id="fotoLider" src="" alt="Foto do Líder">
+                        <div class="profile-details">
+                            <h4 id="nomeLider">-</h4>
+                            <p id="cargoLider">-</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panelAgentes" class="panel-section">
+                    <h3>AGENTES REGISTADOS</h3>
+                    <ul id="listaAgentes" class="agents-list"></ul>
+                </section>
+            </aside>
+        </div>
+    </div>
+
+    <script src="../js/organizacoes.js"></script>
+</body>
+</html>
