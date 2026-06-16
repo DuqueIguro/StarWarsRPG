@@ -82,7 +82,7 @@ function renderizarVitrine() {
 function criarChuvaDeDinheiro() {
     const container = document.getElementById("moneyRain");
     if (!container) return;
-    const simbolos = ["$", "💲", "C$", "R$"];
+    const simbolos = ["$", "💲", "R$", "$$", "€", "£", "¥"];
     
     for (let i = 0; i < 40; i++) {
         const span = document.createElement("span");
