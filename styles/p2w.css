@@ -1,7 +1,7 @@
 :root {
     --money-green: #00ff66;
     --gold-yellow: #ffcc00;
-    --bg-dark: #030a05; /* Preto com fundo sutil esverdeado */
+    --bg-dark: #030a05;
     --panel-bg: rgba(10, 25, 15, 0.85);
     --border-green: rgba(0, 255, 102, 0.3);
 }
@@ -15,7 +15,6 @@ body {
     position: relative;
 }
 
-/* Chuva de Cifrões no Background */
 .money-rain {
     position: fixed;
     top: -50px; left: 0; width: 100%; height: 100%;
@@ -38,7 +37,6 @@ body {
     100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
 }
 
-/* Grid tático */
 .hologram-grid {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -70,7 +68,7 @@ body {
 }
 
 .p2w-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 60px 20px;
     text-align: center;
@@ -90,15 +88,31 @@ body {
     font-size: 1.1rem;
 }
 
-/* Card Principal Pay-To-Win */
+/* Vitrine de Layout Flexível e Expansível */
+.store-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    margin-top: 40px;
+    align-items: center;
+}
+
+/* Card P2W Individual */
 .card-p2w {
     background: var(--panel-bg);
     border: 2px solid var(--money-green);
     box-shadow: 0 0 30px rgba(0, 255, 102, 0.15), inset 0 0 20px rgba(0, 255, 102, 0.05);
     border-radius: 12px;
     padding: 40px;
-    margin-top: 40px;
     position: relative;
+    width: 100%;
+    max-width: 850px;
+    box-sizing: border-box;
+}
+
+.card-destaque {
+    border-color: var(--gold-yellow);
+    box-shadow: 0 0 35px rgba(255, 204, 0, 0.25), inset 0 0 20px rgba(255, 204, 0, 0.05);
 }
 
 .badge-unic {
@@ -113,6 +127,7 @@ body {
     letter-spacing: 1px;
     border-radius: 4px;
     box-shadow: 0 0 10px var(--gold-yellow);
+    white-space: nowrap;
 }
 
 .card-p2w h2 {
@@ -129,7 +144,6 @@ body {
     margin: 20px 0;
 }
 
-/* Seções de Itens */
 .perks-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -143,6 +157,10 @@ body {
     border: 1px solid var(--border-green);
     padding: 20px;
     border-radius: 6px;
+}
+
+.card-destaque .perk-section {
+    border-color: rgba(255, 204, 0, 0.2);
 }
 
 .perk-section h3 {
@@ -177,7 +195,6 @@ body {
     margin-left: auto;
 }
 
-/* Seção de Escolha de Rádio Cards */
 .choice-section {
     margin-top: 35px;
     text-align: left;
@@ -226,7 +243,6 @@ body {
     box-shadow: 0 0 12px rgba(255, 204, 0, 0.3);
 }
 
-/* Botão de Compra */
 .btn-buy-p2w {
     width: 100%;
     padding: 18px;
@@ -288,7 +304,6 @@ body {
     object-fit: contain;
 }
 
-/* Linha de laser subindo e descendo no QR */
 .qr-laser-line {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 2px;
@@ -335,6 +350,6 @@ body {
     color: #000;
 }
 
-@media (max-width: 650px) {
+@media (max-width: 750px) {
     .perks-grid, .choice-buttons { grid-template-columns: 1fr; }
 }

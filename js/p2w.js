@@ -1,44 +1,87 @@
 /**
- * StarWars RPG - Motor de Pay-to-Win (P2W)
- * Gerenciamento de compras com dinheiro real e interface de ostentação.
+ * StarWars RPG - Motor de Pay-to-Win (P2W) Expansível
+ * Gerenciamento dinâmico de vitrine via arquivo JSON.
  */
 
-let dadosPacote = null;
+let listaPacotes = [];
+let pacoteSelecionadoId = null;
 
-async function carregarPacoteP2W() {
+async function carregarPacotesP2W() {
     try {
         const response = await fetch('../data/p2w.json');
         if (!response.ok) throw new Error('Erro ao conectar com as fundições de crédito.');
-        const data = await response.json();
+        listaPacotes = await response.json();
         
-        dadosPacote = data.pacote_rebelde_ouro;
-        if (dadosPacote) {
-            renderizarPacote();
+        if (Array.isArray(listaPacotes) && listaPacotes.length > 0) {
+            renderizarVitrine();
         }
     } catch (error) {
-        console.error('Erro de transação:', error);
+        console.error('Erro de transação galáctica:', error);
     }
 }
 
-function renderizarPacote() {
-    document.getElementById("pacoteNome").innerText = dadosPacote.nome;
+function renderizarVitrine() {
+    const storeLayout = document.getElementById("storeLayout");
+    storeLayout.innerHTML = ""; // Limpa a vitrine
 
-    // Renderiza Atributos de Ficha (Vida/Dano)
-    const listaStats = document.getElementById("listaStats");
-    listaStats.innerHTML = dadosPacote.estatisticas.map(st => `
-        <li><span class="perk-icon">${st.icon}</span> <strong>${st.prop}</strong></li>
-    `).join('');
+    listaPacotes.forEach(pacote => {
+        // Gera a lista de modificadores de ficha
+        const statsHTML = pacote.estatisticas.map(st => `
+            <li><span class="perk-icon">${st.icon}</span> <strong>${st.prop}</strong></li>
+        `).join('');
 
-    // Renderiza Equipamentos Fixos
-    const listaItens = document.getElementById("listaItensFixos");
-    listaItens.innerHTML = dadosPacote.itens_fixos.map(it => `
-        <li><span class="perk-icon">📦</span> ${it.nome} <small class="rarity">${it.raridade}</small></li>
-    `).join('');
+        // Gera a lista de equipamentos inclusos
+        const itensHTML = pacote.itens_fixos.map(it => `
+            <li><span class="perk-icon">📦</span> ${it.nome} <small class="rarity">${it.raridade}</small></li>
+        `).join('');
+
+        // Gera o bloco de escolhas de rádio
+        const escolhasHTML = pacote.itens_escolha.map((esc, index) => `
+            <label class="radio-card">
+                <input type="radio" name="escolha_${pacote.id}" value="${esc.value}" ${index === 0 ? 'checked' : ''}>
+                <span class="radio-label">${esc.label}</span>
+            </label>
+        `).join('');
+
+        // Constrói a estrutura do card individual
+        const cardHTML = `
+            <div class="card-p2w ${pacote.destaque ? 'card-destaque' : ''}" id="card_${pacote.id}">
+                <div class="badge-unic">${pacote.restricao.toUpperCase()}</div>
+                <div class="card-glow-layer"></div>
+                
+                <h2>${pacote.nome}</h2>
+                <div class="price-tag">R$ ${pacote.preco}</div>
+
+                <div class="perks-grid">
+                    <div class="perk-section">
+                        <h3>MODIFICADORES DE FICHA</h3>
+                        <ul class="perk-list">${statsHTML}</ul>
+                    </div>
+
+                    <div class="perk-section">
+                        <h3>EQUIPAMENTOS INCLUSOS</h3>
+                        <ul class="perk-list">${itensHTML}</ul>
+                    </div>
+                </div>
+
+                <div class="choice-section">
+                    <h3>SELECIONE SEU COMPLEMENTO EXCLUSIVO:</h3>
+                    <div class="choice-buttons">${escolhasHTML}</div>
+                </div>
+
+                <button class="btn-buy-p2w" onclick="abrirCheckout('${pacote.id}')">
+                    💲 ADQUIRIR PODER AGORA 💲
+                </button>
+            </div>
+        `;
+
+        storeLayout.innerHTML += cardHTML;
+    });
 }
 
-// Criação dinâmica da chuva de cifrões de riqueza
 function criarChuvaDeDinheiro() {
     const container = document.getElementById("moneyRain");
+    if (!container) return;
     const simbolos = ["$", "💲", "C$", "R$"];
     
     for (let i = 0; i < 40; i++) {
@@ -52,22 +95,32 @@ function criarChuvaDeDinheiro() {
     }
 }
 
-function abrirCheckout() {
+function abrirCheckout(idPacote) {
+    const pacote = listaPacotes.find(p => p.id === idPacote);
+    if (!pacote) return;
+
+    pacoteSelecionadoId = idPacote;
+    document.getElementById("checkoutPreco").innerText = `R$ ${pacote.preco}`;
+    document.getElementById("checkoutPacoteNome").innerText = pacote.nome;
     document.getElementById("modalCheckout").style.display = "flex";
 }
 
 function fecharCheckout() {
     document.getElementById("modalCheckout").style.display = "none";
+    pacoteSelecionadoId = null;
 }
 
 function confirmarInjecao() {
-    const escolha = document.querySelector('input[name="escolhaExclusiva"]:checked').value;
-    alert(`Créditos enviados! Suas vantagens permanentes e sua escolha de complemento foram salvas na Holonet do Mestre.`);
+    if (!pacoteSelecionadoId) return;
+    
+    const inputEscolhido = document.querySelector(`input[name="escolha_${pacoteSelecionadoId}"]:checked`);
+    const escolhaLabel = inputEscolhido ? inputEscolhido.nextElementSibling.innerText : "Padrão";
+    
+    alert(`Créditos enviados! Suas vantagens permanentes e a sua escolha [${escolhaLabel}] foram registradas na Holonet do Mestre.`);
     fecharCheckout();
 }
 
-// Inicializadores
 document.addEventListener("DOMContentLoaded", () => {
-    carregarPacoteP2W();
+    carregarPacotesP2W();
     criarChuvaDeDinheiro();
 });

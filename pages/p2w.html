@@ -8,11 +8,10 @@
     <link rel="stylesheet" href="../styles/p2w.css">
 </head>
 <body>
-    <!-- Fundo holográfico de cifrões flutuantes -->
     <div class="money-rain" id="moneyRain"></div>
     <div class="hologram-grid"></div>
 
-    <button class="btn-voltar" onclick="window.location.href='https://starwars.duqueiguro.xyz/'">◀ Voltar ao Jogo</button>
+    <button class="btn-voltar" onclick="window.location.href='../index.html'">◀ Voltar ao Jogo</button>
 
     <div class="p2w-container">
         <header class="p2w-header">
@@ -20,64 +19,20 @@
             <p class="subtitle">Desbalanceie a galáxia. Compre poder legítimo com créditos do mundo real.</p>
         </header>
 
-        <main class="store-layout">
-            <!-- Card de Compra Ostentoso -->
-            <div class="card-p2w" id="cardPacote">
-                <div class="badge-unic">COMPRA ÚNICA POR JOGADOR</div>
-                <div class="card-glow-layer"></div>
-                
-                <h2 id="pacoteNome">Carregando Carga...</h2>
-                <div class="price-tag">R$ 25,00</div>
-
-                <div class="perks-grid">
-                    <!-- Atributos -->
-                    <div class="perk-section">
-                        <h3>MODIFICADORES DE FICHA</h3>
-                        <ul id="listaStats" class="perk-list"></ul>
-                    </div>
-
-                    <!-- Itens Fixos -->
-                    <div class="perk-section">
-                        <h3>EQUIPAMENTOS INCLUSOS</h3>
-                        <ul id="listaItensFixos" class="perk-list"></ul>
-                    </div>
-                </div>
-
-                <!-- Escolha do Jogador (Mecânica Obrigatória) -->
-                <div class="choice-section">
-                    <h3>SELECIONE SEU COMPLEMENTO EXCLUSIVO:</h3>
-                    <div class="choice-buttons">
-                        <label class="radio-card">
-                            <input type="radio" name="escolhaExclusiva" value="arma" checked>
-                            <span class="radio-label">Blastech 500 Riot Gun</span>
-                        </label>
-                        <label class="radio-card">
-                            <input type="radio" name="escolhaExclusiva" value="item">
-                            <span class="radio-label">Amplificador Auricular</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Botão de Compra Pró-Player -->
-                <button class="btn-buy-p2w" onclick="abrirCheckout()">
-                    💲 ADQUIRIR PODER AGORA 💲
-                </button>
-            </div>
-        </main>
+        <main class="store-layout" id="storeLayout"></main>
     </div>
 
-    <!-- Modal de Checkout Via LivePix -->
     <div id="modalCheckout" class="modal-p2w">
         <div class="modal-content-p2w">
             <h2 class="glow-gold">$$$ TRANSMISSÃO DE CRÉDITOS $$$</h2>
-            <p>Escaneie o código holográfico para transferir <strong>R$ 25,00</strong> e injetar os itens direto no seu Datapad!</p>
+            <p>Escaneie o código holográfico para transferir <strong id="checkoutPreco">R$ 0,00</strong> e injetar os itens do pacote <strong id="checkoutPacoteNome">-</strong> direto no seu Datapad!</p>
             
             <div class="qr-placeholder">
                 <img src="../img/livepix.png" alt="Checkout LivePix" class="livepix-img">
                 <div class="qr-laser-line"></div>
             </div>
 
-            <p class="warning-text">⚠️ Certifique-se de preencher seu Nome de Jogador e qual complemento você escolheu, na mensagem do LivePix para o Mestre aplicar os modificadores!</p>
+            <p class="warning-text">⚠️ Certifique-se de preencher seu Nome de Jogador e o complementos que você escolheu, na mensagem do LivePix para o Mestre aplicar os modificadores!</p>
 
             <div class="modal-buttons">
                 <button class="btn-cancel" onclick="fecharCheckout()">Abortar Transação</button>

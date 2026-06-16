@@ -1,9 +1,10 @@
-{
-    "pacote_rebelde_ouro": {
-        "id": "p2w_ouro",
+[
+    {
+        "id": "pacote_ouro",
         "nome": "Suprimento de Elite: Fortuna do Contrabandista",
-        "preco": 25.00,
+        "preco": "25,00",
         "restricao": "Compra única por jogador",
+        "destaque": true,
         "estatisticas": [
             { "prop": "+1d10 de Vida Máxima", "icon": "❤️" },
             { "prop": "+1d8 de Dano Permanente", "icon": "⚔️" }
@@ -14,8 +15,8 @@
             { "nome": "1x Dróide de Reparo WED Treadwell", "raridade": "Raro" }
         ],
         "itens_escolha": [
-            { "id": "arma", "nome": "1x Blastech 500 Riot Gun", "tipo": "Armamento" },
-            { "id": "item", "nome": "1x Amplificador Auricular Ambiental", "tipo": "Equipamento" }
+            { "value": "arma", "label": "Blastech 500 Riot Gun" },
+            { "value": "item", "label": "Amplificador Auricular" }
         ]
     }
-}
+]
