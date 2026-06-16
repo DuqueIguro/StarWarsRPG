@@ -24,6 +24,8 @@ StarWarsRPG
 ├─ CNAME
 ├─ data
 │  ├─ Aurebesh.woff
+│  ├─ contatosRebeldes.json
+│  ├─ durtoc.json
 │  ├─ planetas_database.json
 │  └─ senhasRebeldes.json
 ├─ hangar
@@ -38,6 +40,10 @@ StarWarsRPG
 │  ├─ bg.png
 │  ├─ caminho.png
 │  ├─ caminhoLogo.png
+│  ├─ contatoAstara.png
+│  ├─ contatoCaminho.png
+│  ├─ contatoMassassi.png
+│  ├─ contatoOrion.png
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
 │  ├─ DurtocDocumento.png

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canal Seguro Aliança</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/organizacoes.css">
+</head>
+<!-- MUDAR APENAS ESTE ATRIBUTO EM CADA ARQUIVO (astara, caminho, massassi, orion) -->
+<body data-alianca="massassi">
+    
+    <div class="holonet-scanlines"></div>
+
+    <!-- Barra de Navegação Lateral Expansível (Inventário/Naves) -->
+    <aside id="sidebarLogistica" class="sidebar">
+        <button class="btn-close-sidebar" onclick="toggleSidebar()">▶ PANEL</button>
+        <div class="sidebar-content">
+            <h3 class="side-title">RECURSOS DA CÉLULA</h3>
+            <div class="side-section">
+                <h4>FROTA DISPONÍVEL</h4>
+                <ul id="sideNaves"></ul>
+            </div>
+            <div class="side-section">
+                <h4>LOGÍSTICA DE ITENS</h4>
+                <ul id="sideItens"></ul>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main-layout">
+        <!-- Linha Superior com Título, Brasão e Botão do Painel Lateral -->
+        <header class="header-alianca">
+            <button class="btn-voltar-selecao" onclick="window.location.href='../pages/selecaoRebelde.html'">◀ Voltar</button>
+            <div class="title-block">
+                <img id="brasaoAlianca" src="" alt="Brasão" class="brasao-img">
+                <h1 id="nomeAlianca" class="text-neon-cyan">Carregando Rede...</h1>
+            </div>
+            <button id="btnToggleSidebar" class="btn-open-sidebar" onclick="toggleSidebar()">LOGÍSTICA / FROTA ◀</button>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Coluna Central de Monitoramento -->
+            <main class="feed-panel">
+                <!-- Pseudo Holonet / Notícias -->
+                <section class="sub-panel panel-noticias">
+                    <h3 class="panel-header">TRANSMISSÃO HOLONET: ÚLTIMA HORA</h3>
+                    <ul id="feedNoticias" class="ticker-list"></ul>
+                </section>
+
+                <!-- Bloco Alternável: Missões OU Rotas Secretas -->
+                <section class="sub-panel panel-dinamico">
+                    <!-- Abas de Missões (Ocultado em O Caminho) -->
+                    <div id="containerMissoes">
+                        <div class="tab-menu">
+                            <button class="tab-link active" onclick="mudarAbaMissao(event, 'convocados')">Convocados</button>
+                            <button class="tab-link" onclick="mudarAbaMissao(event, 'disponiveis')">Disponíveis</button>
+                            <button class="tab-link" onclick="mudarAbaMissao(event, 'andamento')">Em Andamento</button>
+                            <button class="tab-link" onclick="mudarAbaMissao(event, 'concluidas')">Concluídas</button>
+                            <button class="tab-link" onclick="mudarAbaMissao(event, 'falhas')">Falhas</button>
+                        </div>
+                        <div id="conteudoMissao" class="tab-content-box"></div>
+                    </div>
+
+                    <!-- Rotas Ocultas (Exclusivo de O Caminho) -->
+                    <div id="containerRotas" class="hidden">
+                        <h3 class="panel-header">ROTAS E PLANETAS DE FUGA</h3>
+                        <div id="listaRotas" class="routes-grid"></div>
+                    </div>
+                </section>
+
+                <!-- Informações do Setor, Frequências e Contatos -->
+                <section class="info-footer-grid">
+                    <div class="sub-panel">
+                        <h4>BASE DE OPERAÇÕES</h4>
+                        <p id="infoBase"></p>
+                    </div>
+                    <div class="sub-panel">
+                        <h4>FREQUÊNCIAS</h4>
+                        <p id="infoFrequencia" class="digital-txt"></p>
+                    </div>
+                    <div class="sub-panel">
+                        <h4>CONTATO DE EMERGÊNCIA</h4>
+                        <p id="infoEmergencia" class="alert-txt"></p>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Coluna Direita: Liderança e Agentes -->
+            <aside class="intel-panel">
+                <!-- Líder -->
+                <section id="panelLider" class="sub-panel lider-box">
+                    <h3 class="panel-header">COMANDO DE REDE</h3>
+                    <div class="lider-profile">
+                        <img id="fotoLider" src="" alt="Líder">
+                        <div class="lider-info">
+                            <h4 id="nomeLider"></h4>
+                            <p id="cargoLider"></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Agentes -->
+                <section id="panelAgentes" class="sub-panel">
+                    <h3 class="panel-header">AGENTES E OPERACIONAIS</h3>
+                    <ul id="listaAgentes" class="agents-list"></ul>
+                </section>
+            </aside>
+        </div>
+    </div>
+
+    <script src="../js/organizacoes.js"></script>
+</body>
+</html>

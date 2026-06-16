@@ -1,0 +1,212 @@
+:root {
+    --cyan-glow: #00f0ff;
+    --cyan-dim: rgba(0, 240, 255, 0.15);
+    --border-color: rgba(0, 240, 255, 0.3);
+    --panel-bg: rgba(8, 14, 20, 0.9);
+}
+
+body {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #e2e8f0;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+}
+
+.holonet-scanlines {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 24, 32, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+    background-size: 100% 4px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.main-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* Header */
+.header-alianca {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--cyan-glow);
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+}
+
+.title-block {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.brasao-img {
+    width: 55px;
+    height: 55px;
+    filter: drop-shadow(0 0 8px var(--cyan-glow));
+}
+
+.text-neon-cyan {
+    color: #fff;
+    text-shadow: 0 0 10px var(--cyan-glow);
+    margin: 0;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2.3fr 1fr;
+    gap: 30px;
+}
+
+.sub-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
+}
+
+.panel-header {
+    margin-top: 0;
+    color: var(--cyan-glow);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    padding-bottom: 8px;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+/* Botões do Menu Superior e Abas */
+button {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--cyan-glow);
+    padding: 8px 16px;
+    font-family: monospace;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background: var(--cyan-dim);
+    border-color: var(--cyan-glow);
+    box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+/* Abas de Missão */
+.tab-menu {
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.tab-link.active {
+    background: var(--cyan-glow);
+    color: #000;
+    box-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.tab-content-box {
+    min-height: 120px;
+    text-align: left;
+}
+
+/* Rotas Ocultas (O Caminho) */
+.routes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    text-align: left;
+    margin-top: 15px;
+}
+
+.route-card {
+    background: rgba(0, 0, 0, 0.4);
+    border-left: 3px solid var(--cyan-glow);
+    padding: 15px;
+}
+
+.route-card h5 {
+    margin: 0 0 6px 0;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.route-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #94a3b8;
+}
+
+/* Informações do Footer */
+.info-footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.digital-txt { color: #50e3c2; font-weight: bold; }
+.alert-txt { color: #ff6b6b; }
+
+/* Gaveta Lateral de Logística/Inventário Expansível */
+.sidebar {
+    position: fixed;
+    top: 0; right: -320px;
+    width: 300px; height: 100%;
+    background: rgba(6, 10, 15, 0.96);
+    border-left: 2px solid var(--cyan-glow);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.8);
+    transition: right 0.3s cubic-bezier(0.1, 0.8, 0.2, 1);
+    z-index: 2000;
+    padding: 20px;
+    text-align: left;
+}
+
+.sidebar.open { right: 0; }
+
+.btn-close-sidebar {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Perfis e Listas */
+.lider-profile img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+    margin-bottom: 15px;
+}
+
+.agents-list, .ticker-list, .mission-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.agents-list li, .ticker-list li, .mission-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.hidden { display: none !important; }
+
+@media (max-width: 950px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+}
