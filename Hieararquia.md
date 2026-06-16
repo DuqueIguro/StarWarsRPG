@@ -26,6 +26,7 @@ StarWarsRPG
 │  ├─ Aurebesh.woff
 │  ├─ contatosRebeldes.json
 │  ├─ durtoc.json
+│  ├─ p2w.json
 │  ├─ planetas_database.json
 │  └─ senhasRebeldes.json
 ├─ hangar
@@ -53,6 +54,7 @@ StarWarsRPG
 │  ├─ error-404.ico
 │  ├─ HNN.ico
 │  ├─ imperio.png
+│  ├─ livepix.png
 │  ├─ mandalorian.ico
 │  ├─ mandaloriano.png
 │  ├─ massassi.png
@@ -77,6 +79,8 @@ StarWarsRPG
 │  ├─ inventarioOficina.js
 │  ├─ manutencao.js
 │  ├─ mapa_galatico.js
+│  ├─ organizacoes.js
+│  ├─ p2w.js
 │  ├─ rebeldes.js
 │  └─ selecaoRebelde.js
 ├─ oficina
@@ -112,6 +116,7 @@ StarWarsRPG
 │  ├─ manutencao.html
 │  ├─ mapa_galatico.html
 │  ├─ oficina.html
+│  ├─ p2w.html
 │  ├─ rebeldes.html
 │  └─ selecaoRebelde.html
 ├─ README.md
@@ -131,6 +136,8 @@ StarWarsRPG
    ├─ manutencao.css
    ├─ mapa_galatico.css
    ├─ oficina.css
+   ├─ organizacoes.css
+   ├─ p2w.css
    ├─ rebeldes.css
    ├─ selecaoRebelde.css
    └─ style.css

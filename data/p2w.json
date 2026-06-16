@@ -1,0 +1,21 @@
+{
+    "pacote_rebelde_ouro": {
+        "id": "p2w_ouro",
+        "nome": "Suprimento de Elite: Fortuna do Contrabandista",
+        "preco": 25.00,
+        "restricao": "Compra única por jogador",
+        "estatisticas": [
+            { "prop": "+1d10 de Vida Máxima", "icon": "❤️" },
+            { "prop": "+1d8 de Dano Permanente", "icon": "⚔️" }
+        ],
+        "itens_fixos": [
+            { "nome": "2x Granadas de Concussão", "raridade": "Militar" },
+            { "nome": "1x Kit de Medicina Avançado", "raridade": "Essencial" },
+            { "nome": "1x Dróide de Reparo WED Treadwell", "raridade": "Raro" }
+        ],
+        "itens_escolha": [
+            { "id": "arma", "nome": "1x Blastech 500 Riot Gun", "tipo": "Armamento" },
+            { "id": "item", "nome": "1x Amplificador Auricular Ambiental", "tipo": "Equipamento" }
+        ]
+    }
+}
