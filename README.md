@@ -1,78 +1,43 @@
-# Star Wars RPG - Plataforma de Suporte para Campanhas
+# Star Wars RPG - Plataforma de Suporte para Campanhas 🚀
 
-## 🚀 Visão Geral do Projeto
+Uma aplicação web imersiva e completa para suporte a campanhas de RPG de mesa no universo Star Wars. Desenvolvida inteiramente com tecnologias front-end (HTML5, CSS3 e JavaScript ES6+), oferecendo interfaces dinâmicas e ricas em recursos sem necessidade de backend.
 
-O **Star Wars RPG** é uma aplicação web imersiva e completa, projetada para servir como uma ferramenta de suporte robusta para campanhas de RPG de mesa no universo de Star Wars. A plataforma oferece uma gama de funcionalidades interativas que visam aprimorar a experiência tanto dos jogadores quanto dos mestres, centralizando informações cruciais e automatizando processos complexos do jogo.
+**Acesse online:** [www.duqueiguro.xyz](http://www.duqueiguro.xyz)
 
-Desenvolvido inteiramente com tecnologias front-end (HTML, CSS e JavaScript), o projeto é uma demonstração de como interfaces dinâmicas e ricas em recursos podem ser criadas sem a necessidade de um back-end complexo, utilizando o armazenamento local do navegador e a manipulação de dados via JSON para gerenciar o estado da aplicação.
+---
+
+## 📊 Composição do Projeto
+
+![JavaScript](https://img.shields.io/badge/JavaScript-47.9%25-F7DF1E?style=flat-square&logo=javascript)
+![HTML](https://img.shields.io/badge/HTML-35.4%25-E34C26?style=flat-square&logo=html5)
+![CSS](https://img.shields.io/badge/CSS-16.7%25-1572B6?style=flat-square&logo=css3)
+
+---
 
 ## ✨ Funcionalidades Principais
 
-A plataforma é modularizada em várias seções, cada uma com um propósito específico dentro do ecossistema do RPG:
+A plataforma é modularizada em várias seções, cada uma otimizada para um propósito específico:
 
-  * **Ficha de Personagem Interativa (`ficha.html`):** Um sistema completo para criação e gerenciamento de fichas de personagem. Ele automatiza cálculos de atributos, perícias e outras estatísticas com base em raça, classe e tamanho, utilizando os dados de `dadosRacas.js`, `dadosClasses.js`, e `dadosTamanhos.js`.
-  * **Oficina de Droides e Equipamentos (`oficina.html`):** Uma interface para gerenciar ordens de serviço, reparos e modificações em droides e equipamentos. O sistema utiliza arquivos JSON para manifestos de carga (`manifesto.json`) e ordens de serviço, permitindo um controle detalhado das atividades de manutenção.
-  * **Hangar de Naves Espaciais (`hangar.html`):** Um painel para visualização e gerenciamento do status de naves espaciais, incluindo controle de combustível (`fuel.js`), status dos sistemas (`status.js`) e fichas de naves (`fichas.js`).
-  * **Mapa Galáctico Interativo (`mapa_galatico.html`):** Uma representação visual da galáxia de Star Wars, com dados de planetas carregados a partir de `planetas_database.json`. Permite a consulta de informações sobre diferentes sistemas e setores.
-  * **Sistema de Inventário (`inventario.html`):** Uma ferramenta para que os jogadores gerenciem os itens de seus personagens, com uma base de dados de itens em `database.js` e uma interface de fácil utilização.
-  * **Terminal de Comunicação (`comunicacao.html`):** Simula um terminal de comunicação no universo de Star Wars, adicionando um elemento de imersão para os jogadores.
-  * **Escudo do Mestre (`Escudo/mestre.html`):** Uma área dedicada ao mestre do jogo, com ferramentas e informações para auxiliar na condução da campanha.
+| Funcionalidade | Descrição | Arquivo |
+|---|---|---|
+| **🎭 Ficha de Personagem** | Sistema completo de criação e gerenciamento de fichas com cálculos automáticos de atributos e perícias | `ficha.html` |
+| **🤖 Oficina de Droides** | Interface para gerenciar ordens de serviço, reparos e modificações em droides e equipamentos | `oficina.html` |
+| **🚀 Hangar de Naves** | Painel de visualização e gerenciamento de naves espaciais com controle de combustível e status de sistemas | `hangar.html` |
+| **🌌 Mapa Galáctico** | Representação interativa da galáxia de Star Wars com consulta de dados de planetas | `mapa_galatico.html` |
+| **🎒 Sistema de Inventário** | Ferramenta para gerenciamento de itens dos personagens com interface intuitiva | `inventario.html` |
+| **📡 Terminal de Comunicação** | Simulador de terminal de comunicação para imersão no universo Star Wars | `comunicacao.html` |
+| **⚔️ Escudo do Mestre** | Área dedicada ao mestre do jogo com ferramentas para condução da campanha | `Escudo/mestre.html` |
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
 
-Este projeto foi construído utilizando as seguintes tecnologias:
+- **HTML5** - Estruturação semântica e responsiva
+- **CSS3** - Estilização avançada e layouts responsivos
+- **JavaScript (ES6+)** - Lógica de negócio, DOM manipulation e gerenciamento de dados
+- **JSON** - Armazenamento estruturado de dados (planetas, itens, configurações)
 
-  * **HTML5:** Para a estruturação semântica do conteúdo da aplicação.
-  * **CSS3:** Para a estilização e criação de layouts responsivos, proporcionando uma experiência de usuário imersiva.
-  * **JavaScript (ES6+):** A parte principal da aplicação, responsável por toda a lógica de negócio, interatividade, manipulação do DOM e gerenciamento de dados.
-  * **JSON:** Utilizado extensivamente para armazenar e gerenciar dados de forma estruturada, como informações de planetas, ordens de serviço, e itens.
-
-## 📂 Estrutura do Repositório
-
-O repositório está organizado da seguinte forma para garantir a manutenibilidade e escalabilidade do projeto:
-
-```
-/
-|-- 404.html                # Página de erro 404 customizada
-|-- CNAME                   # Configuração de domínio customizado para o GitHub Pages
-|-- Escudo/
-|   |-- mestre.html           # Ferramentas para o mestre do jogo
-|-- backups/                # Backups de scripts importantes
-|-- comunicacao.html        # Página do terminal de comunicação
-|-- ficha.html              # Página da ficha de personagem
-|-- ficha/
-|   |-- dadosClasses.js     # Dados das classes dos personagens
-|   |-- dadosRacas.js       # Dados das raças dos personagens
-|   |-- dadosTamanhos.js    # Dados dos tamanhos dos personagens
-|   |-- script.js           # Lógica da ficha de personagem
-|-- hangar.html             # Página do hangar de naves
-|-- hangar/
-|   |-- fichas.js           # Dados das fichas das naves
-|   |-- fuel.js             # Lógica de controle de combustível
-|   |-- hangar.js           # Lógica principal do hangar
-|   |-- status.js           # Lógica de status dos sistemas da nave
-|-- img/                    # Ícones e imagens da aplicação
-|-- index.html              # Página inicial da aplicação
-|-- inventario.html         # Página de inventário
-|-- inventario/
-|   |-- database.js         # Base de dados de itens do inventário
-|   |-- script.js           # Lógica do sistema de inventário
-|-- mapa_galatico.html      # Página do mapa galáctico
-|-- mapa/
-|   |-- mapa_galatico.js    # Lógica do mapa galáctico
-|   |-- planetas_database.json # Base de dados dos planetas
-|-- oficina.html            # Página da oficina
-|-- oficina/
-|   |-- database/           # Dados de suporte para a oficina
-|   |-- manifesto.json      # Manifesto de carga pública
-|   |-- manifestoSigiloso.json # Manifesto de carga sigilosa
-|   |-- ordens_de_servico/  # Ordens de serviço públicas
-|   |-- ordens_sigilosas/   # Ordens de serviço sigilosas
-|   |-- oficina.js          # Lógica da oficina
-|-- styles/                 # Folhas de estilo CSS
-|   |-- style.css           # Estilo principal
-|   |-- ...                 # Estilos específicos para cada página
-```
+---
 
 ## 🚀 Como Executar o Projeto
 
