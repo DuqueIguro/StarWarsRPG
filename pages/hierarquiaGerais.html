@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hierarquias da Aliança Rebelde</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/hierarquiaGeral.css">
+
+    <link rel="icon" type="image/x-icon" href="../img/rebelde.png">
+</head>
+
+<body>
+    <button class="btn-voltar" onclick="window.location.href='https://starwars.duqueiguro.xyz/'">
+        ◀ Desconectar Terminal
+    </button>
+
+    <h1 class="titulo-pagina">Base de Dados Rebelde</h1>
+    <p style="text-align: center; color: #55687a; margin-bottom: 40px; font-size: 0.9rem;">Cadeia de Comando Geral da
+        Aliança</p>
+
+    <div class="container-cards">
+
+        <div class="card-hierarquia" id="card-exercito">
+            <div class="card-header" onclick="alternarCard('card-exercito')">
+                <h2>Divisão de Infantaria e Exército</h2>
+                <span class="indicador">▼</span>
+            </div>
+            <div class="card-conteudo">
+                <div class="patentes-grid" id="lista-exercito"></div>
+            </div>
+        </div>
+
+        <div class="card-hierarquia" id="card-marinha">
+            <div class="card-header" onclick="alternarCard('card-marinha')">
+                <h2>Frota Estelar e Corpos de Caça</h2>
+                <span class="indicador">▼</span>
+            </div>
+            <div class="card-conteudo">
+                <div class="patentes-grid" id="lista-marinha"></div>
+            </div>
+        </div>
+
+        <div class="card-hierarquia" id="card-inteligencia">
+            <div class="card-header" onclick="alternarCard('card-inteligencia')">
+                <h2>Operações Secretas e Inteligência</h2>
+                <span class="indicador">▼</span>
+            </div>
+            <div class="card-conteudo">
+                <div class="patentes-grid" id="lista-inteligencia"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../js/hierarquiaGerais.js"></script>
+</body>
+
+</html>

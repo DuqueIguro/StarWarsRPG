@@ -1,0 +1,316 @@
+/* ==========================================================================
+   STAR WARS RPG - HOLOGRAPHIC & FUTURISTIC INTERFACE STYLESHEET
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&display=swap');
+
+:root {
+    --holo-blue: #00f3ff;
+    --holo-blue-glow: rgba(0, 243, 255, 0.4);
+    --holo-blue-dim: rgba(0, 243, 255, 0.15);
+    --holo-cyan: #00ffcc;
+    --holo-amber: #ffaa00;
+    --holo-amber-glow: rgba(255, 170, 0, 0.3);
+    --holo-red: #ff3366;
+    --holo-red-glow: rgba(255, 51, 102, 0.4);
+    --bg-dark: #020710;
+    --bg-panel: rgba(5, 19, 36, 0.65);
+    --bg-panel-solid: #041224;
+    --border-glow: 0 0 12px var(--holo-blue-glow);
+    --text-glow: 0 0 8px var(--holo-blue-glow);
+    --font-primary: 'Orbitron', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+}
+
+/* Base Terminal Setup */
+body {
+    background-color: var(--bg-dark);
+    color: var(--holo-blue);
+    font-family: var(--font-primary);
+    margin: 0;
+    padding: 24px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    letter-spacing: 1px;
+}
+
+/* Holographic Cyber-Grid Background Background Overlay */
+body::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: 
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), 
+        linear-gradient(90deg, rgba(0, 243, 255, 0.04), rgba(0, 0, 0, 0) 10%),
+        linear-gradient(rgba(0, 243, 255, 0.03), rgba(0, 0, 0, 0) 10%);
+    background-size: 100% 4px, 40px 40px, 40px 40px;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+/* Moving Scanline Distortion Effect */
+body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0) 0%,
+        rgba(0, 243, 255, 0.06) 10%,
+        rgba(255,255,255,0) 20%
+    );
+    background-size: 100% 100%;
+    z-index: 10000;
+    pointer-events: none;
+    animation: scanline 8s linear infinite;
+}
+
+/* Animations */
+@keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+@keyframes glitch-flicker {
+    0% { opacity: 0.96; }
+    5% { opacity: 0.93; }
+    10% { opacity: 0.98; }
+    14% { opacity: 0.88; }
+    15% { opacity: 0.99; }
+    55% { opacity: 0.95; }
+    56% { opacity: 0.65; }
+    57% { opacity: 0.97; }
+    80% { opacity: 0.99; }
+    81% { opacity: 0.4; }
+    82% { opacity: 0.99; }
+    100% { opacity: 0.98; }
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 8px var(--holo-blue-dim), inset 0 0 8px var(--holo-blue-dim); }
+    50% { box-shadow: 0 0 18px var(--holo-blue-glow), inset 0 0 14px var(--holo-blue-glow); }
+    100% { box-shadow: 0 0 8px var(--holo-blue-dim), inset 0 0 8px var(--holo-blue-dim); }
+}
+
+/* Main Container Window */
+.main-container {
+    background: var(--bg-panel);
+    border: 1px solid var(--holo-blue);
+    border-radius: 4px;
+    padding: 30px;
+    max-width: 1100px;
+    margin: 40px auto;
+    position: relative;
+    backdrop-filter: blur(6px);
+    box-shadow: var(--border-glow), inset 0 0 20px var(--holo-blue-dim);
+    animation: glitch-flicker 6s infinite;
+}
+
+/* Corner Bracket Decorations */
+.main-container::before {
+    content: "";
+    position: absolute;
+    top: -2px; left: -2px;
+    width: 25px; height: 25px;
+    border-top: 3px solid var(--holo-cyan);
+    border-left: 3px solid var(--holo-cyan);
+}
+.main-container::after {
+    content: "";
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 25px; height: 25px;
+    border-bottom: 3px solid var(--holo-cyan);
+    border-right: 3px solid var(--holo-cyan);
+}
+
+/* Typography & Headers */
+h1 {
+    font-size: 26pt;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 10px var(--holo-blue), 0 0 20px var(--holo-blue-glow);
+    text-transform: uppercase;
+    margin-left: 20px;
+    margin-right: 10px;
+    margin-bottom: 25px;
+    text-align: center;
+    border-bottom: 2px dashed var(--holo-blue-glow);
+    padding-bottom: 15px;
+}
+
+h2, h3 {
+    color: var(--holo-cyan);
+    font-family: var(--font-primary);
+    text-transform: uppercase;
+    text-shadow: 0 0 6px rgba(0, 255, 204, 0.4);
+    margin-top: 25px;
+}
+
+p, li, span {
+    font-family: var(--font-mono);
+    font-size: 11pt;
+    color: #d0e4ff;
+    line-height: 1.6;
+}
+
+/* Holographic Data Display Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: var(--font-mono);
+    background: rgba(4, 18, 36, 0.4);
+}
+
+th {
+    background-color: var(--holo-blue-dim);
+    color: var(--holo-blue);
+    border: 1px solid var(--holo-blue);
+    padding: 12px;
+    font-family: var(--font-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 10pt;
+    text-align: left;
+    text-shadow: var(--text-glow);
+}
+
+td {
+    border: 1px solid rgba(0, 243, 255, 0.25);
+    padding: 10px 12px;
+    font-size: 11pt;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(0, 243, 255, 0.03);
+}
+
+tr:hover {
+    background-color: rgba(0, 243, 255, 0.12);
+    box-shadow: inset 0 0 8px var(--holo-blue-dim);
+}
+
+/* Futuristic Form Inputs */
+input, select, textarea {
+    background: rgba(2, 10, 22, 0.8);
+    border: 1px solid var(--holo-blue);
+    color: #ffffff;
+    font-family: var(--font-mono);
+    padding: 10px 14px;
+    border-radius: 2px;
+    font-size: 11pt;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 0 4px var(--holo-blue-dim);
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--holo-cyan);
+    box-shadow: 0 0 12px rgba(0, 255, 204, 0.5), inset 0 0 6px rgba(0, 255, 204, 0.2);
+}
+
+/* Tactile Holographic Buttons */
+button, .btn {
+    background: transparent;
+    border: 1px solid var(--holo-blue);
+    color: var(--holo-blue);
+    font-family: var(--font-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    letter-spacing: 2px;
+    font-size: 10pt;
+    box-shadow: inset 0 0 8px var(--holo-blue-dim);
+}
+
+button:hover, .btn:hover {
+    background: var(--holo-blue-dim);
+    color: #ffffff;
+    text-shadow: 0 0 8px #ffffff;
+    box-shadow: 0 0 15px var(--holo-blue-glow), inset 0 0 10px var(--holo-blue-glow);
+}
+
+button:active, .btn:active {
+    transform: scale(0.98);
+    background: rgba(0, 243, 255, 0.3);
+}
+
+/* Alert/Danger Elements (Sith/Empire Warning Mode) */
+.alert, .danger-zone {
+    border: 1px solid var(--holo-red);
+    background: rgba(255, 51, 102, 0.08);
+    box-shadow: 0 0 10px var(--holo-red-glow), inset 0 0 8px var(--holo-red-glow);
+    color: #ffb3c6;
+    padding: 15px;
+    border-radius: 2px;
+}
+
+.alert h2, .alert h3 {
+    color: var(--holo-red);
+    text-shadow: 0 0 8px var(--holo-red-glow);
+}
+
+/* Success/Confirmed Indicators */
+.success-text {
+    color: var(--holo-cyan);
+    text-shadow: 0 0 6px rgba(0, 255, 204, 0.4);
+}
+
+/* Interactive Status Light Dot */
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    background-color: var(--holo-cyan);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 10px var(--holo-cyan);
+    animation: pulse-glow 2s infinite;
+}
+
+/* ==========================================================================
+   CONTROLE DE EXPANSÃO DOS CARDS (SANFONA)
+   ========================================================================== */
+
+/* Esconde o conteúdo por padrão */
+.card-hierarquia .card-conteudo {
+    display: none;
+    padding: 20px;
+    background: rgba(5, 19, 36, 0.4);
+    border-top: 1px solid var(--holo-blue-dim);
+}
+
+/* Quando o card estiver ativo, mostra o conteúdo */
+.card-hierarquia.ativo .card-conteudo {
+    display: block;
+}
+
+/* Estilização opcional para o indicador (seta ▼) girar quando aberto */
+.card-hierarquia .indicador {
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.card-hierarquia.ativo .indicador {
+    transform: rotate(180deg);
+    color: var(--holo-cyan);
+    text-shadow: 0 0 8px var(--holo-cyan);
+}
+
+/* Estilo para o header ficar com aspecto clicável */
+.card-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    user-select: none;
+}

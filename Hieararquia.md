@@ -54,6 +54,7 @@ StarWarsRPG
 │  ├─ error-404.ico
 │  ├─ HNN.ico
 │  ├─ imperio.png
+│  ├─ livepix.jpeg
 │  ├─ livepix.png
 │  ├─ mandalorian.ico
 │  ├─ mandaloriano.png
@@ -75,6 +76,8 @@ StarWarsRPG
 │  ├─ durtoc.js
 │  ├─ ficha.js
 │  ├─ hangar.js
+│  ├─ hierarquiaGerais.js
+│  ├─ hierarquiaImperio.js
 │  ├─ inventario.js
 │  ├─ inventarioOficina.js
 │  ├─ manutencao.js
@@ -111,6 +114,8 @@ StarWarsRPG
 │  ├─ durtoc.html
 │  ├─ ficha.html
 │  ├─ hangar.html
+│  ├─ hierarquiaGerais.html
+│  ├─ hierarquiaImperio.html
 │  ├─ inventario.html
 │  ├─ invetarioOficina.html
 │  ├─ manutencao.html
@@ -132,6 +137,8 @@ StarWarsRPG
    ├─ ficha.css
    ├─ fornecedores.css
    ├─ hangar.css
+   ├─ hierarquiaGeral.css
+   ├─ hirarquiaImperio.css
    ├─ inventario.css
    ├─ manutencao.css
    ├─ mapa_galatico.css
