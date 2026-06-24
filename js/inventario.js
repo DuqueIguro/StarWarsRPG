@@ -43,6 +43,7 @@ const cartEl = document.getElementById('cart');
 const cartItemsEl = document.getElementById('cart-items');
 const closeCartBtn = document.getElementById('close-cart-btn');
 const cartTotalPersonalEl = document.getElementById('cart-total-personal');
+const cartTotalReaisEl = document.getElementById('cart-total-reais');
 const checkoutBtn = document.getElementById('checkout-btn');
 const notificationEl = document.getElementById('notification');
 const resetBtn = document.getElementById('reset-btn');
@@ -61,7 +62,7 @@ const createItemCard = (item, context = 'shop') => {
     const card = document.createElement('div');
     const qualityClass = item.quality.replace(/\s/g, '-');
     card.className = `glass-pane p-4 rounded-lg flex flex-col border-l-4 quality-${qualityClass}`;
-    
+
     let buttonsHtml = '';
     if (context === 'shop') {
         buttonsHtml = `<button class="add-to-cart-btn mt-4 btn-primary font-bold py-2 px-4 rounded-md w-full">Adicionar ao Carrinho</button>`;
@@ -80,8 +81,8 @@ const createItemCard = (item, context = 'shop') => {
             <p class="text-sm mb-4">${item.description}</p>
         </div>
         <div>
-            <p class="font-bold text-yellow-400 text-lg">${item.price.toLocaleString()} ⦻ (Créditos Imperiais)</p>
-            <p class="text-sm text-green-400 font-bold">R$ ${priceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (Real Brasileiro)</p>
+            <p class="font-bold text-yellow-400 text-lg">${item.price.toLocaleString()} ⦻ (Créditos)</p>
+            <p class="text-sm text-green-400 font-bold mb-2">R$ ${priceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             ${buttonsHtml}
         </div>
     `;
@@ -152,7 +153,7 @@ const renderInventories = () => {
     personalInventoryGridEl.innerHTML = '<p class="text-gray-400 col-span-full text-center">Nenhum item no inventário pessoal.</p>';
     if (state.personalInventory.length > 0) {
         personalInventoryGridEl.innerHTML = '';
-        state.personalInventory.sort((a,b) => b.price - a.price).forEach(item => {
+        state.personalInventory.sort((a, b) => b.price - a.price).forEach(item => {
             personalInventoryGridEl.appendChild(createItemCard(item, 'personal'));
         });
     }
@@ -163,34 +164,32 @@ const renderCart = () => {
     let totalPersonal = 0;
 
     if (state.cart.length === 0) {
-        cartItemsEl.innerHTML = '<p class="text-gray-400">O carrinho está vazio.</p>';
+        cartItemsEl.innerHTML = '<p class="text-gray-400 text-center py-4">O carrinho está vazio.</p>';
     } else {
         state.cart.forEach((cartItem, index) => {
             const div = document.createElement('div');
-            div.className = 'mb-4 p-2 rounded-md bg-gray-900/50';
-            
-            // Conversão individual no carrinho
+            div.className = 'mb-4 p-3 rounded-md bg-gray-900/40 border border-gray-800 flex flex-col';
+
             const itemPriceInReais = cartItem.item.price / 10000;
 
             div.innerHTML = `
-                <p class="font-bold">${cartItem.item.name}</p>
-                <p class="text-sm text-yellow-400">${cartItem.item.price.toLocaleString()} Créditos</p>
-                <p class="text-xs text-green-400">R$ ${itemPriceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                <div class="mt-1 flex">
-                    <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1 rounded-md w-full">Remover</button>
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="font-bold text-sm text-cyan-100">${cartItem.item.name}</p>
+                        <p class="text-xs text-yellow-400">${cartItem.item.price.toLocaleString()} Créditos</p>
+                        <p class="text-xs text-green-400">R$ ${itemPriceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    </div>
                 </div>
+                <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1 rounded-md w-full mt-1">Remover</button>
             `;
             totalPersonal += cartItem.item.price;
             cartItemsEl.appendChild(div);
         });
     }
 
-    // Exibição do total acumulado convertido
     const totalInReais = totalPersonal / 10000;
-    cartTotalPersonalEl.innerHTML = `
-        <div>${totalPersonal.toLocaleString()} Créditos</div>
-        <div class="text-sm text-green-400 font-normal">R$ ${totalInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-    `;
+    cartTotalPersonalEl.textContent = `${totalPersonal.toLocaleString()} Créditos`;
+    cartTotalReaisEl.textContent = `R$ ${totalInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     document.querySelectorAll('.remove-from-cart-btn').forEach(btn => btn.addEventListener('click', (e) => handleRemoveFromCart(parseInt(e.target.dataset.index))));
 };
@@ -239,7 +238,7 @@ const showNotification = (message, type = 'success') => {
 };
 
 const handleAddToCart = (item) => {
-    const uniqueItem = {...item, uid: Date.now() + Math.random() };
+    const uniqueItem = { ...item, uid: Date.now() + Math.random() };
     state.cart.push({ item: uniqueItem, destination: null });
     cartEl.classList.remove('translate-x-full');
     renderCart();
@@ -258,25 +257,44 @@ const handleAssignDestination = (index, destination) => {
 };
 
 const handleCheckout = () => {
+    if (state.cart.length === 0) {
+        showNotification('O carrinho está vazio!', 'danger');
+        return;
+    }
+
+    const selectedPayment = document.querySelector('input[name="payment-method"]:checked').value;
+
     let personalCost = 0;
-    // Não é mais necessário checar destino
     state.cart.forEach(cartItem => {
         personalCost += cartItem.item.price;
     });
-    if (state.personalCredits < personalCost) {
-        showNotification('Créditos pessoais insuficientes!', 'danger');
-        return;
+
+    if (selectedPayment === 'credits') {
+        if (state.personalCredits < personalCost) {
+            showNotification('Créditos pessoais insuficientes!', 'danger');
+            return;
+        }
+        state.personalCredits -= personalCost;
+
+        state.cart.forEach(cartItem => {
+            state.personalInventory.push(cartItem.item);
+        });
+        showNotification('Compra realizada com Créditos!', 'success');
+
+    } else if (selectedPayment === 'reais') {
+        state.cart.forEach(cartItem => {
+            state.personalInventory.push(cartItem.item);
+        });
+
+        window.open('https://livepix.gg/doisimperadores', '_blank');
+        showNotification('Redirecionando para o Livepix para concluir o pagamento!', 'success');
     }
-    state.personalCredits -= personalCost;
-    state.cart.forEach(cartItem => {
-        state.personalInventory.push(cartItem.item);
-    });
+
     state.cart = [];
     renderCredits();
     renderInventories();
     renderCart();
     cartEl.classList.add('translate-x-full');
-    showNotification('Compra realizada com sucesso!', 'success');
     saveState();
 };
 
@@ -306,7 +324,6 @@ const handleCustomItemSubmit = (e) => {
         uid: Date.now() + Math.random()
     };
 
-    // Sempre adiciona ao inventário do personagem
     state.itemDatabase.push(newItem);
     state.personalInventory.push(newItem);
 

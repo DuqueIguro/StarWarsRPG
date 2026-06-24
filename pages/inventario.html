@@ -133,11 +133,29 @@
         <div id="cart-items" class="flex-grow overflow-y-auto pr-2">
         </div>
         <div class="mt-4 pt-4 border-t border-cyan-700">
-            <div class="mb-2">
+            <div class="mb-2 flex justify-between items-center">
                 <span class="font-bold">Total Pessoal:</span>
-                <span id="cart-total-personal" class="float-right">0 Créditos</span>
+                <div class="text-right">
+                    <span id="cart-total-personal" class="block text-yellow-400 font-bold">0 Créditos</span>
+                    <span id="cart-total-reais" class="block text-sm text-green-400 font-bold">R$ 0,00</span>
+                </div>
             </div>
-            <button id="checkout-btn" class="w-full btn-primary font-bold py-2 rounded-md">FINALIZAR COMPRA</button>
+            
+            <div class="my-4 p-3 rounded-md bg-gray-900/60 border border-cyan-800">
+                <p class="text-xs font-orbitron text-cyan-400 mb-2 font-bold tracking-wider">FORMA DE PAGAMENTO</p>
+                <div class="flex flex-col space-y-2">
+                    <label class="flex items-center space-x-2 text-sm cursor-pointer select-none">
+                        <input type="radio" name="payment-method" value="credits" checked class="accent-cyan-500">
+                        <span>Créditos Imperiais</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-sm cursor-pointer select-none">
+                        <input type="radio" name="payment-method" value="reais" class="accent-green-500">
+                        <span class="text-green-400 font-bold">Reais Brasileiros (R$)</span>
+                    </label>
+                </div>
+            </div>
+
+            <button id="checkout-btn" class="w-full btn-primary font-bold py-2 rounded-md tracking-widest font-orbitron">FINALIZAR COMPRA</button>
         </div>
     </div>
 
