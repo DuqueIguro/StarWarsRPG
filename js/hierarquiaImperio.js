@@ -1,14 +1,20 @@
-// Banco de dados expandido do Império Galáctico
+// Banco de dados expandido e corrigido do Império Galáctico
 const dadosImperio = {
-    exercito_imp: {
-        nome: "Alto Comando e Exército Imperial",
+    politico_imp: {
+        nome: "Setor Político e Administrativo",
         corPrincipal: "#ff0033",
         patentes: [
-            { nome: "Grande Moff", desc: "Comandante de super-setores (grupos de sistemas estelares). Possui autoridade irrestrita para realocar exércitos e destituir outros governadores.", blocos: [["B", "B", "B"], ["R", "R", "R"]], cilindros: 2 },
-            { nome: "Moff", desc: "Governador de um setor imperial. Administra a política local e atua como líder militar máximo dentro das fronteiras de seu setor.", blocos: [["B", "B", "B", "R", "R", "R"]], cilindros: 0 },
-            { nome: "General de Superfície", desc: "Posição mais alta do exército de um setor, coordenando recursos e ataques na linha de frente. Planejador estratégico responsável por divisões inteiras.", blocos: [["R", "R", "R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Coronel", desc: "Oficial superior encarregado de liderar brigadas diretamente no campo de batalha e guarnições táticas.", blocos: [["R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Oficial do Corpo Stormtrooper", desc: "Cuida do comando tático e burocrático dos soldados de base do corpo de assalto.", blocos: [["R", "R", "R"]], cilindros: 1 },
+            { nome: "Grande Moff", desc: "Comandante de super-setores (grupos de sistemas estelares). Possui autoridade irrestrita para realocar exércitos e destituir outros governadores.", blocos: [["B", "B", "B", "B", "B", "B"], ["R", "R", "R", "Y", "Y", "Y"]], cilindros: 4 },
+            { nome: "Moff", desc: "Governador de um setor imperial. Administra a política local e atua como líder militar máximo dentro das fronteiras de seu setor.", blocos: [["B", "B", "B", "B", "B", "B"], ["R", "R", "R", "Y", "Y", "Y"]], cilindros: 2 }
+        ]
+    },
+    exercito_imp: {
+        nome: "Exército Imperial (Forças de Ocupação Terrestre)",
+        corPrincipal: "#ff3300",
+        patentes: [
+            { nome: "General de Superfície", desc: "Posição mais alta do exército de um setor, coordenando recursos e ataques na linha de frente. Planejador estratégico responsável por divisões inteiras.", blocos: [["R", "R", "R", "R", "R", "R"], ["B", "B", "B", "B", "B", "B"]], cilindros: 2 },
+            { nome: "Coronel", desc: "Oficial superior encarregado de liderar brigadas diretamente no campo de batalha e guarnições táticas.", blocos: [["R", "R", "B", "B", "B", "B"]], cilindros: 0 },
+            { nome: "Oficial do Corpo Stormtrooper", desc: "Cuida do comando tático e burocrático dos soldados de base do corpo de assalto.", blocos: [["B", "B", "B", "B"]], cilindros: 0 },
             { nome: "Comandante Stormtrooper", desc: "Oficial tático máximo no calor da batalha. Identificado no campo por sua ombreira tática especial.", blocos: null, cilindros: 0, ombreira: "laranja" },
             { nome: "Capitão / Líder de Esquadrão", desc: "Comanda pelotões e lidera o avanço frontal das tropas de choque.", blocos: null, cilindros: 0, ombreira: "vermelha" },
             { nome: "Sargento Stormtrooper", desc: "Lidera patrulhas de rua e grupos menores de ação contínua em áreas de ocupação.", blocos: null, cilindros: 0, ombreira: "branca" },
@@ -20,29 +26,19 @@ const dadosImperio = {
         nome: "Marinha Imperial (Frota Naval)",
         corPrincipal: "#ff0000",
         patentes: [
-            { nome: "Grão-Almirante", desc: "Oficial supremo da Marinha. Comanda as maiores e mais letais frotas do Império, vestindo um uniforme branco exclusivo.", blocos: [["R", "R", "R", "B", "B", "B"]], cilindros: 2 },
-            { nome: "Almirante", desc: "Oficial responsável por comandar frotas regulares e traçar estratégias navais de grande escala.", blocos: [["R", "R", "R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Vice-Almirante", desc: "Oficial de inteligência naval que atua logo abaixo do Almirante, auxiliando no comando e na ponte com o Senado.", blocos: [["R", "R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Capitão de Nave", desc: "Autoridade absoluta dentro de um Star Destroyer, governando toda a tripulação e o poder de fogo de sua embarcação.", blocos: [["R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Tenente Sênior", desc: "Oficial superior de convés, atua garantindo que as ordens do capitão sejam cumpridas à risca na nave.", blocos: [["R", "R", "R"]], cilindros: 1 },
-            { nome: "Tenente", desc: "Oficial de navegação, qualificado para comandar naves menores como cruzadores leves e escoltas.", blocos: [["R", "R"]], cilindros: 1 },
-            { nome: "Aspirante", desc: "Estagiário de operações em naves capitais, dedicado ao estudo tático e auxílio na ponte de comando.", blocos: [["R"]], cilindros: 1 },
+            { nome: "Grão-Almirante", desc: "Oficial supremo da Marinha. Comanda as maiores e mais letais frotas do Império, vestindo um uniforme branco exclusivo.", blocos: [["R", "R", "R", "Y", "Y", "Y"], ["B", "B", "B", "Y", "Y", "Y"]], cilindros: 4 },
+            { nome: "Almirante", desc: "Oficial responsável por comandar frotas regulares e traçar estratégias navais de grande escala.", blocos: [["R", "R", "R", "R", "R", "R"], ["B", "B", "B", "B", "B", "B"]], cilindros: 4 },
+            { nome: "Vice-Almirante", desc: "Oficial de inteligência naval que atua logo abaixo do Almirante, auxiliando no comando e na ponte com o Senado.", blocos: [["R", "R", "R", "R"], ["B", "B", "B", "B"]], cilindros: 2 },
+            { nome: "Capitão de Nave", desc: "Autoridade absoluta dentro de um Star Destroyer, governando toda a tripulação e o poder de fogo de sua embarcação.", blocos: [["R", "R", "R"], ["B", "B", "B"]], cilindros: 2 },
+            { nome: "Tenente Sênior", desc: "Oficial superior de convés, atua garantindo que as ordens do capitão sejam cumpridas à risca na nave.", blocos: [["B", "B", "B", "R"]], cilindros: 0 },
+            { nome: "Tenente", desc: "Oficial de navegação, qualificado para comandar naves menores como cruzadores leves e escoltas.", blocos: [["R", "R"], ["B", "B"]], cilindros: 0 },
+            { nome: "Aspirante", desc: "Estagiário de operações em naves capitais, dedicado ao estudo tático e auxílio na ponte de comando.", blocos: [["R"], ["B"]], cilindros: 0 },
             { nome: "Oficial de Convés", desc: "Tripulante militar padrão, focado em tarefas de vigilância e manutenção interna da nave.", blocos: null, cilindros: 0 }
-        ]
-    },
-    isb_imp: {
-        nome: "Diretório de Segurança (ISB)",
-        corPrincipal: "#ff3300",
-        patentes: [
-            { nome: "Diretor do ISB", desc: "Líder supremo da Inteligência Imperial e do Escritório de Segurança. Responsável direto por caçar células rebeldes e expor traidores.", blocos: [["B", "B", "B", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Coronel do ISB", desc: "Interrogador chefe e estrategista de contra-espionagem operando em setores de alta traição.", blocos: [["B", "B", "B", "R"]], cilindros: 2 },
-            { nome: "Comandante Operacional", desc: "Supervisiona redes de agentes infiltrados e operações de vigilância em massa.", blocos: [["B", "B", "R"]], cilindros: 1 },
-            { nome: "Inspetor", desc: "Agente de campo encarregado de auditorias ideológicas e investigações de segurança em guarnições.", blocos: [["B", "R"]], cilindros: 1 }
         ]
     }
 };
 
-// Gera o SVG Imperial ou identificadores alternativos (ombreiras) de forma limpa
+// Gera o SVG Imperial estruturado corretamente com linhas empilhadas e cilindros alinhados à direita
 function gerarPlacaImperialSVG(matriz, numCilindros, ombreira) {
     if (ombreira) {
         if (ombreira === "padrão") return `<span class="sem-placa">Armadura Branca Padrão</span>`;
@@ -50,47 +46,61 @@ function gerarPlacaImperialSVG(matriz, numCilindros, ombreira) {
     }
     if (!matriz) return `<span class="sem-placa">Sem placa de identificação</span>`;
 
-    const cores = { 'R': '#ff0033', 'B': '#0066ff' };
+    // Inclusão do Amarelo Imperial
+    const cores = { 'R': '#ff0033', 'B': '#0066ff', 'Y': '#ffcc00' };
     let blocosHTML = '';
     
     const blocoLargura = 14;
     const blocoAltura = 22;
-    const espacamento = 4;
+    const espacamentoX = 4;
+    const espacamentoY = 6;
     
+    const numLinhas = matriz.length;
     let maxColunas = 0;
     matriz.forEach(linha => maxColunas = Math.max(maxColunas, linha.length));
     
-    const larguraInsignia = 20 + maxColunas * (blocoLargura + espacamento);
-    const alturaInsignia = 45;
+    // Ajuste dinâmico de dimensões da placa de cromo
+    const larguraInsignia = 20 + maxColunas * (blocoLargura + espacamentoX);
+    const alturaInsignia = numLinhas === 2 ? 68 : 45;
     
     const espacoCilindros = numCilindros * 22;
-    const larguraTotalSVG = larguraInsignia + espacoCilindros + 10;
-    const alturaTotalSVG = 60;
+    const larguraTotalSVG = larguraInsignia + espacoCilindros + 15;
+    const alturaTotalSVG = numLinhas === 2 ? 80 : 60;
 
     matriz.forEach((linha, idxLinha) => {
         linha.forEach((tipo, idxColuna) => {
             if (tipo && cores[tipo]) {
-                let x = 12 + idxColuna * (blocoLargura + espacamento);
-                let y = 12 + idxLinha * (blocoAltura + 4);
+                let x = 12 + idxColuna * (blocoLargura + espacamentoX);
+                let y = 12 + idxLinha * (blocoAltura + espacamentoY);
                 
                 blocosHTML += `
-                    <rect x="${x}" y="${y}" width="${blocoLargura}" height="${blocoAltura}" fill="${cores[tipo]}" filter="url(#glowImperial)" opacity="0.4"/>
+                    <!-- Brilho/Glow do Bloco -->
+                    <rect x="${x}" y="${y}" width="${blocoLargura}" height="${blocoAltura}" fill="${cores[tipo]}" filter="url(#glowImperial)" opacity="0.35"/>
+                    <!-- Bloco Sólido Retangular -->
                     <rect x="${x}" y="${y}" width="${blocoLargura}" height="${blocoAltura}" fill="${cores[tipo]}" stroke="#000" stroke-width="1.5" rx="1"/>
-                    <rect x="${x + 2}" y="${y + 2}" width="3" height="${blocoAltura - 4}" fill="#fff" opacity="0.3"/>
+                    <!-- Reflexo Metálico Interno -->
+                    <rect x="${x + 2}" y="${y + 2}" width="2" height="${blocoAltura - 4}" fill="#fff" opacity="0.3"/>
                 `;
             }
         });
     });
 
+    // Renderização dos Cilindros de Código alinhados de acordo com a altura da placa
     let cilindrosHTML = '';
+    const yTopCilindro = numLinhas === 2 ? 16 : 5;
     for (let i = 0; i < numCilindros; i++) {
         let xCilindro = larguraInsignia + 10 + (i * 20);
         cilindrosHTML += `
-            <rect x="${xCilindro}" y="6" width="12" height="48" rx="2" fill="#000" opacity="0.4"/>
-            <rect x="${xCilindro}" y="5" width="12" height="44" rx="2" fill="url(#metalImperial)" stroke="#222" stroke-width="1"/>
-            <rect x="${xCilindro + 2}" y="5" width="8" height="6" fill="#00aeff" stroke="#111" stroke-width="0.5"/>
-            <line x1="${xCilindro + 6}" y1="15" x2="${xCilindro + 6}" y2="38" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
-            <line x1="${xCilindro}" y1="41" x2="${xCilindro + 12}" y2="41" stroke="#222" stroke-width="1"/>
+            <!-- Sombra projetada do cilindro -->
+            <rect x="${xCilindro}" y="${yTopCilindro + 1}" width="12" height="48" rx="2" fill="#000" opacity="0.4"/>
+            <!-- Corpo de Cromo Prata -->
+            <rect x="${xCilindro}" y="${yTopCilindro}" width="12" height="44" rx="2" fill="url(#metalImperial)" stroke="#222" stroke-width="1"/>
+            <!-- Cabeça azul do cilindro de dados -->
+            <rect x="${xCilindro + 2}" y="${yTopCilindro}" width="8" height="6" fill="#00aeff" stroke="#111" stroke-width="0.5"/>
+            <!-- Clipe de fixação metálico -->
+            <line x1="${xCilindro + 6}" y1="${yTopCilindro + 10}" x2="${xCilindro + 6}" y2="${yTopCilindro + 33}" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+            <!-- Ranhuras do design -->
+            <line x1="${xCilindro}" y1="${yTopCilindro + 36}" x2="${xCilindro + 12}" y2="${yTopCilindro + 36}" stroke="#222" stroke-width="1"/>
         `;
     }
 
@@ -107,8 +117,11 @@ function gerarPlacaImperialSVG(matriz, numCilindros, ombreira) {
                     <stop offset="100%" stop-color="#333333" />
                 </linearGradient>
             </defs>
+            
+            <!-- Placa Metálica Imperial Rígida -->
             <rect x="4" y="6" width="${larguraInsignia - 8}" height="${alturaInsignia}" rx="2" fill="url(#metalImperial)" stroke="#111" stroke-width="2"/>
             <rect x="7" y="9" width="${larguraInsignia - 14}" height="${alturaInsignia - 6}" rx="1" fill="none" stroke="#000000" stroke-width="1" opacity="0.2"/>
+            
             ${blocosHTML}
             ${cilindrosHTML}
         </svg>

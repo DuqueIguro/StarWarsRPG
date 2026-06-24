@@ -21,8 +21,8 @@
             { "nome": "Tala Durith", "cargo": "Infiltradora Oficial" }
         ],
         "inventario": {
-            "naves": ["Cargueiro YT-2400", "Caça Z-95 Headhunter"],
-            "itens": ["20x Blasters E-11", "5x Detonadores Termais", "2x Datapads Militares"]
+            "naves": ["4x Baudo-class Star Yacht", "2x Corellian Corvette (CR70/CR90)", "3x Gozanti Cruiser"],
+            "itens": ["400 mil créditos","2x Amplificador Auricular Ambiental", "10x  Bastões de Atordoamento", "2x Compartimentos de Contrabando", "4x Granadas de Gás", "2x Transceptor HoloNet", "2x Transponder Disfarçado"]
         },
         "missoes": {
             "convocados": ["Operação Sombra do Senado"],
@@ -116,7 +116,9 @@
             "Aviso: Inquisidores imperiais rastreando portos fantasmas na Orla Exterior."
         ],
         "agentes": [],
-        "inventario": {},
+        "inventario": {
+            "itens": ["200 Mil créditos"]
+        },
         "missoes": {},
         "rotas": [
             {
