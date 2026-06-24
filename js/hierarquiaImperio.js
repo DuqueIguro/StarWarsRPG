@@ -1,25 +1,33 @@
-// Banco de dados das hierarquias do Império Galáctico
+// Banco de dados expandido do Império Galáctico
 const dadosImperio = {
     exercito_imp: {
-        nome: "Exército Imperial",
+        nome: "Alto Comando e Exército Imperial",
         corPrincipal: "#ff0033",
         patentes: [
-            { nome: "General de Superfície", desc: "Comandante supremo das forças terrestres em setores planetários. Lidera legiões inteiras de Stormtroopers e divisões de AT-ATs.", blocos: [["R", "R", "R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Coronel", desc: "Oficial superior responsável pelo gerenciamento tático de regimentos blindados e guarnições planetárias críticas.", blocos: [["R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Major", desc: "Supervisiona as operações de batalhões terrestres coordenando ataques de infantaria pesada e suporte logístico.", blocos: [["R", "R", "R"]], cilindros: 1 },
-            { nome: "Capitão", desc: "Comanda diretamente companhias de assalto no campo de batalha avançado.", blocos: [["R", "R"]], cilindros: 1 },
-            { nome: "Tenente", desc: "Oficial de campo júnior encarregado de pelotões ou postos avançados de fronteira.", blocos: [["R"]], cilindros: 1 }
+            { nome: "Grande Moff", desc: "Comandante de super-setores (grupos de sistemas estelares). Possui autoridade irrestrita para realocar exércitos e destituir outros governadores.", blocos: [["B", "B", "B"], ["R", "R", "R"]], cilindros: 2 },
+            { nome: "Moff", desc: "Governador de um setor imperial. Administra a política local e atua como líder militar máximo dentro das fronteiras de seu setor.", blocos: [["B", "B", "B", "R", "R", "R"]], cilindros: 0 },
+            { nome: "General de Superfície", desc: "Posição mais alta do exército de um setor, coordenando recursos e ataques na linha de frente. Planejador estratégico responsável por divisões inteiras.", blocos: [["R", "R", "R", "R", "R", "R"]], cilindros: 2 },
+            { nome: "Coronel", desc: "Oficial superior encarregado de liderar brigadas diretamente no campo de batalha e guarnições táticas.", blocos: [["R", "R", "R", "R"]], cilindros: 2 },
+            { nome: "Oficial do Corpo Stormtrooper", desc: "Cuida do comando tático e burocrático dos soldados de base do corpo de assalto.", blocos: [["R", "R", "R"]], cilindros: 1 },
+            { nome: "Comandante Stormtrooper", desc: "Oficial tático máximo no calor da batalha. Identificado no campo por sua ombreira tática especial.", blocos: null, cilindros: 0, ombreira: "laranja" },
+            { nome: "Capitão / Líder de Esquadrão", desc: "Comanda pelotões e lidera o avanço frontal das tropas de choque.", blocos: null, cilindros: 0, ombreira: "vermelha" },
+            { nome: "Sargento Stormtrooper", desc: "Lidera patrulhas de rua e grupos menores de ação contínua em áreas de ocupação.", blocos: null, cilindros: 0, ombreira: "branca" },
+            { nome: "Cabo Stormtrooper", desc: "Comando de base para pequenos agrupamentos ou guaritas de segurança periférica.", blocos: null, cilindros: 0, ombreira: "preta" },
+            { nome: "Stormtrooper / Cadete", desc: "Soldados rasos operacionais para combate armado e jovens em treinamento de infantaria.", blocos: null, cilindros: 0, ombreira: "padrão" }
         ]
     },
     marinha_imp: {
-        nome: "Marinha Imperial",
+        nome: "Marinha Imperial (Frota Naval)",
         corPrincipal: "#ff0000",
         patentes: [
-            { nome: "Grão-Almirante", desc: "O ápice do comando militar do Império. Controla frotas estelares inteiras e dita a estratégia espacial da galáxia.", blocos: [["R", "R", "R", "B", "B", "B"]], cilindros: 2 },
-            { nome: "Almirante", desc: "Responsável por comandar esquadrões de Star Destroyers e coordenar cercos orbitais a planetas rebeldes.", blocos: [["R", "R", "R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Capitão de Linha", desc: "Oficial comandante encarregado de uma nave capital específica, como um Star Destroyer classe Imperial.", blocos: [["R", "R", "R", "R"]], cilindros: 2 },
-            { nome: "Comandante de Voo", desc: "Administra as alas de caças TIE a partir dos hangares das naves-mãe.", blocos: [["R", "R", "R"]], cilindros: 1 },
-            { nome: "Tenente de Voo", desc: "Líder de esquadrão de caças TIE encarregado de interceptações no espaço profundo.", blocos: [["R", "R"]], cilindros: 1 }
+            { nome: "Grão-Almirante", desc: "Oficial supremo da Marinha. Comanda as maiores e mais letais frotas do Império, vestindo um uniforme branco exclusivo.", blocos: [["R", "R", "R", "B", "B", "B"]], cilindros: 2 },
+            { nome: "Almirante", desc: "Oficial responsável por comandar frotas regulares e traçar estratégias navais de grande escala.", blocos: [["R", "R", "R", "R", "R", "R"]], cilindros: 2 },
+            { nome: "Vice-Almirante", desc: "Oficial de inteligência naval que atua logo abaixo do Almirante, auxiliando no comando e na ponte com o Senado.", blocos: [["R", "R", "R", "R", "R"]], cilindros: 2 },
+            { nome: "Capitão de Nave", desc: "Autoridade absoluta dentro de um Star Destroyer, governando toda a tripulação e o poder de fogo de sua embarcação.", blocos: [["R", "R", "R", "R"]], cilindros: 2 },
+            { nome: "Tenente Sênior", desc: "Oficial superior de convés, atua garantindo que as ordens do capitão sejam cumpridas à risca na nave.", blocos: [["R", "R", "R"]], cilindros: 1 },
+            { nome: "Tenente", desc: "Oficial de navegação, qualificado para comandar naves menores como cruzadores leves e escoltas.", blocos: [["R", "R"]], cilindros: 1 },
+            { nome: "Aspirante", desc: "Estagiário de operações em naves capitais, dedicado ao estudo tático e auxílio na ponte de comando.", blocos: [["R"]], cilindros: 1 },
+            { nome: "Oficial de Convés", desc: "Tripulante militar padrão, focado em tarefas de vigilância e manutenção interna da nave.", blocos: null, cilindros: 0 }
         ]
     },
     isb_imp: {
@@ -34,8 +42,14 @@ const dadosImperio = {
     }
 };
 
-// Gera o SVG Imperial rígido com blocos quadrados e cilindros de código ao lado direito
-function gerarPlacaImperialSVG(matriz, numCilindros) {
+// Gera o SVG Imperial ou identificadores alternativos (ombreiras) de forma limpa
+function gerarPlacaImperialSVG(matriz, numCilindros, ombreira) {
+    if (ombreira) {
+        if (ombreira === "padrão") return `<span class="sem-placa">Armadura Branca Padrão</span>`;
+        return `<div class="ombreira-box omb-${ombreira}">Ombreira ${ombreira}</div>`;
+    }
+    if (!matriz) return `<span class="sem-placa">Sem placa de identificação</span>`;
+
     const cores = { 'R': '#ff0033', 'B': '#0066ff' };
     let blocosHTML = '';
     
@@ -46,16 +60,13 @@ function gerarPlacaImperialSVG(matriz, numCilindros) {
     let maxColunas = 0;
     matriz.forEach(linha => maxColunas = Math.max(maxColunas, linha.length));
     
-    // Dimensões dinâmicas da insígnia metálica baseada no número de blocos
     const larguraInsignia = 20 + maxColunas * (blocoLargura + espacamento);
     const alturaInsignia = 45;
     
-    // Espaço extra para renderizar os cilindros de código ao lado direito
     const espacoCilindros = numCilindros * 22;
     const larguraTotalSVG = larguraInsignia + espacoCilindros + 10;
     const alturaTotalSVG = 60;
 
-    // 1. Renderiza os blocos retangulares/quadrados rígidos do Império
     matriz.forEach((linha, idxLinha) => {
         linha.forEach((tipo, idxColuna) => {
             if (tipo && cores[tipo]) {
@@ -71,7 +82,6 @@ function gerarPlacaImperialSVG(matriz, numCilindros) {
         });
     });
 
-    // 2. Renderiza os Cilindros de Código (Code Cylinders) à direita da placa
     let cilindrosHTML = '';
     for (let i = 0; i < numCilindros; i++) {
         let xCilindro = larguraInsignia + 10 + (i * 20);
@@ -97,10 +107,8 @@ function gerarPlacaImperialSVG(matriz, numCilindros) {
                     <stop offset="100%" stop-color="#333333" />
                 </linearGradient>
             </defs>
-            
             <rect x="4" y="6" width="${larguraInsignia - 8}" height="${alturaInsignia}" rx="2" fill="url(#metalImperial)" stroke="#111" stroke-width="2"/>
             <rect x="7" y="9" width="${larguraInsignia - 14}" height="${alturaInsignia - 6}" rx="1" fill="none" stroke="#000000" stroke-width="1" opacity="0.2"/>
-            
             ${blocosHTML}
             ${cilindrosHTML}
         </svg>
@@ -119,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             item.innerHTML = `
                 <div class="brasao-container-imp">
-                    ${gerarPlacaImperialSVG(patente.blocos, patente.cilindros)}
+                    ${gerarPlacaImperialSVG(patente.blocos, patente.cilindros, patente.ombreira)}
                 </div>
                 <div class="patente-info-imp">
                     <h4>${patente.nome}</h4>
