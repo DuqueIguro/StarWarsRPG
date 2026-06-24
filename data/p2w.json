@@ -1,6 +1,6 @@
 [
     {
-        "id": "pacote_ouro",
+        "id": "pacote_inicial",
         "nome": "Suprimento de Elite: Fortuna do Contrabandista",
         "preco": "25,00",
         "restricao": "Compra única por jogador",
@@ -17,6 +17,27 @@
         "itens_escolha": [
             { "value": "arma", "label": "Blastech 500 Riot Gun" },
             { "value": "item", "label": "Amplificador Auricular" }
+        ]
+    },
+    {
+        "id": "pacote_intermediario",
+        "nome": "Suprimento de Campo: Arsenal do Explorador",
+        "preco": "40,00",
+        "restricao": "Compra única por jogador",
+        "destaque": false,
+        "estatisticas": [
+            { "prop": "+2d10 de Vida Máxima", "icon": "❤️" },
+            { "prop": "+2d8 de Dano Permanente", "icon": "⚔️" }
+        ],
+        "itens_fixos": [
+            { "nome": "4x Granada de Concussão", "raridade": "Militar" },
+            { "nome": "2x Kits de Medicina", "raridade": "Essencial" },
+            { "nome": "1x Dróide Agromecânico Série R4", "raridade": "Raro" },
+            { "nome": "1x Nave Espacial (a negociar com o mestre)", "raridade": "Raro" }
+        ],
+        "itens_escolha": [
+            { "value": "arma", "label": "1x Lançador de Mísseis Portátil PLX-2M"},
+            { "value": "armadura", "label": "1x Armadura de Motim Merr-Sonn KZZ" }
         ]
     }
 ]
