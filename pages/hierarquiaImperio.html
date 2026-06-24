@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Centro de Dados Imperial - Diretrizes de Patentes</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/hierarquiaImperio.css">
+    <link rel="icon" type="image/x-icon" href="../img/imperio.png">
+</head>
+<body>
+
+    <button class="btn-voltar-imp" onclick="window.location.href='https://starwars.duqueiguro.xyz/'">
+        ◀ Criptografar Terminal
+    </button>
+
+    <h1 class="titulo-pagina-imp">Alto Comando Imperial</h1>
+    <p style="text-align: center; color: #64748b; margin-bottom: 40px; font-size: 0.85rem; font-family: 'Share Tech Mono', monospace;">
+        ACESSO RESTRITO - NÍVEL DE SEGURANÇA DIRETORIAL 05
+    </p>
+
+    <div class="container-cards-imp">
+
+        <div class="card-imperio" id="card-exercito-imp">
+            <div class="card-header-imp" onclick="alternarCardImperio('card-exercito-imp')">
+                <h2>Forças de Ocupação Terrestre e Exército</h2>
+                <span class="indicador-imp">▼</span>
+            </div>
+            <div class="card-conteudo-imp">
+                <div class="patentes-grid-imp" id="lista-exercito_imp"></div>
+            </div>
+        </div>
+
+        <div class="card-imperio" id="card-marinha-imp">
+            <div class="card-header-imp" onclick="alternarCardImperio('card-marinha-imp')">
+                <h2>Frota da Armada Imperial e Caças</h2>
+                <span class="indicador-imp">▼</span>
+            </div>
+            <div class="card-conteudo-imp">
+                <div class="patentes-grid-imp" id="lista-marinha_imp"></div>
+            </div>
+        </div>
+
+        <div class="card-imperio" id="card-isb-imp">
+            <div class="card-header-imp" onclick="alternarCardImperio('card-isb-imp')">
+                <h2>Gabinete de Segurança Imperial (ISB)</h2>
+                <span class="indicador-imp">▼</span>
+            </div>
+            <div class="card-conteudo-imp">
+                <div class="patentes-grid-imp" id="lista-isb_imp"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../js/hierarquiaImperio.js"></script>
+</body>
+</html>

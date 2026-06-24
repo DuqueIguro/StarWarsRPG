@@ -1,0 +1,183 @@
+/* ==========================================================================
+   STAR WARS RPG - IMPERIAL HIGH COMMAND INTERFACE STYLE (AGRESSIVO)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+:root {
+    --crimson-imp: #ff0033;
+    --crimson-glow: rgba(255, 0, 51, 0.45);
+    --crimson-dim: rgba(255, 0, 51, 0.08);
+    --bg-imperial-dark: #030407;
+    --panel-military: rgba(14, 16, 22, 0.85);
+    --font-terminal: 'Orbitron', sans-serif;
+    --font-data: 'Share Tech Mono', monospace;
+}
+
+body {
+    background-color: var(--bg-imperial-dark);
+    color: #e2e8f0;
+    font-family: var(--font-terminal);
+    margin: 0;
+    padding: 24px;
+    letter-spacing: 0.5px;
+}
+
+/* Fundo Tático de Estação Espacial Imperial */
+body::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.7) 50%), 
+        linear-gradient(90deg, rgba(255, 0, 51, 0.03), rgba(0, 0, 0, 0) 8%),
+        linear-gradient(rgba(255, 0, 51, 0.02), rgba(0, 0, 0, 0) 8%);
+    background-size: 100% 6px, 30px 30px, 30px 30px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.titulo-pagina-imp {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: #fff;
+    text-shadow: 0 0 12px var(--crimson-glow);
+    border-bottom: 2px solid var(--crimson-imp);
+    max-width: 800px;
+    margin: 0 auto 30px auto;
+    padding-bottom: 10px;
+}
+
+/* Container de Sanfonas Rígidas */
+.container-cards-imp {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.card-imperio {
+    background: var(--panel-military);
+    border-left: 4px solid #333;
+    border-top: 1px solid #222;
+    border-right: 1px solid #111;
+    border-bottom: 1px solid #111;
+    border-radius: 0px; /* Cantos retos e brutais do Império */
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.card-header-imp {
+    padding: 20px 25px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #090c12;
+    user-select: none;
+}
+
+.card-header-imp h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    color: #94a3b8;
+    letter-spacing: 2px;
+}
+
+/* Ativação Vermelha Militar */
+.card-imperio.ativo {
+    border-left-color: var(--crimson-imp);
+    box-shadow: 0 0 20px var(--crimson-dim);
+}
+.card-imperio.ativo .card-header-imp h2 {
+    color: #fff;
+    text-shadow: 0 0 8px var(--crimson-glow);
+}
+
+.card-imperio .indicador-imp {
+    color: #475569;
+    transition: transform 0.2s;
+}
+.card-imperio.ativo .indicador-imp {
+    transform: rotate(180deg);
+    color: var(--crimson-imp);
+}
+
+/* Área Interna Ocultável */
+.card-conteudo-imp {
+    display: none;
+    padding: 25px;
+    background: #05070a;
+    border-top: 1px solid #1e293b;
+}
+.card-imperio.ativo .card-conteudo-imp {
+    display: block;
+}
+
+/* Grid de Linhas das Patentes */
+.patentes-grid-imp {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.patente-item-imp {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid #151b26;
+    padding: 15px 20px;
+    gap: 30px;
+    transition: background 0.2s;
+}
+
+.patente-item-imp:hover {
+    background: rgba(255, 0, 51, 0.02);
+    border-color: rgba(255, 0, 51, 0.2);
+}
+
+.brasao-container-imp {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.patente-info-imp h4 {
+    margin: 0 0 6px 0;
+    font-size: 1.15rem;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.patente-info-imp p {
+    margin: 0;
+    font-family: var(--font-data);
+    font-size: 10.5pt;
+    color: #94a3b8;
+    line-height: 1.5;
+}
+
+/* Botões de Comando Superior */
+.btn-voltar-imp {
+    background: transparent;
+    border: 1px solid #475569;
+    color: #94a3b8;
+    font-family: var(--font-terminal);
+    padding: 10px 20px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 9pt;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+}
+.btn-voltar-imp:hover {
+    border-color: var(--crimson-imp);
+    color: #fff;
+    box-shadow: 0 0 10px var(--crimson-glow);
+}
