@@ -63,6 +63,7 @@ StarWarsRPG
 │  ├─ nave.ico
 │  ├─ orion.png
 │  ├─ orionLogo.png
+│  ├─ p2w.png
 │  ├─ r2d2.ico
 │  ├─ rebelde.png
 │  └─ sabres.ico

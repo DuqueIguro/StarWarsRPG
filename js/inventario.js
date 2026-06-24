@@ -69,6 +69,9 @@ const createItemCard = (item, context = 'shop') => {
         buttonsHtml = `<button class="remove-from-inventory-btn mt-4 btn-danger font-bold py-2 px-4 rounded-md w-full">Remover do Inventário</button>`;
     }
 
+    // CÁLCULO DA CONVERSÃO (10000 créditos = 1 real)
+    const priceInReais = item.price / 10000;
+
     card.innerHTML = `
         <div class="flex-grow">
             <h4 class="font-orbitron text-lg text-cyan-400">${item.name}</h4>
@@ -77,11 +80,12 @@ const createItemCard = (item, context = 'shop') => {
             <p class="text-sm mb-4">${item.description}</p>
         </div>
         <div>
-            <p class="font-bold text-yellow-400 text-lg">${item.price.toLocaleString()} Créditos</p>
+            <p class="font-bold text-yellow-400 text-lg">${item.price.toLocaleString()} ⦻ (Créditos Imperiais)</p>
+            <p class="text-sm text-green-400 font-bold">R$ ${priceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (Real Brasileiro)</p>
             ${buttonsHtml}
         </div>
     `;
-    
+
     const itemData = JSON.stringify(item);
     if (context === 'shop') {
         card.querySelector('.add-to-cart-btn').addEventListener('click', () => handleAddToCart(item));
@@ -164,9 +168,14 @@ const renderCart = () => {
         state.cart.forEach((cartItem, index) => {
             const div = document.createElement('div');
             div.className = 'mb-4 p-2 rounded-md bg-gray-900/50';
+            
+            // Conversão individual no carrinho
+            const itemPriceInReais = cartItem.item.price / 10000;
+
             div.innerHTML = `
                 <p class="font-bold">${cartItem.item.name}</p>
                 <p class="text-sm text-yellow-400">${cartItem.item.price.toLocaleString()} Créditos</p>
+                <p class="text-xs text-green-400">R$ ${itemPriceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 <div class="mt-1 flex">
                     <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1 rounded-md w-full">Remover</button>
                 </div>
@@ -176,7 +185,12 @@ const renderCart = () => {
         });
     }
 
-    cartTotalPersonalEl.textContent = `${totalPersonal.toLocaleString()} Créditos`;
+    // Exibição do total acumulado convertido
+    const totalInReais = totalPersonal / 10000;
+    cartTotalPersonalEl.innerHTML = `
+        <div>${totalPersonal.toLocaleString()} Créditos</div>
+        <div class="text-sm text-green-400 font-normal">R$ ${totalInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+    `;
 
     document.querySelectorAll('.remove-from-cart-btn').forEach(btn => btn.addEventListener('click', (e) => handleRemoveFromCart(parseInt(e.target.dataset.index))));
 };
