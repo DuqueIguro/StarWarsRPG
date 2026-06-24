@@ -54,8 +54,8 @@
             { "nome": "Wedge Antilles", "cargo": "Piloto de Elite" }
         ],
         "inventario": {
-            "naves": ["6x Caças T-65B X-Wing", "2x Bombardeiros BTL Y-Wing"],
-            "itens": ["50x Células de Energia", "12x Torpedos de Prótons", "Kit de Ferramentas Hidráulicas"]
+            "naves": ["10x Caças T-65B X-Wing", "6x Bombardeiros BTL Y-Wing", "18x Caças Z-95 Headhunter", "2x Transporte Medio Mobquet"],
+            "itens": ["250 mil créditos", "15x Lancador de Misseis Portatil Merr-Sonn PLX-2M", "40x Blastech 500 Riot Gun", "80x Rifle Blaster SG-4", "20x Granada de Concussao", "40x Armadura de Motim Merr-Sonn KZZ"]
         },
         "missoes": {
             "convocados": ["Defesa de Ponto do Perímetro Yavin"],
@@ -87,8 +87,8 @@
             { "nome": "Kaelen Voss", "cargo": "Agente de Campo de Longo Alcance" }
         ],
         "inventario": {
-            "naves": ["Nave de Ataque Leve Firespray Modificada", "Transporte de Carga Médio"],
-            "itens": ["15x Rifles Blaster A280", "1x Emissor de Interferência Avançado"]
+            "naves": ["4x Transporte Medio Mobquet", "2x Caças TIE Avançado", "6x Nova Courier YKL-37R", "5x Cargueiro Ghtroc 720"],
+            "itens": ["100 mil créditos", "20x Amplificador Auricular Ambiental", "5x Transceptor HoloNet", "2x Transponder Disfarçado", "6x Computador de Interface Computadorizada (Mira)", "20x Kit de ferramentas"]
         },
         "missoes": {
             "convocados": ["Decodificação de Transmissões Imperiais"],
