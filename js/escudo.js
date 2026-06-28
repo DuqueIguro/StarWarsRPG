@@ -1,7 +1,8 @@
+// Configurações e variáveis de estado globais
 const CORE_COOKIE_KEY = "sw_overlord_datapad_v6";
-let activeRollMode = "normal";
+let activeRollMode = "normal"; // normal, advantage, disadvantage
 
-// Banco de dados dinâmico de regras para o painel de abas
+// Base de Dados de Consulta Rápida (Abas)
 const rulesDatabase = {
     "tab-cd": `<table class="cyber-matrix-table">
                 <tr><th>Dificuldade</th><th>CD Alvo</th></tr>
@@ -27,26 +28,27 @@ const rulesDatabase = {
                </table>`
 };
 
-// Banco de nomes extraído do mestre.html original do projeto
+// Banco de nomes extraído do projeto
 const galacticNamesPool = {
-    humano: ["Jax Pavan", "Kaelen Horn", "Corran Horn", "Talon Karrde", "Garm Bel Iblis", "Bria Tharen", "Mirax Terrik", "Dash Rendar"],
-    twilek: ["Orn Free Taa", "Aayla Secura", "Bib Fortuna", "Oola Doneeta", "Tott Doneeta", "Nima-Da-Boda"],
-    rodiano: ["Greedo", "Beedo", "Navik o Vermelho", "Chio Fain", "Wald"],
-    wookiee: ["Chewbacca", "Tarfful", "Lowbacca", "Groznik", "Rorworr", "Salporin"],
-    bothan: ["Borsk Fey'lya", "Koth Melan", "Tereb Ab'lon", "Tav Breil'lya", "Karka Kre'fey"],
-    sullustano: ["Nien Nunb", "Sian Tevv", "Aril Nunb", "Syub Snunb", "Dilr Nep"]
+    humano: ["Jax Pavan", "Kaelen Horn", "Corran Horn", "Talon Karrde", "Bria Tharen", "Dash Rendar"],
+    twilek: ["Aayla Secura", "Bib Fortuna", "Oola Doneeta", "Tott Doneeta", "Nima-Da-Boda"],
+    rodiano: ["Greedo", "Beedo Tee", "Navik o Vermelho", "Chio Fain", "Wald"],
+    wookiee: ["Chewbacca", "Tarfful", "Lowbacca", "Groznik", "Salporin"],
+    bothan: ["Borsk Fey'lya", "Koth Melan", "Tereb Ab'lon", "Tav Breil'lya"],
+    sullustano: ["Nien Nunb", "Sian Tevv", "Aril Nunb", "Syub Snunb"]
 };
 
 document.addEventListener("DOMContentLoaded", () => {
     loadNotesFromCache();
     toggleDatabaseTab('tab-cd');
 
-    // Autosave instantâneo ativado nas notas
+    // Sincronização contínua das notas
     document.getElementById("notes-text-area").addEventListener("input", (e) => {
         writeCookie(CORE_COOKIE_KEY, e.target.value, 14);
     });
 });
 
+// Manipuladores de quantidade de dados (Stepper)
 function changeQty(value) {
     const qtyInput = document.getElementById("dice-qty");
     let calculated = parseInt(qtyInput.value) + value;
@@ -55,6 +57,7 @@ function changeQty(value) {
     qtyInput.value = calculated;
 }
 
+// Alterador de Modos de Jogo (Soma, Vantagem, Desvantagem)
 function setRollMode(mode) {
     activeRollMode = mode;
     document.querySelectorAll(".mode-cyber-btn").forEach(b => b.classList.remove("active"));
@@ -63,6 +66,7 @@ function setRollMode(mode) {
     if (mode === 'disadvantage') document.getElementById("mode-disadvantage").classList.add("active");
 }
 
+// Disparador de animação de rolagem tática
 function triggerComplexRoll(sides) {
     const totalDisplay = document.getElementById("hud-total");
     const breakdownDisplay = document.getElementById("hud-breakdown");
@@ -72,41 +76,50 @@ function triggerComplexRoll(sides) {
 
     setTimeout(() => {
         totalDisplay.classList.remove("roll-glitch-active");
-        
-        const qty = parseInt(document.getElementById("dice-qty").value);
-        const mod = parseInt(document.getElementById("dice-modifier").value) || 0;
-        
-        let poolA = [];
-        for(let i=0; i<qty; i++) poolA.push(Math.floor(Math.random() * sides) + 1);
-        
-        let finalValue = 0;
-        let breakdownText = "";
-        
-        if (activeRollMode === "normal") {
-            const sumA = poolA.reduce((a, b) => a + b, 0);
-            finalValue = sumA + mod;
-            breakdownText = `Pool: [${poolA.join(", ")}] ${mod >= 0 ? "+" : ""}${mod}`;
-        } else {
-            let poolB = [];
-            for(let i=0; i<qty; i++) poolB.push(Math.floor(Math.random() * sides) + 1);
-            
-            const sumA = poolA.reduce((a, b) => a + b, 0);
-            const sumB = poolB.reduce((a, b) => a + b, 0);
-            
-            if (activeRollMode === "advantage") {
-                finalValue = Math.max(sumA, sumB) + mod;
-                breakdownText = `Vantagem | Maior entre [${poolA.join(", ")}] (${sumA}) e [${poolB.join(", ")}] (${sumB}) ${mod >= 0 ? "+" : ""}${mod}`;
-            } else {
-                finalValue = Math.min(sumA, sumB) + mod;
-                breakdownText = `Desvantagem | Menor entre [${poolA.join(", ")}] (${sumA}) e [${poolB.join(", ")}] (${sumB}) ${mod >= 0 ? "+" : ""}${mod}`;
-            }
-        }
-        
-        totalDisplay.innerText = finalValue;
-        breakdownDisplay.innerText = breakdownText;
-        
-        logToTerminalStream(finalValue, qty, sides, breakdownText);
+        executeCalculations(sides);
     }, 350);
+}
+
+// Processamento matemático customizado com as regras de filtragem de resultados
+function executeCalculations(sides) {
+    const qty = parseInt(document.getElementById("dice-qty").value);
+    const mod = parseInt(document.getElementById("dice-modifier").value) || 0;
+    
+    let rolls = [];
+    for (let i = 0; i < qty; i++) {
+        rolls.push(Math.floor(Math.random() * sides) + 1);
+    }
+
+    // Criamos uma cópia ordenada de forma decrescente para facilitar a extração dos maiores valores
+    let sortedRolls = [...rolls].sort((a, b) => b - a);
+
+    let finalValue = 0;
+    let breakdownText = "";
+
+    if (activeRollMode === "normal") {
+        // Modo SOMA: Soma todos os dados gerados e adiciona o modificador fixo
+        const sum = rolls.reduce((a, b) => a + b, 0);
+        finalValue = sum + mod;
+        breakdownText = `Pool: [${rolls.join(", ")}] ${mod >= 0 ? "+" : ""}${mod}`;
+    } 
+    else if (activeRollMode === "advantage") {
+        // Modo VANTAGEM: Pega o maior valor absoluto rolado
+        const highest = sortedRolls[0];
+        finalValue = highest + mod;
+        breakdownText = `Vantagem | Maior valor pinado de [${rolls.join(", ")}] -> ${highest} ${mod >= 0 ? "+" : ""}${mod}`;
+    } 
+    else if (activeRollMode === "disadvantage") {
+        // Modo DESVANTAGEM: Pega o segundo maior valor rolado (se houver apenas 1 dado, usa ele mesmo)
+        const secondHighest = sortedRolls.length > 1 ? sortedRolls[1] : sortedRolls[0];
+        finalValue = secondHighest + mod;
+        breakdownText = `Desvantagem | Segundo maior pino de [${rolls.join(", ")}] -> ${secondHighest} ${mod >= 0 ? "+" : ""}${mod}`;
+    }
+
+    // Atualização dos elementos da interface
+    document.getElementById("hud-total").innerText = finalValue;
+    document.getElementById("hud-breakdown").innerText = breakdownText;
+    
+    logToTerminalStream(finalValue, qty, sides, breakdownText);
 }
 
 function logToTerminalStream(total, qty, sides, details) {
@@ -114,7 +127,7 @@ function logToTerminalStream(total, qty, sides, details) {
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const paragraph = document.createElement("p");
     paragraph.className = "log-row-stream";
-    paragraph.innerHTML = `<strong>[${timestamp}] JOGADA: ${total}</strong> <br><small>Esquema: ${qty}d${sides} (${activeRollMode.toUpperCase()}) -> ${details}</small>`;
+    paragraph.innerHTML = `<strong>[${timestamp}] CAPTURA: ${total}</strong> <br><small>Esquema: ${qty}d${sides} (${activeRollMode.toUpperCase()}) -> ${details}</small>`;
     logContainer.insertBefore(paragraph, logContainer.firstChild);
 }
 
@@ -122,7 +135,7 @@ function purgeLogs() {
     document.getElementById("console-stream").innerHTML = `<p class="system-boot-string text-gray-500">>> Registros do Terminal Limpos.</p>`;
 }
 
-// Monitor de turnos e gerenciador de HP
+// Módulo de Combate / Iniciativa
 let activeCombatants = [];
 function addNewCombatant() {
     const name = document.getElementById("combat-name").value || "Alvo Não Identificado";
@@ -163,12 +176,14 @@ function executeInitiativeSort() {
     renderCombatHUD();
 }
 
+// Módulo de Regras (Abas)
 function toggleDatabaseTab(tabId) {
     document.querySelectorAll(".tab-cyber-btn").forEach(b => b.classList.remove("active"));
-    if(event && event.target) event.target.classList.add("active");
+    if(window.event && window.event.target) window.event.target.classList.add("active");
     document.getElementById("tab-data-box").innerHTML = rulesDatabase[tabId];
 }
 
+// Módulo Gerador de Nomes
 function triggerNpcGeneration() {
     const species = document.getElementById("npc-species-select").value;
     const arrayNames = galacticNamesPool[species];
@@ -176,7 +191,7 @@ function triggerNpcGeneration() {
     document.getElementById("npc-identity-output").innerText = randomizedName;
 }
 
-// Cookies com encodeURIComponent para preservar quebras de linha e dados complexos nas anotações
+// Mecânica de cookies criptografados por URI
 function writeCookie(name, value, days) {
     const date = new Date();
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
