@@ -50,8 +50,8 @@
             "Sensores de varredura profunda captaram anomalias no espaço real."
         ],
         "agentes": [
-            { "nome": "Ren'Tai Sol", "cargo": "...", "foto": "../img/personagens/renTaiSol.jpeg" },
-            { "nome": "Lihua", "cargo": "...", "foto": "../img/personagens/lihua.jpeg" }
+            { "nome": "Ren'Tai Sol", "cargo": "Capitão Naval/Líder ouro", "foto": "../img/personagens/renTaiSol.jpeg" },
+            { "nome": "Lihua", "cargo": "Capitã/Ouro 4", "foto": "../img/personagens/lihua.jpeg" }
         ],
         "inventario": {
             "naves": ["10x Caças T-65B X-Wing", "6x Bombardeiros BTL Y-Wing", "18x Caças Z-95 Headhunter", "2x Transporte Medio Mobquet"],
@@ -83,7 +83,7 @@
             "Varreduras de longo alcance sugerem movimentos de frotas na Orla Exterior."
         ],
         "agentes": [
-            { "nome": "Renn Dravos", "cargo": "Analista de Criptografia", "foto": "../img/personagens/dravos.jpeg" }
+            { "nome": "Renn Dravos", "cargo": "Capitão da Inteligência/Líder Verde", "foto": "../img/personagens/dravos.jpeg" }
         ],
         "inventario": {
             "naves": ["4x Transporte Medio Mobquet", "2x Caças TIE Avançado", "6x Nova Courier YKL-37R", "5x Cargueiro Ghtroc 720"],
@@ -115,8 +115,8 @@
             "Aviso: Inquisidores imperiais rastreando portos fantasmas na Orla Exterior."
         ],
         "agentes": [
-            { "nome": "Keiran Jinn", "cargo": "...", "foto": "../img/personagens/keiranJinn.jpeg" },
-            { "nome": "Rapin Floo", "cargo": "...", "foto": "../img/personagens/rapinFloo.jpeg" }
+            { "nome": "Keiran Jinn", "cargo": "Refúgiado", "foto": "../img/personagens/keiranJinn.jpeg" },
+            { "nome": "Rapin Floo", "cargo": "Refúgiado", "foto": "../img/personagens/rapinFloo.jpeg" }
         ],
         "inventario": {
             "itens": ["200 Mil créditos"]
