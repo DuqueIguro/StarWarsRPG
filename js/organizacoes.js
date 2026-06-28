@@ -72,7 +72,10 @@ function renderizarInterface(data) {
         document.getElementById("cargoLider").innerText = data.lider.cargo;
 
         document.getElementById("listaAgentes").innerHTML = data.agentes.map(a => `
-            <li><strong>${a.nome}</strong> - <span>${a.cargo}</span></li>
+            <li class="agent-item">
+                <img src="${a.foto}" alt="${a.nome}" class="contact-mini-img">
+                <div><strong>${a.nome}</strong> - <span>${a.cargo}</span></div>
+            </li>
         `).join('');
 
         document.getElementById("sideNaves").innerHTML = data.inventario.naves.map(n => `<li>🚀 ${n}</li>`).join('');

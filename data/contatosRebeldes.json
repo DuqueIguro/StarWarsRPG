@@ -17,8 +17,8 @@
             "Cargas de suprimentos médicos desviadas com sucesso para a Orla Média."
         ],
         "agentes": [
-            { "nome": "Voren Na'al", "cargo": "Espião Tático" },
-            { "nome": "Tala Durith", "cargo": "Infiltradora Oficial" }
+            { "nome": "Voren Na'al", "cargo": "Espião Tático", "foto": "../img/personagens/vorenNaal.png" },
+            { "nome": "Tala Durith", "cargo": "Infiltradora Oficial", "foto": "../img/personagens/talaDurith.png" }
         ],
         "inventario": {
             "naves": ["4x Baudo-class Star Yacht", "2x Corellian Corvette (CR70/CR90)", "3x Gozanti Cruiser"],
@@ -50,8 +50,8 @@
             "Sensores de varredura profunda captaram anomalias no espaço real."
         ],
         "agentes": [
-            { "nome": "Garven Dreis", "cargo": "Líder do Esquadrão Vermelho" },
-            { "nome": "Wedge Antilles", "cargo": "Piloto de Elite" }
+            { "nome": "Ren'Tai Sol", "cargo": "...", "foto": "../img/personagens/renTaiSol.jpeg" },
+            { "nome": "Lihua", "cargo": "...", "foto": "../img/personagens/lihua.jpeg" }
         ],
         "inventario": {
             "naves": ["10x Caças T-65B X-Wing", "6x Bombardeiros BTL Y-Wing", "18x Caças Z-95 Headhunter", "2x Transporte Medio Mobquet"],
@@ -83,8 +83,7 @@
             "Varreduras de longo alcance sugerem movimentos de frotas na Orla Exterior."
         ],
         "agentes": [
-            { "nome": "Lira Wessex", "cargo": "Analista de Criptografia" },
-            { "nome": "Kaelen Voss", "cargo": "Agente de Campo de Longo Alcance" }
+            { "nome": "Renn Dravos", "cargo": "Analista de Criptografia", "foto": "../img/personagens/dravos.jpeg" }
         ],
         "inventario": {
             "naves": ["4x Transporte Medio Mobquet", "2x Caças TIE Avançado", "6x Nova Courier YKL-37R", "5x Cargueiro Ghtroc 720"],
@@ -115,7 +114,10 @@
             "Múltiplos sensitivos à Força evacuados com sucesso através da rede segura.",
             "Aviso: Inquisidores imperiais rastreando portos fantasmas na Orla Exterior."
         ],
-        "agentes": [],
+        "agentes": [
+            { "nome": "Keiran Jinn", "cargo": "...", "foto": "../img/personagens/keiranJinn.jpeg" },
+            { "nome": "Rapin Floo", "cargo": "...", "foto": "../img/personagens/rapinFloo.jpeg" }
+        ],
         "inventario": {
             "itens": ["200 Mil créditos"]
         },
