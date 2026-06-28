@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HNN — Holonet News Network</title>
+  <link rel="icon" href="../img/HNN.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="../styles/holonet.css" />
+  <!-- Google Fonts carregadas pelo CSS -->
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════
+       TICKER — faixa de notícias rolando
+  ═══════════════════════════════════════════ -->
+  <div class="hnn-ticker-wrap" role="marquee" aria-label="Últimas notícias">
+    <span class="hnn-ticker-label">HNN AO VIVO</span>
+    <div style="overflow:hidden; flex:1;">
+      <div class="hnn-ticker-track" id="ticker-track">
+        <!-- Preenchido pelo JS -->
+        <span class="hnn-ticker-item">Carregando transmissão...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════ -->
+  <header class="hnn-header">
+
+    <div class="hnn-logo-block">
+      <span class="hnn-logo">HNN</span>
+      <span class="hnn-logo-sub">Holonet News Network</span>
+      <span class="hnn-logo-aure" title="Holonet em Aurebesh">𝐇𝐎𝐋𝐎𝐍𝐄𝐓</span>
+    </div>
+
+    <div class="hnn-header-center">
+      <p class="hnn-date" id="hnn-data">Carregando data...</p>
+      <p class="hnn-date-aure" title="Transmissão Galáctica em Aurebesh">BAATU BAATU SU CUY'GAR</p>
+    </div>
+
+    <div class="hnn-live-block">
+      <span class="hnn-live-badge">
+        <span class="hnn-live-dot"></span>
+        TRANSMISSÃO AO VIVO
+      </span>
+      <span class="hnn-version" id="hnn-version">HNN-7.4.2</span>
+      <span class="hnn-version" id="hnn-relogio">00:00:00 GST</span>
+    </div>
+
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       NAV — filtros de categoria
+  ═══════════════════════════════════════════ -->
+  <nav class="hnn-nav" id="hnn-nav" aria-label="Filtro por categoria">
+    <!-- Preenchido pelo JS -->
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════════ -->
+  <main class="hnn-main">
+
+    <!-- ── Coluna Principal ── -->
+    <section aria-label="Notícias">
+
+      <!-- Notícia em destaque -->
+      <div class="hnn-section-label">PRINCIPAL</div>
+      <div id="hnn-featured">
+        <!-- Preenchido pelo JS -->
+        <div class="hnn-featured-card" style="opacity:0.4;">
+          <p style="font-family:var(--font-mono);color:var(--text-muted);font-size:12px;">
+            // Estabelecendo conexão com a HoloNet...
+          </p>
+        </div>
+      </div>
+
+      <!-- Grade de notícias secundárias -->
+      <div class="hnn-section-label" style="margin-top:28px;">MAIS NOTÍCIAS</div>
+      <div class="hnn-news-grid" id="hnn-news-grid">
+        <!-- Preenchido pelo JS -->
+      </div>
+
+    </section>
+
+    <!-- ── Sidebar ── -->
+    <aside class="hnn-sidebar" aria-label="Painel lateral">
+
+      <!-- Transmissões ao vivo -->
+      <div class="hnn-panel" role="region" aria-label="Transmissões ao vivo">
+        <div class="hnn-panel-header">
+          <span class="hnn-panel-title">◈ CANAIS AO VIVO</span>
+          <span class="hnn-panel-aure" title="Canais em Aurebesh">HAAT MANDO</span>
+        </div>
+        <div id="hnn-transmissoes">
+          <!-- Preenchido pelo JS -->
+        </div>
+      </div>
+
+      <!-- Mercados -->
+      <div class="hnn-panel" role="region" aria-label="Mercados galácticos">
+        <div class="hnn-panel-header">
+          <span class="hnn-panel-title">◇ MERCADOS GALÁCTICOS</span>
+          <span class="hnn-panel-aure" title="Mercados em Aurebesh">MANDO'ADE</span>
+        </div>
+        <div id="hnn-mercados">
+          <!-- Preenchido pelo JS -->
+        </div>
+        <div style="padding:8px 16px 10px; border-top: 1px solid var(--border-dim);">
+          <p style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);letter-spacing:0.08em;">
+            // COTAÇÕES EM CRÉDITOS GALÁCTICOS — ATUALIZAÇÃO: <span id="hnn-footer-ano"></span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Alerta Imperial -->
+      <div class="hnn-panel hnn-alerta" role="alert" aria-live="assertive">
+        <div class="hnn-panel-header" style="background:rgba(204,34,0,0.2); border-bottom-color: var(--red-hot);">
+          <span class="hnn-panel-title" style="color:var(--red-warm);">⚠ ALERTA IMPERIAL</span>
+          <span class="hnn-panel-aure" title="Alerta em Aurebesh">VODE AN</span>
+        </div>
+        <div class="hnn-alerta-body">
+          <p class="hnn-alerta-titulo">NÍVEL DE AMEAÇA: VERMELHO</p>
+          <p class="hnn-alerta-texto">
+            Presença Imperial confirmada nos setores J-7 a K-9 do Outer Rim.
+            Evite rotas hiperespaciais. Mantenha comunicações criptografadas.
+            Células rebeldes em alerta máximo.
+          </p>
+          <p class="hnn-alerta-aure" title="Código de alerta em Aurebesh">
+            NAASADE — KAD HA'RANGIR
+          </p>
+        </div>
+      </div>
+
+      <!-- Identificação do Terminal -->
+      <div class="hnn-panel" role="region" aria-label="ID do Terminal">
+        <div class="hnn-panel-header">
+          <span class="hnn-panel-title">◉ TERMINAL ID</span>
+        </div>
+        <div style="padding: 14px 16px; display:flex; flex-direction:column; gap:7px;">
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;">
+              TERMINAL
+            </span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--amber-light);letter-spacing:0.06em;">
+              HNN-NODE-0047
+            </span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;">
+              SETOR
+            </span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--amber-light);letter-spacing:0.06em;">
+              INNER RIM / CORUSCANT
+            </span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;">
+              CRIPTOGRAFIA
+            </span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:#66FF88;letter-spacing:0.06em;">
+              ATIVA ✓
+            </span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;">
+              SINAL
+            </span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:#66FF88;letter-spacing:0.06em;">
+              ████████░░ 80%
+            </span>
+          </div>
+          <div style="margin-top:6px; padding-top:8px; border-top:1px solid var(--border-dim);">
+            <p style="font-family:var(--font-aure);font-size:10px;color:var(--text-muted);
+                      text-align:center; letter-spacing:0.12em; opacity:0.7;"
+               title="Que a Força esteja com você em Aurebesh">
+              MAY THE FORCE BE WITH YOU
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       MODAL — detalhe da notícia
+  ═══════════════════════════════════════════ -->
+  <div class="hnn-modal-overlay" id="hnn-modal-overlay" role="dialog"
+       aria-modal="true" aria-labelledby="hnn-modal-label">
+    <div class="hnn-modal" id="hnn-modal-content">
+      <!-- Preenchido pelo JS -->
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="hnn-footer">
+    <div>
+      <p class="hnn-footer-logo">HNN — HOLONET NEWS NETWORK</p>
+      <p class="hnn-footer-aure" title="Holonet News Network em Aurebesh"
+         style="font-family:var(--font-aure);font-size:11px;color:var(--text-muted);
+                margin-top:4px;letter-spacing:0.12em;">
+        HOLONET SU CUY'GAR — VODE AN
+      </p>
+    </div>
+    <div style="text-align:center;">
+      <p style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);
+                letter-spacing:0.08em; line-height:1.8;">
+        // TODOS OS DIREITOS RESERVADOS — NOVA REPÚBLICA<br>
+        // USO NÃO AUTORIZADO SUJEITO À JURISDIÇÃO GALÁCTICA
+      </p>
+    </div>
+    <div class="hnn-footer-copy">
+      <p style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);
+                letter-spacing:0.08em; line-height:1.8;">
+        StarWarsRPG — Uso Interno<br>
+        HNN-NODE-0047 // ATIVO
+      </p>
+    </div>
+  </footer>
+
+  <!-- ── JSON embutido como fallback se o fetch falhar ── -->
+  <script>
+    // Fallback: dados mínimos caso o fetch de holonet.json falhe em dev local
+    window.__HNN_DATA__ = null; // será substituído se necessário
+  </script>
+
+  <script src="../js/holonet.js"></script>
+
+</body>
+</html>

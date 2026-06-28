@@ -1,0 +1,106 @@
+{
+  "hnn_version": "HNN-7.4.2",
+  "ultima_atualizacao": "Dia 14, Mês 3, Ano 04 ABY",
+  "noticias": [
+    {
+      "id": "HNN-001",
+      "categoria": "URGENTE",
+      "titulo": "Movimento Imperial Detectado no Setor Outer Rim",
+      "subtitulo": "Frotas Imperiais avançam em direção ao sistema Anoat",
+      "corpo": "Fontes rebeldes confirmam movimentação massiva de Destroyers Estelares classe Imperial próximos às rotas comerciais do Outer Rim. Cidadãos são aconselhados a evitar as rotas hiperespaciais dos setores J-7 a K-9 até novo aviso. A Aliança Rebelde emitiu alerta máximo para todas as células ativas.",
+      "fonte": "Correspondente Anônimo - Nar Shaddaa",
+      "data": "Dia 14, Mês 3",
+      "aurebesh_tag": "ᴀᴜʀᴇʙᴇꜱʜ",
+      "tag_aurebesh": "BAATU BAATU",
+      "prioridade": 1,
+      "icone": "⚠"
+    },
+    {
+      "id": "HNN-002",
+      "categoria": "POLÍTICA",
+      "titulo": "Senado Galáctico Debate Novo Tratado de Corusçant",
+      "subtitulo": "Representantes de 400 sistemas se reúnem para negociação de paz",
+      "corpo": "Após semanas de tensão diplomática, representantes dos principais sistemas do núcleo galáctico se reuniram em Coruscant para debater os termos de um possível cessar-fogo. Mon Mothma lidera a delegação da Nova República enquanto representantes imperiais permanecem sem identificação oficial.",
+      "fonte": "HNN - Correspondente Político",
+      "data": "Dia 13, Mês 3",
+      "tag_aurebesh": "HAAT IJA ORU",
+      "prioridade": 2,
+      "icone": "◈"
+    },
+    {
+      "id": "HNN-003",
+      "categoria": "ECONOMIA",
+      "titulo": "Créditos Galácticos em Queda Livre Após Bloqueio Imperial",
+      "subtitulo": "Mercados do Setor Tion registram perdas de 40%",
+      "corpo": "O bloqueio imposto pelo Império às rotas comerciais do setor Tion causou impacto severo nos mercados galácticos. A Câmara de Comércio de Coruscant emite alerta amarelo enquanto especuladores acumulam commodities básicas. Especialistas preveem escassez de tibanna gas nas próximas semanas.",
+      "fonte": "Câmara de Comércio Galáctica",
+      "data": "Dia 12, Mês 3",
+      "tag_aurebesh": "MANDO",
+      "prioridade": 3,
+      "icone": "◇"
+    },
+    {
+      "id": "HNN-004",
+      "categoria": "CONFLITO",
+      "titulo": "Batalha de Jakku: Análise Completa Um Ano Depois",
+      "subtitulo": "O confronto que definiu o fim da Guerra Civil Galáctica",
+      "corpo": "Analistas militares publicam relatório completo sobre a Batalha de Jakku, considerada o conflito decisivo que pôs fim ao Império Galáctico. O relatório detalha táticas utilizadas pela Nova República e confirma a destruição de mais de 2.000 naves imperiais. Os destroços ainda cobrem a superfície do planeta desértico.",
+      "fonte": "Instituto de Estudos Militares de Hosnian Prime",
+      "data": "Dia 11, Mês 3",
+      "tag_aurebesh": "VODE AN",
+      "prioridade": 4,
+      "icone": "◆"
+    },
+    {
+      "id": "HNN-005",
+      "categoria": "TECNOLOGIA",
+      "titulo": "Cloakshape Fighter Modificado Avistado em Nar Shaddaa",
+      "subtitulo": "Engenheiros locais adaptam nave obsoleta com tecnologia furtiva",
+      "corpo": "Mecânicos da Lua das Luas reportam avistamento de uma nave Cloakshape Fighter com modificações extensivas, incluindo sistema de camuflagem avançado e propulsores de íons de última geração. A Guarda de Nar Shaddaa abriu investigação sobre a procedência das modificações e possível conexão com grupos criminosos.",
+      "fonte": "Gazeta de Nar Shaddaa",
+      "data": "Dia 10, Mês 3",
+      "tag_aurebesh": "NAASADE",
+      "prioridade": 5,
+      "icone": "◉"
+    },
+    {
+      "id": "HNN-006",
+      "categoria": "VARIEDADES",
+      "titulo": "Festival das Dunas de Tatooine Atrai Visitantes de Todo o Rim",
+      "subtitulo": "Podracing ilegal volta a ocorrer nos arredores de Mos Espa",
+      "corpo": "O tradicional Festival das Dunas de Tatooine acontece esta semana com atrações de toda a galáxia. Autoridades locais emitem alerta sobre corridas de podracing não sancionadas nos arredores de Mos Espa, que atraem apostadores e pilotos temerários. A Família Hutt, ausente do evento pela primeira vez em décadas, não emitiu comentários.",
+      "fonte": "Repórter Viajante - Tatooine",
+      "data": "Dia 09, Mês 3",
+      "tag_aurebesh": "AKAANIR",
+      "prioridade": 6,
+      "icone": "○"
+    }
+  ],
+  "ticker": [
+    "ALERTA: Zona de exclusão declarada no Setor Anoat",
+    "MERCADOS: Tibanna Gas +23% / Cortosis -8% / Beskar +41%",
+    "CLIMA: Tempestades de areia em Tatooine - setores 4 a 9",
+    "COMUNICADO: Nova República reforça presença na Borda Exterior",
+    "PROCURADO: Caçadores de recompensas buscam contrabandista em Ord Mantell",
+    "ESPORTES: Resultados da Liga de Sabacc de Coruscant - Rodada 7",
+    "AVISO: Rota Kessel temporariamente fechada por atividade pirata",
+    "IMPERIAL: Sobreviventes imperiais reportados em sistemas remotos do Desconhecido"
+  ],
+  "transmissoes_ao_vivo": [
+    {
+      "canal": "HNN-ALPHA",
+      "status": "AO VIVO",
+      "descricao": "Cobertura: Movimentação Imperial - Setor Anoat"
+    },
+    {
+      "canal": "HNN-BETA",
+      "status": "AO VIVO",
+      "descricao": "Sessão do Senado - Tratado de Coruscant"
+    },
+    {
+      "canal": "HNN-GAMA",
+      "status": "GRAVADO",
+      "descricao": "Especial: 1 Ano da Batalha de Jakku"
+    }
+  ]
+}
