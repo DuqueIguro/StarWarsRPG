@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITH_CORE // Matriz de Redirecionamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/escudo.css">
+    <link rel="icon" type="image/x-icon" href="../img/imperio.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="crt-hologram-scan">
+
+    <div class="main-container min-h-screen flex flex-col justify-between p-4 md:p-6">
+
+        <!-- TOP BAR PADRÃO -->
+        <div class="top-bar flex justify-between items-center mb-4">
+            <div class="system-info text-xs md:text-sm">
+                <span>SISTEMA: OVERLORD_SITH_CORE v6.0</span>
+                <span>JURISDIÇÃO: MATRIZ_DE_ROTAS</span>
+            </div>
+            <div class="system-status flex items-center gap-2">
+                <span class="status-indicator online"></span>
+                <span class="text-xs md:text-sm">LINK SEGURO</span>
+            </div>
+        </div>
+
+        <!-- BOTÃO VOLTAR PARA O ESCUDO -->
+        <div class="mb-6">
+            <button class="btn-voltar-imp" onclick="window.location.href='escudo.html'">
+                ◀ RETORNAR AO ESCUDO DO MESTRE
+            </button>
+        </div>
+
+        <!-- CONTEÚDO PRINCIPAL / CATEGORIAS -->
+        <main class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 flex-grow mb-4">
+
+            <!-- CATEGORIA 01: OPERAÇÕES DE JOGADORES -->
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[CORP_01] DATA_SHEETS_PERSONAGENS</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
+                    <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
+                        <p>Terminais de monitoramento e alteração de parâmetros biológicos, perícias, talentos e inventários dos agentes em campo.</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-300">
+                            <li>Ficha Oficial do Personagem</li>
+                            <li>Inventário de Créditos Pessoais</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="window.location.href='../pages/ficha.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Acessar Ficha Principal</button>
+                        <button onclick="window.location.href='../pages/inventario.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Abrir Inventário Core</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CATEGORIA 02: LOGÍSTICA E OFICINA -->
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[CORP_02] LOGÍSTICA_E_MANUFATURA</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
+                    <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
+                        <p>Terminais de controle de maquinário, hangar, ordens de serviço de Lothal, armazenamento de peças de dróides e naves.</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-300">
+                            <li>Inventário Dedicado da Oficina</li>
+                            <li>Ordens de Manutenção e Reparo</li>
+                            <li>Logística de Oficinas Autônomas</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="window.location.href='../pages/invetarioOficina.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Acessar Banco de Peças</button>
+                        <button onclick="window.location.href='../pages/manutencao.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Painel de Manutenção</button>
+                        <button onclick="window.location.href='../pages/oficina.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Matriz da Oficina</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CATEGORIA 03: INTELIGÊNCIA E CRIPTOGRAFIA -->
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[CORP_03] INTELIGÊNCIA_MILITAR</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
+                    <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
+                        <p>Acesso a dados confidenciais de segurança e patentes, dossiês de alta prioridade e mapeamento estratégico de alvos.</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-300">
+                            <li>Diretório de Hierarquias Galácticas</li>
+                            <li>Dossiê Técnico do General Dur'toc</li>
+                            <li>Cartografia de Rotas Estelares</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="window.location.href='../pages/hierarquias.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Matriz de Hierarquias</button>
+                        <button onclick="window.location.href='../pages/durtoc.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Dossiê IMP-994-DT</button>
+                        <button onclick="window.location.href='../pages/mapa_galatico.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Mapeamento de Rotas</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CATEGORIA 04: SUPORTE HOLONET -->
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[CORP_04] REDE_HOLONET_E_CANAIS</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
+                    <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
+                        <p>Sistemas de transmissões abertas e criptografadas para comunicação externa com operadores da Holonet.</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-300">
+                            <li>Central de Comunicações Seguras</li>
+                            <li>Terminais de Alimentação e Hangar</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="window.location.href='../pages/comunicacao.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Canais de Comunicação</button>
+                        <button onclick="window.location.href='../pages/hangar.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Terminal de Combustível</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CATEGORIA 05: ARQUIVOS SUBVERSIVOS -->
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[CORP_05] REPOSITÓRIO_SUBVERSIVO</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
+                    <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
+                        <p>Monitoramento tático de atividades rebeldes interceptadas, mercado negro, inteligência de células locais e dados não-autorizados.</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-300">
+                            <li>Diretório de Células Rebeldes</li>
+                            <li>Relatórios de Transações P2W</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="window.location.href='../pages/rebeldes.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Banco de Dados Rebelde</button>
+                        <button onclick="window.location.href='../pages/p2w.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Terminal Logístico P2W</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BOTTOM BAR PADRÃO -->
+        <div class="bottom-bar flex justify-between items-center mt-2 text-xs md:text-sm">
+            <span>© ABY 04 - ALTO COMANDO IMPERIAL | SUB-DIRETÓRIO TÁTICO</span>
+            <span class="system-time">HORA DO SISTEMA: 00:00:00</span>
+        </div>
+
+    </div>
+
+    <script>
+        // Sincronização do relógio idêntica às outras páginas para consistência
+        (function () {
+            const clockEl = document.querySelector('.system-time');
+            if (clockEl) {
+                function updateClock() {
+                    const now = new Date();
+                    const h = String(now.getHours()).padStart(2, '0');
+                    const m = String(now.getMinutes()).padStart(2, '0');
+                    const s = String(now.getSeconds()).padStart(2, '0');
+                    clockEl.textContent = `HORA DO SISTEMA: ${h}:${m}:${s}`;
+                }
+                updateClock();
+                setInterval(updateClock, 1000);
+            }
+        })();
+    </script>
+</body>
+</html>
