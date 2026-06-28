@@ -8,25 +8,18 @@ StarWarsRPG
 │  ├─ ficha
 │  │  ├─ backup.js
 │  │  └─ script.js
-│  ├─ Oficina
-│  │  └─ oficinaBackup.js
-│  ├─ releases
-│  │  ├─ releases.js
-│  │  └─ releases.json
-│  └─ releses
-│     ├─ bug_fixes.json
-│     ├─ features.json
-│     ├─ patch_notes.json
-│     ├─ releases.css
-│     ├─ releases.html
-│     ├─ releases.js
-│     └─ upcoming_features.json
+│  └─ Oficina
+│     └─ oficinaBackup.js
 ├─ CNAME
 ├─ data
 │  ├─ Aurebesh.woff
 │  ├─ contatosRebeldes.json
 │  ├─ durtoc.json
 │  ├─ holonet.json
+│  ├─ MCMT
+│  │  ├─ droids.json
+│  │  ├─ MCMT.json
+│  │  └─ tripulantes.json
 │  ├─ p2w.json
 │  ├─ planetasSecretos.json
 │  ├─ planetas_database.json
@@ -41,6 +34,7 @@ StarWarsRPG
 │  ├─ astara.png
 │  ├─ astaraLogo.png
 │  ├─ bg.png
+│  ├─ blueprints
 │  ├─ caminho.png
 │  ├─ caminhoLogo.png
 │  ├─ contatoAstara.png
@@ -74,7 +68,15 @@ StarWarsRPG
 │  │  └─ renTaiSol.jpeg
 │  ├─ r2d2.ico
 │  ├─ rebelde.png
-│  └─ sabres.ico
+│  ├─ sabres.ico
+│  └─ tripulantes
+│     ├─ PreFaisca.png
+│     ├─ PreKael.png
+│     ├─ PreLoras.png
+│     ├─ PreRenn.png
+│     ├─ PreSara.png
+│     ├─ PreVasctor.png
+│     └─ PreZarek.png
 ├─ index.html
 ├─ js
 │  ├─ backupFicha.js
@@ -94,6 +96,7 @@ StarWarsRPG
 │  ├─ manutencao.js
 │  ├─ mapaSecreto.js
 │  ├─ mapa_galatico.js
+│  ├─ MCMT.js
 │  ├─ organizacoes.js
 │  ├─ p2w.js
 │  ├─ rebeldes.js
@@ -126,6 +129,7 @@ StarWarsRPG
 │     └─ OS-14-SIG-002.json
 ├─ pages
 │  ├─ comunicacao.html
+│  ├─ droids.html
 │  ├─ durtoc.html
 │  ├─ ficha.html
 │  ├─ hangar.html
@@ -141,7 +145,8 @@ StarWarsRPG
 │  ├─ oficina.html
 │  ├─ p2w.html
 │  ├─ rebeldes.html
-│  └─ selecaoRebelde.html
+│  ├─ selecaoRebelde.html
+│  └─ tripulantes.html
 ├─ README.md
 ├─ rebeldes
 │  ├─ astara.html
@@ -163,6 +168,7 @@ StarWarsRPG
    ├─ inventario.css
    ├─ manutencao.css
    ├─ mapa_galatico.css
+   ├─ MCMT.css
    ├─ oficina.css
    ├─ organizacoes.css
    ├─ p2w.css
