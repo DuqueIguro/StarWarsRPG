@@ -24,7 +24,7 @@
         "nome": "Suprimento de Campo: Arsenal do Explorador",
         "preco": "40,00",
         "restricao": "Compra única por jogador",
-        "destaque": false,
+        "destaque": true,
         "estatisticas": [
             { "prop": "+2d10 de Vida Máxima", "icon": "❤️" },
             { "prop": "+2d8 de Dano Permanente", "icon": "⚔️" }

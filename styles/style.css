@@ -279,6 +279,127 @@ h1 {
 .data-status.ok { background-color: #5cb85c; }
 .data-status.warning { background-color: #f0ad4e; }
 
+/* ======== PAINEL DE ALERTA IMPERIAL ======== */
+
+.imperial-alert-panel {
+    background: rgba(139, 0, 0, 0.25);
+    border: 1px solid #d9534f;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(217, 83, 79, 0.15);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s;
+}
+
+.imperial-alert-panel:hover {
+    transform: scale(1.01);
+    box-shadow: 0 0 25px rgba(217, 83, 79, 0.4);
+    border-color: #ff4d4d;
+    background: rgba(139, 0, 0, 0.35);
+}
+
+.imperial-header {
+    color: #ff4d4d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #d9534f;
+    font-size: 1.2em;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.imperial-header i {
+    color: #ff4d4d;
+    text-shadow: 0 0 8px rgba(255, 77, 77, 0.8);
+    margin-right: 10px;
+}
+
+.imperial-id {
+    font-size: 0.8em;
+    color: #a7b0c2;
+    font-family: monospace;
+}
+
+.imperial-description {
+    font-size: 0.9em;
+    color: #e6c2c2;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.imperial-description strong {
+    color: #ffffff;
+    background-color: #d9534f;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.imperial-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.access-text {
+    font-size: 0.85em;
+    color: #ff4d4d;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+}
+
+.imperial-alert-panel:hover .access-text {
+    color: #ffffff;
+    text-shadow: 0 0 5px #ff4d4d;
+}
+
+/* Animações de Alerta */
+.danger-pulse {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #d9534f;
+    box-shadow: 0 0 0 rgba(217, 83, 79, 0.7);
+    animation: pulse-danger 1.5s infinite;
+}
+
+@keyframes pulse-danger {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(217, 83, 79, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(217, 83, 79, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(217, 83, 79, 0);
+    }
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        opacity: 0.3;
+    }
+}
+
+.animate-flicker {
+    animation: flicker 3s infinite;
+}
+
 /* ======== LOG DE ATIVIDADES (ESTILO FINAL) ======== */
 
 @keyframes scanline {
