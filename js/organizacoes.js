@@ -41,7 +41,15 @@ function renderizarInterface(data) {
         document.getElementById("containerMissoes").classList.add("hidden");
         document.getElementById("panelLider").classList.add("hidden");
         document.getElementById("panelAgentes").classList.add("hidden");
-        document.getElementById("btnToggleSidebar").classList.add("hidden");
+
+        // Substitui o botão de logística por um placeholder invisível para manter o título centralizado
+        const btnSidebar = document.getElementById("btnToggleSidebar");
+        btnSidebar.classList.add("hidden");
+        const placeholder = document.createElement("div");
+        placeholder.style.cssText = btnSidebar.getBoundingClientRect().width
+            ? `width:${btnSidebar.getBoundingClientRect().width}px; visibility:hidden;`
+            : `width: 160px; visibility:hidden;`;
+        btnSidebar.parentNode.insertBefore(placeholder, btnSidebar);
 
         // Colapsa a coluna direita para layout de coluna unica
         const colunaDir = document.querySelector(".right-column");
@@ -49,9 +57,24 @@ function renderizarInterface(data) {
         const gridDash = document.querySelector(".grid-dashboard");
         if (gridDash) gridDash.style.gridTemplateColumns = "1fr";
 
-        // Ativa e renderiza as rotas estruturadas + agentes
+        // Ativa e renderiza as rotas estruturadas + inventário expansível + agentes
         const containerRotas = document.getElementById("containerRotas");
         containerRotas.classList.remove("hidden");
+
+        const inventarioHTML = data.inventario && data.inventario.itens ? `
+            <div class="panel-section" style="margin-top: 1.5rem;">
+                <button class="btn-open-sidebar" onclick="toggleInventarioCaminho(this)"
+                    style="width:100%; text-align:left; margin-bottom:0;">
+                    INVENTÁRIO / RECURSOS ▶
+                </button>
+                <div id="inventarioCaminhoConteudo" class="hidden" style="padding: 1rem 0.5rem;">
+                    <h4 style="color:var(--color-cyan, #00e5ff); margin-bottom:0.5rem;">SUPRIMENTOS E RECURSOS</h4>
+                    <ul>
+                        ${data.inventario.itens.map(i => `<li>📦 ${i}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        ` : '';
 
         const agentesHTML = data.agentes && data.agentes.length > 0 ? `
             <div class="panel-section" style="margin-top: 1.5rem;">
@@ -84,6 +107,7 @@ function renderizarInterface(data) {
                     </div>
                 `).join('')}
             </div>
+            ${inventarioHTML}
             ${agentesHTML}
         `;
     } else {
@@ -121,6 +145,13 @@ function mudarAbaMissao(evt, statusMissao) {
     } else {
         box.innerHTML = `<ul class="mission-ul">${lista.map(m => `<li>🛰️ ${m}</li>`).join('')}</ul>`;
     }
+}
+
+function toggleInventarioCaminho(btn) {
+    const conteudo = document.getElementById("inventarioCaminhoConteudo");
+    const aberto = !conteudo.classList.contains("hidden");
+    conteudo.classList.toggle("hidden");
+    btn.textContent = aberto ? "INVENTÁRIO / RECURSOS ▶" : "INVENTÁRIO / RECURSOS ▼";
 }
 
 function toggleSidebar() {
