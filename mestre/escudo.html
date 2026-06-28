@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITH_CORE // Escudo do Mestre v6.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/escudo.css">
+    <link rel="icon" type="image/x-icon" href="../img/imperio.png">
+</head>
+<body class="crt-hologram-scan">
+
+    <div class="main-container min-h-screen flex flex-col justify-between p-4 md:p-6">
+        
+        <div class="top-bar flex justify-between items-center mb-4">
+            <div class="system-info text-xs md:text-sm">
+                <span>SISTEMA: OVERLORD_SITH_CORE v6.0</span>
+                <span>USUÁRIO: MESTRE_SUPREMO</span>
+            </div>
+            <div class="system-status flex items-center gap-2">
+                <span class="status-indicator online"></span>
+                <span class="text-xs md:text-sm">ONLINE</span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <button class="btn-voltar-imp" onclick="window.location.href='https://starwars.duqueiguro.xyz/'">
+                ◀ Criptografar Terminal
+            </button>
+        </div>
+
+        <main class="grid grid-cols-1 xl:grid-cols-3 gap-6 flex-grow mb-4">
+            
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[01] ROLADOR_DE_DADOS_MATRICIAL</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex flex-col gap-1 text-xs">
+                            <label class="font-bold tracking-wider text-red-400">QTD DADOS</label>
+                            <div class="flex border border-red-600 bg-black">
+                                <button type="button" class="w-10 py-1 font-bold text-white bg-red-950 hover:bg-red-700" onclick="changeQty(-1)">-</button>
+                                <input type="number" id="dice-qty" value="1" min="1" max="30" class="w-full text-center bg-black text-white border-none font-mono" readonly>
+                                <button type="button" class="w-10 py-1 font-bold text-white bg-red-950 hover:bg-red-700" onclick="changeQty(1)">+</button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1 text-xs">
+                            <label class="font-bold tracking-wider text-red-400">SOMA / MOD</label>
+                            <input type="number" id="dice-modifier" value="0" class="w-full p-1.5 bg-black text-white border border-red-600 font-mono text-center">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button id="mode-normal" class="mode-cyber-btn active flex-1 py-1 text-xs tracking-wider" onclick="setRollMode('normal')">NORMAL</button>
+                        <button id="mode-advantage" class="mode-cyber-btn flex-1 py-1 text-xs tracking-wider" onclick="setRollMode('advantage')">VANTAGEM</button>
+                        <button id="mode-disadvantage" class="mode-cyber-btn flex-1 py-1 text-xs tracking-wider" onclick="setRollMode('disadvantage')">DESVANTAGEM</button>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2">
+                        <button class="die-btn-cyber text-sm font-bold p-2" onclick="triggerComplexRoll(4)">D4</button>
+                        <button class="die-btn-cyber text-sm font-bold p-2" onclick="triggerComplexRoll(6)">D6</button>
+                        <button class="die-btn-cyber text-sm font-bold p-2" onclick="triggerComplexRoll(8)">D8</button>
+                        <button class="die-btn-cyber text-sm font-bold p-2" onclick="triggerComplexRoll(10)">D10</button>
+                        <button class="die-btn-cyber text-sm font-bold p-2" onclick="triggerComplexRoll(12)">D12</button>
+                        <button class="die-btn-cyber text-sm font-bold p-2" onclick="triggerComplexRoll(20)">D20</button>
+                        <button class="die-btn-cyber text-sm font-bold p-2" onclick="triggerComplexRoll(100)">D100</button>
+                    </div>
+
+                    <div class="hud-display-container bg-black border border-dashed border-red-600 p-4 text-center">
+                        <div id="hud-total" class="text-5xl font-bold text-white tracking-widest">--</div>
+                        <div id="hud-breakdown" class="text-xxs opacity-60 mt-1 font-mono">Aguardando telemetria...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[02] DATALOG_DE_TELEMETRIA</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-3 h-full overflow-hidden">
+                    <div id="console-stream" class="terminal-stream-box bg-black/90 border border-red-600 p-3 flex-grow overflow-y-auto font-mono text-xs">
+                        <p class="system-boot-string text-gray-500">>> Holonet Core estabelecido. Carregando diretrizes de combate...</p>
+                    </div>
+                    <button onclick="purgeLogs()" class="btn-wipe-action w-full py-1.5 text-xs font-mono border border-red-900 text-red-400 hover:bg-red-950 transition">LIMPAR LOGS TERMINAL</button>
+                </div>
+            </section>
+
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[03] MONITOR_DE_COMBATE_ATIVO</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-3 h-full overflow-hidden">
+                    <div class="grid grid-cols-12 gap-1">
+                        <input type="text" id="combat-name" placeholder="ID Alvo" class="col-span-5 bg-black border border-red-600 text-white p-1 text-xs font-mono">
+                        <input type="number" id="combat-init" placeholder="Inic" class="col-span-3 bg-black border border-red-600 text-white p-1 text-xs font-mono">
+                        <input type="number" id="combat-hp" placeholder="HP" class="col-span-3 bg-black border border-red-600 text-white p-1 text-xs font-mono">
+                        <button onclick="addNewCombatant()" class="col-span-1 bg-red-600 text-black font-bold text-sm hover:bg-red-500">+</button>
+                    </div>
+                    <div id="combat-tracker-rows" class="tracker-stream-box bg-black/90 border border-red-600 p-2 flex-grow overflow-y-auto text-xs font-mono">
+                        </div>
+                    <button onclick="executeInitiativeSort()" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">ORDENAR MATRIZ INICIATIVA</button>
+                </div>
+            </section>
+
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[04] BANCO_DE_DADOS_REGRAS</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-3 h-full overflow-hidden">
+                    <div class="flex gap-1">
+                        <button class="tab-cyber-btn active flex-1 py-1.5 text-xs font-bold" onclick="toggleDatabaseTab('tab-cd')">CDs</button>
+                        <button class="tab-cyber-btn flex-1 py-1.5 text-xs font-bold" onclick="toggleDatabaseTab('tab-states')">ESTADOS</button>
+                        <button class="tab-cyber-btn flex-1 py-1.5 text-xs font-bold" onclick="toggleDatabaseTab('tab-cover')">COBERTURA</button>
+                    </div>
+                    <div id="tab-data-box" class="tab-data-stream-box bg-black/90 border border-red-600 p-3 flex-grow overflow-y-auto text-xs font-mono">
+                        </div>
+                </div>
+            </section>
+
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[05] GERADOR_DE_IDENTIDADE_GALÁCTICA</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-3 justify-between h-full">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold tracking-wider text-red-400">DIRETÓRIO DE ESPÉCIES:</label>
+                        <select id="npc-species-select" class="w-full bg-black border border-red-600 text-white p-2 font-mono text-xs rounded-none focus:outline-none focus:border-red-400">
+                            <option value="humano">Humano</option>
+                            <option value="twilek">Twi'lek</option>
+                            <option value="rodiano">Rodiano</option>
+                            <option value="wookiee">Wookiee</option>
+                            <option value="bothan">Bothan</option>
+                            <option value="sullustano">Sullustano</option>
+                        </select>
+                    </div>
+                    <button onclick="triggerNpcGeneration()" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">DECRIPTAR DESIGNAÇÃO</button>
+                    <div id="npc-identity-output" class="identity-terminal-box bg-black border border-red-600 p-4 text-center text-sm font-bold text-white font-mono uppercase tracking-widest">
+                        Aguardando requisição...
+                    </div>
+                </div>
+            </section>
+
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[06] DIRETÓRIO_DE_NOTAS_CRIPTOGRAFADAS</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-3 h-full overflow-hidden">
+                    <textarea id="notes-text-area" class="w-full bg-black border border-red-600 text-white p-3 font-mono text-xs flex-grow focus:outline-none resize-none" placeholder="Transmita dados táticos cruciais... (Cookies sync ativo)"></textarea>
+                    <div class="flex gap-2">
+                        <button onclick="triggerPDFExport()" class="btn-prime-cyber flex-grow py-2 text-xs font-bold uppercase tracking-wider">EXPORTAR LOG SESSÃO (PDF)</button>
+                        <button onclick="wipeNotesCookie()" class="btn-wipe-action px-3 py-2 text-xs font-bold border border-red-900 text-red-400 hover:bg-red-950 transition">WIPE</button>
+                    </div>
+                    <span id="cookie-status-indicator" class="text-center font-mono opacity-50 tracking-wide" style="font-size: 0.65rem;">Módulo sincronizado com Cookies Locais.</span>
+                </div>
+            </section>
+
+        </main>
+
+        <div class="bottom-bar flex justify-between items-center mt-2 text-xs md:text-sm">
+            <span>© ABY 04 - FROTA ESTELAR LOCAL | IMPERIAL COMMAND SETOR</span>
+            <span class="system-time">HORA DO SISTEMA: 00:00:00</span>
+        </div>
+
+    </div>
+
+    <script src="../js/escudo.js"></script>
+    <script>
+        // Sistema de relógio em tempo real integrado idêntico ao comunicacao.html
+        (function () {
+            const clockEl = document.querySelector('.system-time');
+            if (clockEl) {
+                function updateClock() {
+                    const now = new Date();
+                    const h = String(now.getHours()).padStart(2, '0');
+                    const m = String(now.getMinutes()).padStart(2, '0');
+                    const s = String(now.getSeconds()).padStart(2, '0');
+                    clockEl.textContent = `HORA DO SISTEMA: ${h}:${m}:${s}`;
+                }
+                updateClock();
+                setInterval(updateClock, 1000);
+            }
+        })();
+    </script>
+</body>
+</html>

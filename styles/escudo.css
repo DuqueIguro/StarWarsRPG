@@ -1,0 +1,154 @@
+:root {
+    --bg-cyber-black: #060101;
+    --bg-imperial-dark: #140202;
+    --bg-panel-dark: #0c0202;
+    --color-imperial-red: #ff1a1a;
+    --color-sith-neon: #ff0000;
+    --glow-matrix: rgba(255, 0, 0, 0.65);
+    --text-hologram: #ffcccc;
+    --font-tactical: 'Orbitron', Arial, sans-serif;
+    --font-data: 'Roboto Mono', monospace;
+}
+
+body {
+    background-color: var(--bg-cyber-black);
+    color: var(--text-hologram);
+    font-family: var(--font-data);
+    letter-spacing: 0.5px;
+}
+
+/* Camada Holográfica de Varredura Estilo hierarquias.css */
+.crt-hologram-scan::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+    z-index: 9999;
+    opacity: 0.9;
+    pointer-events: none;
+    background-size: 100% 4px, 6px 100%;
+}
+
+/* Painéis de Comando Rígidos (Como em durtoc.css / hirarquiaImperio.css) */
+.tactical-panel {
+    background: radial-gradient(circle at top left, var(--bg-imperial-dark) 0%, var(--bg-panel-dark) 100%);
+    border: 1px solid var(--color-imperial-red);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.15);
+}
+
+.tactical-panel-title {
+    margin: 0;
+    background-color: var(--color-imperial-red);
+    color: #000;
+    padding: 6px 12px;
+    font-family: var(--font-tactical);
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Botões Customizados Baseados no Layout Imperial */
+.mode-cyber-btn {
+    background: transparent;
+    border: 1px solid var(--color-imperial-red);
+    color: var(--text-hologram);
+    font-family: var(--font-tactical);
+    transition: all 0.2s ease;
+}
+.mode-cyber-btn.active, .mode-cyber-btn:hover {
+    background-color: var(--color-imperial-red);
+    color: #000;
+    font-weight: bold;
+    box-shadow: 0 0 10px var(--color-sith-neon);
+}
+
+.die-btn-cyber {
+    background: #1f0303;
+    border: 1px solid var(--color-imperial-red);
+    color: #fff;
+    font-family: var(--font-tactical);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.die-btn-cyber:hover {
+    background-color: var(--color-imperial-red);
+    color: #000;
+    box-shadow: 0 0 12px var(--color-sith-neon);
+}
+
+.btn-prime-cyber {
+    background: transparent;
+    border: 1px solid var(--color-imperial-red);
+    color: #fff;
+    font-family: var(--font-tactical);
+    transition: all 0.2s ease;
+}
+.btn-prime-cyber:hover {
+    background: var(--color-imperial-red);
+    color: #000;
+    box-shadow: 0 0 12px var(--color-sith-neon);
+}
+
+/* Displays e Streams */
+.hud-main-result {
+    text-shadow: 0 0 15px var(--color-sith-neon);
+}
+.hud-main-result.roll-glitch-active {
+    animation: resultGlitchAnim 0.12s infinite alternate;
+}
+
+.log-row-stream {
+    border-left: 2px solid var(--color-imperial-red);
+    padding-left: 8px;
+    margin: 8px 0;
+}
+
+.combat-row-hud {
+    display: grid;
+    grid-template-columns: 5fr 3fr 3fr 1fr;
+    gap: 6px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.15);
+    padding: 6px 0;
+}
+
+/* Abas e Tabelas */
+.tab-cyber-btn {
+    background: #1a0202;
+    border: 1px solid var(--color-imperial-red);
+    color: #fff;
+    font-family: var(--font-tactical);
+}
+.tab-cyber-btn.active {
+    background: var(--color-imperial-red);
+    color: #000;
+}
+
+.cyber-matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.cyber-matrix-table td, .cyber-matrix-table th {
+    padding: 6px;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.15);
+    text-align: left;
+}
+
+/* Animações */
+@keyframes resultGlitchAnim {
+    0% { transform: scale(0.97) skewX(-4deg); color: #ff5555; }
+    100% { transform: scale(1.03) skewX(4deg); color: #fff; }
+}
+
+/* Regra Dinâmica para Impressão e Conversão PDF Limpa */
+@media print {
+    body * { visibility: hidden; background: none; box-shadow: none; }
+    .tactical-panel, #notes-text-area, #notes-text-area * { visibility: visible; }
+    #notes-text-area {
+        position: absolute; left: 0; top: 0; width: 100%; height: auto;
+        border: none; color: #000; background: transparent; font-size: 12pt;
+    }
+    .notes-button-row, .tactical-panel-title, #cookie-status-indicator, .top-bar, .bottom-bar, .btn-voltar-imp { display: none !important; }
+}

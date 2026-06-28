@@ -26,6 +26,7 @@ StarWarsRPG
 │  ├─ Aurebesh.woff
 │  ├─ contatosRebeldes.json
 │  ├─ durtoc.json
+│  ├─ holonet.json
 │  ├─ p2w.json
 │  ├─ planetas_database.json
 │  └─ senhasRebeldes.json
@@ -81,10 +82,12 @@ StarWarsRPG
 │  ├─ dadosTamanhosFicha.js
 │  ├─ databaseInventario.js
 │  ├─ durtoc.js
+│  ├─ escudo.js
 │  ├─ ficha.js
 │  ├─ hangar.js
 │  ├─ hierarquiaGerais.js
 │  ├─ hierarquiaImperio.js
+│  ├─ holonet.js
 │  ├─ inventario.js
 │  ├─ inventarioOficina.js
 │  ├─ manutencao.js
@@ -93,6 +96,9 @@ StarWarsRPG
 │  ├─ p2w.js
 │  ├─ rebeldes.js
 │  └─ selecaoRebelde.js
+├─ mestre
+│  ├─ escudo.html
+│  └─ redirecionamentos.html
 ├─ oficina
 │  ├─ database
 │  │  ├─ modeloOS.json
@@ -124,6 +130,7 @@ StarWarsRPG
 │  ├─ hierarquiaGerais.html
 │  ├─ hierarquiaImperio.html
 │  ├─ hierarquias.html
+│  ├─ holonet.html
 │  ├─ inventario.html
 │  ├─ invetarioOficina.html
 │  ├─ manutencao.html
@@ -142,12 +149,14 @@ StarWarsRPG
    ├─ 404.css
    ├─ comunicacao.css
    ├─ durtoc.css
+   ├─ escudo.css
    ├─ ficha.css
    ├─ fornecedores.css
    ├─ hangar.css
    ├─ hierarquiaGeral.css
    ├─ hierarquias.css
    ├─ hirarquiaImperio.css
+   ├─ holonet.css
    ├─ inventario.css
    ├─ manutencao.css
    ├─ mapa_galatico.css
