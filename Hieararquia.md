@@ -28,6 +28,7 @@ StarWarsRPG
 │  ├─ durtoc.json
 │  ├─ holonet.json
 │  ├─ p2w.json
+│  ├─ planetasSecretos.json
 │  ├─ planetas_database.json
 │  └─ senhasRebeldes.json
 ├─ hangar
@@ -91,6 +92,7 @@ StarWarsRPG
 │  ├─ inventario.js
 │  ├─ inventarioOficina.js
 │  ├─ manutencao.js
+│  ├─ mapaSecreto.js
 │  ├─ mapa_galatico.js
 │  ├─ organizacoes.js
 │  ├─ p2w.js
@@ -134,6 +136,7 @@ StarWarsRPG
 │  ├─ inventario.html
 │  ├─ invetarioOficina.html
 │  ├─ manutencao.html
+│  ├─ mapaSecreto.html
 │  ├─ mapa_galatico.html
 │  ├─ oficina.html
 │  ├─ p2w.html
