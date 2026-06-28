@@ -1,0 +1,232 @@
+/* Carregando a fonte Aurebesh do seu projeto */
+@font-face {
+    font-family: 'Aurebesh';
+    src: url('../data/Aurebesh.woff') format('woff');
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+:root {
+    --rebel-color: #00bcff;
+    --rebel-glow: rgba(0, 188, 255, 0.4);
+    --empire-color: #ff003c;
+    --empire-glow: rgba(255, 0, 60, 0.4);
+    --bg-dark: #050811;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    font-family: 'Orbitron', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    color: #ffffff;
+}
+
+/* Camada Holográfica de Linhas de Varredura (Scanlines) */
+.hologram-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 4px, 6px 100%;
+    z-index: 10;
+    pointer-events: none;
+    animation: hologramFlicker 0.15s infinite;
+}
+
+/* Container Principal dividido ao meio */
+.selection-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* Base de cada lado (links gigantes) */
+.faction-side {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.content {
+    z-index: 5;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 450px;
+    transform: scale(0.95);
+    transition: transform 0.5s ease;
+}
+
+/* Logos das facções com filtro para parecer holograma */
+.faction-logo {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 1.5rem;
+    transition: transform 0.5s ease;
+}
+
+.faction-title {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+}
+
+/* Escritas em Aurebesh */
+.aurebesh-text {
+    font-family: 'Aurebesh', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.description {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+    font-weight: 300;
+}
+
+/* Botões Estilo Terminal */
+.terminal-btn {
+    border: 1px solid;
+    padding: 10px 25px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+/* --- COSTUMIZAÇÃO DO LADO REBELDE --- */
+.rebel-side {
+    background: radial-gradient(ellipse at bottom left, rgba(0, 188, 255, 0.15), transparent 70%);
+    color: var(--rebel-color);
+}
+
+.rebel-side .faction-title {
+    text-shadow: 0 0 10px var(--rebel-color), 0 0 20px var(--rebel-glow);
+}
+
+.rebel-side .faction-logo {
+    filter: drop-shadow(0 0 15px var(--rebel-glow)) drop-shadow(0 0 2px var(--rebel-color));
+}
+
+.rebel-side .terminal-btn {
+    border-color: var(--rebel-color);
+    color: var(--rebel-color);
+    box-shadow: 0 0 10px var(--rebel-glow);
+}
+
+/* --- COSTUMIZAÇÃO DO LADO IMPERIAL --- */
+.empire-side {
+    background: radial-gradient(ellipse at bottom right, rgba(255, 0, 60, 0.12), transparent 70%);
+    color: var(--empire-color);
+}
+
+.empire-side .faction-title {
+    text-shadow: 0 0 10px var(--empire-color), 0 0 20px var(--empire-glow);
+}
+
+.empire-side .faction-logo {
+    filter: drop-shadow(0 0 15px var(--empire-glow)) drop-shadow(0 0 2px var(--empire-color));
+}
+
+.empire-side .terminal-btn {
+    border-color: var(--empire-color);
+    color: var(--empire-color);
+    box-shadow: 0 0 10px var(--empire-glow);
+}
+
+/* --- EFEITOS DE HOVER (INTERATIVIDADE) --- */
+
+/* Quando passa o mouse no lado Rebelde */
+.rebel-side:hover {
+    flex: 1.2;
+    background: radial-gradient(ellipse at center, rgba(0, 188, 255, 0.25), transparent 60%);
+    box-shadow: inset 0 0 50px rgba(0, 188, 255, 0.2);
+}
+
+.rebel-side:hover .content {
+    transform: scale(1);
+}
+
+.rebel-side:hover .faction-logo {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.rebel-side:hover .terminal-btn {
+    background: var(--rebel-color);
+    color: #000;
+    box-shadow: 0 0 20px var(--rebel-color);
+}
+
+/* Quando passa o mouse no lado Imperial */
+.empire-side:hover {
+    flex: 1.2;
+    background: radial-gradient(ellipse at center, rgba(255, 0, 60, 0.22), transparent 60%);
+    box-shadow: inset 0 0 50px rgba(255, 0, 60, 0.2);
+}
+
+.empire-side:hover .content {
+    transform: scale(1);
+}
+
+.empire-side:hover .faction-logo {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.empire-side:hover .terminal-btn {
+    background: var(--empire-color);
+    color: #000;
+    box-shadow: 0 0 20px var(--empire-color);
+}
+
+/* Animação de instabilidade do holograma (Flicker) */
+@keyframes hologramFlicker {
+    0% {
+        opacity: 0.98;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.99;
+    }
+}
+
+/* Responsividade simples se abrir em telas menores */
+@media (max-width: 768px) {
+    .selection-container {
+        flex-direction: column;
+    }
+
+    .faction-side:hover {
+        flex: 1.5;
+    }
+}

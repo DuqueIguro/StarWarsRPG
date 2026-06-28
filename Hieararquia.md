@@ -64,6 +64,12 @@ StarWarsRPG
 │  ├─ orion.png
 │  ├─ orionLogo.png
 │  ├─ p2w.png
+│  ├─ personagens
+│  │  ├─ dravos.jpeg
+│  │  ├─ keiranJinn.jpeg
+│  │  ├─ lihua.jpeg
+│  │  ├─ rapinFloo.jpeg
+│  │  └─ renTaiSol.jpeg
 │  ├─ r2d2.ico
 │  ├─ rebelde.png
 │  └─ sabres.ico
@@ -117,6 +123,7 @@ StarWarsRPG
 │  ├─ hangar.html
 │  ├─ hierarquiaGerais.html
 │  ├─ hierarquiaImperio.html
+│  ├─ hierarquias.html
 │  ├─ inventario.html
 │  ├─ invetarioOficina.html
 │  ├─ manutencao.html
@@ -139,6 +146,7 @@ StarWarsRPG
    ├─ fornecedores.css
    ├─ hangar.css
    ├─ hierarquiaGeral.css
+   ├─ hierarquias.css
    ├─ hirarquiaImperio.css
    ├─ inventario.css
    ├─ manutencao.css
