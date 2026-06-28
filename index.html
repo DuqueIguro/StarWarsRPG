@@ -209,6 +209,115 @@
 
     </div>
 
+    <!-- ======== EFEITOS DE TERMINAL ======== -->
+    <script>
+    (function() {
+
+        /* ---- Relógio real no rodapé ---- */
+        const clockEl = document.querySelector('.system-time');
+        if (clockEl) {
+            function updateClock() {
+                const now = new Date();
+                const h = String(now.getHours()).padStart(2, '0');
+                const m = String(now.getMinutes()).padStart(2, '0');
+                const s = String(now.getSeconds()).padStart(2, '0');
+                clockEl.textContent = `HORA DO SISTEMA: ${h}:${m}:${s}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        /* ---- Efeito de digitação no log ---- */
+        const logContent = document.querySelector('.log-content');
+        if (logContent) {
+            const lines = Array.from(logContent.querySelectorAll('p'));
+            const classes = lines.map(p => p.className);
+            const texts  = lines.map(p => p.textContent.trim());
+
+            // Limpa e esconde tudo
+            logContent.innerHTML = '';
+
+            // Adiciona cursor
+            const cursor = document.createElement('span');
+            cursor.className = 'log-cursor';
+            logContent.appendChild(cursor);
+
+            let lineIndex = 0;
+
+            function typeLine() {
+                if (lineIndex >= texts.length) {
+                    // Deixa cursor piscando no final
+                    logContent.appendChild(cursor);
+                    // Rola para o final
+                    logContent.scrollTop = logContent.scrollHeight;
+                    return;
+                }
+
+                const p = document.createElement('p');
+                if (classes[lineIndex]) p.className = classes[lineIndex];
+
+                const text = texts[lineIndex];
+                logContent.insertBefore(p, cursor);
+
+                let charIndex = 0;
+                const speed = 18; // ms por caractere
+
+                function typeChar() {
+                    if (charIndex < text.length) {
+                        p.textContent += text[charIndex];
+                        charIndex++;
+                        logContent.scrollTop = logContent.scrollHeight;
+                        setTimeout(typeChar, speed);
+                    } else {
+                        lineIndex++;
+                        // Pausa entre linhas
+                        const pause = lineIndex < texts.length ? 280 : 500;
+                        setTimeout(typeLine, pause);
+                    }
+                }
+                typeChar();
+            }
+
+            // Começa após pequeno delay de boot
+            setTimeout(typeLine, 600);
+        }
+
+        /* ---- Glitch ocasional no título ---- */
+        const h1 = document.querySelector('h1');
+        if (h1) {
+            // Guarda o texto sem o ícone para o data-text
+            h1.setAttribute('data-text', h1.textContent.trim());
+
+            function triggerGlitch() {
+                h1.classList.add('glitch-active');
+                setTimeout(() => h1.classList.remove('glitch-active'), 200);
+
+                // Agenda próximo glitch: entre 4s e 14s
+                const next = 4000 + Math.random() * 10000;
+                setTimeout(triggerGlitch, next);
+            }
+
+            // Primeiro glitch após 3s
+            setTimeout(triggerGlitch, 3000);
+        }
+
+        /* ---- Glitch rápido de pixel no container (noise) ---- */
+        const container = document.querySelector('.main-container');
+        if (container) {
+            function triggerNoise() {
+                container.style.transform = `translateX(${(Math.random()-0.5)*1.5}px)`;
+                setTimeout(() => {
+                    container.style.transform = '';
+                }, 80);
+                const next = 6000 + Math.random() * 12000;
+                setTimeout(triggerNoise, next);
+            }
+            setTimeout(triggerNoise, 5000);
+        }
+
+    })();
+    </script>
+
 </body>
 
 </html>

@@ -799,3 +799,221 @@ h1>i,
         grid-template-columns: 1fr;
     }
 }
+
+/* ================================================================
+   EFEITOS DE TERMINAL
+   ================================================================ */
+
+/* ---- Scanlines globais sobre o container ---- */
+.main-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.main-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.08) 3px,
+        rgba(0, 0, 0, 0.08) 4px
+    );
+    animation: scanlines-drift 12s linear infinite;
+}
+
+@keyframes scanlines-drift {
+    0%   { background-position: 0 0; }
+    100% { background-position: 0 100px; }
+}
+
+/* ---- Vinheta de brilho nas bordas (CRT) ---- */
+.main-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 60%,
+        rgba(0, 0, 0, 0.45) 100%
+    );
+}
+
+/* ---- Glitch no título principal ---- */
+h1 {
+    position: relative;
+}
+
+h1.glitch-active::before,
+h1.glitch-active::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    font-size: inherit;
+    font-family: inherit;
+    letter-spacing: inherit;
+    border: none;
+}
+
+h1.glitch-active::before {
+    color: var(--tech-cyan);
+    clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%);
+    transform: translateX(-3px);
+    opacity: 0.8;
+    animation: glitch-slice-1 0.15s steps(1) forwards;
+}
+
+h1.glitch-active::after {
+    color: var(--imp-crimson);
+    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+    transform: translateX(3px);
+    opacity: 0.8;
+    animation: glitch-slice-2 0.15s steps(1) forwards;
+}
+
+@keyframes glitch-slice-1 {
+    0%   { transform: translateX(-3px); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); }
+    33%  { transform: translateX(2px);  clip-path: polygon(0 55%, 100% 55%, 100% 65%, 0 65%); }
+    66%  { transform: translateX(-1px); clip-path: polygon(0 5%,  100% 5%,  100% 15%, 0 15%); }
+    100% { transform: translateX(0);    opacity: 0; }
+}
+
+@keyframes glitch-slice-2 {
+    0%   { transform: translateX(3px);  clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+    33%  { transform: translateX(-2px); clip-path: polygon(0 30%, 100% 30%, 100% 45%, 0 45%); }
+    66%  { transform: translateX(1px);  clip-path: polygon(0 75%, 100% 75%, 100% 90%, 0 90%); }
+    100% { transform: translateX(0);    opacity: 0; }
+}
+
+/* ---- Pulso nos indicadores online/mission ---- */
+.status-indicator.online {
+    animation: pulse-online 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-online {
+    0%, 100% { box-shadow: 0 0 6px var(--tech-cyan); }
+    50%       { box-shadow: 0 0 18px var(--tech-cyan), 0 0 30px rgba(0, 255, 255, 0.4); }
+}
+
+.status-indicator.mission {
+    animation: pulse-mission 2s ease-in-out infinite;
+}
+
+@keyframes pulse-mission {
+    0%, 100% { box-shadow: 0 0 5px #f0ad4e; }
+    50%       { box-shadow: 0 0 16px #f0ad4e, 0 0 25px rgba(240, 173, 78, 0.4); }
+}
+
+/* ---- Energia pulsando na borda do painel imperial ---- */
+@keyframes imperial-border-pulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(217, 83, 79, 0.2),
+                    inset 0 0 20px rgba(139, 0, 0, 0.05);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(255, 77, 77, 0.5),
+                    0 0 80px rgba(217, 83, 79, 0.2),
+                    inset 0 0 30px rgba(139, 0, 0, 0.15);
+    }
+}
+
+.imperial-alert-panel {
+    animation: imperial-border-pulse 3s ease-in-out infinite;
+}
+
+.imperial-alert-panel:hover {
+    animation: none;
+}
+
+/* ---- Cursor piscante no log ---- */
+.log-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background-color: var(--tech-cyan);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink-cursor 1s step-end infinite;
+}
+
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+
+/* ---- Linha do log sendo "digitada" ---- */
+.log-line-typing {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid var(--tech-cyan);
+    animation: typing-line 0.4s steps(30) forwards,
+               blink-caret 0.8s step-end 3;
+    width: 0;
+}
+
+@keyframes typing-line {
+    from { width: 0; }
+    to   { width: 100%; }
+}
+
+@keyframes blink-caret {
+    0%, 100% { border-color: var(--tech-cyan); }
+    50%       { border-color: transparent; }
+}
+
+/* ---- Noise/ruído no fundo do container ---- */
+@keyframes noise-shift {
+    0%   { transform: translate(0,    0);    }
+    10%  { transform: translate(-1px, 1px);  }
+    20%  { transform: translate(1px,  -1px); }
+    30%  { transform: translate(-2px, 0);    }
+    40%  { transform: translate(2px,  1px);  }
+    50%  { transform: translate(0,    -1px); }
+    60%  { transform: translate(1px,  2px);  }
+    70%  { transform: translate(-1px, -2px); }
+    80%  { transform: translate(2px,  0);    }
+    90%  { transform: translate(-2px, 1px);  }
+    100% { transform: translate(0,    0);    }
+}
+
+/* ---- Barra de progresso pulsando ---- */
+.progress-bar {
+    animation: bar-glow 3s ease-in-out infinite;
+}
+
+@keyframes bar-glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(0, 170, 255, 0.6); }
+    50%       { box-shadow: 0 0 20px rgba(0, 255, 255, 0.9), 0 0 35px rgba(0, 170, 255, 0.4); }
+}
+
+.progress-bar.warning {
+    animation: bar-glow-warning 2.5s ease-in-out infinite;
+}
+
+@keyframes bar-glow-warning {
+    0%, 100% { box-shadow: 0 0 8px rgba(240, 173, 78, 0.6); }
+    50%       { box-shadow: 0 0 20px rgba(240, 173, 78, 0.9), 0 0 35px rgba(240, 173, 78, 0.4); }
+}
+
+/* ---- Glitch rápido ocasional nos cards ---- */
+@keyframes card-glitch {
+    0%   { transform: translateY(-4px) translateX(0);   }
+    20%  { transform: translateY(-4px) translateX(-2px) skewX(-1deg); }
+    40%  { transform: translateY(-4px) translateX(2px)  skewX(1deg);  }
+    60%  { transform: translateY(-4px) translateX(-1px); }
+    80%  { transform: translateY(-4px) translateX(1px);  }
+    100% { transform: translateY(-4px) translateX(0);   }
+}
+
+.module-card:hover {
+    animation: card-glitch 0.3s steps(1) 1;
+}
