@@ -46,7 +46,8 @@
                     <div class="card-content">
                         <p class="contact-name">Ueli Shihoin</p>
                         <p class="card-description">
-                            Para dúvidas sobre a campanha, regras, desenvolvimento de personagem ou problemas intergalácticos, este é o seu canal direto. O tempo de resposta é de até 3 dias úteis.
+                            Para dúvidas sobre a campanha, regras, desenvolvimento de personagem ou problemas
+                            intergalácticos, este é o seu canal direto. O tempo de resposta é de até 3 dias úteis.
                         </p>
                         <div class="contact-info">
                             <i class="fa-brands fa-discord"></i>
@@ -55,7 +56,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="https://discord.com" target="_blank" rel="noopener" class="access-button">ABRIR CANAL</a>
+                        <a href="https://discord.com" target="_blank" rel="noopener" class="access-button">ABRIR
+                            CANAL</a>
                         <span class="data-status ok"></span>
                     </div>
                 </div>
@@ -68,7 +70,8 @@
                     <div class="card-content">
                         <p class="contact-name">DuqueIguro</p>
                         <p class="card-description">
-                            Responsável pela arquitetura e manutenção dos sistemas deste terminal. Contate para relatar bugs, sugerir novas funcionalidades ou discutir tecnologias antigas da República.
+                            Responsável pela arquitetura e manutenção dos sistemas deste terminal. Contate para relatar
+                            bugs, sugerir novas funcionalidades ou discutir tecnologias antigas da República.
                         </p>
                         <div class="contact-info-group">
                             <div class="contact-info">
@@ -84,11 +87,12 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="https://github.com/DuqueIguro" target="_blank" rel="noopener" class="access-button">VER PERFIL</a>
+                        <a href="https://github.com/DuqueIguro" target="_blank" rel="noopener" class="access-button">VER
+                            PERFIL</a>
                         <span class="data-status ok"></span>
                     </div>
                 </div>
-                
+
                 <div class="module-card">
                     <div class="card-header">
                         <span><i class="fa-solid fa-wrench"></i>DESENVOLVEDOR SECUNDÁRIO</span>
@@ -97,7 +101,8 @@
                     <div class="card-content">
                         <p class="contact-name">Eidenfox</p>
                         <p class="card-description">
-                            Focado no desenvolvimento de interface e experiência do usuário. Contate para feedback visual, problemas de usabilidade ou sugestões de design.
+                            Focado no desenvolvimento de interface e experiência do usuário. Contate para feedback
+                            visual, problemas de usabilidade ou sugestões de design.
                         </p>
                         <div class="contact-info-group">
                             <div class="contact-info">
@@ -113,8 +118,33 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="https://github.com/Eidenfox" target="_blank" rel="noopener" class="access-button">VER PERFIL</a>
+                        <a href="https://github.com/Eidenfox" target="_blank" rel="noopener" class="access-button">VER
+                            PERFIL</a>
                         <span class="data-status ok"></span>
+                    </div>
+                </div>
+
+                <div class="module-card">
+                    <div class="card-header">
+                        <span><i class="fa-solid fa-robot"></i>IA CHEFE</span>
+                        <span class="module-id">#UNIDADE-IA</span>
+                    </div>
+                    <div class="card-content">
+                        <p class="contact-name">Clude</p>
+                        <p class="card-description">
+                            Inteligência artificial avançada para suporte e automação de tarefas. Disponível para
+                            consultas, geração de conteúdo e assistência em tempo real.
+                        </p>
+                        <div class="contact-info">
+                            <i class="fa-solid fa-terminal"></i>
+                            <span>Acesso:</span>
+                            <span class="contact-value">Terminal de Prompt</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://claude.ai" target="_blank" rel="noopener" class="access-button">INICIAR
+                            PROMPT</a>
+                        <span class="data-status mission"></span>
                     </div>
                 </div>
 
@@ -126,7 +156,8 @@
                     <div class="card-content">
                         <p class="contact-name">Gemini</p>
                         <p class="card-description">
-                           Unidade de IA auxiliar no desenvolvimento e processamento de dados. Disponível para consultas e assistência via interface de prompt de comando.
+                            Unidade de IA auxiliar no desenvolvimento e processamento de dados. Disponível para
+                            consultas e assistência via interface de prompt de comando.
                         </p>
                         <div class="contact-info">
                             <i class="fa-solid fa-terminal"></i>
@@ -135,7 +166,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="https://gemini.google.com" target="_blank" rel="noopener" class="access-button">INICIAR PROMPT</a>
+                        <a href="https://gemini.google.com" target="_blank" rel="noopener" class="access-button">INICIAR
+                            PROMPT</a>
                         <span class="data-status mission"></span>
                     </div>
                 </div>
@@ -151,5 +183,26 @@
     </div>
 
 </body>
+
+<!-- ======== EFEITOS DE TERMINAL ======== -->
+<script>
+    (function () {
+
+        /* ---- Relógio real no rodapé ---- */
+        const clockEl = document.querySelector('.system-time');
+        if (clockEl) {
+            function updateClock() {
+                const now = new Date();
+                const h = String(now.getHours()).padStart(2, '0');
+                const m = String(now.getMinutes()).padStart(2, '0');
+                const s = String(now.getSeconds()).padStart(2, '0');
+                clockEl.textContent = `HORA DO SISTEMA: ${h}:${m}:${s}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+    })();
+</script>
 
 </html>
