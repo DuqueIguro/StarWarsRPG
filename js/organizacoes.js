@@ -37,20 +37,40 @@ function renderizarInterface(data) {
     document.getElementById("fotoContatoEmergencia").src = data.foto_emergencia;
 
     if (data.isOculta) {
-        // "O Caminho": Esconde os blocos convencionais
+        // "O Caminho": Esconde os blocos convencionais e a coluna direita vazia
         document.getElementById("containerMissoes").classList.add("hidden");
         document.getElementById("panelLider").classList.add("hidden");
         document.getElementById("panelAgentes").classList.add("hidden");
         document.getElementById("btnToggleSidebar").classList.add("hidden");
 
-        // Ativa e renderiza as rotas estruturadas
+        // Colapsa a coluna direita para layout de coluna unica
+        const colunaDir = document.querySelector(".right-column");
+        if (colunaDir) colunaDir.classList.add("hidden");
+        const gridDash = document.querySelector(".grid-dashboard");
+        if (gridDash) gridDash.style.gridTemplateColumns = "1fr";
+
+        // Ativa e renderiza as rotas estruturadas + agentes
         const containerRotas = document.getElementById("containerRotas");
         containerRotas.classList.remove("hidden");
+
+        const agentesHTML = data.agentes && data.agentes.length > 0 ? `
+            <div class="panel-section" style="margin-top: 1.5rem;">
+                <h3>AGENTES REGISTADOS</h3>
+                <ul class="agents-list">
+                    ${data.agentes.map(a => `
+                        <li class="agent-item">
+                            <img src="${a.foto}" alt="${a.nome}" class="contact-mini-img">
+                            <div><strong>${a.nome}</strong> - <span>${a.cargo}</span></div>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        ` : '';
 
         const listaRotas = document.getElementById("listaRotas");
         listaRotas.innerHTML = `
             <div class="caminho-profile border-neon">
-                <img src="${data.lider.foto}" alt="Líder do Caminho">
+                <img src="${data.lider.foto}" alt="Lider do Caminho">
                 <div class="caminho-desc">
                     <h4>REDE OCULTA DE FUGA</h4>
                     <p><strong>Operadora Principal:</strong> ${data.contato_emergencia}</p>
@@ -64,6 +84,7 @@ function renderizarInterface(data) {
                     </div>
                 `).join('')}
             </div>
+            ${agentesHTML}
         `;
     } else {
         // Estrutura padrão para as outras 3 organizações (Astara, Massassi, Orion)
