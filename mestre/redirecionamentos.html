@@ -15,125 +15,123 @@
 
     <div class="main-container min-h-screen flex flex-col justify-between p-4 md:p-6">
 
-        <!-- TOP BAR PADRÃO -->
+        <!-- TOP BAR PADRÃO DO PROJETO -->
         <div class="top-bar flex justify-between items-center mb-4">
             <div class="system-info text-xs md:text-sm">
                 <span>SISTEMA: OVERLORD_SITH_CORE v6.0</span>
-                <span>JURISDIÇÃO: MATRIZ_DE_ROTAS</span>
+                <span>JURISDIÇÃO: REDIRECIONAMENTO_GLOBAL</span>
             </div>
             <div class="system-status flex items-center gap-2">
                 <span class="status-indicator online"></span>
-                <span class="text-xs md:text-sm">LINK SEGURO</span>
+                <span class="text-xs md:text-sm">HOLONET_LINK: ATIVO</span>
             </div>
         </div>
 
         <!-- BOTÃO VOLTAR PARA O ESCUDO -->
         <div class="mb-6">
-            <button class="btn-voltar-imp" onclick="window.location.href='escudo.html'">
+            <button class="btn-voltar-imp" onclick="window.location.href='escudo'">
                 ◀ RETORNAR AO ESCUDO DO MESTRE
             </button>
         </div>
 
-        <!-- CONTEÚDO PRINCIPAL / CATEGORIAS -->
+        <!-- GRADE DE CATEGORIAS -->
         <main class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 flex-grow mb-4">
 
-            <!-- CATEGORIA 01: OPERAÇÕES DE JOGADORES -->
+            <!-- CATEGORIA 01: FLUXO CORE & RECURSOS -->
             <section class="tactical-panel flex flex-col">
-                <h2 class="tactical-panel-title">[CORP_01] DATA_SHEETS_PERSONAGENS</h2>
+                <h2 class="tactical-panel-title">[REDIREC_01] DIRETÓRIO_CORE_SISTEMA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Terminais de monitoramento e alteração de parâmetros biológicos, perícias, talentos e inventários dos agentes em campo.</p>
+                        <p>Acesso aos nós de dados principais da infraestrutura galáctica, incluindo o índice raiz, mapas de hiperespaço e logs de transações.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
-                            <li>Ficha Oficial do Personagem</li>
-                            <li>Inventário de Créditos Pessoais</li>
+                            <li>Index Raiz do Sistema</li>
+                            <li>Gerenciador de Inventário Geral</li>
+                            <li>Logística de Suprimentos P2W</li>
+                            <li>Cartografia Tática de Sistemas</li>
+                            <li>Malha de Transmissões Holonet</li>
                         </ul>
                     </div>
                     <div class="flex flex-col gap-2">
-                        <button onclick="window.location.href='../pages/ficha.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Acessar Ficha Principal</button>
-                        <button onclick="window.location.href='../pages/inventario.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Abrir Inventário Core</button>
+                        <button onclick="window.location.href='https://starwars.duqueiguro.xyz/'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Raiz Inicial (Index)</button>
+                        <button onclick="window.location.href='../pages/inventario'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Inventário Geral</button>
+                        <button onclick="window.location.href='../pages/p2w'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Logística P2W</button>
+                        <button onclick="window.location.href='../pages/mapa_galatico'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Mapa Galáctico</button>
+                        <button onclick="window.location.href='../pages/holonet'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Canal Holonet</button>
                     </div>
                 </div>
             </section>
 
-            <!-- CATEGORIA 02: LOGÍSTICA E OFICINA -->
+            <!-- CATEGORIA 02: DIRETÓRIO DE PATENTES E CADEIA DE COMANDO -->
             <section class="tactical-panel flex flex-col">
-                <h2 class="tactical-panel-title">[CORP_02] LOGÍSTICA_E_MANUFATURA</h2>
+                <h2 class="tactical-panel-title">[REDIREC_02] CADEIA_DE_COMANDO</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Terminais de controle de maquinário, hangar, ordens de serviço de Lothal, armazenamento de peças de dróides e naves.</p>
+                        <p>Nós de rede dedicados ao mapeamento de patentes, postos e hierarquias de ambas as forças militares ativas no setor.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
-                            <li>Inventário Dedicado da Oficina</li>
-                            <li>Ordens de Manutenção e Reparo</li>
-                            <li>Logística de Oficinas Autônomas</li>
+                            <li>Terminal de Seleção de Facção</li>
+                            <li>Cadeia de Comando Imperial</li>
+                            <li>Organização de Infantaria Rebelde</li>
                         </ul>
                     </div>
                     <div class="flex flex-col gap-2">
-                        <button onclick="window.location.href='../pages/invetarioOficina.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Acessar Banco de Peças</button>
-                        <button onclick="window.location.href='../pages/manutencao.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Painel de Manutenção</button>
-                        <button onclick="window.location.href='../pages/oficina.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Matriz da Oficina</button>
+                        <button onclick="window.location.href='../pages/hierarquias'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquias (Seleção)</button>
+                        <button onclick="window.location.href='../pages/hierarquiaImperio'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquia Império</button>
+                        <button onclick="window.location.href='../pages/hierarquiaGerais'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquia Aliança</button>
                     </div>
                 </div>
             </section>
 
-            <!-- CATEGORIA 03: INTELIGÊNCIA E CRIPTOGRAFIA -->
+            <!-- CATEGORIA 03: INFRAESTRUTURA DA OFICINA E LOGÍSTICA -->
             <section class="tactical-panel flex flex-col">
-                <h2 class="tactical-panel-title">[CORP_03] INTELIGÊNCIA_MILITAR</h2>
+                <h2 class="tactical-panel-title">[REDIREC_03] REGISTROS_DE_ENGENHARIA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Acesso a dados confidenciais de segurança e patentes, dossiês de alta prioridade e mapeamento estratégico de alvos.</p>
+                        <p>Dossiê biográfico e canais industriais do complexo automatizado de Lothal e do hangar de reparos sob o comando do General Dur'toc.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
-                            <li>Diretório de Hierarquias Galácticas</li>
-                            <li>Dossiê Técnico do General Dur'toc</li>
-                            <li>Cartografia de Rotas Estelares</li>
+                            <li>Perfil Biométrico IMP-994-DT</li>
+                            <li>Terminal de Manufatura da Oficina</li>
+                            <li>Manifestos de Fornecedores Cadastrados</li>
+                            <li>Controle de Combustível e Hangar Autorizado</li>
                         </ul>
                     </div>
                     <div class="flex flex-col gap-2">
-                        <button onclick="window.location.href='../pages/hierarquias.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Matriz de Hierarquias</button>
-                        <button onclick="window.location.href='../pages/durtoc.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Dossiê IMP-994-DT</button>
-                        <button onclick="window.location.href='../pages/mapa_galatico.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Mapeamento de Rotas</button>
+                        <button onclick="window.location.href='../pages/durtoc'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Dossiê Dur'toc</button>
+                        <button onclick="window.location.href='../pages/oficina'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Matriz da Oficina</button>
+                        <button onclick="window.location.href='../oficina/fornecedores'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Fábricas e Fornecedores</button>
+                        <button onclick="window.location.href='../hangar/hangarAutorizado'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hangar Autorizado</button>
                     </div>
                 </div>
             </section>
 
-            <!-- CATEGORIA 04: SUPORTE HOLONET -->
+            <!-- CATEGORIA 04: CÉLULAS E REDES DA RESISTÊNCIA -->
             <section class="tactical-panel flex flex-col">
-                <h2 class="tactical-panel-title">[CORP_04] REDE_HOLONET_E_CANAIS</h2>
+                <h2 class="tactical-panel-title">[REDIREC_04] REDES_DE_INSURGÊNCIA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Sistemas de transmissões abertas e criptografadas para comunicação externa com operadores da Holonet.</p>
+                        <p>Interceptação de dados e canais dedicados às células operacionais da Aliança Rebelde monitoradas no setor de Lothal.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
-                            <li>Central de Comunicações Seguras</li>
-                            <li>Terminais de Alimentação e Hangar</li>
+                            <li>Banco Geral de Rebeldes</li>
+                            <li>Seleção de Células de Insurgência</li>
+                            <li>Célula Astara</li>
+                            <li>Célula Orion</li>
+                            <li>Célula Massassi</li>
+                            <li>Célula Caminho</li>
                         </ul>
                     </div>
-                    <div class="flex flex-col gap-2">
-                        <button onclick="window.location.href='../pages/comunicacao.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Canais de Comunicação</button>
-                        <button onclick="window.location.href='../pages/hangar.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Terminal de Combustível</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CATEGORIA 05: ARQUIVOS SUBVERSIVOS -->
-            <section class="tactical-panel flex flex-col">
-                <h2 class="tactical-panel-title">[CORP_05] REPOSITÓRIO_SUBVERSIVO</h2>
-                <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
-                    <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Monitoramento tático de atividades rebeldes interceptadas, mercado negro, inteligência de células locais e dados não-autorizados.</p>
-                        <ul class="list-disc list-inside space-y-1 text-red-300">
-                            <li>Diretório de Células Rebeldes</li>
-                            <li>Relatórios de Transações P2W</li>
-                        </ul>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <button onclick="window.location.href='../pages/rebeldes.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Banco de Dados Rebelde</button>
-                        <button onclick="window.location.href='../pages/p2w.html'" class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">Terminal Logístico P2W</button>
+                    <div class="flex flex-col grid grid-cols-2 gap-2">
+                        <button onclick="window.location.href='../pages/rebeldes'" class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Banco de Dados Rebelde</button>
+                        <button onclick="window.location.href='../pages/selecaoRebelde'" class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Seleção de Células</button>
+                        <button onclick="window.location.href='../rebeldes/astara'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Astara</button>
+                        <button onclick="window.location.href='../rebeldes/orion'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Orion</button>
+                        <button onclick="window.location.href='../rebeldes/massassi'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Massassi</button>
+                        <button onclick="window.location.href='../rebeldes/caminho'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Caminho</button>
                     </div>
                 </div>
             </section>
 
         </main>
 
-        <!-- BOTTOM BAR PADRÃO -->
+        <!-- BOTTOM BAR PADRÃO DO PROJETO -->
         <div class="bottom-bar flex justify-between items-center mt-2 text-xs md:text-sm">
             <span>© ABY 04 - ALTO COMANDO IMPERIAL | SUB-DIRETÓRIO TÁTICO</span>
             <span class="system-time">HORA DO SISTEMA: 00:00:00</span>
@@ -142,7 +140,7 @@
     </div>
 
     <script>
-        // Sincronização do relógio idêntica às outras páginas para consistência
+        // Sincronização do relógio idêntica ao padrão do seu repositório
         (function () {
             const clockEl = document.querySelector('.system-time');
             if (clockEl) {
