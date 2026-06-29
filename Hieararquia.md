@@ -8,6 +8,7 @@ StarWarsRPG
 │  ├─ ficha
 │  │  ├─ backup.js
 │  │  └─ script.js
+│  ├─ holonetBackup.json
 │  └─ Oficina
 │     └─ oficinaBackup.js
 ├─ CNAME
@@ -42,6 +43,11 @@ StarWarsRPG
 │  ├─ astaraLogo.png
 │  ├─ bg.png
 │  ├─ blueprints
+│  │  ├─ Bruto.png
+│  │  ├─ Comboio.png
+│  │  ├─ Tino.png
+│  │  ├─ Vok.png
+│  │  └─ zunido.png
 │  ├─ caminho.png
 │  ├─ caminhoLogo.png
 │  ├─ contatoAstara.png
@@ -118,6 +124,7 @@ StarWarsRPG
 │  │  ├─ OS-04-COR-001.json
 │  │  ├─ OS-04-UND-001.json
 │  │  └─ siglasLocalidade.json
+│  ├─ droids.html
 │  ├─ fornecedores
 │  │  ├─ fornecedores.js
 │  │  └─ fornecedores.json
@@ -131,13 +138,13 @@ StarWarsRPG
 │  │  ├─ OS-14-JAK-001.json
 │  │  ├─ OS-14-OFI-001.json
 │  │  └─ OS-14-OFI-002.json
-│  └─ ordens_sigilosas
-│     ├─ OS-04-UND-001.json
-│     ├─ OS-14-SIG-001.json
-│     └─ OS-14-SIG-002.json
+│  ├─ ordens_sigilosas
+│  │  ├─ OS-04-UND-001.json
+│  │  ├─ OS-14-SIG-001.json
+│  │  └─ OS-14-SIG-002.json
+│  └─ tripulantes.html
 ├─ pages
 │  ├─ comunicacao.html
-│  ├─ droids.html
 │  ├─ durtoc.html
 │  ├─ ficha.html
 │  ├─ hangar.html
@@ -153,8 +160,7 @@ StarWarsRPG
 │  ├─ oficina.html
 │  ├─ p2w.html
 │  ├─ rebeldes.html
-│  ├─ selecaoRebelde.html
-│  └─ tripulantes.html
+│  └─ selecaoRebelde.html
 ├─ README.md
 ├─ rebeldes
 │  ├─ astara.html

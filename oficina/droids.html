@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Droids Operacionais — MCMT</title>
+  <link rel="icon" href="../img/droid.ico" />
+  <link rel="stylesheet" href="../styles/MCMT.css" />
+</head>
+<body>
+
+  <!-- Aurebesh watermark background -->
+  <div class="aurebesh-bg" aria-hidden="true"></div>
+
+  <!-- ── HEADER ─────────────────────────────────────────── -->
+  <header class="mcmt-header">
+    <div class="logo">
+      <span class="logo-aurebesh">EGM</span>
+      <span>A Engrenagem Mestra · IMC14427G</span>
+    </div>
+    <nav aria-label="Navegação MCMT">
+      <ul class="mcmt-nav">
+        <li><a href="../pages/durtoc">Comandante</a></li>
+        <li><a href="../oficina/tripulantes">Tripulação</a></li>
+        <li><a href="../oficina/droids" class="active">Droids</a></li>
+        <li><a href="../pages/hangar">Hangar</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ── MAIN ───────────────────────────────────────────── -->
+  <main class="mcmt-wrapper">
+
+    <!-- Hero -->
+    <div class="mcmt-hero">
+      <p class="hero-eyebrow"><span>&#9670;</span> Registro de Unidades — Automação de Bordo</p>
+      <h1>Droids Operacionais</h1>
+      <p class="hero-sub">
+        Unidades customizadas e modificadas por Dur'toc. Cada dróide
+        é uma extensão de sua filosofia: função absoluta, sem
+        componentes desnecessários.
+      </p>
+      <div class="hero-meta">
+        <span class="reg-num">IMC14427G</span>
+        CLASSE: CRUZADOR CARGUEIRO DE REPAROS<br />
+        UNIDADES ATIVAS: 4 · OFFLINE: 1
+      </div>
+    </div>
+
+    <!-- Grid de droids -->
+    <div class="section-header">
+      <span class="section-tag">&#9670;</span>
+      <h2>Unidades Registradas</h2>
+    </div>
+
+    <div class="cards-grid" id="droids-grid">
+
+      <!-- R5-T1N — Tino -->
+      <article class="mcmt-card" onclick="MCMT.open(DROIDS.tino)" tabindex="0" aria-label="Abrir ficha de R5-T1N Tino">
+        <div class="card-img-wrap">
+          <img src="../img/blueprints/Tino.png" alt="Tino — R5-T1N" loading="lazy" />
+          <span class="card-status">ATIVO</span>
+        </div>
+        <div class="card-body">
+          <p class="card-designation">R5-T1N</p>
+          <h2 class="card-name">Tino</h2>
+          <p class="card-alias">Assistente Principal</p>
+          <p class="card-role">Piloto Secundário / Engenheiro Assistente</p>
+        </div>
+      </article>
+
+      <!-- C3-V0K — Vok -->
+      <article class="mcmt-card" onclick="MCMT.open(DROIDS.vok)" tabindex="0" aria-label="Abrir ficha de C3-V0K Vok">
+        <div class="card-img-wrap">
+          <img src="../img/blueprints/Vok.png" alt="Vok — C3-V0K" loading="lazy" />
+          <span class="card-status">ATIVO</span>
+        </div>
+        <div class="card-body">
+          <p class="card-designation">C3-V0K</p>
+          <h2 class="card-name">Vok</h2>
+          <p class="card-alias">Protocolo</p>
+          <p class="card-role">Comunicações e Tradução</p>
+        </div>
+      </article>
+
+      <!-- USM-07 — Comboio -->
+      <article class="mcmt-card" onclick="MCMT.open(DROIDS.comboio)" tabindex="0" aria-label="Abrir ficha de USM-07 Comboio">
+        <div class="card-img-wrap">
+          <img src="../img/blueprints/Comboio.png" alt="Comboio — USM-07" loading="lazy" />
+          <span class="card-status">ATIVO</span>
+        </div>
+        <div class="card-body">
+          <p class="card-designation">USM-07</p>
+          <h2 class="card-name">Comboio</h2>
+          <p class="card-alias">Logística Leve</p>
+          <p class="card-role">Suporte Modular / Transporte Interno</p>
+        </div>
+      </article>
+
+      <!-- CL-R — Bruto -->
+      <article class="mcmt-card" onclick="MCMT.open(DROIDS.bruto)" tabindex="0" aria-label="Abrir ficha de CL-R Bruto">
+        <div class="card-img-wrap">
+          <img src="../img/blueprints/Bruto.png" alt="Bruto — CL-R" loading="lazy" />
+          <span class="card-status offline">STANDBY</span>
+        </div>
+        <div class="card-body">
+          <p class="card-designation">CL-R</p>
+          <h2 class="card-name">Bruto</h2>
+          <p class="card-alias">Logística Pesada</p>
+          <p class="card-role">Cargueiro de Levantamento Robusto</p>
+        </div>
+      </article>
+
+      <!-- Zunido -->
+      <article class="mcmt-card" onclick="MCMT.open(DROIDS.zunido)" tabindex="0" aria-label="Abrir ficha de Zunido">
+        <div class="card-img-wrap">
+          <img src="../img/blueprints/zunido.png" alt="Zunido — Droid Integrado" loading="lazy" />
+          <span class="card-status">INTEGRADO</span>
+        </div>
+        <div class="card-body">
+          <p class="card-designation">ASTROMEC. INTEGRADO</p>
+          <h2 class="card-name">Zunido</h2>
+          <p class="card-alias">Sistema Nervoso do Cinzel</p>
+          <p class="card-role">Computador de Voo / Co-piloto do Cinzel</p>
+        </div>
+      </article>
+
+    </div><!-- /cards-grid -->
+
+  </main>
+
+  <!-- ── FOOTER ──────────────────────────────────────────── -->
+  <footer class="mcmt-footer">
+    <span>A Brigada das Catracas</span>
+    <span class="footer-aurebesh">EGM · IMC14427G</span>
+    <span>Dur'toc · Comandante</span>
+  </footer>
+
+  <!-- ── MODAL ───────────────────────────────────────────── -->
+  <div class="mcmt-modal-overlay" id="mcmt-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="mcmt-modal">
+      <div class="modal-close">
+        <button onclick="MCMT.close()" aria-label="Fechar">&#x2715; FECHAR</button>
+      </div>
+      <div class="modal-inner">
+        <div class="modal-img-col">
+          <img id="modal-img" src="" alt="" />
+        </div>
+        <div class="modal-content-col">
+          <p class="modal-eyebrow" id="modal-eyebrow"></p>
+          <h2 class="modal-title" id="modal-title"></h2>
+          <p class="modal-subtitle" id="modal-subtitle"></p>
+          <div id="modal-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DADOS DOS DROIDS ────────────────────────────────── -->
+  <script src="droids.js"></script>
+
+  <script src="../js/MCMT.js"></script>
+</body>
+</html>
