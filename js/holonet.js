@@ -32,17 +32,30 @@ const HNN = (() => {
   ];
 
   /* ─── Inicialização ─── */
+  const HOLONET_CATEGORY_FILES = [
+    'UrgenteNews.json',
+    'PoliticaNews.json',
+    'EconomiaNews.json',
+    'ConflitoNews.json',
+    'TecnologiaNews.json',
+    'VariedadesNews.json'
+  ];
+
   async function init() {
     try {
       const resp = await fetch('../data/holonet.json');
       dados = await resp.json();
-      if (dados?.noticias) {
-        dados.noticias.sort((a, b) => Number(a.id) - Number(b.id));
-      }
-      window.__HNN_DATA__ = dados;
     } catch (e) {
-      dados = window.__HNN_DATA__ || null;
+      dados = window.__HNN_DATA__ || {};
     }
+
+    await carregarNoticiasDasCategorias();
+
+    if (!Array.isArray(dados.noticias)) {
+      dados.noticias = [];
+    }
+    window.__HNN_DATA__ = dados;
+
     renderHeader();
     renderNav();
     renderNoticias();
@@ -51,6 +64,21 @@ const HNN = (() => {
     renderTicker();
     iniciarRelogio();
     initModal();
+  }
+
+  async function carregarNoticiasDasCategorias() {
+    const promises = HOLONET_CATEGORY_FILES.map(filename => {
+      return fetch(`../data/holonet/${filename}`)
+        .then(resp => resp.ok ? resp.json() : null)
+        .catch(() => null);
+    });
+
+    const resultados = await Promise.all(promises);
+    const noticiasCarregadas = resultados
+      .filter(Boolean)
+      .flatMap(file => Array.isArray(file.noticias) ? file.noticias : []);
+
+    dados.noticias = noticiasCarregadas.sort((a, b) => Number(a.id) - Number(b.id));
   }
 
   /* ─── Ticker ─── */
