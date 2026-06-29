@@ -36,24 +36,18 @@ const HNN = (() => {
     try {
       const resp = await fetch('../data/holonet.json');
       dados = await resp.json();
+      window.__HNN_DATA__ = dados; // <--- ADICIONE ESTA LINHA AQUI!
     } catch (e) {
-      // fallback: usa dados embutidos se o fetch falhar (desenvolvimento local)
       dados = window.__HNN_DATA__ || null;
     }
-
-    if (!dados) {
-      console.error('[HNN] Falha ao carregar holonet.json');
-      return;
-    }
-
-    renderTicker();
     renderHeader();
     renderNav();
     renderNoticias();
     renderSidebar();
     renderFooter();
-    initModal();
+    renderTicker();
     iniciarRelogio();
+    initModal();
   }
 
   /* ─── Ticker ─── */
