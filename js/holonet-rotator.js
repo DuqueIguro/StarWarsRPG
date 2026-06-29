@@ -5,63 +5,51 @@
 
 // Configurações do Rotador
 const ROTATOR_CONFIG = {
-  intervaloSegundos: 10, // Altere aqui o tempo de troca (X segundos)
-  pausarNoModal: true    // Pausa a rotação se o modal de detalhes estiver aberto
+  intervaloSegundos: 5, // Altere aqui o tempo de troca (X segundos)
+  pausarNoModal: false    // Pausa a rotação se o modal de detalhes estiver aberto
 };
 
 let rotatorInterval = null;
 let noticiaAtualId = null;
 
+function getNoticiasAtivas() {
+  const dadosGerais = window.__HNN_DATA__;
+  if (!dadosGerais || !dadosGerais.noticias) return [];
+
+  const categoriaAtiva = document.querySelector('.hnn-nav-btn.active')?.dataset.cat || 'TODOS';
+  const lista = categoriaAtiva === 'TODOS'
+    ? [...dadosGerais.noticias]
+    : dadosGerais.noticias.filter(n => n.categoria === categoriaAtiva);
+
+  return lista.sort((a, b) => Number(a.id) - Number(b.id));
+}
+
 /**
  * Avança para a próxima notícia com base nas regras de filtro atuais do HNN
  */
 function alternarNoticiaPrincipal() {
-  // 1. Verifica se o modal está aberto (se configurado para pausar)
   if (ROTATOR_CONFIG.pausarNoModal) {
     const modalOverlay = document.getElementById('hnn-modal-overlay');
     if (modalOverlay && modalOverlay.classList.contains('open')) {
-      return; // Ignora o tick se o usuário estiver lendo uma notícia
+      return;
     }
   }
 
-  // Accessa os dados e estado de forma segura através do escopo global/DOM se necessário,
-  // mas como o 'dados' e 'filtroAtivo' estão privados dentro do HNN, vamos capturar as notícias
-  // diretamente da lista que o holonet.js usa ou re-filtrando do elemento pai.
-  // Para manter a elegância, simulamos a mesma lógica de filtro buscando do DOM ou mapeando IDs.
-  
-  // Como os dados originais estão no escopo do fetch, a forma mais limpa e integrada
-  // sem quebrar o encapsulamento do seu código original é interceptar ou ler do DOM.
-  // Vamos ler os IDs das notícias que estão atualmente na Grid + a que está no Destaque.
-  
-  const cardsNoticias = document.querySelectorAll('.hnn-news-card');
+  const noticiasAtivas = getNoticiasAtivas();
+  if (noticiasAtivas.length <= 1) return;
+
   const cardDestaque = document.querySelector('.hnn-featured-card');
-  
-  if (!cardDestaque) return; // Se não tem destaque renderizado, não faz nada
+  const idAtual = cardDestaque?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1] || noticiaAtualId;
+  const indiceAtual = noticiasAtivas.findIndex(n => n.id === idAtual);
+  const proximoIndice = indiceAtual >= 0
+    ? (indiceAtual + 1) % noticiasAtivas.length
+    : 0;
 
-  // Captura o ID atual do destaque através do atributo onclick (ex: HNN.abrirModal('HNN-001'))
-  const matchIdAtual = cardDestaque.getAttribute('onclick')?.match(/'([^']+)'/);
-  if (matchIdAtual) {
-    noticiaAtualId = matchIdAtual[1];
-  }
+  const proximaNoticia = noticiasAtivas[proximoIndice];
+  if (!proximaNoticia) return;
 
-  // Lista para onde podemos rotacionar (Destaque atual + itens da Grid)
-  let listaIdsDisponiveis = [];
-  if (noticiaAtualId) listaIdsDisponiveis.push(noticiaAtualId);
-  
-  cardsNoticias.forEach(card => {
-    const match = card.getAttribute('onclick')?.match(/'([^']+)'/);
-    if (match) listaIdsDisponiveis.push(match[1]);
-  });
-
-  if (listaIdsDisponiveis.length <= 1) return; // Sem outras notícias para rotacionar neste filtro
-
-  // Encontra o índice da notícia atual e define a próxima
-  let indiceAtual = listaIdsDisponiveis.indexOf(noticiaAtualId);
-  let proximoIndice = (indiceAtual + 1) % listaIdsDisponiveis.length;
-  let proximoId = listaIdsDisponiveis[proximoIndice];
-
-  // Modifica temporariamente a renderização da notícia em destaque de forma suave
-  atualizarDestaquePeloId(proximoId);
+  noticiaAtualId = proximaNoticia.id;
+  atualizarDestaquePeloId(proximaNoticia.id);
 }
 
 /**

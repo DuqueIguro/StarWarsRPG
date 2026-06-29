@@ -1,0 +1,54 @@
+﻿{
+  "hnn_version": "HNN-7.4.2",
+  "ultima_atualizacao": "Dia 14, Mês 3, Ano 04 ABY",
+  "noticias": [
+    {
+      "id": "005",
+      "categoria": "TECNOLOGIA",
+      "titulo": "Sinal Mais Forte e Seguro para Todos",
+      "subtitulo": "Rede HoloNet Classe-Sentinela chega à Orla Exterior",
+      "corpo": "O Departamento de Pesquisa Imperial tem o orgulho de revelar a nova rede de retransmissores HoloNet Classe-Sentinela, projetada para entregar transmissões de entretenimento e comunicados oficiais com nitidez sem precedentes até os confins da Orla Exterior. A tecnologia, que entrará em vigor compulsoriamente no próximo ciclo padrão de comunicação, inclui um avançado filtro de criptografia estatal que erradicará estática e bloqueará automaticamente transmissões piratas não licenciadas. Graças a esta inovação benevolente do Império, garantimos que sua família consuma apenas o conteúdo mais puro e aprovado, totalmente livre das mentiras e interferências de agitadores cibernéticos.",
+      "fonte": "HNN - Correspondente Tecnológico",
+      "data": "Dia 16, Mês 3",
+      "tag_aurebesh": "NAASADE",
+      "prioridade": 5,
+      "icone": "◉"
+    },
+    {
+      "id": "011",
+      "categoria": "TECNOLOGIA",
+      "titulo": "Vigilância Autônoma para o seu Bem-Estar",
+      "subtitulo": "Droides Viper-PX começam patrulha urbana nos grandes centros",
+      "corpo": "A Arakyd Industries acaba de revelar o seu mais novo triunfo no campo da segurança pública: o droide sonda de patrulha urbana da série Viper-PX. Projetados para operar de forma autônoma nas grandes metrópoles, esses droides flutuantes estão equipados com sensores biométricos de última geração capazes de identificar, em tempo real, cidadãos portando doenças contagiosas, criminosos foragidos e indivíduos sem a devida documentação imperial. A adoção imediata destes guardiões metálicos pelas forças de segurança planetárias promete reduzir os índices de criminalidade a quase zero, permitindo que os cidadãos de bem caminhem pelas ruas com a absoluta certeza de que estão sendo protegidos.",
+      "fonte": "HNN - Correspondente Tecnológico",
+      "data": "Dia 17, Mês 3",
+      "tag_aurebesh": "NAASADE",
+      "prioridade": 5,
+      "icone": "◉"
+    },
+    {
+      "id": "017",
+      "categoria": "TECNOLOGIA",
+      "titulo": "Mais Rapidez para a Segurança Pública",
+      "subtitulo": "TIE/in Interceptor inicia testes operacionais com alta capacidade de resposta",
+      "corpo": "A Sienar Fleet Systems tem o orgulho de anunciar o início dos testes operacionais do novo caça TIE/in Interceptor, a mais avançada maravilha da engenharia aeroespacial já concebida. Projetados com painéis solares em formato de adaga, esses novos veículos oferecem uma velocidade e manobrabilidade sem precedentes, criados especificamente para missões de resposta rápida e assistência a naves civis em perigo. O Comandante da Marinha encarregado do projeto ressaltou que a presença dessas novas naves nos sistemas estelares garantirá que a lei chegue de forma implacável a qualquer quadrante, desestimulando a ação de piratas espaciais com sua mera e formidável presença.",
+      "fonte": "HNN - Correspondente Tecnológico",
+      "data": "Dia 18, Mês 3",
+      "tag_aurebesh": "NAASADE",
+      "prioridade": 5,
+      "icone": "◉"
+    },
+    {
+      "id": "023",
+      "categoria": "TECNOLOGIA",
+      "titulo": "Códigos em Cadeia para Viagens 'Sem Fricção'",
+      "subtitulo": "Nova rede biométrica acelera processamentos imperiais de passageiros",
+      "corpo": "O Bureau de Imigração e Trânsito Galáctico introduziu hoje a revolucionária atualização da rede de Códigos em Cadeia, projetada para tornar as suas viagens interplanetárias incrivelmente mais rápidas e seguras. O novo sistema implanta rastreadores biométricos nos documentos de todo e qualquer cidadão, permitindo que postos de controle imperiais processem identidades, históricos de crédito e afiliações políticas em frações de segundos. Ao aderir ao novo sistema obrigatório, os viajantes honestos e de ficha limpa não perderão mais tempo em filas de alfândega, enquanto criminosos, contrabandistas e dissidentes não terão onde se esconder da luz da justiça imperial.",
+      "fonte": "HNN - Correspondente Tecnológico",
+      "data": "Dia 18, Mês 3",
+      "tag_aurebesh": "NAASADE",
+      "prioridade": 5,
+      "icone": "◉"
+    }
+  ]
+}

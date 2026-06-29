@@ -1,0 +1,54 @@
+﻿{
+  "hnn_version": "HNN-7.4.2",
+  "ultima_atualizacao": "Dia 14, Mês 3, Ano 04 ABY",
+  "noticias": [
+    {
+      "id": "003",
+      "categoria": "ECONOMIA",
+      "titulo": "Salto Histórico no Setor de Defesa",
+      "subtitulo": "Crescimento recorde impulsionado pela expansão da frota estelar",
+      "corpo": "A economia galáctica registrou um crescimento recorde neste último trimestre, impulsionada de forma esmagadora pela alta nas ações da Sienar Fleet Systems e da Kuat Drive Yards, logo após o anúncio de uma injeção massiva de créditos para a expansão de nossa gloriosa frota estelar. Analistas do Centro Financeiro de Muunilinst destacam que as recentes intervenções do Império na mineração de mundos não-alinhados reduziram os custos de matéria-prima em quarenta por cento. Isso não apenas barateia a construção de nossos novos Cruzadores Estelares, como garante que os cidadãos continuem a desfrutar de preços baixos e abundância ininterrupta de recursos.",
+      "fonte": "HNN - Correspondente Econômico",
+      "data": "Dia 16, Mês 3",
+      "tag_aurebesh": "MANDO",
+      "prioridade": 3,
+      "icone": "◇"
+    },
+    {
+      "id": "009",
+      "categoria": "ECONOMIA",
+      "titulo": "Fim das Taxas Abusivas no Setor Corporativo",
+      "subtitulo": "Autoridade Aduaneira Imperial reorganiza rotas e tarifas estatais",
+      "corpo": "Em uma vitória formidável para o livre comércio regulamentado, a Autoridade Aduaneira Imperial assumiu oficialmente o controle logístico de todas as rotas de transporte independentes que cortam a Orla Média. A reestruturação econômica tem como objetivo primário erradicar a ineficiência e extorquir guildas autônomas que, segundo investigações do Bureau de Inteligência, vinham secretamente facilitando o contrabando. Com o estabelecimento de tarifas fixas estatais e escoltas obrigatórias de cruzadores, os mercados do Núcleo já relatam uma queda nos preços de mercadorias de base, provando mais uma vez que o controle firme do Império é o único e verdadeiro motor da prosperidade galáctica.",
+      "fonte": "HNN - Correspondente Econômico",
+      "data": "Dia 17, Mês 3",
+      "tag_aurebesh": "MANDO",
+      "prioridade": 3,
+      "icone": "◇"
+    },
+    {
+      "id": "015",
+      "categoria": "ECONOMIA",
+      "titulo": "Transparência Total nas Finanças Galácticas",
+      "subtitulo": "Ministério das Finanças absorve clãs bancários autônomos",
+      "corpo": "O Ministério das Finanças celebrou a aquisição e absorção completa das últimas filiais autônomas do antigo Clã Bancário Intergaláctico para dentro dos cofres do Tesouro Imperial. A medida histórica encerra de uma vez por todas a era de especulações nefastas e juros abusivos que assolaram a República por milênios. Com a economia agora sob a tutela benevolente e centralizada de Coruscant, especialistas garantem que o valor do Crédito Imperial alcançará uma estabilidade inédita. Os cidadãos podem dormir tranquilos sabendo que suas economias estão protegidas contra fraudadores e que nenhum crédito será desviado para financiar grupos marginais não sancionados.",
+      "fonte": "HNN - Correspondente Econômico",
+      "data": "Dia 18, Mês 3",
+      "tag_aurebesh": "MANDO",
+      "prioridade": 3,
+      "icone": "◇"
+    },
+    {
+      "id": "021",
+      "categoria": "ECONOMIA",
+      "titulo": "Supersafra Garante Abundância no Núcleo",
+      "subtitulo": "Cotas de trabalho e logística imperial elevam produção agrícola",
+      "corpo": "O Ministério da Agricultura Imperial divulgou os relatórios do último ciclo de colheita e confirmou uma supersafra sem precedentes nos mundos agrários designados, impulsionada pelas novas cotas de trabalho impostas na Orla Exterior. Com o redirecionamento estratégico de maquinário pesado e a implementação de turnos estendidos de trabalho voluntário-compulsório entre as populações nativas, os silos do Núcleo estão operando muito acima da capacidade máxima. Esta reorganização logística brilhante garante que os cidadãos dos mundos centrais continuem a desfrutar de banquetes fartos e preços baixos nos mercados locais, provando que a administração econômica centralizada do Império não deixa absolutamente ninguém que seja digno passar fome.",
+      "fonte": "HNN - Correspondente Econômico",
+      "data": "Dia 18, Mês 3",
+      "tag_aurebesh": "MANDO",
+      "prioridade": 3,
+      "icone": "◇"
+    }
+  ]
+}

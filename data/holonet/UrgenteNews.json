@@ -1,0 +1,58 @@
+﻿{
+  "hnn_version": "HNN-7.4.2",
+  "ultima_atualizacao": "Dia 14, Mês 3, Ano 04 ABY",
+  "noticias": [
+    {
+      "id": "001",
+      "categoria": "URGENTE",
+      "titulo": "Toque de Recolher no Setor Lothal",
+      "subtitulo": "Governadora Pryce decreta ordem imediata após incidente terrorista",
+      "corpo": "ALERTA DE SEGURANÇA MÁXIMA: O Gabinete da Governadora Arihnda Pryce acaba de decretar um toque de recolher imediato e o fechamento temporário do espaço aéreo em toda a Capital de Lothal, citando um 'incidente de segurança isolado' envolvendo um pequeno grupo de terroristas que tentaram invadir um depósito de suprimentos. A população é orientada a trancar suas portas, permanecer em suas residências e reportar imediatamente qualquer atividade suspeita, cidadãos não registrados ou indivíduos mascarados às autoridades imperiais locais. A ordem total será restaurada ao amanhecer, e a colaboração irrestrita é o seu dever inquestionável para com o Império.",
+      "fonte": "HNN - Correspondente de Segurança",
+      "data": "Dia 19, Mês 3",
+      "aurebesh_tag": "ᴀᴜʀᴇʙᴇꜱʜ",
+      "tag_aurebesh": "BAATU BAATU",
+      "prioridade": 1,
+      "icone": "⚠"
+    },
+    {
+      "id": "007",
+      "categoria": "URGENTE",
+      "titulo": "Bloqueio Preventivo no Sistema Ryloth",
+      "subtitulo": "Quarentena planetária decretada por variante do Vírus da Sombra Azul",
+      "corpo": "COMUNICADO DE SAÚDE PÚBLICA: O Alto Comando Imperial acaba de decretar um bloqueio planetário absoluto no sistema Ryloth devido à suspeita de um surto de uma variante altamente mutável do 'Vírus da Sombra Azul'. Todos os voos civis estão temporariamente suspensos, e as patrulhas de Destróieres Estelares receberam ordens de interceptar e, se necessário, abater qualquer nave não autorizada que tente furar o perímetro de quarentena. Fontes oficiais desmentem categoricamente e repudiam os boatos irresponsáveis de que o cerco seja uma retaliação contra greves nas minas Twi'lek, reforçando que o isolamento militar é uma medida puramente preventiva.",
+      "fonte": "HNN - Correspondente de Saúde",
+      "data": "Dia 19, Mês 3",
+      "aurebesh_tag": "ᴀᴜʀᴇʙᴇꜱʜ",
+      "tag_aurebesh": "BAATU BAATU",
+      "prioridade": 1,
+      "icone": "⚠"
+    },
+    {
+      "id": "013",
+      "categoria": "URGENTE",
+      "titulo": "URGENTE: Incidente de Trabalho nos Estaleiros de Kuat",
+      "subtitulo": "Ministério do Trabalho bloqueia emergência o Anel Orbital 4",
+      "corpo": "ALERTA DE SEGURANÇA INDUSTRIAL: O Ministério do Trabalho determinou um bloqueio de emergência no Anel Orbital 4 dos Estaleiros da Kuat Drive Yards após um pequeno foco de incêndio em um dos reatores de montagem. Culpando falhas crônicas de disciplina no sindicato dos operários locais, as autoridades imperiais suspenderam temporariamente os turnos de descanso e os direitos de saída da estação até que todos os responsáveis pela negligência criminosa sejam identificados e interrogados. A produção dos novos Cruzadores não será afetada.",
+      "fonte": "HNN - Correspondente Industrial",
+      "data": "Dia 19, Mês 3",
+      "aurebesh_tag": "ᴀᴜʀᴇʙᴇꜱʜ",
+      "tag_aurebesh": "BAATU BAATU",
+      "prioridade": 1,
+      "icone": "⚠"
+    },
+    {
+      "id": "019",
+      "categoria": "URGENTE",
+      "titulo": "Vazamento Tóxico Exige Evacuação em Mon Cala",
+      "subtitulo": "Purge Troopers intervêm no setor portuário de Dac City",
+      "corpo": "ALERTA DE EMERGÊNCIA PLANETÁRIA: O Governador Imperial do sistema Mon Cala acaba de emitir uma ordem de evacuação compulsória e bloqueio militar no setor portuário de Dac City, justificando a intervenção massiva com a detecção de um grave vazamento de plasma tóxico nos estaleiros subaquáticos. As tropas de choque da classe Purge Trooper foram despachadas em peso para auxiliar na realocação dos cidadãos e garantir que nenhum funcionário dos estaleiros deixe a área sem ser devidamente interrogado e descontaminado. A HoloNet News desaconselha fortemente qualquer aproximação da zona interditada e desmente com veemência os rumores infundados de que a ocupação militar seja uma resposta a um motim trabalhista dos operários Quarren e Mon Calamari.",
+      "fonte": "HNN - Correspondente de Emergência",
+      "data": "Dia 19, Mês 3",
+      "aurebesh_tag": "ᴀᴜʀᴇʙᴇꜱʜ",
+      "tag_aurebesh": "BAATU BAATU",
+      "prioridade": 1,
+      "icone": "⚠"
+    }
+  ]
+}

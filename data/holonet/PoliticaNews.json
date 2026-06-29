@@ -1,0 +1,54 @@
+{
+  "hnn_version": "HNN-7.4.2",
+  "ultima_atualizacao": "Dia 14, Mês 3, Ano 04 ABY",
+  "noticias": [
+    {
+      "id": "002",
+      "categoria": "POLÍTICA",
+      "titulo": "Nova Lei de Proteção aos Cidadãos",
+      "subtitulo": "Senado Imperial aprova aumento de patrulhas de stormtroopers",
+      "corpo": "Em uma sessão extraordinária no Senado Imperial, o recém-nomeado Comitê de Segurança aprovou, com apoio esmagador, a Lei de Integração Pacífica, garantindo um aumento ostensivo das patrulhas de stormtroopers nos mundos da Orla Média. O Imperador Palpatine, em uma rara declaração oficial holográfica, elogiou a medida como 'um escudo inquebrável contra as fagulhas do caos do passado', assegurando aos cidadãos leais que os impostos arrecadados estão sendo diretamente convertidos em paz e ordem. Especialistas afirmam que a presença militar redobrada irá erradicar pequenos focos de descontentamento, desencorajando qualquer rumor infundado sobre instabilidade governamental espalhado por traidores da Nova Ordem.",
+      "fonte": "HNN - Correspondente Político",
+      "data": "Dia 13, Mês 3",
+      "tag_aurebesh": "HAAT IJA ORU",
+      "prioridade": 2,
+      "icone": "◈"
+    },
+    {
+      "id": "008",
+      "categoria": "POLÍTICA",
+      "titulo": "Expansão do 'Currículo da Nova Ordem'",
+      "subtitulo": "Ministério da Educação anuncia pacote de reformas obrigatórias para escolas planetárias",
+      "corpo": "O Ministério da Educação anunciou hoje um pacote de reformas obrigatórias para todas as escolas planetárias, implementando o 'Currículo da Nova Ordem' para garantir a padronização do ensino galáctico. A medida visa substituir materiais regionais defasados por conteúdos unificados que exaltam as conquistas pacíficas do Império e preparam os jovens para um futuro próspero. Governadores que não conseguirem implementar a mudança no prazo estipulado serão prontamente substituídos por supervisores nomeados diretamente por Coruscant, garantindo que nossas crianças sejam moldadas como cidadãos leais e produtivos, completamente imunizados contra as ideologias anárquicas e falhas da antiga República.",
+      "fonte": "HNN - Correspondente Político",
+      "data": "Dia 15, Mês 3",
+      "tag_aurebesh": "HAAT IJA ORU",
+      "prioridade": 2,
+      "icone": "◈"
+    },
+    {
+      "id": "014",
+      "categoria": "POLÍTICA",
+      "titulo": "Nova Lei de Censo e Assistência Demográfica",
+      "subtitulo": "Senado Imperial aprova recadastramento biométrico para espécies do Núcleo e Colônias",
+      "corpo": "O Senado Imperial aprovou a 'Lei de Censo e Assistência Demográfica', uma medida administrativa brilhante que exige o recadastramento biométrico imediato de todas as espécies residentes no Núcleo e nas Colônias. Segundo o porta-voz do Palácio Imperial, a atualização do banco de dados visa otimizar a distribuição de suprimentos médicos e garantir que as necessidades biológicas específicas de cada espécie sejam atendidas de forma mais eficiente pelo Estado. Qualquer resistência ou recusa em fornecer os dados ao Bureau de Inteligência será tratada como fraude fiscal grave, provando que apenas indivíduos com intenções criminosas se opõem aos esforços humanitários e organizacionais do nosso Imperador.",
+      "fonte": "HNN - Correspondente Político",
+      "data": "Dia 15, Mês 3",
+      "tag_aurebesh": "HAAT IJA ORU",
+      "prioridade": 2,
+      "icone": "◈"
+    },
+    {
+      "id": "020",
+      "categoria": "POLÍTICA",
+      "titulo": "Sucesso no Programa de Juventude",
+      "subtitulo": "COMPNOR celebra bilhões de inscritos no Grupo Sub-Adulto da Orla Média",
+      "corpo": "O Comitê de Preservação da Nova Ordem (COMPNOR) celebrou hoje a marca histórica de bilhões de novos inscritos no Grupo Sub-Adulto em toda a Orla Média, consolidando o maior programa de desenvolvimento de talentos da história da galáxia. A nova diretriz educacional, que agora estabelece o alistamento civil como etapa obrigatória no currículo de jovens a partir dos dez anos padrão, foi desenhada para promover valores essenciais como disciplina, patriotismo e camaradagem. Governadores locais relatam que o afastamento dos jovens de más influências e familiares 'desalinhados' tem gerado comunidades muito mais limpas, organizadas e totalmente voltadas para o progresso da formidável máquina pacífica do nosso amado Imperador.",
+      "fonte": "HNN - Correspondente Político",
+      "data": "Dia 15, Mês 3",
+      "tag_aurebesh": "HAAT IJA ORU",
+      "prioridade": 2,
+      "icone": "◈"
+    }
+  ]
+}

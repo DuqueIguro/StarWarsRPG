@@ -36,7 +36,10 @@ const HNN = (() => {
     try {
       const resp = await fetch('../data/holonet.json');
       dados = await resp.json();
-      window.__HNN_DATA__ = dados; // <--- ADICIONE ESTA LINHA AQUI!
+      if (dados?.noticias) {
+        dados.noticias.sort((a, b) => Number(a.id) - Number(b.id));
+      }
+      window.__HNN_DATA__ = dados;
     } catch (e) {
       dados = window.__HNN_DATA__ || null;
     }
@@ -116,8 +119,10 @@ const HNN = (() => {
     if (!dados?.noticias) return;
 
     const lista = filtroAtivo === 'TODOS'
-      ? dados.noticias
+      ? [...dados.noticias]
       : dados.noticias.filter(n => n.categoria === filtroAtivo);
+
+    lista.sort((a, b) => Number(a.id) - Number(b.id));
 
     const [principal, ...resto] = lista;
 

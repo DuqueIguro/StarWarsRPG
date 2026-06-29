@@ -1,0 +1,54 @@
+﻿{
+  "hnn_version": "HNN-7.4.2",
+  "ultima_atualizacao": "Dia 14, Mês 3, Ano 04 ABY",
+  "noticias": [
+    {
+      "id": "004",
+      "categoria": "CONFLITO",
+      "titulo": "Insurgentes Neutralizados com Sucesso",
+      "subtitulo": "Forças Imperiais destroem foco criminoso em Kashyyyk",
+      "corpo": "As gloriosas Forças Armadas Imperiais neutralizaram com sucesso mais um foco criminoso no setor de Kashyyyk, onde baderneiros desorganizados tentavam sabotar uma refinaria de recursos essencial para o comércio local. O brilhante planejamento tático de nossos comandantes navais resultou em uma operação impecável, enquanto a escória terrorista, que tentavam se autodenominar 'combatentes da liberdade', foi rapidamente detida e encaminhada para centros de reeducação laboral no complexo de especiarias de Kessel. O Império reitera através deste informe que atos de vandalismo contra infraestruturas estatais não serão tolerados e que a paz na galáxia é inegociável.",
+      "fonte": "HNN - Correspondente de Conflito",
+      "data": "Dia 16, Mês 3",
+      "tag_aurebesh": "VODE AN",
+      "prioridade": 4,
+      "icone": "◆"
+    },
+    {
+      "id": "010",
+      "categoria": "CONFLITO",
+      "titulo": "'Guerrilheiros' Dizimados em Jedha",
+      "subtitulo": "Elite imperial protege civis no planeta sagrado",
+      "corpo": "As Forças Imperiais intervieram heroicamente para salvar a população civil de Jedha de um ataque cruel perpetrado por extremistas radicais que se escondiam covardemente nas antigas catacumbas do planeta. Os terroristas, munidos de armamento ilegal, tentaram sabotar comboios vitais de mineração, ameaçando a estabilidade dos recursos que abastecem a nossa gloriosa Marinha Imperial. Graças à resposta rápida de nossos esquadrões de elite e ao uso calculado de artilharia pesada e autorizada, a ameaça foi completamente neutralizada com danos colaterais restritos apenas às áreas que abrigavam a escória insurrecta, restaurando a glória a um mundo há muito manchado por superstições ultrapassadas.",
+      "fonte": "HNN - Correspondente de Conflito",
+      "data": "Dia 17, Mês 3",
+      "tag_aurebesh": "VODE AN",
+      "prioridade": 4,
+      "icone": "◆"
+    },
+    {
+      "id": "016",
+      "categoria": "CONFLITO",
+      "titulo": "Escória Pirata Erradicada no Sistema Sullust",
+      "subtitulo": "Rede de contrabando desmantelada perto do cinturão de asteroides",
+      "corpo": "Uma frota de patrulha comandada por bravos oficiais imperiais desmantelou uma perigosa rede de contrabando e extorsão que operava furtivamente no cinturão de asteroides próximo a Sullust. Os criminosos, que utilizavam táticas covardes de guerrilha e tecnologia roubada para assediar rotas comerciais locais, foram reduzidos a pó após uma barragem cirúrgica de turbolasers disparada pelos nossos Destróieres Estelares. O Império reforça que tentativas de interromper o fluxo do comércio são atos de puro terrorismo, e o destino daqueles que desafiam a paz será sempre a prisão ou medidas mais radicais, caso seja necessário.",
+      "fonte": "HNN - Correspondente de Conflito",
+      "data": "Dia 18, Mês 3",
+      "tag_aurebesh": "VODE AN",
+      "prioridade": 4,
+      "icone": "◆"
+    },
+    {
+      "id": "022",
+      "categoria": "CONFLITO",
+      "titulo": "Atentado Covarde Contra Suprimentos Médicos Frustrado",
+      "subtitulo": "Comboio imperial de medicamentos protegido por caças TIE",
+      "corpo": "Em uma demonstração patética de pura malícia, uma célula de anarquistas não identificados tentou emboscar um comboio imperial de suprimentos que sobrevoava o espaço de Garel nesta madrugada. Os insurgentes, demonstrando sua total falta de moralidade, alvejaram naves que transportavam provisões essenciais e medicamentos destinados a colônias carentes, mas foram interceptados de forma implacável pelos ágeis caças TIE da nossa vigilante Marinha. Todos os agitadores foram presos antes que pudessem causar danos reais, e o Império aproveita este triste episódio para lembrar aos cidadãos que qualquer pessoa que simpatize com os ideais destes chamados 'rebeldes' está, na verdade, apoiando o caos, a fome e o terrorismo civil.",
+      "fonte": "HNN - Correspondente de Conflito",
+      "data": "Dia 18, Mês 3",
+      "tag_aurebesh": "VODE AN",
+      "prioridade": 4,
+      "icone": "◆"
+    }
+  ]
+}

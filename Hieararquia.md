@@ -15,6 +15,13 @@ StarWarsRPG
 │  ├─ Aurebesh.woff
 │  ├─ contatosRebeldes.json
 │  ├─ durtoc.json
+│  ├─ holonet
+│  │  ├─ ConflitoNews.json
+│  │  ├─ EconomiaNews.json
+│  │  ├─ PoliticaNews.json
+│  │  ├─ TecnologiaNews.json
+│  │  ├─ UrgenteNews.json
+│  │  └─ VariedadesNews.json
 │  ├─ holonet.json
 │  ├─ MCMT
 │  │  ├─ droids.json
@@ -90,6 +97,7 @@ StarWarsRPG
 │  ├─ hangar.js
 │  ├─ hierarquiaGerais.js
 │  ├─ hierarquiaImperio.js
+│  ├─ holonet-rotator.js
 │  ├─ holonet.js
 │  ├─ inventario.js
 │  ├─ inventarioOficina.js

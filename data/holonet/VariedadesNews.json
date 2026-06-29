@@ -1,0 +1,54 @@
+﻿{
+  "hnn_version": "HNN-7.4.2",
+  "ultima_atualizacao": "Dia 14, Mês 3, Ano 04 ABY",
+  "noticias": [
+    {
+      "id": "006",
+      "categoria": "VARIEDADES",
+      "titulo": "Noite de Gala em Coruscant",
+      "subtitulo": "A elite imperial estreia 'A Alvorada da Nova Ordem' na Casa de Ópera das Galáxias",
+      "corpo": "A mais alta sociedade da Capital se reuniu ontem na prestigiada Casa de Ópera das Galáxias para a grande estreia de 'A Alvorada da Nova Ordem', uma majestosa e emocionante peça holográfica que reconta a corajosa intervenção do nosso Imperador para salvar a República da vil traição da Aliança Separatista e dos Jedis quinze anos atrás. A apresentação, aclamada pela crítica oficial como 'o ápice inquestionável da cultura moderna', contou com a presença de diversos Moffs e dignitários que desfilaram pela tapeçaria carmesim. O evento provou, mais uma vez, que a Era Imperial inaugurou não apenas um período de segurança irretocável, mas também um verdadeiro renascimento artístico e moral.",
+      "fonte": "HNN - Correspondente de Variedades",
+      "data": "Dia 16, Mês 3",
+      "tag_aurebesh": "AKAANIR",
+      "prioridade": 6,
+      "icone": "○"
+    },
+    {
+      "id": "012",
+      "categoria": "VARIEDADES",
+      "titulo": "Exposição Fascinante",
+      "subtitulo": "Museu de Coruscant inaugura ala permanente sobre a fundação do Império",
+      "corpo": "O Museu de Coruscant inaugurou sua mais nova ala permanente, atraindo multidões de cidadãos ávidos por cultura e história. A exibição interativa, celebrando os 15 anos da fundação do Império, apresenta uma vasta e educativa coleção de artefatos recolhidos das cinzas das infames Guerras Clônicas, documentando a traição da Aliança Separatista e o sacrifício heroico das tropas para manter a República unida. O curador-chefe do museu declarou que a exposição é um representativo visual e essencial das trevas que deixamos para trás, incentivando as famílias de toda a galáxia a visitarem as instalações e renovarem seus votos de gratidão à Nova Ordem.",
+      "fonte": "HNN - Correspondente de Variedades",
+      "data": "Dia 17, Mês 3",
+      "tag_aurebesh": "AKAANIR",
+      "prioridade": 6,
+      "icone": "○"
+    },
+    {
+      "id": "018",
+      "categoria": "VARIEDADES",
+      "titulo": "Troféu de Grav-ball Exalta Superioridade Imperial",
+      "subtitulo": "Equipe do Cruzador Estelar Vindicator domina final no Estádio Palpatine",
+      "corpo": "A finalíssima do Campeonato Galáctico de Grav-ball, sediada no majestoso Estádio Palpatine, em Coruscant, terminou com uma vitória esmagadora da equipe do Cruzador Estelar Vindicator sobre a seleção civil de Chandrila. Os atletas militares, submetidos aos rigorosos, eficientes e exemplares programas de condicionamento físico da Academia Imperial, não deram nenhuma chance aos seus adversários, vencendo a partida por uma margem de pontos jamais vista na história do esporte. Especialistas e comentaristas da HoloNet destacaram que a partida foi mais do que entretenimento: foi uma belíssima metáfora visual provando que a ordem, a hierarquia e o treinamento imperial sempre triunfarão.",
+      "fonte": "HNN - Correspondente de Variedades",
+      "data": "Dia 18, Mês 3",
+      "tag_aurebesh": "AKAANIR",
+      "prioridade": 6,
+      "icone": "○"
+    },
+    {
+      "id": "024",
+      "categoria": "VARIEDADES",
+      "titulo": "'Heróis de Armadura Branca' Quebra Recordes",
+      "subtitulo": "Novo holo-drama da HoloNet cativa bilhões de espectadores",
+      "corpo": "A nova superprodução licenciada pela HoloNet, Heróis de Armadura Branca, tornou-se o fenômeno de audiência mais assistido deste ciclo, cativando bilhões de espectadores leais em toda a galáxia. O empolgante holo-drama acompanha a rotina dramatizada, porém historicamente acurada, de um esquadrão de stormtroopers que sacrifica tudo para proteger civis indefesos de perigosos contrabandistas em mundos hostis. Com efeitos práticos espetaculares financiados pelo Estado, a obra garante uma experiência imersiva que tem inspirado uma onda sem precedentes de jovens cidadãos a se alistarem com orgulho na Academia Imperial, buscando replicar o brilhante exemplo de dever e patriotismo exibido na tela.",
+      "fonte": "HNN - Correspondente de Variedades",
+      "data": "Dia 18, Mês 3",
+      "tag_aurebesh": "AKAANIR",
+      "prioridade": 6,
+      "icone": "○"
+    }
+  ]
+}
