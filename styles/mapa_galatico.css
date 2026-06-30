@@ -6,23 +6,50 @@
 }
 
 :root {
-    --cor-fundo: #0c2b35; /* Azul-petróleo bem escuro */
-    --cor-painel: #113a47; /* Azul-petróleo escuro */
-    --cor-borda: #2a7c8e; /* Ciano escuro */
-    --cor-texto-principal: #cdeef7; /* Ciano muito claro */
-    --cor-texto-secundario: #8cb6c2; /* Ciano acinzentado */
-    --cor-highlight: #67e8f9; /* Ciano brilhante */
-    --cor-titulo: #a5f3fc; /* Ciano super claro */
+    --cor-fundo: #051318; /* Mais escuro para destacar o neon */
+    --cor-painel: #0b252e; /* Azul-petróleo profundo */
+    --cor-borda: #00f0ff; /* Ciano Neon ultra vivo */
+    --cor-texto-principal: #d1f7ff; /* Ciano claro digital */
+    --cor-texto-secundario: #00bfff; /* Azul ciber vibrante */
+    --cor-highlight: #00ffff; /* Neon absoluto */
+    --cor-titulo: #ffffff; /* Branco puro para alto contraste */
+    --neon-glow: 0 0 12px rgba(0, 240, 255, 0.4), 0 0 25px rgba(0, 240, 255, 0.2);
 }
 
+/* Efeito de varredura futurista (Scanlines de monitor CRT/Holograma) */
 body {
     font-family: 'Roboto Mono', monospace;
     background-color: var(--cor-fundo);
     color: var(--cor-texto-principal);
     margin: 0;
     padding: 2rem;
-    background-image: radial-gradient(circle at 1px 1px, rgba(103, 232, 249, 0.07) 1px, transparent 0);
-    background-size: 25px 25px;
+    background-image: 
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%),
+        radial-gradient(circle at 1px 1px, rgba(0, 240, 255, 0.08) 1px, transparent 0);
+    background-size: 100% 4px, 25px 25px;
+}
+
+/* Animações Modernas */
+@keyframes fadeInCard {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes hologramFlicker {
+    0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+        opacity: 0.99;
+        filter: hue-rotate(0deg) saturate(1);
+    }
+    20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+        opacity: 0.4;
+        filter: hue-rotate(90deg) saturate(1.5);
+    }
 }
 
 .font-aurebesh {
@@ -34,20 +61,21 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    border: 1px solid var(--cor-borda);
-    background-color: rgba(17, 58, 71, 0.5);
-    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    background-color: rgba(11, 37, 46, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 25px rgba(103, 232, 249, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.05);
 }
 
 header {
     text-align: center;
     margin-bottom: 2rem;
-    border-bottom: 1px solid var(--cor-borda);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
     padding-bottom: 1.5rem;
-    position: relative; /* Adicionado para o posicionamento do botão */
+    position: relative;
 }
 
 h1 {
@@ -57,10 +85,10 @@ h1 {
     letter-spacing: 4px;
     text-transform: uppercase;
     margin: 0;
-    text-shadow: 0 0 10px rgba(103, 232, 249, 0.3);
+    text-shadow: var(--neon-glow);
+    animation: hologramFlicker 6s infinite; /* Efeito de instabilidade de holograma */
 }
 
-/* NOVO: Estilo para alinhar ícone no H1 */
 h1 i {
     margin-right: 1rem;
     color: var(--cor-highlight);
@@ -70,18 +98,20 @@ header .font-aurebesh {
     font-size: 1.2rem;
     color: var(--cor-texto-secundario);
     margin-top: 0.5rem;
+    opacity: 0.8;
 }
 
 .filtros-container {
-    background-color: rgba(8, 28, 36, 0.7);
+    background-color: rgba(4, 14, 18, 0.85);
     padding: 1.5rem;
-    border-radius: 6px;
+    border-radius: 8px;
     margin-bottom: 2rem;
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
-    border: 1px solid var(--cor-borda);
+    border: 1px solid rgba(0, 240, 255, 0.25);
     align-items: flex-start;
+    box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.05);
 }
 
 .filtro-grupo {
@@ -97,9 +127,9 @@ header .font-aurebesh {
     margin-bottom: 0.5rem;
     color: var(--cor-texto-secundario);
     text-transform: uppercase;
-    /* NOVO: Alinhamento de ícones nos labels */
     display: flex;
     align-items: center;
+    letter-spacing: 1px;
 }
 
 .filtro-grupo label i {
@@ -109,21 +139,23 @@ header .font-aurebesh {
 }
 
 .filtro-input {
-    background-color: var(--cor-fundo);
-    border: 1px solid var(--cor-borda);
-    color: var(--cor-texto-principal);
+    background-color: rgba(5, 19, 24, 0.9);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    color: #ffffff;
     padding: 0.75rem;
-    border-radius: 4px;
+    border-radius: 6px;
     font-family: 'Roboto Mono', monospace;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.25s ease-in-out;
+    box-shadow: inset 0 0 5px rgba(0, 240, 255, 0.1);
 }
 
 .filtro-input:focus {
     outline: none;
     border-color: var(--cor-highlight);
-    box-shadow: 0 0 8px rgba(103, 232, 249, 0.4);
+    box-shadow: var(--neon-glow), inset 0 0 5px rgba(0, 240, 255, 0.2);
 }
 
+/* Grid de Planetas */
 #mapa-galactico {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -131,20 +163,24 @@ header .font-aurebesh {
 }
 
 .planeta-card {
-    background-color: var(--cor-painel);
-    border: 1px solid var(--cor-borda);
+    background-color: rgba(11, 37, 46, 0.75);
+    border: 1px solid rgba(0, 240, 255, 0.25);
     border-left: 5px solid var(--cor-highlight);
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 1.5rem;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s;
     display: flex;
     flex-direction: column;
+    animation: fadeInCard 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; /* Surgimento fluido */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                border-color 0.3s;
 }
 
 .planeta-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(103, 232, 249, 0.15);
-    border-left-color: #a5f3fc;
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--neon-glow);
+    border-color: var(--cor-highlight);
+    border-left-color: #ffffff;
 }
 
 .planeta-card h2 {
@@ -152,8 +188,9 @@ header .font-aurebesh {
     margin: 0 0 0.25rem 0;
     color: var(--cor-highlight);
     font-size: 1.5rem;
-    display: flex; /* NOVO: Alinhamento de ícones */
+    display: flex;
     align-items: center;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
 }
 
 .planeta-card h2 i {
@@ -166,23 +203,26 @@ header .font-aurebesh {
     font-size: 1rem;
     margin: 0 0 0.75rem 0;
     line-height: 1;
+    opacity: 0.7;
 }
 
 .planeta-card .regiao {
     font-size: 0.9rem;
     color: var(--cor-texto-secundario);
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--cor-borda);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
     padding-bottom: 1rem;
+    letter-spacing: 0.5px;
 }
 
 .description-box {
-    border: 1px solid var(--cor-borda);
+    border: 1px solid rgba(0, 240, 255, 0.2);
     padding: 1rem;
-    border-radius: 4px;
+    border-radius: 6px;
     margin-top: auto;
     margin-bottom: 1.5rem;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .description-box p {
@@ -197,28 +237,30 @@ header .font-aurebesh {
     gap: 1rem;
     font-size: 0.85rem;
     margin: auto;
+    width: 100%;
 }
 
 .info-box {
-    border: 1px solid var(--cor-borda);
+    border: 1px solid rgba(0, 240, 255, 0.2);
     padding: 0.75rem;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: rgba(0, 0, 0, 0.2);
 }
 
 .info-box strong {
     color: var(--cor-texto-secundario);
-    display: flex; /* NOVO: Alinhamento de ícones */
+    display: flex;
     align-items: center;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.35rem;
     font-family: 'Orbitron', sans-serif;
     font-size: 0.8rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .info-box strong i {
-    margin-right: 0.5rem; /* NOVO: Espaçamento do ícone */
-    width: 14px; /* NOVO: Largura fixa para alinhamento */
+    margin-right: 0.5rem;
+    width: 14px;
 }
 
 .info-box span {
@@ -243,65 +285,72 @@ header .font-aurebesh {
     color: var(--cor-highlight);
     position: absolute;
     left: 0;
+    text-shadow: 0 0 4px var(--cor-highlight);
 }
 
 .info-box ul li:last-child {
     margin-bottom: 0;
 }
 
+/* ==========================================================================
+   Cores de Card por Afiliação Dinâmica (Página Secreta)
+   ========================================================================== */
 
-/* Cores de card por afiliação (usado na página secreta) */
 .card-imperio {
-    --cor-tema: #ef4444; /* Vermelho */
-    --cor-tema-clara: #fca5a5;
-    border-color: var(--cor-tema);
+    --cor-tema: #ff2a2a; /* Vermelho Sith Neon */
+    --cor-tema-clara: #ff8585;
+    border-color: rgba(255, 42, 42, 0.35);
     border-left-color: var(--cor-tema);
-    background-color: rgba(239, 68, 68, 0.08);
+    background-color: rgba(255, 42, 42, 0.04);
 }
 
 .card-rebeldes {
-    --cor-tema: #3b82f6; /* Azul */
-    --cor-tema-clara: #93c5fd;
-    border-color: var(--cor-tema);
+    --cor-tema: #0066ff; /* Azul Aliança Neon */
+    --cor-tema-clara: #80b3ff;
+    border-color: rgba(0, 102, 255, 0.35);
     border-left-color: var(--cor-tema);
-    background-color: rgba(59, 130, 246, 0.08);
+    background-color: rgba(0, 102, 255, 0.04);
 }
 
 .card-neutro {
-    --cor-tema: #9ca3af; /* Cinza */
+    --cor-tema: #9ca3af; /* Cinza Tático */
     --cor-tema-clara: #e5e7eb;
-    border-color: var(--cor-tema);
+    border-color: rgba(156, 163, 175, 0.35);
     border-left-color: var(--cor-tema);
-    background-color: rgba(156, 163, 175, 0.08);
+    background-color: rgba(156, 163, 175, 0.04);
 }
 
 .card-euphoria {
-    --cor-tema: #a855f7; /* Roxo */
-    --cor-tema-clara: #d8b4fe;
-    border-color: var(--cor-tema);
+    --cor-tema: #bd00ff; /* Roxo Subterrâneo Cyberpunk */
+    --cor-tema-clara: #e899ff;
+    border-color: rgba(189, 0, 255, 0.35);
     border-left-color: var(--cor-tema);
-    background-color: rgba(168, 85, 247, 0.08);
+    background-color: rgba(189, 0, 255, 0.04);
 }
 
+/* Hover avançado para os cards de facção */
 [class*="card-"]:hover {
-    border-left-color: var(--cor-tema-clara);
-    box-shadow: 0 10px 20px color-mix(in srgb, var(--cor-tema) 25%, transparent);
+    border-color: var(--cor-tema);
+    border-left-color: #ffffff;
+    box-shadow: 0 0 15px color-mix(in srgb, var(--cor-tema) 50%, transparent),
+                0 0 30px color-mix(in srgb, var(--cor-tema) 15%, transparent);
 }
 
 [class*="card-"] h2,
 [class*="card-"] h2 i {
     color: var(--cor-tema-clara);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--cor-tema) 50%, transparent);
 }
 
 [class*="card-"] .regiao {
-    border-bottom-color: var(--cor-tema);
+    border-bottom-color: rgba(255, 255, 255, 0.15);
     color: var(--cor-tema-clara);
 }
 
 [class*="card-"] .description-box,
 [class*="card-"] .info-box {
-    border-color: var(--cor-tema);
-    background-color: rgba(0, 0, 0, 0.25);
+    border-color: color-mix(in srgb, var(--cor-tema) 30%, transparent);
+    background-color: rgba(0, 0, 0, 0.35);
 }
 
 [class*="card-"] .info-box strong {
@@ -310,32 +359,40 @@ header .font-aurebesh {
 
 [class*="card-"] .info-box ul li::before {
     color: var(--cor-tema-clara);
+    text-shadow: 0 0 4px var(--cor-tema-clara);
 }
 
+/* Mensagem de Erro / Sem Resultados */
 #mensagem-nenhum-resultado {
     text-align: center;
     color: var(--cor-texto-secundario);
     padding: 2rem;
     font-style: italic;
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.2);
 }
 
+/* Botão Voltar Estilo Interface de Nave */
 .back-button {
     display: inline-block;
-    margin-bottom: 2rem; /* Espaçamento entre o botão e os filtros */
-    padding: 8px 15px;
-    background-color: var(--cor-painel);
-    border: 1px solid var(--cor-borda);
+    margin-bottom: 2rem;
+    padding: 10px 20px;
+    background-color: rgba(11, 37, 46, 0.8);
+    border: 1px solid rgba(0, 240, 255, 0.4);
     color: var(--cor-texto-secundario);
     font-family: 'Orbitron', sans-serif;
     text-decoration: none;
     border-radius: 6px;
-    transition: all 0.2s ease-in-out;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .back-button:hover {
-    background-color: rgba(103, 232, 249, 0.15);
+    background-color: rgba(0, 240, 255, 0.15);
     color: var(--cor-highlight);
     border-color: var(--cor-highlight);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    transform: translateX(-3px);
 }
 
 .back-button i {
