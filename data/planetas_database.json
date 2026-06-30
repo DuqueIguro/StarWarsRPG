@@ -2,603 +2,876 @@
   "planetas": [
     {
       "nome": "Tatooine",
-      "descricao": "Um mundo desértico com dois sóis na Orla Exterior, conhecido como refúgio para contrabandistas. É o planeta natal de Anakin e Luke Skywalker, sendo central na saga.",
+      "descricao": "Planeta desértico dominado pelo submundo do crime.",
       "regiao": "Orla Exterior",
       "setor": "Setor Arkanis",
       "sistema": "Sistema Tatoo",
-      "governo": "Controle dos Hutts (durante a República e o Império); posteriormente, autônomo com várias facções.",
-      "afiliacao": "Cartel Hutt, Império Galáctico (presença limitada), Aliança Rebelde (presença secreta), vários sindicatos do crime.",
+      "governo": "Senhores locais e Cartel Hutt",
+      "afiliacao": "Cartel Hutt",
       "rota_utilizada": "Corredor Corelliano (via conexões locais), Rota de Triellus.",
-      "principais_especies": ["Humanos", "Jawas", "Tusken Raiders (Povo da Areia)", "Hutts"],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "Local de nascimento de Anakin Skywalker e lar de Luke Skywalker durante sua juventude. Famoso por suas corridas de pods e pela cidade portuária de Mos Eisley."
     },
     {
       "nome": "Coruscant",
-      "descricao": "Uma ecumenópole que serviu como capital da galáxia por milênios. Sede do Senado e do Templo Jedi, seus níveis inferiores escondem um perigoso submundo.",
-      "regiao": "Mundos do Núcleo",
+      "descricao": "Ecumenópole que serve como capital do Império.",
+      "regiao": "Núcleo",
       "setor": "Setor Coruscant",
       "sistema": "Sistema Coruscant",
-      "governo": "República Galáctica (Senado Galáctico), Império Galáctico (Governo Imperial), Nova República.",
-      "afiliacao": "República Galáctica, Ordem Jedi, Império Galáctico, Nova República.",
+      "governo": "Capital Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Rota Comercial Perlemiana, Via Hydiana (principais entroncamentos da galáxia).",
-      "principais_especies": ["Humanos (maioria)", "Grande diversidade de espécies de toda a galáxia."],
+      "principais_especies": [
+        "Diversas"
+      ],
       "outras_informacoes": "Sede do Templo Jedi e do Senado Galáctico. Seus níveis inferiores são conhecidos por sua alta criminalidade e pobreza."
     },
     {
       "nome": "Naboo",
-      "descricao": "Um mundo pacífico de planícies e cidades elegantes, lar dos humanos Naboo e dos Gungans aquáticos. Planeta natal de Padmé Amidala e do Imperador Palpatine.",
+      "descricao": "Planeta exuberante de lagos, florestas e arquitetura clássica.",
       "regiao": "Orla Média",
       "setor": "Setor Chommell",
       "sistema": "Sistema Naboo",
-      "governo": "Monarquia eletiva (humanos Naboo) e governo tribal (Gungans).",
-      "afiliacao": "República Galáctica, Federação do Comércio (brevemente), Império Galáctico, Aliança Rebelde, Nova República.",
+      "governo": "Monarquia eletiva",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Rota Comercial de Corellia.",
-      "principais_especies": ["Humanos (Naboo)", "Gungans"],
+      "principais_especies": [
+        "Humanos",
+        "Gungans"
+      ],
       "outras_informacoes": "Planeta natal de Padmé Amidala e do Imperador Palpatine. Cenário da Batalha de Naboo."
     },
     {
       "nome": "Alderaan",
-      "descricao": "Um planeta terrestre idílico, famoso por sua beleza natural, cultura refinada e forte compromisso com a paz e a democracia. Foi destruído pela primeira Estrela da Morte.",
-      "regiao": "Mundos do Núcleo",
+      "descricao": "Planeta pacífico, montanhoso e altamente desenvolvido.",
+      "regiao": "Núcleo",
       "setor": "Setor Alderaan",
       "sistema": "Sistema Alderaan",
-      "governo": "Monarquia constitucional (Casa de Organa).",
-      "afiliacao": "República Galáctica, um dos membros fundadores da Aliança Rebelde.",
+      "governo": "Monarquia constitucional",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Rota Comercial Perlemiana.",
-      "principais_especies": ["Humanos"],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "Planeta natal da Princesa Leia Organa (adotiva) e de Bail Organa. Sua destruição se tornou um símbolo da tirania do Império."
     },
     {
       "nome": "Kashyyyk",
-      "descricao": "Um mundo de selvas densas e árvores wroshyr colossais, conhecido como o planeta natal dos Wookiees. Foi um importante campo de batalha nas Guerras Clônicas.",
+      "descricao": "Planeta florestal onde os Wookiees são escravizados pelo Império.",
       "regiao": "Orla Média",
       "setor": "Setor Mytaranor",
       "sistema": "Sistema Kashyyyk",
-      "governo": "Conselho de Chefes Tribais Wookiee.",
-      "afiliacao": "República Galáctica, Império Galáctico (escravizou a população), Aliança Rebelde, Nova República.",
+      "governo": "Ocupação Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Via Hydiana.",
-      "principais_especies": ["Wookiees"],
+      "principais_especies": [
+        "Wookiees"
+      ],
       "outras_informacoes": "Cenário de uma grande batalha durante as Guerras Clônicas. Os Wookiees são conhecidos por sua força e lealdade."
     },
     {
       "nome": "Bespin",
-      "descricao": "Um gigante gasoso onde a vida é possível em cidades flutuantes, como a famosa Cidade das Nuvens. Importante centro de mineração de gás Tibanna.",
+      "descricao": "Gigante gasoso famoso pela mineração de tibanna.",
       "regiao": "Orla Exterior",
       "setor": "Setor Anoat",
       "sistema": "Sistema Bespin",
-      "governo": "Administração independente (Cidade das Nuvens).",
-      "afiliacao": "Independente, brevemente ocupado pelo Império Galáctico.",
+      "governo": "Administração planetária",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Corredor Corelliano.",
-      "principais_especies": ["Humanos", "Ugnaughts"],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "Local do confronto icônico entre Luke Skywalker e Darth Vader em 'O Império Contra-Ataca'."
     },
     {
       "nome": "Endor",
-      "descricao": "Uma lua florestal que abrigava a construção da segunda Estrela da Morte. É coberta por florestas densas e serve como o lar da tribo nativa dos Ewoks.",
+      "descricao": "Lua florestal coberta por densas matas.",
       "regiao": "Orla Exterior",
       "setor": "Setor Moddell",
       "sistema": "Sistema Endor",
-      "governo": "Sociedade tribal Ewok.",
-      "afiliacao": "Império Galáctico (local da construção da segunda Estrela da Morte), Aliança Rebelde.",
+      "governo": "Tribos locais",
+      "afiliacao": "Nenhuma",
       "rota_utilizada": "Rota do Santuário.",
-      "principais_especies": ["Ewoks"],
+      "principais_especies": [
+        "Ewoks"
+      ],
       "outras_informacoes": "Local da Batalha de Endor, que resultou na destruição da segunda Estrela da Morte e na morte do Imperador."
     },
     {
       "nome": "Hoth",
-      "descricao": "Um planeta gelado e inóspito, coberto por neve e geleiras. Serviu como base secreta para a Aliança Rebelde antes de ser atacado pelo Império.",
+      "descricao": "Mundo gelado, desabitado e coberto por neve.",
       "regiao": "Orla Exterior",
       "setor": "Setor Anoat",
       "sistema": "Sistema Hoth",
-      "governo": "Nenhum governo estabelecido.",
-      "afiliacao": "Aliança Rebelde (Base Echo).",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
       "rota_utilizada": "Fora das principais rotas, o que garantia seu isolamento.",
-      "principais_especies": ["Wampas", "Tauntauns"],
+      "principais_especies": [
+        "Nenhuma"
+      ],
       "outras_informacoes": "Cenário da Batalha de Hoth, onde o Império atacou a base rebelde."
     },
     {
       "nome": "Dagobah",
-      "descricao": "Um planeta pantanoso e remoto, envolto em uma forte conexão com a Força. Serviu como refúgio para o Mestre Jedi Yoda durante seu exílio.",
+      "descricao": "Planeta pantanoso, rico na Força e praticamente inexplorado.",
       "regiao": "Orla Exterior",
       "setor": "Setor Sluis",
       "sistema": "Sistema Dagobah",
-      "governo": "Nenhum governo estabelecido.",
-      "afiliacao": "Nenhuma.",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
       "rota_utilizada": "Desconhecida e de difícil acesso.",
-      "principais_especies": ["Grande variedade de vida selvagem não-senciente."],
+      "principais_especies": [
+        "Nenhuma"
+      ],
       "outras_informacoes": "Local onde Luke Skywalker recebeu seu treinamento Jedi de Yoda."
     },
     {
       "nome": "Mustafar",
-      "descricao": "Um mundo vulcânico infernal, coberto por rios de lava e cinzas. Foi o local do duelo entre Obi-Wan e Anakin, e mais tarde tornou-se a fortaleza de Darth Vader.",
+      "descricao": "Planeta vulcânico que abriga a fortaleza de Darth Vader.",
       "regiao": "Orla Exterior",
       "setor": "Setor Atravis",
       "sistema": "Sistema Mustafar",
-      "governo": "Controlado por várias facções ao longo do tempo, incluindo a Tecno União e o Império Sith.",
-      "afiliacao": "Confederação de Sistemas Independentes, Império Galáctico (fortaleza de Darth Vader).",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Via Hydiana.",
-      "principais_especies": ["Mustafarianos"],
+      "principais_especies": [
+        "Mustafarianos"
+      ],
       "outras_informacoes": "Local do duelo entre Obi-Wan Kenobi e Anakin Skywalker. Mais tarde, tornou-se a fortaleza pessoal de Darth Vader."
     },
     {
-        "nome": "Kamino",
-        "descricao": "Um mundo oceânico assolado por tempestades, conhecido por sua avançada tecnologia de clonagem. Foi o local de origem do exército de clones da República.",
-        "regiao": "Espaço Selvagem (Além da Orla Exterior)",
-        "setor": "Setor Kamino",
-        "sistema": "Sistema Kamino",
-        "governo": "Conselho de Governo Kaminoano.",
-        "afiliacao": "República Galáctica (forneceu o exército de clones), Império Galáctico (posteriormente destruiu as instalações).",
-        "rota_utilizada": "Desconhecida para a maioria, mantida em segredo.",
-        "principais_especies": ["Kaminoanos"],
-        "outras_informacoes": "Origem do Grande Exército da República, os soldados clones."
+      "nome": "Kamino",
+      "descricao": "Mundo oceânico famoso por sua tecnologia de clonagem.",
+      "regiao": "Espaço Selvagem",
+      "setor": "Setor Kamino",
+      "sistema": "Sistema Kamino",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Desconhecida para a maioria, mantida em segredo.",
+      "principais_especies": [
+        "Kaminoanos"
+      ],
+      "outras_informacoes": "Origem do Grande Exército da República, os soldados clones."
     },
     {
-        "nome": "Geonosis",
-        "descricao": "Um planeta rochoso e árido, lar dos Geonosianos. Foi um dos principais centros de fabricação de dróides Separatistas e o palco da primeira batalha das Guerras Clônicas.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Arkanis",
-        "sistema": "Sistema Geonosis",
-        "governo": "Colmeia Geonosiana, liderada por um Arquiduque.",
-        "afiliacao": "Confederação de Sistemas Independentes.",
-        "rota_utilizada": "Corredor Corelliano (via desvios).",
-        "principais_especies": ["Geonosianos"],
-        "outras_informacoes": "Local da primeira batalha das Guerras Clônicas."
+      "nome": "Geonosis",
+      "descricao": "Mundo desértico onde é construída a primeira Estrela da Morte.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Arkanis",
+      "sistema": "Sistema Geonosis",
+      "governo": "Ocupação Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Corredor Corelliano (via desvios).",
+      "principais_especies": [
+        "Geonosianos"
+      ],
+      "outras_informacoes": "Local da primeira batalha das Guerras Clônicas."
     },
     {
-        "nome": "Utapau",
-        "descricao": "Um planeta árido com cidades construídas dentro de gigantescas dolinas. Foi o local do confronto final entre Obi-Wan Kenobi e o General Grievous.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Tarabba",
-        "sistema": "Sistema Utapau",
-        "governo": "Comitê de Governo de Utapau.",
-        "afiliacao": "Neutro, mas brevemente envolvido nas Guerras Clônicas.",
-        "rota_utilizada": "Rota de Comércio de Rimma.",
-        "principais_especies": ["Pau'ans", "Utai"],
-        "outras_informacoes": "Local do confronto final entre Obi-Wan Kenobi e o General Grievous."
+      "nome": "Utapau",
+      "descricao": "Mundo de enormes sumidouros onde ficam suas cidades.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Tarabba",
+      "sistema": "Sistema Utapau",
+      "governo": "Conselho local",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Rota de Comércio de Rimma.",
+      "principais_especies": [
+        "Pau'ans",
+        "Utai"
+      ],
+      "outras_informacoes": "Local do confronto final entre Obi-Wan Kenobi e o General Grievous."
     },
     {
-        "nome": "Felucia",
-        "descricao": "Um planeta colorido e exótico, coberto por uma flora gigante e bioluminescente. Um mundo perigoso e de grande importância estratégica durante as Guerras Clônicas.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Thanium",
-        "sistema": "Sistema Felucia",
-        "governo": "Várias tribos e facções locais.",
-        "afiliacao": "Confederação de Sistemas Independentes, Império Galáctico.",
-        "rota_utilizada": "Rota Perlemiana.",
-        "principais_especies": ["Felucianos"],
-        "outras_informacoes": "Local da morte da Mestre Jedi Aayla Secura durante a Ordem 66."
+      "nome": "Felucia",
+      "descricao": "Selva exuberante repleta de fungos e plantas gigantes.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Thanium",
+      "sistema": "Sistema Felucia",
+      "governo": "Governador Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Rota Perlemiana.",
+      "principais_especies": [
+        "Felucianos"
+      ],
+      "outras_informacoes": "Local da morte da Mestre Jedi Aayla Secura durante a Ordem 66."
     },
     {
-        "nome": "Mygeeto",
-        "descricao": "Um mundo gelado e cristalino, importante centro bancário da galáxia. Foi palco de intensos combates durante as Guerras Clônicas entre a República e os Separatistas.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Albarrio",
-        "sistema": "Sistema Mygeeto",
-        "governo": "Clã Bancário Intergaláctico.",
-        "afiliacao": "República Galáctica, Confederação de Sistemas Independentes (influência).",
-        "rota_utilizada": "Trilha de Braxant.",
-        "principais_especies": ["Lurmens"],
-        "outras_informacoes": "Local da morte do Mestre Jedi Ki-Adi-Mundi durante a Ordem 66."
+      "nome": "Mygeeto",
+      "descricao": "Mundo gelado conhecido por seus bancos e minas de cristais.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Albarrio",
+      "sistema": "Sistema Mygeeto",
+      "governo": "Governador Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Trilha de Braxant.",
+      "principais_especies": [
+        "Muuns"
+      ],
+      "outras_informacoes": "Local da morte do Mestre Jedi Ki-Adi-Mundi durante a Ordem 66."
     },
     {
-        "nome": "Corellia",
-        "descricao": "Um mundo industrializado no Núcleo, famoso por seus estaleiros que produzem naves de alta qualidade. Planeta natal do contrabandista Han Solo.",
-        "regiao": "Mundos do Núcleo",
-        "setor": "Setor Corelliano",
-        "sistema": "Sistema Corelliano",
-        "governo": "Coronet City, com forte influência de corporações.",
-        "afiliacao": "República Galáctica, Império Galáctico, Nova República.",
-        "rota_utilizada": "Corredor Corelliano (um dos principais da galáxia).",
-        "principais_especies": ["Humanos (Corellianos)"],
-        "outras_informacoes": "Planeta natal de Han Solo e Wedge Antilles."
+      "nome": "Corellia",
+      "descricao": "Centro industrial e um dos maiores fabricantes de naves.",
+      "regiao": "Núcleo",
+      "setor": "Setor Corelliano",
+      "sistema": "Sistema Corelliano",
+      "governo": "Diktat Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Corredor Corelliano (um dos principais da galáxia).",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "Planeta natal de Han Solo e Wedge Antilles."
     },
     {
-        "nome": "Mandalore",
-        "descricao": "Um planeta outrora devastado pela guerra, com uma forte tradição marcial e cultural centrada nos Mandalorianos e suas armaduras de beskar.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Mandalore",
-        "sistema": "Sistema Mandalore",
-        "governo": "Variado ao longo do tempo, incluindo clãs governantes, um governo pacifista e ocupação imperial.",
-        "afiliacao": "Mandalorianos, Nova República (influência).",
-        "rota_utilizada": "Corredor de Shustine.",
-        "principais_especies": ["Humanos (Mandalorianos)"],
-        "outras_informacoes": "A cultura mandaloriana valoriza a armadura de beskar e a habilidade em combate."
+      "nome": "Mandalore",
+      "descricao": "Mundo natal dos mandalorianos, sob forte controle imperial.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Mandalore",
+      "sistema": "Sistema Mandalore",
+      "governo": "Ocupação Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Corredor de Shustine.",
+      "principais_especies": [
+        "Mandalorianos (Humanos)"
+      ],
+      "outras_informacoes": "A cultura mandaloriana valoriza a armadura de beskar e a habilidade em combate."
     },
     {
-        "nome": "Dantooine",
-        "descricao": "Um planeta rural e tranquilo, com vastas planícies e savanas. Serviu como a primeira base principal conhecida da Aliança Rebelde.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Raioballo",
-        "sistema": "Sistema Dantooine",
-        "governo": "Governo local independente.",
-        "afiliacao": "Aliança Rebelde.",
-        "rota_utilizada": "Rota de Myto.",
-        "principais_especies": ["Humanos", "Dantari"],
-        "outras_informacoes": "Abandonado pela Aliança Rebelde antes dos eventos de 'Uma Nova Esperança'."
+      "nome": "Dantooine",
+      "descricao": "Mundo rural de extensas planícies e pequenas colônias.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Raioballo",
+      "sistema": "Sistema Dantooine",
+      "governo": "Administração local",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Rota de Myto.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "Abandonado pela Aliança Rebelde antes dos eventos de 'Uma Nova Esperança'."
     },
     {
-        "nome": "Ryloth",
-        "descricao": "Um planeta com rotação sincronizada, resultando em um lado de luz perpétua e outro de escuridão. É o mundo natal dos Twi'leks.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Gaulus",
-        "sistema": "Sistema Ryloth",
-        "governo": "Clãs Twi'lek.",
-        "afiliacao": "República Galáctica, Confederação de Sistemas Independentes (ocupação), Império Galáctico (ocupação), Movimento Ryloth Livre.",
-        "rota_utilizada": "Corredor Corelliano.",
-        "principais_especies": ["Twi'leks"],
-        "outras_informacoes": "Conhecido por sua exportação da especiaria ryll."
+      "nome": "Ryloth",
+      "descricao": "Mundo árido explorado economicamente pelo Império.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Gaulus",
+      "sistema": "Sistema Ryloth",
+      "governo": "Governo planetário",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Corredor Corelliano.",
+      "principais_especies": [
+        "Twi'leks"
+      ],
+      "outras_informacoes": "Conhecido por sua exportação da especiaria ryll."
     },
     {
-        "nome": "Yavin 4",
-        "descricao": "Uma lua de selva com antigas ruínas Massassi. Serviu como a base principal da Aliança Rebelde durante a Batalha de Yavin, que destruiu a primeira Estrela da Morte.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Gordian Reach",
-        "sistema": "Sistema Yavin",
-        "governo": "Nenhum governo estabelecido.",
-        "afiliacao": "Aliança Rebelde (Grande Templo Massassi).",
-        "rota_utilizada": "Corredor Gordiano.",
-        "principais_especies": ["Várias formas de vida selvagem."],
-        "outras_informacoes": "Local da Batalha de Yavin, onde a primeira Estrela da Morte foi destruída."
+      "nome": "Yavin 4",
+      "descricao": "Lua coberta por selvas e antigas ruínas Massassi.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Gordian Reach",
+      "sistema": "Sistema Yavin",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
+      "rota_utilizada": "Corredor Gordiano.",
+      "principais_especies": [
+        "Nenhuma"
+      ],
+      "outras_informacoes": "Local da Batalha de Yavin, onde a primeira Estrela da Morte foi destruída."
     },
     {
-        "nome": "Mon Cala",
-        "descricao": "Um mundo oceânico, lar dos Mon Calamari e dos Quarren. Seus estaleiros produziram as mais importantes naves capitais para a frota da Aliança Rebelde.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Mon Calamari",
-        "sistema": "Sistema Calamari",
-        "governo": "Conselho Mon Calamari.",
-        "afiliacao": "República Galáctica, Aliança Rebelde, Nova República.",
-        "rota_utilizada": "Rota de Nklon.",
-        "principais_especies": ["Mon Calamari", "Quarren"],
-        "outras_informacoes": "O Almirante Ackbar é um dos Mon Calamari mais famosos."
+      "nome": "Mon Cala",
+      "descricao": "Mundo oceânico famoso por seus engenheiros e construtores de naves.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Mon Calamari",
+      "sistema": "Sistema Mon Cala",
+      "governo": "Monarquia",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Rota de Nklon.",
+      "principais_especies": [
+        "Mon Calamari",
+        "Quarren"
+      ],
+      "outras_informacoes": "O Almirante Ackbar é um dos Mon Calamari mais famosos."
     },
     {
-        "nome": "Sullust",
-        "descricao": "Um planeta vulcânico com atmosfera tóxica e cidades subterrâneas. Foi o ponto de encontro da frota da Aliança Rebelde antes da crucial Batalha de Endor.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Sullust",
-        "sistema": "Sistema Sullust",
-        "governo": "Corporações SoroSuub.",
-        "afiliacao": "Império Galáctico, Aliança Rebelde (apoio significativo).",
-        "rota_utilizada": "Rota de Rimma.",
-        "principais_especies": ["Sullustanos"],
-        "outras_informacoes": "A Frota Rebelde se reuniu em Sullust antes da Batalha de Endor."
+      "nome": "Sullust",
+      "descricao": "Mundo vulcânico de grande importância industrial.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Sullust",
+      "sistema": "Sistema Sullust",
+      "governo": "Governo planetário",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Rota de Rimma.",
+      "principais_especies": [
+        "Sullustanos"
+      ],
+      "outras_informacoes": "A Frota Rebelde se reuniu em Sullust antes da Batalha de Endor."
     },
     {
-        "nome": "Jakku",
-        "descricao": "Um planeta desértico remoto e sem lei, conhecido como um cemitério de naves estelares após uma grande batalha entre a Nova República e o Império.",
-        "regiao": "Orla Interior",
-        "setor": "Setor Go-Bral",
-        "sistema": "Sistema Jakku",
-        "governo": "Nenhum governo centralizado.",
-        "afiliacao": "Nova República, Primeira Ordem (presença).",
-        "rota_utilizada": "Fora das rotas principais.",
-        "principais_especies": ["Humanos", "Teedo"],
-        "outras_informacoes": "Local onde Rey viveu antes de se juntar à Resistência."
+      "nome": "Jakku",
+      "descricao": "Mundo desértico remoto e pouco desenvolvido.",
+      "regiao": "Orla Interior",
+      "setor": "Setor Go-Bral",
+      "sistema": "Sistema Jakku",
+      "governo": "Assentamentos locais",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Fora das rotas principais.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "Local onde Rey viveu antes de se juntar à Resistência."
     },
     {
-        "nome": "Crait",
-        "descricao": "Um pequeno planeta mineral inabitado, coberto por uma camada de sal branco sobre um solo vermelho. Serviu como um posto avançado para a Aliança Rebelde.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Crait",
-        "sistema": "Sistema Crait",
-        "governo": "Nenhum.",
-        "afiliacao": "Aliança Rebelde, Resistência.",
-        "rota_utilizada": "Desconhecida.",
-        "principais_especies": ["Vulptex"],
-        "outras_informacoes": "Local da Batalha de Crait entre a Primeira Ordem e a Resistência."
+      "nome": "Crait",
+      "descricao": "Mundo mineral coberto por sal branco sobre solo vermelho.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Crait",
+      "sistema": "Sistema Crait",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Nenhuma"
+      ],
+      "outras_informacoes": "Local da Batalha de Crait entre a Primeira Ordem e a Resistência."
     },
     {
-        "nome": "Scarif",
-        "descricao": "Um planeta tropical que abrigava o complexo de segurança imperial e os arquivos da Estrela da Morte. Foi o local da batalha onde os planos da estação foram roubados.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Abrion",
-        "sistema": "Sistema Scarif",
-        "governo": "Império Galáctico.",
-        "afiliacao": "Império Galáctico.",
-        "rota_utilizada": "Rota do Santuário.",
-        "principais_especies": ["Nenhuma espécie senciente nativa."],
-        "outras_informacoes": "Local da Batalha de Scarif, onde os planos da Estrela da Morte foram roubados."
+      "nome": "Scarif",
+      "descricao": "Mundo tropical que abriga o cofre de dados militar do Império.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Abrion",
+      "sistema": "Sistema Scarif",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Rota do Santuário.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "Local da Batalha de Scarif, onde os planos da Estrela da Morte foram roubados."
     },
     {
-        "nome": "Lothal",
-        "descricao": "Um planeta de pastagens e formações rochosas incomuns na Orla Exterior. Foi um dos primeiros mundos a se rebelar abertamente contra o Império.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Lothal",
-        "sistema": "Sistema Lothal",
-        "governo": "Governo Imperial, posteriormente independente.",
-        "afiliacao": "Império Galáctico, Célula Rebelde de Lothal.",
-        "rota_utilizada": "Rota de Comércio de Hydian.",
-        "principais_especies": ["Humanos", "Loth-gatos", "Loth-lobos"],
-        "outras_informacoes": "Planeta natal de Ezra Bridger."
+      "nome": "Lothal",
+      "descricao": "Mundo agrícola transformado em importante polo industrial imperial.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Lothal",
+      "sistema": "Sistema Lothal",
+      "governo": "Governador Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Rota de Comércio de Hydian.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "Planeta natal de Ezra Bridger."
     },
     {
-        "nome": "D'Qar",
-        "descricao": "Um planeta verdejante e exuberante localizado na Orla Exterior, que serviu como a base principal da Resistência durante a guerra contra a Primeira Ordem.",
-        "regiao": "Orla Exterior",
-        "setor": "Setor Ileenium",
-        "sistema": "Sistema D'Qar",
-        "governo": "Nenhum.",
-        "afiliacao": "Resistência.",
-        "rota_utilizada": "Desconhecida.",
-        "principais_especies": ["Várias espécies não-sencientes."],
-        "outras_informacoes": "A base da Resistência em D'Qar foi evacuada após ser descoberta pela Primeira Ordem."
+      "nome": "D'Qar",
+      "descricao": "Mundo florestal remoto e pouco habitado.",
+      "regiao": "Orla Exterior",
+      "setor": "Setor Ileenium",
+      "sistema": "Sistema D'Qar",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Nenhuma"
+      ],
+      "outras_informacoes": "A base da Resistência em D'Qar foi evacuada após ser descoberta pela Primeira Ordem."
     },
     {
-        "nome": "Hosnian Prime",
-        "descricao": "Um planeta cosmopolita que serviu como capital da Nova República antes de sua destruição pela superarma da Primeira Ordem, a Base Starkiller.",
-        "regiao": "Mundos do Núcleo",
-        "setor": "Setor Hosniano",
-        "sistema": "Sistema Hosniano",
-        "governo": "Senado da Nova República.",
-        "afiliacao": "Nova República.",
-        "rota_utilizada": "Corredor Corelliano.",
-        "principais_especies": ["Grande diversidade de espécies."],
-        "outras_informacoes": "A destruição do sistema Hosniano foi um golpe devastador para a Nova República."
+      "nome": "Hosnian Prime",
+      "descricao": "Planeta urbano e importante centro político do Núcleo.",
+      "regiao": "Núcleo",
+      "setor": "Setor Hosniano",
+      "sistema": "Sistema Hosnian",
+      "governo": "Governo planetário",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Corredor Corelliano.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "A destruição do sistema Hosniano foi um golpe devastador para a Nova República."
     },
     {
-        "nome": "Exegol",
-        "descricao": "Um mundo desértico e sombrio localizado nas Regiões Desconhecidas, um reduto oculto dos Sith e local de renascimento do Imperador Palpatine.",
-        "regiao": "Regiões Desconhecidas",
-        "setor": "Desconhecido",
-        "sistema": "Sistema Exegol",
-        "governo": "Culto Sith (Sith Eternos).",
-        "afiliacao": "Sith Eternos, Ordem Final.",
-        "rota_utilizada": "Apenas através de um Wayfinder Sith.",
-        "principais_especies": ["Cultistas Sith"],
-        "outras_informacoes": "Local onde o Imperador Palpatine retornou e construiu a Frota da Ordem Final."
+      "nome": "Exegol",
+      "descricao": "Mundo oculto dos Sith envolto por tempestades.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Exegol",
+      "governo": "Culto Sith Eterno",
+      "afiliacao": "Sith Eterno",
+      "rota_utilizada": "Apenas através de um Wayfinder Sith.",
+      "principais_especies": [
+        "Sith Eternal"
+      ],
+      "outras_informacoes": "Local onde o Imperador Palpatine retornou e construiu a Frota da Ordem Final."
     },
     {
-        "nome": "Ahch-To",
-        "descricao": "Um planeta oceânico com ilhas rochosas, local do primeiro Templo Jedi e o esconderijo de Luke Skywalker durante seu exílio autoimposto.",
-        "regiao": "Regiões Desconhecidas",
-        "setor": "Desconhecido",
-        "sistema": "Sistema Ahch-To",
-        "governo": "Nenhum.",
-        "afiliacao": "Ordem Jedi (antiga), Luke Skywalker (exílio).",
-        "rota_utilizada": "Apenas através de um mapa fragmentado.",
-        "principais_especies": ["Porgs", "Lanais", "Thala-sirens"],
-        "outras_informacoes": "Um lugar de forte conexão com a Força."
+      "nome": "Ahch-To",
+      "descricao": "Mundo oceânico isolado com os primeiros templos Jedi.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Ahch-To",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
+      "rota_utilizada": "Apenas através de um mapa fragmentado.",
+      "principais_especies": [
+        "Lanai"
+      ],
+      "outras_informacoes": "Um lugar de forte conexão com a Força."
     },
     {
       "nome": "Kuat",
-      "descricao": "Um dos principais centros de construção naval da galáxia, conhecido por seus estaleiros orbitais. Foi o principal produtor dos Destróieres Estelares Imperiais.",
-      "regiao": "Mundos do Núcleo",
+      "descricao": "Centro de construção das maiores frotas estelares imperiais.",
+      "regiao": "Núcleo",
       "setor": "Setor Kuat",
       "sistema": "Sistema Kuat",
-      "governo": "Controlado pela Kuat Drive Yards (KDY), uma poderosa corporação.",
-      "afiliacao": "República Galáctica, Império Galáctico.",
+      "governo": "Aristocracia planetária",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Via Hydiana.",
-      "principais_especies": ["Humanos"],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "Os estaleiros de Kuat foram responsáveis pela construção dos Destróieres Estelares Imperiais."
     },
     {
       "nome": "Fondor",
-      "descricao": "Um planeta industrial com vastos estaleiros orbitais, rival de Kuat. Famoso por produzir naves de guerra avançadas, como o Super Destróier Estelar Executor.",
-      "regiao": "Mundos do Núcleo",
+      "descricao": "Potente centro industrial e estaleiro naval.",
+      "regiao": "Núcleo",
       "setor": "Setor Tapani",
       "sistema": "Sistema Fondor",
-      "governo": "Tecnocracia controlada por guildas de estaleiros.",
-      "afiliacao": "República Galáctica, Império Galáctico.",
+      "governo": "Governador Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Corredor Corelliano.",
-      "principais_especies": ["Humanos"],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "Conhecido por sua engenharia avançada e pela construção de naves como o Super Destróier Estelar Executor."
     },
     {
       "nome": "Raxus Prime",
-      "descricao": "Um planeta tóxico que serve como um imenso ferro-velho para a galáxia. É um local perigoso, mas um paraíso para catadores em busca de tecnologia rara.",
+      "descricao": "Mundo coberto por sucata e destroços industriais.",
       "regiao": "Orla Exterior",
       "setor": "Setor Tion Hegemony",
       "sistema": "Sistema Raxus",
-      "governo": "Nenhum governo centralizado, dominado por catadores e gangues.",
-      "afiliacao": "Neutro, com presença de vários grupos criminosos.",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
       "rota_utilizada": "Próximo à Rota Comercial Perlemiana.",
-      "principais_especies": ["Jaw-scavengers", "Humanos", "Rodianos"],
+      "principais_especies": [
+        "Diversas"
+      ],
       "outras_informacoes": "Um local perigoso, mas com potencial para encontrar peças raras de naves e dróides."
     },
     {
       "nome": "Christophsis",
-      "descricao": "Um planeta cristalino com cidades imponentes. Foi palco de uma grande e estratégica batalha no início das Guerras Clônicas, defendido por Obi-Wan e Anakin.",
+      "descricao": "Mundo cristalino rico em recursos minerais.",
       "regiao": "Orla Exterior",
       "setor": "Setor Savareen",
       "sistema": "Sistema Christoph",
-      "governo": "Governo planetário local.",
-      "afiliacao": "República Galáctica, Confederação de Sistemas Independentes (invasão).",
+      "governo": "Governador Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Corredor Corelliano.",
-      "principais_especies": ["Humanos"],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "A Batalha de Christophsis foi uma das primeiras missões de Ahsoka Tano como padawan de Anakin Skywalker."
     },
     {
       "nome": "Umbara",
-      "descricao": "Um planeta sombrio e nebuloso, conhecido como o 'Mundo Sombrio'. Sua flora e fauna são bioluminescentes e extremamente perigosas para forasteiros.",
-      "regiao": "Expansão Profunda",
+      "descricao": "Mundo sombrio com tecnologia avançada e atmosfera densa.",
+      "regiao": "Orla Exterior",
       "setor": "Setor Fantasma",
       "sistema": "Sistema Umbara",
-      "governo": "Milícia Umbarana.",
-      "afiliacao": "Originalmente República Galáctica, depois se aliou à Confederação de Sistemas Independentes.",
+      "governo": "Governador Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Desconhecida, de difícil navegação.",
-      "principais_especies": ["Umbaranos"],
+      "principais_especies": [
+        "Umbaranos"
+      ],
       "outras_informacoes": "Local de uma campanha brutal e controversa liderada pelo General Jedi Pong Krell durante as Guerras Clônicas."
     },
     {
       "nome": "Kessel",
-      "descricao": "Um planeta prisão inóspito, famoso por suas perigosas minas de especiaria. A 'Kessel Run' é uma rota de contrabando notoriamente perigosa na galáxia.",
+      "descricao": "Mundo minerador conhecido pela extração de especiarias e coaxium.",
       "regiao": "Orla Exterior",
       "setor": "Setor Kessel",
       "sistema": "Sistema Kessel",
-      "governo": "Controlado pelo Sindicato Pyke durante a era do Império.",
-      "afiliacao": "Sindicato Pyke, Império Galáctico (controle indireto).",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Kessel Run.",
-      "principais_especies": ["Várias espécies escravizadas nas minas."],
+      "principais_especies": [
+        "Diversas"
+      ],
       "outras_informacoes": "Han Solo se gabava de ter completado a Kessel Run em menos de 12 parsecs."
     },
     {
       "nome": "Malastare",
-      "descricao": "Um planeta conhecido por suas vastas reservas de combustível e por ser o lar da espécie Dug. Foi palco de testes de armas devastadoras da República.",
-      "regiao": "Orla Média",
+      "descricao": "Mundo industrial rico em combustível e energia.",
+      "regiao": "Orla Interior",
       "setor": "Setor Futhark",
       "sistema": "Sistema Malastare",
-      "governo": "Conselho de Malastare.",
-      "afiliacao": "República Galáctica.",
+      "governo": "Governo planetário",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Via Hydiana.",
-      "principais_especies": ["Dugs"],
+      "principais_especies": [
+        "Dug",
+        "Humanos"
+      ],
       "outras_informacoes": "O chanceler Palpatine usou a crise em Malastare para ganhar mais poderes de emergência."
     },
     {
       "nome": "Korriban (Moraband)",
-      "descricao": "O mundo natal dos Sith, um planeta desolado e amaldiçoado, com tumbas antigas e uma forte presença do lado sombrio da Força.",
+      "descricao": "Antigo mundo-túmulo dos Sith, abandonado e envolto pelo lado sombrio.",
       "regiao": "Orla Exterior",
       "setor": "Setor Esstran",
       "sistema": "Sistema Horuset",
-      "governo": "Nenhum governo atual, governado pelos espíritos dos Lordes Sith do passado.",
-      "afiliacao": "Império Sith (antigo), Ordem dos Lordes Sith.",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
       "rota_utilizada": "Rota do Vale dos Lordes Sombrios.",
-      "principais_especies": ["Sith (espécie original, extinta), Tuk'ata (cães Sith)"],
+      "principais_especies": [
+        "Nenhuma"
+      ],
       "outras_informacoes": "Um local de peregrinação para os Sith que buscam poder e conhecimento do lado sombrio."
     },
     {
       "nome": "Dathomir",
-      "descricao": "Um planeta vermelho e místico, lar das misteriosas Irmãs da Noite e dos ferozes Irmãos da Noite. Um lugar de magia sombria e perigosa.",
+      "descricao": "Mundo sombrio dominado por magia e fauna hostil.",
       "regiao": "Orla Exterior",
       "setor": "Setor Quelii",
       "sistema": "Sistema Dathomir",
-      "governo": "Clãs matriarcais (Irmãs da Noite).",
-      "afiliacao": "Independente, com laços com os Sith através de Maul.",
+      "governo": "Clãs das Irmãs da Noite",
+      "afiliacao": "Independente",
       "rota_utilizada": "Desconhecida.",
-      "principais_especies": ["Zabraks (Irmãos da Noite)", "Humanos (Irmãs da Noite)"],
+      "principais_especies": [
+        "Zabraks",
+        "Dathomirianos"
+      ],
       "outras_informacoes": "Planeta natal de Darth Maul e Asajj Ventress. A magia das Irmãs da Noite é uma forma única de manipulação da Força."
     },
     {
       "nome": "Ilum",
-      "descricao": "Um mundo gelado e sagrado para a Ordem Jedi, famoso por suas cavernas de cristais kyber. O Império o transformou na superarma conhecida como Base Starkiller.",
+      "descricao": "Planeta glacial rico em cristais kyber, explorado secretamente pelo Império.",
       "regiao": "Regiões Desconhecidas",
       "setor": "Setor 7G",
       "sistema": "Sistema Ilum",
-      "governo": "Nenhum, protegido pela Ordem Jedi.",
-      "afiliacao": "Ordem Jedi, Império Galáctico (transformado na Base Starkiller).",
+      "governo": "Ocupação Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Rota secreta conhecida apenas pelos Jedi.",
-      "principais_especies": ["Nenhuma espécie senciente nativa."],
+      "principais_especies": [
+        "Nenhuma"
+      ],
       "outras_informacoes": "Foi escavado pelo Império e transformado na superarma da Primeira Ordem, a Base Starkiller."
     },
     {
       "nome": "Cato Neimoidia",
-      "descricao": "Um rico mundo-bolsa da Federação do Comércio, conhecido por suas opulentas cidades suspensas. Símbolo da riqueza e corrupção Separatista.",
-      "regiao": "Colônias",
+      "descricao": "Mundo de cidades suspensas e antiga riqueza comercial.",
+      "regiao": "Orla Interior",
       "setor": "Setor Kanz",
       "sistema": "Sistema Cato Neimoidia",
-      "governo": "Diretoria da Federação do Comércio.",
-      "afiliacao": "Federação do Comércio, Confederação de Sistemas Independentes.",
+      "governo": "Governador Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Corredor de Neimoidia.",
-      "principais_especies": ["Neimoidianos"],
+      "principais_especies": [
+        "Neimoidianos"
+      ],
       "outras_informacoes": "A riqueza do planeta era lendária, mas também sua covardia e corrupção."
     },
     {
       "nome": "Saleucami",
-      "descricao": "Um planeta árido com caldeiras de meteoros, colonizado por diversas espécies. Foi palco de um longo e brutal cerco durante as Guerras Clônicas.",
+      "descricao": "Planeta quente de desertos e vegetação rasteira.",
       "regiao": "Orla Exterior",
       "setor": "Setor Saleucami",
       "sistema": "Sistema Saleucami",
-      "governo": "Governo local independente.",
-      "afiliacao": "Confederação de Sistemas Independentes, depois Império Galáctico.",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Rota de Comércio de Rimma.",
-      "principais_especies": ["Humanos", "Twi'leks", "Weequays"],
+      "principais_especies": [
+        "Saleucami"
+      ],
       "outras_informacoes": "O Mestre Jedi Stass Allie foi morto em Saleucami durante a Ordem 66."
     },
     {
       "nome": "Zeffo",
-      "descricao": "Um planeta ventoso e montanhoso com uma forte conexão com a Força, lar de uma antiga civilização sensível à Força, os Zeffo.",
+      "descricao": "Mundo ventoso repleto de tumbas e ruínas de uma antiga civilização.",
       "regiao": "Orla Exterior",
       "setor": "Desconhecido",
       "sistema": "Sistema Zeffo",
-      "governo": "Nenhum governo atual, apenas ruínas da antiga civilização.",
-      "afiliacao": "Nenhuma.",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
       "rota_utilizada": "Desconhecida.",
-      "principais_especies": ["Zeffo (extintos)"],
+      "principais_especies": [
+        "Zeffo (extintos)"
+      ],
       "outras_informacoes": "Contém tumbas e templos Zeffo que guardam segredos da Força."
     },
     {
       "nome": "Bracca",
-      "descricao": "Um planeta-ferro-velho, local de desmanche de naves de guerra da era das Guerras Clônicas, controlado pela Guilda de Catadores.",
+      "descricao": "Ferro-velho galáctico onde naves são desmontadas.",
       "regiao": "Orla Média",
       "setor": "Desconhecido",
       "sistema": "Sistema Bracca",
-      "governo": "Guilda de Catadores.",
-      "afiliacao": "Império Galáctico (supervisão).",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Próximo à Via Hydiana.",
-      "principais_especies": ["Várias espécies trabalhando como catadores."],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "O Jedi fugitivo Cal Kestis se escondeu em Bracca após a Ordem 66."
     },
     {
       "nome": "Chandrila",
-      "descricao": "Um planeta pacífico e agrícola, um dos mundos fundadores da Aliança Rebelde e a primeira capital da Nova República, liderada por Mon Mothma.",
-      "regiao": "Mundos do Núcleo",
+      "descricao": "Planeta agrícola conhecido por sua tradição política.",
+      "regiao": "Núcleo",
       "setor": "Setor Bormea",
       "sistema": "Sistema Chandrila",
-      "governo": "Democracia representativa.",
-      "afiliacao": "República Galáctica, Aliança Rebelde, Nova República.",
+      "governo": "República planetária",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Rota Comercial Perlemiana.",
-      "principais_especies": ["Humanos"],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "Planeta natal de Mon Mothma, uma das líderes da Aliança Rebelde e Chanceler da Nova República."
     },
     {
       "nome": "Ord Mantell",
-      "descricao": "Um planeta conhecido por seu submundo do crime e por ser um centro para caçadores de recompensas e contrabandistas, como mencionado por Han Solo.",
+      "descricao": "Mundo comercial conhecido por ferro-velhos e caçadores de recompensas.",
       "regiao": "Orla Média",
       "setor": "Setor Bright Jewel",
-      "sistema": "Sistema Ord Mantell",
-      "governo": "Governo local corrupto, forte influência do submundo.",
-      "afiliacao": "Neutro, mas com presença de vários sindicatos do crime.",
+      "sistema": "Sistema Bright Jewel",
+      "governo": "Governo planetário",
+      "afiliacao": "Império Galáctico",
       "rota_utilizada": "Corredor Corelliano.",
-      "principais_especies": ["Humanos", "Twi'leks", "Zabraks"],
+      "principais_especies": [
+        "Humanos"
+      ],
       "outras_informacoes": "Han Solo mencionou ter tido problemas com um caçador de recompensas em Ord Mantell."
     },
     {
       "nome": "Kef Bir",
-      "descricao": "Uma lua oceânica no sistema Endor, local onde os destroços da segunda Estrela da Morte caíram após a batalha. Guardava segredos dos Sith.",
+      "descricao": "Lua oceânica com destroços da segunda Estrela da Morte apenas décadas depois.",
       "regiao": "Orla Exterior",
       "setor": "Setor Moddell",
       "sistema": "Sistema Endor",
-      "governo": "Tribos de ex-soldados da Aliança Rebelde.",
-      "afiliacao": "Independente.",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
       "rota_utilizada": "Rota do Santuário.",
-      "principais_especies": ["Humanos", "Orbak"],
+      "principais_especies": [
+        "Aki-Aki (pequena população)"
+      ],
       "outras_informacoes": "Contém o Wayfinder Sith para Exegol, localizado nos destroços da Estrela da Morte."
     },
     {
       "nome": "Pasaana",
-      "descricao": "Um planeta desértico com uma cultura rica e festivais vibrantes. Foi um dos locais onde a Resistência buscou aliados em sua luta contra a Primeira Ordem.",
+      "descricao": "Mundo desértico onde tribos nômades realizam grandes festivais.",
       "regiao": "Orla Exterior",
       "setor": "Setor Gavar",
       "sistema": "Sistema Pasaana",
-      "governo": "Clãs locais.",
-      "afiliacao": "Simpatizante da Resistência.",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhuma",
       "rota_utilizada": "Desconhecida.",
-      "principais_especies": ["Aki-Aki"],
+      "principais_especies": [
+        "Aki-Aki"
+      ],
       "outras_informacoes": "O Festival dos Ancestrais é um evento cultural importante em Pasaana."
     },
     {
       "nome": "Nal Hutta",
-      "descricao": "O mundo natal dos Hutts, um pântano poluído e perigoso que serve como a capital do vasto e corrupto Espaço Hutt.",
-      "regiao": "Espaço Hutt",
+      "descricao": "Mundo pantanoso e centro do poder dos Hutts.",
+      "regiao": "Orla Exterior",
       "setor": "Setor Y'Toub",
       "sistema": "Sistema Y'Toub",
-      "governo": "Conselho de Anciãos Hutt.",
-      "afiliacao": "Cartel Hutt.",
+      "governo": "Clãs Hutt",
+      "afiliacao": "Cartel Hutt",
       "rota_utilizada": "Corredor de Pabol.",
-      "principais_especies": ["Hutts"],
+      "principais_especies": [
+        "Hutts"
+      ],
       "outras_informacoes": "Nal Hutta é o centro do império criminoso dos Hutts."
     },
     {
       "nome": "Nar Shaddaa",
-      "descricao": "A 'Lua dos Contrabandistas', uma ecumenópole vertical que orbita Nal Hutta. É um dos maiores centros de crime e atividades ilícitas da galáxia.",
-      "regiao": "Espaço Hutt",
+      "descricao": "Lua urbana dominada pelo crime organizado.",
+      "regiao": "Orla Exterior",
       "setor": "Setor Y'Toub",
       "sistema": "Sistema Y'Toub",
-      "governo": "Controlada por vários sindicatos do crime, sem governo central.",
-      "afiliacao": "Submundo do crime.",
+      "governo": "Clãs Hutt",
+      "afiliacao": "Cartel Hutt",
       "rota_utilizada": "Corredor de Pabol.",
-      "principais_especies": ["Grande diversidade de espécies de toda a galáxia."],
+      "principais_especies": [
+        "Diversas"
+      ],
       "outras_informacoes": "Um dos lugares mais perigosos e corruptos da galáxia."
+    },
+    {
+      "nome": "Concord Dawn",
+      "descricao": "Mundo mandaloriano estratégico, conhecido por seus Protetores e guerreiros.",
+      "regiao": "Orla Exterior",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Concord Dawn",
+      "governo": "Casas Mandalorianas",
+      "afiliacao": "Império Galáctico (presença e influência imperial)",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Mandalorianos (Humanos)"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Florrum",
+      "descricao": "Planeta árido que serve de refúgio para piratas e contrabandistas.",
+      "regiao": "Orla Exterior",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Florrum",
+      "governo": "Clãs Piratas",
+      "afiliacao": "Piratas de Hondo Ohnaka",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Diversas"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Euphoria",
+      "descricao": "Capital de um império secreto, reconhecida por sua tecnologia extremamente avançada.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Euphoria",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Asterion",
+      "descricao": "Principal mundo de construção naval e produção da frota imperial.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Asterion",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Voltrix",
+      "descricao": "Planeta responsável pela geração e distribuição de energia do império.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Voltrix",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Ferrus",
+      "descricao": "Mundo minerador rico em metais estratégicos e minerais raros.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Ferrus",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Helion",
+      "descricao": "Principal produtor de alimentos e recursos biológicos do império.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Helion",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Nyxis",
+      "descricao": "Centro de inteligência, espionagem e segurança imperial.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Nyxis",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Orionis",
+      "descricao": "Mundo militar dedicado ao treinamento das forças imperiais.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Orionis",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Caelum",
+      "descricao": "Planeta de pesquisa científica e desenvolvimento tecnológico.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Caelum",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Umbriel",
+      "descricao": "Mundo-fortaleza utilizado para prisões e instalações militares.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Umbriel",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Solaris",
+      "descricao": "Mundo luxuoso reservado à administração e à elite imperial.",
+      "regiao": "Regiões Desconhecidas",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Solaris",
+      "governo": "Império Euphoria",
+      "afiliacao": "Império Euphoria",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos Euphorianos"
+      ],
+      "outras_informacoes": ""
     }
   ]
 }

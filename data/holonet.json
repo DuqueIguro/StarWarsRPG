@@ -15,17 +15,17 @@
     {
       "canal": "HNN-ALPHA",
       "status": "AO VIVO",
-      "descricao": "Cobertura: Movimentação Imperial - Setor Anoat"
+      "descricao": "Cobertura: Operações de Pacificação do BSI no Setor Lothal"
     },
     {
       "canal": "HNN-BETA",
       "status": "AO VIVO",
-      "descricao": "Sessão do Senado - Tratado de Coruscant"
+      "descricao": "Sessão do Senado - Debates sobre Segurança e Orçamento Militar"
     },
     {
       "canal": "HNN-GAMA",
       "status": "GRAVADO",
-      "descricao": "Especial: 1 Ano da Batalha de Jakku"
+      "descricao": "Especial: 15 Anos da Nova Ordem e a Paz de Palpatine"
     }
   ]
 }
