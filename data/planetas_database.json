@@ -142,20 +142,6 @@
       "outras_informacoes": "Local do duelo entre Obi-Wan Kenobi e Anakin Skywalker. Mais tarde, tornou-se a fortaleza pessoal de Darth Vader."
     },
     {
-      "nome": "Kamino",
-      "descricao": "Mundo oceânico famoso por sua tecnologia de clonagem.",
-      "regiao": "Espaço Selvagem",
-      "setor": "Setor Kamino",
-      "sistema": "Sistema Kamino",
-      "governo": "Administração Imperial",
-      "afiliacao": "Império Galáctico",
-      "rota_utilizada": "Desconhecida para a maioria, mantida em segredo.",
-      "principais_especies": [
-        "Kaminoanos"
-      ],
-      "outras_informacoes": "Origem do Grande Exército da República, os soldados clones."
-    },
-    {
       "nome": "Geonosis",
       "descricao": "Mundo desértico onde é construída a primeira Estrela da Morte.",
       "regiao": "Orla Exterior",
@@ -396,34 +382,6 @@
       "outras_informacoes": "A destruição do sistema Hosniano foi um golpe devastador para a Nova República."
     },
     {
-      "nome": "Exegol",
-      "descricao": "Mundo oculto dos Sith envolto por tempestades.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Exegol",
-      "governo": "Culto Sith Eterno",
-      "afiliacao": "Sith Eterno",
-      "rota_utilizada": "Apenas através de um Wayfinder Sith.",
-      "principais_especies": [
-        "Sith Eternal"
-      ],
-      "outras_informacoes": "Local onde o Imperador Palpatine retornou e construiu a Frota da Ordem Final."
-    },
-    {
-      "nome": "Ahch-To",
-      "descricao": "Mundo oceânico isolado com os primeiros templos Jedi.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Ahch-To",
-      "governo": "Nenhum",
-      "afiliacao": "Nenhuma",
-      "rota_utilizada": "Apenas através de um mapa fragmentado.",
-      "principais_especies": [
-        "Lanai"
-      ],
-      "outras_informacoes": "Um lugar de forte conexão com a Força."
-    },
-    {
       "nome": "Kuat",
       "descricao": "Centro de construção das maiores frotas estelares imperiais.",
       "regiao": "Núcleo",
@@ -550,20 +508,6 @@
         "Dathomirianos"
       ],
       "outras_informacoes": "Planeta natal de Darth Maul e Asajj Ventress. A magia das Irmãs da Noite é uma forma única de manipulação da Força."
-    },
-    {
-      "nome": "Ilum",
-      "descricao": "Planeta glacial rico em cristais kyber, explorado secretamente pelo Império.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Setor 7G",
-      "sistema": "Sistema Ilum",
-      "governo": "Ocupação Imperial",
-      "afiliacao": "Império Galáctico",
-      "rota_utilizada": "Rota secreta conhecida apenas pelos Jedi.",
-      "principais_especies": [
-        "Nenhuma"
-      ],
-      "outras_informacoes": "Foi escavado pelo Império e transformado na superarma da Primeira Ordem, a Base Starkiller."
     },
     {
       "nome": "Cato Neimoidia",
@@ -730,146 +674,6 @@
       "rota_utilizada": "Desconhecida.",
       "principais_especies": [
         "Diversas"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Euphoria",
-      "descricao": "Capital de um império secreto, reconhecida por sua tecnologia extremamente avançada.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Euphoria",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Asterion",
-      "descricao": "Principal mundo de construção naval e produção da frota imperial.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Asterion",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Voltrix",
-      "descricao": "Planeta responsável pela geração e distribuição de energia do império.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Voltrix",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Ferrus",
-      "descricao": "Mundo minerador rico em metais estratégicos e minerais raros.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Ferrus",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Helion",
-      "descricao": "Principal produtor de alimentos e recursos biológicos do império.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Helion",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Nyxis",
-      "descricao": "Centro de inteligência, espionagem e segurança imperial.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Nyxis",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Orionis",
-      "descricao": "Mundo militar dedicado ao treinamento das forças imperiais.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Orionis",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Caelum",
-      "descricao": "Planeta de pesquisa científica e desenvolvimento tecnológico.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Caelum",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Umbriel",
-      "descricao": "Mundo-fortaleza utilizado para prisões e instalações militares.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Umbriel",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
-      ],
-      "outras_informacoes": ""
-    },
-    {
-      "nome": "Solaris",
-      "descricao": "Mundo luxuoso reservado à administração e à elite imperial.",
-      "regiao": "Regiões Desconhecidas",
-      "setor": "Desconhecido",
-      "sistema": "Sistema Solaris",
-      "governo": "Império Euphoria",
-      "afiliacao": "Império Euphoria",
-      "rota_utilizada": "Desconhecida.",
-      "principais_especies": [
-        "Humanos Euphorianos"
       ],
       "outras_informacoes": ""
     }

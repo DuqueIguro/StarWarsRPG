@@ -250,6 +250,68 @@ header .font-aurebesh {
 }
 
 
+/* Cores de card por afiliação (usado na página secreta) */
+.card-imperio {
+    --cor-tema: #ef4444; /* Vermelho */
+    --cor-tema-clara: #fca5a5;
+    border-color: var(--cor-tema);
+    border-left-color: var(--cor-tema);
+    background-color: rgba(239, 68, 68, 0.08);
+}
+
+.card-rebeldes {
+    --cor-tema: #3b82f6; /* Azul */
+    --cor-tema-clara: #93c5fd;
+    border-color: var(--cor-tema);
+    border-left-color: var(--cor-tema);
+    background-color: rgba(59, 130, 246, 0.08);
+}
+
+.card-neutro {
+    --cor-tema: #9ca3af; /* Cinza */
+    --cor-tema-clara: #e5e7eb;
+    border-color: var(--cor-tema);
+    border-left-color: var(--cor-tema);
+    background-color: rgba(156, 163, 175, 0.08);
+}
+
+.card-euphoria {
+    --cor-tema: #a855f7; /* Roxo */
+    --cor-tema-clara: #d8b4fe;
+    border-color: var(--cor-tema);
+    border-left-color: var(--cor-tema);
+    background-color: rgba(168, 85, 247, 0.08);
+}
+
+[class*="card-"]:hover {
+    border-left-color: var(--cor-tema-clara);
+    box-shadow: 0 10px 20px color-mix(in srgb, var(--cor-tema) 25%, transparent);
+}
+
+[class*="card-"] h2,
+[class*="card-"] h2 i {
+    color: var(--cor-tema-clara);
+}
+
+[class*="card-"] .regiao {
+    border-bottom-color: var(--cor-tema);
+    color: var(--cor-tema-clara);
+}
+
+[class*="card-"] .description-box,
+[class*="card-"] .info-box {
+    border-color: var(--cor-tema);
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+[class*="card-"] .info-box strong {
+    color: var(--cor-tema-clara);
+}
+
+[class*="card-"] .info-box ul li::before {
+    color: var(--cor-tema-clara);
+}
+
 #mensagem-nenhum-resultado {
     text-align: center;
     color: var(--cor-texto-secundario);

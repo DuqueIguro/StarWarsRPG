@@ -50,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         planetas.forEach(planeta => {
             const card = document.createElement('div');
-            card.className = 'planeta-card';
+            const corClasse = `card-${planeta.afiliacao_id || 'neutro'}`;
+            card.className = `planeta-card ${corClasse}`;
 
             const affiliationItems = planeta.afiliacao.split(',').map(item => `<li>${item.trim()}</li>`).join('');
             const speciesItems = planeta.principais_especies.map(item => `<li>${item.trim()}</li>`).join('');
