@@ -676,6 +676,48 @@
         "Diversas"
       ],
       "outras_informacoes": ""
+    },
+    {
+      "nome": "Kirneh",
+      "descricao": "Mundo conhecido por ter resistido à invasão separatista durante as Guerras Clônicas e reconstruído sob domínio imperial.",
+      "regiao": "Orla Média",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Kirneh",
+      "governo": "Governo Planetário",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "Reconstruído sob influência imperial após resistir à invasão separatista nas Guerras Clônicas."
+    },
+    {
+      "nome": "Brentaal IV",
+      "descricao": "Importante centro comercial e um dos maiores cruzamentos de rotas hiperespaciais da galáxia.",
+      "regiao": "Núcleo",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Brentaal",
+      "governo": "Governador Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "Importante centro comercial do Núcleo, conhecido por seu intenso tráfego de rotas hüperespaciais."
+    },
+    {
+      "nome": "Jedha",
+      "descricao": "Antigo mundo sagrado dos Jedi, explorado pelo Império por seus cristais kyber.",
+      "regiao": "Orla Exterior",
+      "setor": "Desconhecido",
+      "sistema": "Sistema Jedha",
+      "governo": "Ocupação Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": "Mundo sagrado dos Jedi que foi explorado pelo Império para extrair cristais kyber."
     }
   ]
 }
