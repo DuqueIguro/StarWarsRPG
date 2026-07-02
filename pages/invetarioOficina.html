@@ -5,7 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciador de Inventário - Star Wars RPG</title>
+
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -16,7 +25,10 @@
 </head>
 
 <body class="min-h-screen p-4 md:p-8">
-
+    <button id="open-cart-btn" class="fixed bottom-6 right-6 z-30 btn-cart-toggle text-white font-orbitron font-bold py-3 px-5 rounded-full flex items-center gap-2 cursor-pointer transition-transform hover:scale-110 active:scale-95">
+        <span>🛒</span> VER CARRINHO
+    </button>
+    
     <div id="notification"
         class="notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px]">
     </div>
@@ -212,14 +224,15 @@
     <script src="../js/inventario.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            function handleCreditsEnterBlur(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    e.target.blur();
-                }
+            var personalCredits = document.getElementById('personal-credits');
+            if (personalCredits) {
+                personalCredits.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.target.blur();
+                    }
+                });
             }
-            document.getElementById('personal-credits').addEventListener('keydown', handleCreditsEnterBlur);
-            document.getElementById('workshop-credits').addEventListener('keydown', handleCreditsEnterBlur);
         });
     </script>
 
