@@ -26,8 +26,12 @@
 
 <body class="min-h-screen p-4 md:p-8">
 
+    <button id="open-cart-btn" class="fixed bottom-6 right-6 z-30 btn-cart-toggle text-white font-orbitron font-bold py-3 px-5 rounded-full flex items-center gap-2 cursor-pointer transition-transform hover:scale-110 active:scale-95">
+        <span>🛒</span> VER CARRINHO
+    </button>
+
     <div id="notification"
-        class="notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px]">
+        class="notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px] transition-all duration-300">
     </div>
 
     <header class="text-center mb-8 relative">
@@ -36,8 +40,7 @@
             style="text-decoration:none;">
             <span class="text-lg">&#8592;</span> Voltar
         </a>
-        <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento
-            de Recursos</h1>
+        <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento de Recursos</h1>
         <p class="font-aurebesh text-lg text-cyan-500">Terminal de Gerenciamento de Recursos</p>
         <button id="reset-btn"
             class="absolute top-0 right-0 btn-danger font-orbitron text-xs py-1 px-3 rounded-md border border-red-700 bg-red-900/80 hover:bg-red-700/80 transition-colors shadow-md font-bold">
@@ -60,8 +63,7 @@
                 <button data-tab="lojas"
                     class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-active">LOJAS</button>
                 <button data-tab="personagem"
-                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO
-                    PESSOAL</button>
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO PESSOAL</button>
             </nav>
         </div>
 
@@ -73,9 +75,9 @@
                             <h3 class="font-orbitron text-lg mb-2 text-cyan-400">FILTROS DE BUSCA</h3>
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <input type="text" id="search-input" placeholder="Buscar por nome..."
-                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none text-white">
                                 <select id="quality-filter"
-                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none text-white">
                                     <option value="all">Todas as Qualidades</option>
                                     <option value="Lendária">Lendária</option>
                                     <option value="Imperial">Imperial</option>
@@ -85,7 +87,7 @@
                                     <option value="Baixa">Baixa</option>
                                 </select>
                                 <select id="category-filter"
-                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none text-white">
                                     <option value="all">Todas as Categorias</option>
                                     <option value="Naves Prontas">Naves Prontas</option>
                                     <option value="Dróides Prontos">Dróides Prontos</option>
@@ -95,7 +97,7 @@
                                     <option value="Outros">Outros</option>
                                 </select>
                                 <select id="sort-by"
-                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none text-white">
                                     <option value="price-desc">Preço (Maior para Menor)</option>
                                     <option value="price-asc">Preço (Menor para Maior)</option>
                                     <option value="name-asc">Nome (A-Z)</option>
@@ -107,8 +109,7 @@
                         </div>
                         <div class="md:pl-4 md:border-l border-cyan-700 flex-shrink-0 flex items-center">
                             <button id="add-custom-item-btn"
-                                class="btn-success font-bold py-2 px-4 rounded-md w-full h-fit">Adicionar Item
-                                Customizado</button>
+                                class="btn-success font-bold py-2 px-4 rounded-md w-full h-fit">Adicionar Item Customizado</button>
                         </div>
                     </div>
                 </div>
@@ -125,10 +126,10 @@
     </main>
 
     <div id="cart"
-        class="fixed top-0 right-0 h-full w-full md:w-1/3 lg:w-1/4 glass-pane p-4 transform translate-x-full z-40 flex flex-col">
+        class="fixed top-0 right-0 h-full w-full md:w-1/3 lg:w-1/4 glass-pane p-4 transform translate-x-full z-40 flex flex-col transition-transform duration-300 ease-in-out">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-orbitron text-2xl text-cyan-300">CARRINHO</h2>
-            <button id="close-cart-btn" class="text-2xl hover:text-red-500">&times;</button>
+            <button id="close-cart-btn" class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto pr-2">
         </div>
@@ -146,7 +147,7 @@
                 <div class="flex flex-col space-y-2">
                     <label class="flex items-center space-x-2 text-sm cursor-pointer select-none">
                         <input type="radio" name="payment-method" value="credits" checked class="accent-cyan-500">
-                        <span>Créditos Imperiais</span>
+                        <span class="text-white">Créditos Imperiais</span>
                     </label>
                     <label class="flex items-center space-x-2 text-sm cursor-pointer select-none">
                         <input type="radio" name="payment-method" value="reais" class="accent-green-500">
@@ -155,7 +156,7 @@
                 </div>
             </div>
 
-            <button id="checkout-btn" class="w-full btn-primary font-bold py-2 rounded-md tracking-widest font-orbitron">FINALIZAR COMPRA</button>
+            <button id="checkout-btn" class="w-full btn-primary font-bold py-2 rounded-md tracking-widest font-orbitron cursor-pointer">FINALIZAR COMPRA</button>
         </div>
     </div>
 
@@ -164,18 +165,18 @@
         <div class="glass-pane rounded-lg p-8 w-full max-w-lg">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="font-orbitron text-2xl text-cyan-300">ADICIONAR ITEM CUSTOMIZADO</h2>
-                <button id="close-modal-btn" class="text-2xl hover:text-red-500">&times;</button>
+                <button id="close-modal-btn" class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
             </div>
             <form id="custom-item-form">
                 <div class="space-y-4">
-                    <input type="text" id="custom-item-name" placeholder="Nome do Item" class="modal-input w-full"
+                    <input type="text" id="custom-item-name" placeholder="Nome do Item" class="modal-input w-full text-white"
                         required>
-                    <textarea id="custom-item-desc" placeholder="Descrição" class="modal-input w-full" rows="3"
+                    <textarea id="custom-item-desc" placeholder="Descrição" class="modal-input w-full text-white" rows="3"
                         required></textarea>
                     <input type="number" id="custom-item-price" placeholder="Preço em Créditos"
-                        class="modal-input w-full" min="0" required>
+                        class="modal-input w-full text-white" min="0" required>
                     <div class="grid grid-cols-2 gap-4">
-                        <select id="custom-item-quality" class="modal-input w-full" required>
+                        <select id="custom-item-quality" class="modal-input w-full text-white" required>
                             <option value="" disabled selected>Qualidade</option>
                             <option value="Lendária">Lendária</option>
                             <option value="Imperial">Imperial</option>
@@ -184,7 +185,7 @@
                             <option value="Normal">Normal</option>
                             <option value="Baixa">Baixa</option>
                         </select>
-                        <select id="custom-item-category" class="modal-input w-full" required>
+                        <select id="custom-item-category" class="modal-input w-full text-white" required>
                             <option value="" disabled selected>Categoria</option>
                             <option value="Naves Prontas">Nave Pronta</option>
                             <option value="Dróides Prontos">Dróide Pronto</option>
@@ -194,7 +195,7 @@
                             <option value="Outros">Outros</option>
                         </select>
                     </div>
-                    <button type="submit" class="w-full btn-success font-bold py-2 rounded-md">Salvar Item</button>
+                    <button type="submit" class="w-full btn-success font-bold py-2 rounded-md cursor-pointer">Salvar Item</button>
                 </div>
             </form>
         </div>

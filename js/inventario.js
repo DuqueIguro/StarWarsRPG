@@ -42,6 +42,7 @@ const sortByEl = document.getElementById('sort-by');
 const cartEl = document.getElementById('cart');
 const cartItemsEl = document.getElementById('cart-items');
 const closeCartBtn = document.getElementById('close-cart-btn');
+const openCartBtn = document.getElementById('open-cart-btn'); // Novo Botão
 const cartTotalPersonalEl = document.getElementById('cart-total-personal');
 const cartTotalReaisEl = document.getElementById('cart-total-reais');
 const checkoutBtn = document.getElementById('checkout-btn');
@@ -61,13 +62,13 @@ const renderCredits = () => {
 const createItemCard = (item, context = 'shop') => {
     const card = document.createElement('div');
     const qualityClass = item.quality.replace(/\s/g, '-');
-    card.className = `glass-pane p-4 rounded-lg flex flex-col border-l-4 quality-${qualityClass}`;
+    card.className = `glass-pane p-4 rounded-lg flex flex-col border-l-4 quality-${qualityClass} item-card-animate transform transition-all duration-300 hover:-translate-y-1`;
 
     let buttonsHtml = '';
     if (context === 'shop') {
-        buttonsHtml = `<button class="add-to-cart-btn mt-4 btn-primary font-bold py-2 px-4 rounded-md w-full">Adicionar ao Carrinho</button>`;
+        buttonsHtml = `<button class="add-to-cart-btn mt-4 btn-primary font-bold py-2 px-4 rounded-md w-full cursor-pointer">Adicionar ao Carrinho</button>`;
     } else {
-        buttonsHtml = `<button class="remove-from-inventory-btn mt-4 btn-danger font-bold py-2 px-4 rounded-md w-full">Remover do Inventário</button>`;
+        buttonsHtml = `<button class="remove-from-inventory-btn mt-4 btn-danger font-bold py-2 px-4 rounded-md w-full cursor-pointer">Remover do Inventário</button>`;
     }
 
     // CÁLCULO DA CONVERSÃO (10000 créditos = 1 real)
@@ -77,8 +78,8 @@ const createItemCard = (item, context = 'shop') => {
         <div class="flex-grow">
             <h4 class="font-orbitron text-lg text-cyan-400">${item.name}</h4>
             <p class="text-sm text-gray-400 mb-2">Qualidade: <span class="font-bold">${item.quality}</span></p>
-            <p class="text-xs mb-2">Categoria: ${item.category}</p>
-            <p class="text-sm mb-4">${item.description}</p>
+            <p class="text-xs mb-2 text-gray-400">Categoria: ${item.category}</p>
+            <p class="text-sm mb-4 text-gray-300">${item.description}</p>
         </div>
         <div>
             <p class="font-bold text-yellow-400 text-lg">${item.price.toLocaleString()} ⦻ (Créditos)</p>
@@ -168,7 +169,7 @@ const renderCart = () => {
     } else {
         state.cart.forEach((cartItem, index) => {
             const div = document.createElement('div');
-            div.className = 'mb-4 p-3 rounded-md bg-gray-900/40 border border-gray-800 flex flex-col';
+            div.className = 'mb-4 p-3 rounded-md bg-gray-900/40 border border-gray-800 flex flex-col item-card-animate';
 
             const itemPriceInReais = cartItem.item.price / 10000;
 
@@ -180,7 +181,7 @@ const renderCart = () => {
                         <p class="text-xs text-green-400">R$ ${itemPriceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                 </div>
-                <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1 rounded-md w-full mt-1">Remover</button>
+                <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1 rounded-md w-full mt-1 cursor-pointer">Remover</button>
             `;
             totalPersonal += cartItem.item.price;
             cartItemsEl.appendChild(div);
@@ -226,7 +227,7 @@ const handleUpdateCredits = (e) => {
 
 const showNotification = (message, type = 'success') => {
     notificationEl.textContent = message;
-    notificationEl.className = `notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px] ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+    notificationEl.className = `notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px] transition-all duration-300 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
     setTimeout(() => {
         notificationEl.classList.remove('opacity-0', 'translate-y-[-20px]');
         notificationEl.classList.add('opacity-100', 'translate-y-0');
@@ -343,7 +344,11 @@ const init = () => {
     searchInput.addEventListener('input', handleFilterChange);
     qualityFilter.addEventListener('change', handleFilterChange);
     categoryFilter.addEventListener('change', handleFilterChange);
+    
+    // Controles de Visibilidade do Carrinho (Sem Mutar Dados)
     closeCartBtn.addEventListener('click', () => cartEl.classList.add('translate-x-full'));
+    openCartBtn.addEventListener('click', () => cartEl.classList.remove('translate-x-full'));
+    
     checkoutBtn.addEventListener('click', handleCheckout);
     resetBtn.addEventListener('click', handleReset);
     addCustomItemBtn.addEventListener('click', () => customItemModal.classList.remove('hidden'));
