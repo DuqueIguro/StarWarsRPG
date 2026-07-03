@@ -26,7 +26,7 @@
         },
             "missoes": {
                 "convocados": [
-                    "Operação Sombra do Senado — infiltração encoberta para extrair um aliado parlamentar comprometido e plantar documentação que desestabilize uma mesa de conivência imperial; janela operacional: 48 horas; líder de equipe: Senadora Elara Vance; alto risco político."
+                    "Operação Sombra do Senado — infiltração encoberta para extrair um aliado parlamentar compromised e plantar documentação que desestabilize uma mesa de conivência imperial; janela operacional: 48 horas; líder de equipe: Senadora Elara Vance; alto risco político."
                 ],
                 "disponiveis": [
                     "Interceptação de Carga em Kuat — ataque de oportunidade a um comboio de peças de reparo destinadas a um estaleiro imperial; objetivos: apreensão de componentes hidráulicos e embarque de sobreviventes; exige coordenação orbital e cobertura de patrulha."
@@ -75,7 +75,7 @@
                 "Reconhecimento Técnico Orbital — sondagem de rotas de suprimento imperial via sensores ocultos; objetivo: mapear corredores de abastecimento e criar janelas para ataques de interdição."
             ],
             "andamento": [
-                "Análise dos Planos Estruturais Imperiais — equipe de engenharia revisa dados capturados para identificar pontos fracos em plataformas de construção imperial; objetivo: gerar relatórios para operações de sabotagem futuras."
+                "Invasão ao Complexo de D'Qar — desdobramento de Equipe de Solo para incursão em fortificação imperial nas florestas; objetivos: engajar em combate direto nos arredores e avançar progressivamente em direção ao centro da instalação."
             ],
             "concluidas": [
                 "Evacuação de Posto Avançado Dantooine — retirada organizada de civis e material sensível após quebra de segurança; operação completada com sucesso, garantidos rotas de exfiltração seguras."
@@ -117,7 +117,7 @@
                 "Sabotagem de Antena Sônica — infiltração curta para plantar explosivos de precisão em uma antena de rastreio; enfraquecerá a rede de comunicação local por até 72 horas."
             ],
             "andamento": [
-                "Rastreamento de Contrabandistas de Coaxium — perseguição prolongada a uma rota de contrabando suspeita; coleta de inteligência é contínua enquanto se tenta interceptar um carregamento crítico."
+                "Diretiva de Infiltração em Mapuzo — sabotagem tática na antena de transmissão imperial com infiltração em instalação de comunicações; objetivo: corromper o sinal de monitoramento e interromper a rede local."
             ],
             "concluidas": [
                 "Mapeamento de Rotas no Setor de Transição — coleta e curadoria de rotas seguras alternativas usadas por contrabandistas, agora incorporadas aos bancos de dados de exfiltração."
@@ -159,7 +159,7 @@
                 "Rede Fantasma — estabelecimento de novos pontos de contato temporários em planetas 'fantasmas' para expansão de rotas; objetivo: reduzir risco em 30% criando redundância de rotas."
             ],
             "andamento": [
-                "Transporte Silente — missão contínua para mover três civis sensíveis através de tempestades eletromagnéticas em Jabiim; exige pilotos experientes e rotas alternativas."
+                "Retirada de Célula Oculta em Mapuzo — exfiltração urgente de usuários da Força e simpatizantes abrigados em refúgio clandestino; prioridade: máxima; desafios: evitar confrontos diretos, patrulhas intensificadas, varreduras inquisitoriais e droides de busca."
             ],
             "concluidas": [
                 "Evacuação de Tanalorr — retirada bem-sucedida de um pequeno grupo de refugiados para um santuário temporário, mantendo discrição e sem alertar patrulhas imperiais."
