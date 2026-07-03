@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Restrito // Cartografia Galáctica Secreta</title>
+    <!-- Importando fontes oficiais do CSS do Mapa -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/mapa_galatico.css">
+    <link rel="icon" type="image/x-icon" href="../img/droid.ico">
+    <style>
+        /* Estilização base adaptada do mapa_galatico.css */
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto Mono', monospace;
+            background-color: #051318; /* --cor-fundo */
+            color: #d1f7ff; /* --cor-texto-principal */
+            margin: 0;
+            padding: 0;
+            /* Efeito de varredura CRT e linhas de grade originais do mapa */
+            background-image: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%),
+                radial-gradient(circle at 1px 1px, rgba(0, 240, 255, 0.08) 1px, transparent 0);
+            background-size: 100% 4px, 25px 25px;
+        }
+
+        .gate-wrap {
+            width: 100%;
+            max-width: 480px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 10;
+        }
+
+        /* Container do painel emulando as caixas de dados e blur de vidro */
+        .gate-panel {
+            width: 100%;
+            background-color: rgba(11, 37, 46, 0.85); /* --cor-painel com opacidade */
+            border: 1px solid rgba(0, 240, 255, 0.4); /* --cor-borda */
+            border-left: 5px solid #00ffff; /* Borda lateral marcante idêntica ao card do mapa */
+            border-radius: 8px;
+            padding: 2.25rem 2rem;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            text-align: center;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .gate-panel.sucesso {
+            border-color: #00ff66;
+            border-left-color: #00ff66;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
+        }
+
+        .gate-panel.erro {
+            animation: gate-shake 0.4s ease;
+            border-color: #ff2a2a; /* Vermelho Império */
+            border-left-color: #ff2a2a;
+            box-shadow: 0 0 25px rgba(255, 42, 42, 0.3);
+        }
+
+        @keyframes gate-shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(7px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(3px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gate-panel.erro { animation: none; }
+        }
+
+        .gate-eyebrow {
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #ffffff;
+            opacity: 0.7;
+            margin: 0 0 0.6rem;
+        }
+
+        /* Aurebesh adaptado */
+        .gate-aurebesh {
+            font-family: 'Aurebesh', sans-serif;
+            text-transform: lowercase;
+            font-size: 1.1rem;
+            color: #00ffff;
+            opacity: 0.6;
+            letter-spacing: 2px;
+            margin: 0 0 0.9rem;
+        }
+
+        /* Efeito de instabilidade oscilante do holograma no título */
+        .gate-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.4rem, 6vw, 1.9rem);
+            letter-spacing: 3px;
+            margin: 0 0 0.9rem;
+            color: #ffffff; /* --cor-titulo */
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.4), 0 0 25px rgba(0, 240, 255, 0.2);
+            animation: hologramFlicker 6s infinite;
+        }
+
+        .gate-desc {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #d1f7ff;
+            opacity: 0.9;
+            margin: 0 0 1.75rem;
+        }
+
+        .gate-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            text-align: left;
+        }
+
+        .gate-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        /* Inputs estilizados conforme filtros-container do mapa */
+        .gate-input {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            letter-spacing: 0.12em;
+            background-color: rgba(5, 19, 24, 0.9);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            color: #ffffff;
+            padding: 0.75rem 0.9rem;
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.25s ease-in-out;
+            box-shadow: inset 0 0 5px rgba(0, 240, 255, 0.1);
+        }
+
+        .gate-input:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4), inset 0 0 5px rgba(0, 240, 255, 0.2);
+        }
+
+        .gate-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Botão estilo Interface de Computador de Bordo */
+        .gate-btn {
+            margin-top: 0.4rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            padding: 0.8rem 1rem;
+            background-color: rgba(11, 37, 46, 0.8);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            color: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gate-btn:hover:not(:disabled) {
+            background-color: rgba(0, 240, 255, 0.15);
+            color: #00ffff;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .gate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .gate-feedback {
+            min-height: 1.4em;
+            margin: 1rem 0 0;
+            font-size: 0.8rem;
+            letter-spacing: 0.02em;
+        }
+
+        .gate-feedback.erro {
+            color: #ff2a2a;
+            text-shadow: 0 0 5px rgba(255, 42, 42, 0.3);
+        }
+
+        .gate-feedback.sucesso {
+            color: #00ff66;
+            text-shadow: 0 0 5px rgba(0, 255, 102, 0.3);
+        }
+
+        .gate-feedback.info {
+            color: #ffffff;
+            opacity: 0.7;
+        }
+
+        .gate-tentativas {
+            margin: 0.4rem 0 0;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #ffffff;
+            opacity: 0.5;
+        }
+
+        .gate-rodape {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #ffffff;
+            opacity: 0.6;
+            letter-spacing: 0.03em;
+            max-width: 42ch;
+        }
+
+        .gate-rodape .risco {
+            color: #ff2a2a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="gate-wrap">
+        <div class="gate-panel" id="gatePanel">
+            <p class="gate-eyebrow">Terminal Astrografia // Rede Holonet</p>
+            <p class="gate-aurebesh">mapa galactico</p>
+
+            <h1 class="gate-title">LINK CRIPTOGRAFADO</h1>
+            <p class="gate-desc">
+                O banco de dados das Regiões Desconhecidas e planetas secretos exige assinatura quântica. Forneça o código de descriptografia hiperespacial.
+            </p>
+
+            <form id="gateForm" class="gate-form" autocomplete="off">
+                <label class="gate-label" for="gateSenha">Vetor de Autenticação</label>
+                <input type="password" id="gateSenha" class="gate-input" placeholder="••••••••••" autocomplete="off"
+                    spellcheck="false">
+                <button type="submit" class="gate-btn" id="gateBtn">Sincronizar Coordenadas</button>
+            </form>
+
+            <p class="gate-feedback" id="gateFeedback" aria-live="polite"></p>
+            <p class="gate-tentativas" id="gateTentativas"></p>
+        </div>
+
+        <p class="gate-rodape">
+            Aviso de telemetria: Múltiplas falhas corromperão os dados locais e <span class="risco">suspenderão o cálculo de rota automaticamente.</span>
+        </p>
+    </main>
+
+    <script>
+        /* ============================================================
+       senhaMapa.js — Terminal de Acesso do Mapa Galáctico Secreta
+       Verifica a senha contra ../data/senhasGerais.json (chave "mapa")
+       ============================================================ */
+
+        const CAMINHO_SENHAS = "../data/senhasGerais.json";
+        const CHAVE_SENHA = "mapa"; // Busca as diretivas do mapa secreto
+        const MAX_TENTATIVAS = 3;
+        const BLOQUEIO_SEGUNDOS = 15;
+
+        let tentativasFalhas = 0;
+        let bloqueado = false;
+        let entradaSenha = null;
+
+        const painel = document.getElementById("gatePanel");
+        const form = document.getElementById("gateForm");
+        const input = document.getElementById("gateSenha");
+        const btn = document.getElementById("gateBtn");
+        const feedback = document.getElementById("gateFeedback");
+        const tentativasEl = document.getElementById("gateTentativas");
+
+        function setFeedback(mensagem, tipo) {
+            feedback.textContent = mensagem;
+            feedback.className = `gate-feedback ${tipo || ""}`;
+        }
+
+        function setPainelEstado(estado) {
+            painel.classList.remove("erro", "sucesso");
+            if (estado) painel.classList.add(estado);
+        }
+
+        async function carregarEntradaSenha() {
+            try {
+                const resp = await fetch(CAMINHO_SENHAS, { cache: "no-store" });
+                if (!resp.ok) throw new Error("status " + resp.status);
+                const dados = await resp.json();
+                entradaSenha = dados[CHAVE_SENHA];
+                if (!entradaSenha) throw new Error("chave não encontrada");
+            } catch (erro) {
+                console.error("Falha ao carregar credenciais:", erro);
+                setFeedback("Link de dados fora do ar. Tente novamente mais tarde.", "erro");
+                btn.disabled = true;
+            }
+        }
+
+        function atualizarTentativasRestantes() {
+            const restantes = MAX_TENTATIVAS - tentativasFalhas;
+            if (restantes <= 0) {
+                tentativasEl.textContent = "";
+                return;
+            }
+            tentativasEl.textContent = `Amostras de sinal restantes: ${restantes}`;
+        }
+
+        function iniciarBloqueio() {
+            bloqueado = true;
+            input.disabled = true;
+            btn.disabled = true;
+
+            let restante = BLOQUEIO_SEGUNDOS;
+            setFeedback(`Sinal dispersado. Sincronizando novas ondas em ${restante}s.`, "erro");
+            tentativasEl.textContent = "";
+
+            const intervalo = setInterval(() => {
+                restante -= 1;
+                if (restante <= 0) {
+                    clearInterval(intervalo);
+                    bloqueado = false;
+                    tentativasFalhas = 0;
+                    input.disabled = false;
+                    btn.disabled = false;
+                    setPainelEstado(null);
+                    setFeedback("Canal estático limpo. Pronto para retransmissão.", "info");
+                    input.value = "";
+                    input.focus();
+                } else {
+                    setFeedback(`Sinal dispersado. Sincronizando novas ondas em ${restante}s.`, "erro");
+                }
+            }, 1000);
+        }
+
+        function tratarSucesso() {
+            setPainelEstado("sucesso");
+            setFeedback("Coordenadas descriptografadas. Abrindo mapa estelar...", "sucesso");
+            tentativasEl.textContent = "";
+            input.disabled = true;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                window.location.href = entradaSenha.url;
+            }, 1200);
+        }
+
+        function tratarFalha() {
+            tentativasFalhas += 1;
+            setPainelEstado("erro");
+            setTimeout(() => setPainelEstado(null), 400);
+
+            if (tentativasFalhas >= MAX_TENTATIVAS) {
+                iniciarBloqueio();
+                return;
+            }
+
+            setFeedback("Vetor incorreto. Falha na ponte hiperespacial.", "erro");
+            atualizarTentativasRestantes();
+            input.value = "";
+            input.focus();
+        }
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (bloqueado || !entradaSenha) return;
+
+            const valor = input.value.trim();
+            if (!valor) {
+                setFeedback("Forneça a credencial de vetor.", "erro");
+                return;
+            }
+
+            if (valor === entradaSenha.senha) {
+                tratarSucesso();
+            } else {
+                tratarFalha();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarEntradaSenha();
+            input.focus();
+        });
+    </script>
+</body>
+
+</html>
