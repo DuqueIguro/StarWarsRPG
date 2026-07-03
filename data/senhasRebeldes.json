@@ -2,25 +2,25 @@
   "astraa": {
     "nome": "Movimento Astara",
     "senha": "O_futuro_pertence_a_quem_conduz_as_escolhas!",
-    "url": "../rebeldes/astara.html",
+    "url": "../rebeldes/astara",
     "ativo": true
   },
   "caminho": {
     "nome": "O Caminho",
     "senha": "PelaLuzEpelaVida!",
-    "url": "../rebeldes/caminho.html",
+    "url": "../rebeldes/caminho",
     "ativo": true
   },
   "massassi": {
     "nome": "Grupo Massassi",
     "senha": "Pela_Luz_das_Luas_de_Lothal!",
-    "url": "../rebeldes/massassi.html",
+    "url": "../rebeldes/massassi",
     "ativo": true
   },
   "orion": {
     "nome": "Diretiva Orion",
     "senha": "porta.abrir();",
-    "url": "../rebeldes/orion.html",
+    "url": "../rebeldes/orion",
     "ativo": true
   },
   "partisans": {

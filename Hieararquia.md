@@ -31,6 +31,7 @@ StarWarsRPG
 │  ├─ p2w.json
 │  ├─ planetasSecretos.json
 │  ├─ planetas_database.json
+│  ├─ senhasGerais.json
 │  └─ senhasRebeldes.json
 ├─ hangar
 │  ├─ fichas.js
@@ -97,6 +98,7 @@ StarWarsRPG
 │  ├─ dadosRacasFicha.js
 │  ├─ dadosTamanhosFicha.js
 │  ├─ databaseInventario.js
+│  ├─ databaseLojaSecreta.js
 │  ├─ durtoc.js
 │  ├─ escudo.js
 │  ├─ ficha.js
@@ -107,6 +109,7 @@ StarWarsRPG
 │  ├─ holonet.js
 │  ├─ inventario.js
 │  ├─ inventarioOficina.js
+│  ├─ LdIE.js
 │  ├─ manutencao.js
 │  ├─ mapaSecreto.js
 │  ├─ mapa_galatico.js
@@ -125,6 +128,7 @@ StarWarsRPG
 │  │  ├─ OS-04-UND-001.json
 │  │  └─ siglasLocalidade.json
 │  ├─ droids.html
+│  ├─ droids.js
 │  ├─ fornecedores
 │  │  ├─ fornecedores.js
 │  │  └─ fornecedores.json
@@ -167,27 +171,31 @@ StarWarsRPG
 │  ├─ caminho.html
 │  ├─ massassi.html
 │  └─ orion.html
-└─ styles
-   ├─ 404.css
-   ├─ comunicacao.css
-   ├─ durtoc.css
-   ├─ escudo.css
-   ├─ ficha.css
-   ├─ fornecedores.css
-   ├─ hangar.css
-   ├─ hierarquiaGeral.css
-   ├─ hierarquias.css
-   ├─ hirarquiaImperio.css
-   ├─ holonet.css
-   ├─ inventario.css
-   ├─ manutencao.css
-   ├─ mapa_galatico.css
-   ├─ MCMT.css
-   ├─ oficina.css
-   ├─ organizacoes.css
-   ├─ p2w.css
-   ├─ rebeldes.css
-   ├─ selecaoRebelde.css
-   └─ style.css
+├─ styles
+│  ├─ 404.css
+│  ├─ comunicacao.css
+│  ├─ durtoc.css
+│  ├─ escudo.css
+│  ├─ ficha.css
+│  ├─ fornecedores.css
+│  ├─ hangar.css
+│  ├─ hierarquiaGeral.css
+│  ├─ hierarquias.css
+│  ├─ hirarquiaImperio.css
+│  ├─ holonet.css
+│  ├─ inventario.css
+│  ├─ LdIE.css
+│  ├─ manutencao.css
+│  ├─ mapa_galatico.css
+│  ├─ MCMT.css
+│  ├─ oficina.css
+│  ├─ organizacoes.css
+│  ├─ p2w.css
+│  ├─ rebeldes.css
+│  ├─ selecaoRebelde.css
+│  └─ style.css
+└─ terminal
+   ├─ LdIE.html
+   └─ MTP.html
 
 ```

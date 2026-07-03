@@ -1,0 +1,22 @@
+{
+    "loja": {
+        "nome": "Loja de Itens Especiais",
+        "senha": "Leilão_Confederado",
+        "url": "../terminal/LdIE.html"
+    },
+    "mapa": {
+        "nome": "Mapa dos Tesouros Planetários",
+        "senha": "Terra_Desconhecida",
+        "url": "../terminal/MTP"
+    },
+    "hangar": {
+        "nome": "Hangar Autorizado",
+        "senha": "kalicore",
+        "url": "../hangar/hangarAutorizado"
+    },
+    "mestre": {
+        "nome": "Escudo do Mestre",
+        "senha": "Vivirar_Ar_Imperiarlif",
+        "url": "../mestre/escudo"
+    }
+}
