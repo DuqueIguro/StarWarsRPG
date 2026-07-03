@@ -24,13 +24,23 @@
             "naves": ["4x Baudo-class Star Yacht", "2x Corellian Corvette (CR70/CR90)", "3x Gozanti Cruiser"],
             "itens": ["400 mil créditos","2x Amplificador Auricular Ambiental", "10x  Bastões de Atordoamento", "2x Compartimentos de Contrabando", "4x Granadas de Gás", "2x Transceptor HoloNet", "2x Transponder Disfarçado"]
         },
-        "missoes": {
-            "convocados": ["Operação Sombra do Senado"],
-            "disponiveis": ["Interceptação de Carga em Kuat"],
-            "andamento": ["Extração de Dissidentes Políticas"],
-            "concluidas": ["Desvio de Combustível em Corellia"],
-            "falhas": ["Infiltração no Posto de Escuta Terrestre"]
-        }
+            "missoes": {
+                "convocados": [
+                    "Operação Sombra do Senado — infiltração encoberta para extrair um aliado parlamentar comprometido e plantar documentação que desestabilize uma mesa de conivência imperial; janela operacional: 48 horas; líder de equipe: Senadora Elara Vance; alto risco político."
+                ],
+                "disponiveis": [
+                    "Interceptação de Carga em Kuat — ataque de oportunidade a um comboio de peças de reparo destinadas a um estaleiro imperial; objetivos: apreensão de componentes hidráulicos e embarque de sobreviventes; exige coordenação orbital e cobertura de patrulha."
+                ],
+                "andamento": [
+                    "Extração de Dissidentes Políticas — operação em curso para retirar três dissidentes do setor suburbano de Coruscant, usando rotas seguras, documentos falsos e uma retirada noturna por transponder furtivo; prioridade: crítica; desafios: patrulhas e checkpoints imprevistos."
+                ],
+                "concluidas": [
+                    "Desvio de Combustível em Corellia — interceptação e redirecionamento de um carregamento de combustíveis industriais para bases móveis rebeldes; operação logrou êxito com perdas mínimas e reposição de estoque por 72 horas."
+                ],
+                "falhas": [
+                    "Infiltração no Posto de Escuta Terrestre — tentativa frustrada de instalar um dispositivo de escuta em um posto imperial; dupla descoberta forçou retraimento e perda de equipamento sensível; lições aprendidas: aprimorar rotas de infiltração e sinais de contingência."
+                ]
+            }
     },
     "massassi": {
         "nome": "Grupo Massassi",
@@ -58,11 +68,21 @@
             "itens": ["250 mil créditos", "15x Lancador de Misseis Portatil Merr-Sonn PLX-2M", "40x Blastech 500 Riot Gun", "80x Rifle Blaster SG-4", "20x Granada de Concussao", "40x Armadura de Motim Merr-Sonn KZZ"]
         },
         "missoes": {
-            "convocados": ["Defesa de Ponto do Perímetro Yavin"],
-            "disponiveis": ["Reconhecimento Técnico Orbital"],
-            "andamento": ["Análise dos Planos Estruturais Imperiais"],
-            "concluidas": ["Evacuação de Posto Avançado Dantooine"],
-            "falhas": ["Assalto ao Cargueiro de Suprimentos na Orla Interior"]
+            "convocados": [
+                "Defesa de Ponto do Perímetro Yavin — reforço das defesas e coordenação antiaérea em torno de um satélite de comunicação vulnerável; incluir controle de foco de fogo e patrulhas de interceptação."
+            ],
+            "disponiveis": [
+                "Reconhecimento Técnico Orbital — sondagem de rotas de suprimento imperial via sensores ocultos; objetivo: mapear corredores de abastecimento e criar janelas para ataques de interdição."
+            ],
+            "andamento": [
+                "Análise dos Planos Estruturais Imperiais — equipe de engenharia revisa dados capturados para identificar pontos fracos em plataformas de construção imperial; objetivo: gerar relatórios para operações de sabotagem futuras."
+            ],
+            "concluidas": [
+                "Evacuação de Posto Avançado Dantooine — retirada organizada de civis e material sensível após quebra de segurança; operação completada com sucesso, garantidos rotas de exfiltração seguras."
+            ],
+            "falhas": [
+                "Assalto ao Cargueiro de Suprimentos na Orla Interior — ataque mal sincronizado a um cargueiro escoltado; resistência superior e perda de cobertura de sensores resultaram em retirada com danos."
+            ]
         }
     },
     "orion": {
@@ -90,11 +110,21 @@
             "itens": ["100 mil créditos", "20x Amplificador Auricular Ambiental", "5x Transceptor HoloNet", "2x Transponder Disfarçado", "6x Computador de Interface Computadorizada (Mira)", "20x Kit de ferramentas"]
         },
         "missoes": {
-            "convocados": ["Decodificação de Transmissões Imperiais"],
-            "disponiveis": ["Sabotagem de Antena Sônica"],
-            "andamento": ["Rastreamento de Contrabandistas de Coaxium"],
-            "concluidas": ["Mapeamento de Rotas no Setor de Transição"],
-            "falhas": ["Extração de Agente Duplo em Jedha"]
+            "convocados": [
+                "Decodificação de Transmissões Imperiais — operação de inteligência para quebrar um novo algoritmo de cifra; prazo: 7 dias; objetivo: acessar ordens de movimentação de frota e identificar alvos prioritários."
+            ],
+            "disponiveis": [
+                "Sabotagem de Antena Sônica — infiltração curta para plantar explosivos de precisão em uma antena de rastreio; enfraquecerá a rede de comunicação local por até 72 horas."
+            ],
+            "andamento": [
+                "Rastreamento de Contrabandistas de Coaxium — perseguição prolongada a uma rota de contrabando suspeita; coleta de inteligência é contínua enquanto se tenta interceptar um carregamento crítico."
+            ],
+            "concluidas": [
+                "Mapeamento de Rotas no Setor de Transição — coleta e curadoria de rotas seguras alternativas usadas por contrabandistas, agora incorporadas aos bancos de dados de exfiltração."
+            ],
+            "falhas": [
+                "Extração de Agente Duplo em Jedha — tentativa de recuperar um ativo comprometido que acabou sendo capturado; operação expôs vulnerabilidades nos protocolos de extradição."
+            ]
         }
     },
     "caminho": {
@@ -121,7 +151,23 @@
         "inventario": {
             "itens": ["200 Mil créditos"]
         },
-        "missoes": {},
+        "missoes": {
+            "convocados": [
+                "Corredor da Lua — operação urgente para abrir e manter uma rota segura de passagem para sensitives e refugiados através de estações ocultas; coordenação entre condutores e casas seguras necessária."
+            ],
+            "disponiveis": [
+                "Rede Fantasma — estabelecimento de novos pontos de contato temporários em planetas 'fantasmas' para expansão de rotas; objetivo: reduzir risco em 30% criando redundância de rotas."
+            ],
+            "andamento": [
+                "Transporte Silente — missão contínua para mover três civis sensíveis através de tempestades eletromagnéticas em Jabiim; exige pilotos experientes e rotas alternativas."
+            ],
+            "concluidas": [
+                "Evacuação de Tanalorr — retirada bem-sucedida de um pequeno grupo de refugiados para um santuário temporário, mantendo discrição e sem alertar patrulhas imperiais."
+            ],
+            "falhas": [
+                "Ponto Quebrado em Jedha — operação de extração que vazarou e comprometeu a localização de um armazém de artefatos; resultou em mudança de padrão e fechamento temporário de uma rota."
+            ]
+        },
         "rotas": [
             {
                 "planeta": "Mapuzo",
