@@ -1,0 +1,458 @@
+/* ============================================================
+   LdIE.css — Loja de Itens Especiais
+   Arquivo de Aquisições Especiais / Leilão Clandestino
+   ============================================================ */
+
+@font-face {
+  font-family: "Aurebesh";
+  src: url("../data/Aurebesh.woff") format("woff");
+  font-display: swap;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap");
+
+:root {
+  /* ---- paleta ---- */
+  --vazio: #0a0611;
+  --vazio-alt: #120a1c;
+  --painel: #150e22;
+  --roxo-abismo: #2b1140;
+  --roxo-glow: #b565f5;
+  --vermelho-sangue: #8a0303;
+  --vermelho-glow: #ff3b3b;
+  --dourado: #d4af37;
+  --dourado-glow: #ffd76a;
+  --osso: #e8dcc8;
+  --osso-fraco: #8f8a9a;
+  --preto-redigido: #050308;
+
+  --fonte-display: "Orbitron", sans-serif;
+  --fonte-corpo: "Share Tech Mono", monospace;
+  --fonte-aurebesh: "Aurebesh", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(181, 101, 245, 0.10), transparent 45%),
+    radial-gradient(ellipse at 85% 10%, rgba(138, 3, 3, 0.12), transparent 40%),
+    var(--vazio);
+  color: var(--osso);
+  font-family: var(--fonte-corpo);
+  overflow-x: hidden;
+}
+
+/* ---------------- overlay CRT / scanlines ---------------- */
+.scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025) 0px,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+}
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.06) 50%);
+  background-size: 100% 4px;
+  animation: flicker 6s infinite steps(1);
+}
+@keyframes flicker {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.85; }
+  98% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scanlines::after { animation: none; }
+}
+
+/* ---------------- header ---------------- */
+.loja-header {
+  position: relative;
+  padding: 3.5rem 1.5rem 2.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(181, 101, 245, 0.25);
+  background: linear-gradient(180deg, rgba(43,17,64,0.35), transparent);
+}
+
+.boot-sequence {
+  max-width: 640px;
+  margin: 0 auto 2rem;
+  text-align: left;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--roxo-glow);
+  opacity: 0.75;
+  min-height: 4.5em;
+  white-space: pre-wrap;
+}
+.boot-sequence .cursor { animation: blink 1s step-start infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.titulo-wrap { position: relative; display: inline-block; }
+
+.loja-title-aurebesh {
+  display: block;
+  font-family: var(--fonte-aurebesh);
+  font-size: 1.9rem;
+  letter-spacing: 0.08em;
+  color: var(--vermelho-glow);
+  opacity: 0.65;
+  text-shadow: 0 0 12px rgba(255, 59, 59, 0.6);
+  margin-bottom: 0.35rem;
+}
+
+.loja-title {
+  font-family: var(--fonte-display);
+  font-weight: 900;
+  font-size: clamp(1.6rem, 4.5vw, 3rem);
+  letter-spacing: 0.05em;
+  margin: 0;
+  background: linear-gradient(100deg, var(--dourado-glow), var(--osso) 45%, var(--roxo-glow));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.25);
+}
+
+.loja-subtitle {
+  margin-top: 0.9rem;
+  font-family: var(--fonte-corpo);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--osso-fraco);
+}
+.loja-subtitle span { color: var(--vermelho-glow); }
+
+.header-stats {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--osso-fraco);
+}
+.header-stats span { color: var(--osso); }
+.status-blink { color: var(--vermelho-glow) !important; animation: blink 1.4s step-start infinite; }
+
+/* ---------------- navegação / abas ---------------- */
+.categoria-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(10, 6, 17, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(181, 101, 245, 0.2);
+}
+
+.tabs { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+.tab {
+  font-family: var(--fonte-corpo);
+  background: transparent;
+  border: 1px solid rgba(232, 220, 200, 0.2);
+  color: var(--osso-fraco);
+  padding: 0.5rem 1.1rem;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.tab:hover { border-color: var(--roxo-glow); color: var(--osso); }
+.tab.ativo {
+  border-color: var(--dourado);
+  color: var(--dourado-glow);
+  background: rgba(212, 175, 55, 0.08);
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.2) inset;
+}
+
+.legenda {
+  display: flex;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--osso-fraco);
+}
+.legenda .chip { display: inline-flex; align-items: center; gap: 0.4rem; }
+.legenda .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+/* ---------------- destaque (lote em leilão principal) ---------------- */
+.destaque-wrap { padding: 2.5rem 1.5rem 1rem; }
+
+.destaque {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  border: 1px solid var(--dourado);
+  background: linear-gradient(160deg, rgba(212,175,55,0.06), rgba(43,17,64,0.35));
+  padding: 2rem;
+  border-radius: 4px;
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.12);
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: 1.75rem;
+  align-items: center;
+}
+
+.destaque-holo {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fonte-display);
+  font-size: 2.2rem;
+  color: var(--dourado-glow);
+  background: radial-gradient(circle, rgba(212,175,55,0.15), transparent 70%);
+  animation: pulso 3s ease-in-out infinite;
+}
+@keyframes pulso {
+  0%, 100% { box-shadow: 0 0 10px rgba(212,175,55,0.3); }
+  50% { box-shadow: 0 0 34px rgba(212,175,55,0.55); }
+}
+
+.destaque-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vermelho-glow);
+  margin: 0 0 0.4rem;
+}
+.destaque h2 { font-family: var(--fonte-display); margin: 0 0 0.5rem; font-size: 1.35rem; color: var(--osso); }
+.destaque p { margin: 0; font-size: 0.85rem; color: var(--osso-fraco); line-height: 1.55; max-width: 46ch; }
+
+.destaque-lance { text-align: right; }
+.destaque-lance .label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--osso-fraco); }
+.destaque-lance .valor { font-family: var(--fonte-display); font-size: 1.6rem; color: var(--dourado-glow); text-shadow: 0 0 16px rgba(212,175,55,0.4); }
+
+@media (max-width: 720px) {
+  .destaque { grid-template-columns: 1fr; text-align: center; }
+  .destaque-lance { text-align: center; }
+  .destaque p { max-width: none; margin-inline: auto; }
+}
+
+/* ---------------- grid de lotes ---------------- */
+.lote-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem 1.5rem 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.lote-card {
+  position: relative;
+  background: var(--painel);
+  border: 1px solid rgba(232, 220, 200, 0.12);
+  border-left: 3px solid var(--tier-cor, var(--osso-fraco));
+  border-radius: 3px;
+  padding: 1.3rem 1.3rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.lote-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.4), 0 0 18px var(--tier-glow, transparent);
+}
+
+.lote-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+.lote-numero { font-size: 0.7rem; letter-spacing: 0.1em; color: var(--osso-fraco); }
+.tier-badge {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 10px;
+  border: 1px solid var(--tier-cor, var(--osso-fraco));
+  color: var(--tier-cor, var(--osso-fraco));
+  white-space: nowrap;
+}
+
+.lote-nome { font-family: var(--fonte-display); font-size: 1.02rem; margin: 0; color: var(--osso); line-height: 1.3; }
+.lote-nome-aurebesh {
+  font-family: var(--fonte-aurebesh);
+  font-size: 0.9rem;
+  color: var(--tier-cor, var(--roxo-glow));
+  opacity: 0.55;
+  margin: -0.3rem 0 0;
+}
+
+.lote-desc-preview {
+  font-size: 0.78rem;
+  color: var(--osso-fraco);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.4em;
+}
+
+.lote-rodape { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 0.5rem; }
+.lote-lance .label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--osso-fraco); }
+.lote-lance .valor { font-family: var(--fonte-display); font-size: 1.05rem; color: var(--tier-cor, var(--dourado-glow)); }
+
+.btn-ver {
+  font-family: var(--fonte-corpo);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: transparent;
+  border: 1px solid var(--tier-cor, var(--osso-fraco));
+  color: var(--tier-cor, var(--osso));
+  padding: 0.4rem 0.75rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.btn-ver:hover { background: var(--tier-cor, var(--osso)); color: var(--preto-redigido); }
+
+/* classificado: efeito "redigido" */
+.lote-card.classificado .lote-desc-preview {
+  background: repeating-linear-gradient(
+    to right, var(--preto-redigido) 0, var(--preto-redigido) 6px, transparent 6px, transparent 8px
+  );
+  color: transparent;
+  border-radius: 2px;
+}
+.lote-card.classificado:hover .lote-desc-preview {
+  background: none;
+  color: var(--osso-fraco);
+}
+
+/* ---------------- modal de detalhe / lance ---------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 3, 8, 0.82);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 200;
+}
+.modal-overlay.hidden { display: none; }
+
+.modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--vazio-alt);
+  border: 1px solid var(--tier-cor, var(--roxo-glow));
+  box-shadow: 0 0 50px var(--tier-glow, rgba(181,101,245,0.25));
+  border-radius: 4px;
+  padding: 2rem;
+  position: relative;
+}
+
+.modal-fechar {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--osso-fraco);
+  font-size: 1.3rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-fechar:hover { color: var(--osso); }
+
+.modal .lote-numero { display: block; margin-bottom: 0.4rem; }
+.modal h2 { font-family: var(--fonte-display); margin: 0 0 0.2rem; color: var(--osso); font-size: 1.3rem; }
+.modal .aurebesh-linha { font-family: var(--fonte-aurebesh); font-size: 1.1rem; color: var(--tier-cor); opacity: 0.6; margin: 0 0 1rem; }
+.modal .descricao-completa { font-size: 0.88rem; line-height: 1.7; color: var(--osso-fraco); margin-bottom: 1.5rem; }
+
+.lance-painel {
+  border-top: 1px dashed rgba(232,220,200,0.2);
+  padding-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.lance-info .label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--osso-fraco); }
+.lance-info .valor-grande { font-family: var(--fonte-display); font-size: 1.6rem; color: var(--tier-cor, var(--dourado-glow)); }
+.lance-info .comprador { font-size: 0.72rem; color: var(--osso-fraco); margin-top: 0.15rem; }
+
+.btn-lance {
+  font-family: var(--fonte-display);
+  background: linear-gradient(120deg, var(--tier-cor, var(--dourado)), transparent 140%);
+  border: 1px solid var(--tier-cor, var(--dourado));
+  color: var(--preto-redigido);
+  font-weight: 700;
+  padding: 0.75rem 1.4rem;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  transition: filter 0.2s ease;
+}
+.btn-lance:hover { filter: brightness(1.15); }
+.btn-lance:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+
+.consulta-aviso {
+  font-size: 0.8rem;
+  color: var(--vermelho-glow);
+  border: 1px solid var(--vermelho-sangue);
+  padding: 0.7rem 1rem;
+  border-radius: 2px;
+  background: rgba(138,3,3,0.08);
+}
+
+.lance-feed {
+  margin-top: 1rem;
+  font-size: 0.72rem;
+  color: var(--osso-fraco);
+  max-height: 90px;
+  overflow-y: auto;
+  border-top: 1px solid rgba(232,220,200,0.08);
+  padding-top: 0.6rem;
+}
+.lance-feed div { margin-bottom: 0.25rem; }
+.lance-feed .voce { color: var(--dourado-glow); }
+
+/* ---------------- rodapé ---------------- */
+.loja-footer {
+  border-top: 1px solid rgba(181, 101, 245, 0.2);
+  padding: 2rem 1.5rem 3rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--osso-fraco);
+  letter-spacing: 0.04em;
+}
+.loja-footer .risco { color: var(--vermelho-glow); }

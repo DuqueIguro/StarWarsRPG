@@ -171,6 +171,10 @@ StarWarsRPG
 │  ├─ caminho.html
 │  ├─ massassi.html
 │  └─ orion.html
+├─ senhas
+│  ├─ loja.html
+│  ├─ mapa.html
+│  └─ mestre.html
 ├─ styles
 │  ├─ 404.css
 │  ├─ comunicacao.css
