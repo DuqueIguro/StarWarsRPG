@@ -718,6 +718,76 @@
         "Humanos"
       ],
       "outras_informacoes": "Mundo sagrado dos Jedi que foi explorado pelo Império para extrair cristais kyber."
+    },
+    {
+      "nome": "Atollon",
+      "descricao": "Mundo remoto.",
+      "regiao": "Orla Exterior",
+      "setor": "Desconhecido",
+      "sistema": "Atollon",
+      "governo": "Nenhum",
+      "afiliacao": "Nenhum",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Dokma"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Nur",
+      "descricao": "Lua oceânica que abriga a Fortaleza Inquisitorial, quartel-general dos Inquisidores.",
+      "regiao": "Orla Exterior",
+      "setor": "Desconhecido",
+      "sistema": "Mustafar",
+      "governo": "Império Galáctico",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Nenhuma"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Garel",
+      "descricao": "Mundo remoto.",
+      "regiao": "Orla Exterior",
+      "setor": "Desconhecido",
+      "sistema": "Garel",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Mapuzo",
+      "descricao": "Mundo minerador e agrícola.",
+      "regiao": "Orla Interior",
+      "setor": "Desconhecido",
+      "sistema": "Mapuzo",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": ""
+    },
+    {
+      "nome": "Jabiim",
+      "descricao": "Planeta chuvoso.",
+      "regiao": "Orla Exterior",
+      "setor": "Desconhecido",
+      "sistema": "Jabiim",
+      "governo": "Administração Imperial",
+      "afiliacao": "Império Galáctico",
+      "rota_utilizada": "Desconhecida.",
+      "principais_especies": [
+        "Humanos"
+      ],
+      "outras_informacoes": ""
     }
   ]
 }
