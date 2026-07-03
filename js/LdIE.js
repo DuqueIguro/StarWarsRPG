@@ -101,13 +101,6 @@ function itemPorId(id) {
   return LOJA_SECRETA_DB.find(i => i.id === id);
 }
 
-/* ---------------- boot sequence ---------------- */
-function tocarBootSequence() {
-  const alvo = document.getElementById("bootSequence");
-  alvo.textContent = "";
-  let li = 0, ci = 0;
-}
-
 /* ---------------- destaque (lote principal) ---------------- */
 function renderDestaque() {
   const item = LOJA_SECRETA_DB.find(i => i.destaque) || LOJA_SECRETA_DB[0];
@@ -371,7 +364,6 @@ function configurarTabs() {
 document.addEventListener("DOMContentLoaded", () => {
   carregarEstadoCompartilhado();
   inicializarEstado();
-  tocarBootSequence();
   renderDestaque();
   renderGrid();
   renderCreditosPessoais();
