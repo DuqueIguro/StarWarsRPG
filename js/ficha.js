@@ -410,36 +410,29 @@ function initFicha() {
             return;
         }
         conditionPenalty = parseInt(conditionEl.value) || 0;
-        const d20Roll = Math.floor(Math.random() * 20) + 1;
-        const total = d20Roll + baseModifier + conditionPenalty;
-        let breakdown = `(Rolagem: ${d20Roll}) + (Bônus: ${baseModifier})`;
-        if (conditionPenalty !== 0) breakdown += ` + (Condição: ${conditionPenalty})`;
-        showRollResult(label, total, breakdown);
+        
+        // Em vez de rodar o d20, mostramos a fórmula estruturada
+        const totalMod = baseModifier + conditionPenalty;
+        const sinal = totalMod >= 0 ? '+' : '';
+        
+        let breakdown = `Dado base: 1d20<br>Bônus: ${baseModifier}`;
+        if (conditionPenalty !== 0) breakdown += `<br>Condição: ${conditionPenalty}`;
+        
+        showRollResult(label, `1d20 ${sinal}${totalMod}`, breakdown);
     }
 
     function rollDamage(damageString) {
-        const regex = /(\d+)d(\d+)\s*([\+\-]\s*\d+)?/i;
-        const match = damageString.replace(/\s/g, '').match(regex);
-        if (!match) return { total: 'Inválido', breakdown: 'Formato de dano inválido. Use "XdY+Z".' };
-        const numDice = parseInt(match[1]);
-        const dieType = parseInt(match[2]);
-        const modifier = match[3] ? parseInt(match[3].replace(/\s/g, '')) : 0;
-        let total = 0;
-        let rolls = [];
-        for (let i = 0; i < numDice; i++) {
-            const roll = Math.floor(Math.random() * dieType) + 1;
-            rolls.push(roll);
-            total += roll;
-        }
-        total += modifier;
-        let breakdown = `Rolagens: [${rolls.join(', ')}]`;
-        if (modifier !== 0) breakdown += ` ${modifier > 0 ? '+' : '-'} ${Math.abs(modifier)}`;
-        return { total, breakdown };
+        // Apenas limpa e retorna a string que o usuário digitou para o dano
+        return { 
+            total: damageString.trim() || 'Não definido', 
+            breakdown: 'Dados de dano bruto da arma.' 
+        };
     }
 
     function showRollResult(label, result, breakdown) {
         document.getElementById('roll-label').textContent = label;
-        document.getElementById('roll-result').innerHTML = result;
+        // O elemento de resultado agora mostra o texto dos dados a rolar
+        document.getElementById('roll-result').innerHTML = `<span class="text-yellow-400 font-mono">${result}</span>`;
         document.getElementById('roll-breakdown').innerHTML = breakdown;
         diceModal.classList.add('show');
     }
@@ -459,14 +452,18 @@ function initFicha() {
                     return;
                 }
                 conditionPenalty = parseInt(conditionEl.value) || 0;
-                const d20Roll = Math.floor(Math.random() * 20) + 1;
-                const attackTotal = d20Roll + attackModifier + conditionPenalty;
-                let attackBreakdown = `Ataque: (${d20Roll}) + (${attackModifier}) + (${conditionPenalty}) = ${attackTotal}`;
+                
+                const totalAttackMod = attackModifier + conditionPenalty;
+                const sinalAtaque = totalAttackMod >= 0 ? '+' : '';
+                const ataqueFormula = `1d20 ${sinalAtaque}${totalAttackMod}`;
                 const damageResult = rollDamage(damageString);
+                
+                let attackBreakdown = `<strong>Ataque:</strong> d20 + (Bônus: ${attackModifier}) + (Condição: ${conditionPenalty})`;
+                
                 showRollResult(
-                    `Ataque e Dano: ${weaponName}`,
-                    `Ataque: ${attackTotal} | Dano: ${damageResult.total}`,
-                    `${attackBreakdown}<br>${damageResult.breakdown}`
+                    `Dados para: ${weaponName}`,
+                    `Ataque: ${ataqueFormula}<br>Dano: ${damageResult.total}`,
+                    `${attackBreakdown}`
                 );
             } else { // É uma rolagem de perícia/atributo
                 rollDice(rollableElement.dataset.rollLabel || 'Rolagem', parseInt(rollableElement.dataset.rollModifier) || 0);
