@@ -37,8 +37,8 @@ function renderizarInterface(data) {
     document.getElementById("fotoContatoEmergencia").src = data.foto_emergencia;
 
     if (data.isOculta) {
-        // "O Caminho": Esconde os blocos convencionais e a coluna direita vazia
-        document.getElementById("containerMissoes").classList.add("hidden");
+        // "O Caminho": Esconde apenas os painéis exclusivos das outras alianças (líder e agentes convencionais)
+        // As missões permanecem visíveis, então o painel de agentes é reaproveitado dentro das rotas.
         document.getElementById("panelLider").classList.add("hidden");
         document.getElementById("panelAgentes").classList.add("hidden");
 
@@ -110,6 +110,10 @@ function renderizarInterface(data) {
             ${inventarioHTML}
             ${agentesHTML}
         `;
+
+        // Ativa a primeira aba de missões (Convocados) por padrão, assim como nas outras alianças
+        const primeiroBotaoCaminho = document.querySelector(".tab-btn");
+        if (primeiroBotaoCaminho) primeiroBotaoCaminho.click();
     } else {
         // Estrutura padrão para as outras 3 organizações (Astara, Massassi, Orion)
         document.getElementById("fotoLider").src = data.lider.foto;
