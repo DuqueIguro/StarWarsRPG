@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Restrito // Escudo do Mestre</title>
+    <!-- Importando a fonte do Escudo do Mestre -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/escudo.css">
+    <link rel="icon" type="image/x-icon" href="../img/Death_Star.ico">
+    <style>
+        /* Estilização base adaptada do CSS do Escudo do Mestre */
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-cyber-black);
+            color: var(--text-hologram);
+            font-family: var(--font-data);
+            letter-spacing: 0.5px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gate-wrap {
+            width: 100%;
+            max-width: 480px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 10;
+        }
+
+        /* Usando o fundo e bordas do painel tático imperial */
+        .gate-panel {
+            width: 100%;
+            background: radial-gradient(circle at top left, var(--bg-imperial-dark) 0%, var(--bg-panel-dark) 100%);
+            border: 1px solid var(--color-imperial-red);
+            border-radius: 2px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.15);
+            text-align: center;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        /* Título em formato de faixa tática */
+        .gate-panel-header {
+            background-color: var(--color-imperial-red);
+            color: #000;
+            padding: 8px 12px;
+            font-family: var(--font-tactical);
+            font-size: 0.85rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .gate-content {
+            padding: 2.25rem 2rem;
+        }
+
+        .gate-panel.sucesso {
+            border-color: #00ff66;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.4);
+        }
+
+        .gate-panel.sucesso .gate-panel-header {
+            background-color: #00ff66;
+        }
+
+        .gate-panel.erro {
+            animation: gate-shake 0.4s ease;
+            border-color: var(--color-sith-neon);
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.4);
+        }
+
+        @keyframes gate-shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(7px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(3px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gate-panel.erro { animation: none; }
+        }
+
+        .gate-eyebrow {
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-hologram);
+            opacity: 0.7;
+            margin: 0 0 1rem;
+        }
+
+        .gate-title {
+            font-family: var(--font-tactical);
+            font-weight: 900;
+            font-size: clamp(1.5rem, 6vw, 2.1rem);
+            letter-spacing: 0.06em;
+            margin: 0 0 1rem;
+            color: #fff;
+            text-shadow: 0 0 15px var(--color-sith-neon);
+        }
+
+        .gate-desc {
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: var(--text-hologram);
+            opacity: 0.85;
+            margin: 0 0 1.75rem;
+        }
+
+        .gate-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            text-align: left;
+        }
+
+        .gate-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-hologram);
+            font-family: var(--font-tactical);
+        }
+
+        /* Inputs estilizados no padrão do sistema sith */
+        .gate-input {
+            font-family: var(--font-data);
+            font-size: 1rem;
+            letter-spacing: 0.12em;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #fff;
+            padding: 0.75rem 0.9rem;
+            border-radius: 2px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .gate-input:focus {
+            border-color: var(--color-sith-neon);
+            box-shadow: 0 0 12px var(--glow-matrix);
+        }
+
+        .gate-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Botão herdando os estilos do botão cyber do escudo */
+        .gate-btn {
+            margin-top: 0.4rem;
+            font-family: var(--font-tactical);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 0.85rem;
+            padding: 0.8rem 1rem;
+            background: #1f0303;
+            border: 1px solid var(--color-imperial-red);
+            color: #fff;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .gate-btn:hover:not(:disabled) {
+            background-color: var(--color-imperial-red);
+            color: #000;
+            box-shadow: 0 0 12px var(--color-sith-neon);
+        }
+
+        .gate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .gate-feedback {
+            min-height: 1.4em;
+            margin: 1rem 0 0;
+            font-size: 0.8rem;
+            letter-spacing: 0.02em;
+        }
+
+        .gate-feedback.erro {
+            color: var(--color-imperial-red);
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+
+        .gate-feedback.sucesso {
+            color: #00ff66;
+            text-shadow: 0 0 5px rgba(0, 255, 102, 0.5);
+        }
+
+        .gate-feedback.info {
+            color: var(--text-hologram);
+        }
+
+        .gate-tentativas {
+            margin: 0.4rem 0 0;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-hologram);
+            opacity: 0.6;
+        }
+
+        .gate-rodape {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-hologram);
+            opacity: 0.7;
+            letter-spacing: 0.03em;
+            max-width: 42ch;
+        }
+
+        .gate-rodape .risco {
+            color: var(--color-imperial-red);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body class="crt-hologram-scan">
+
+    <main class="gate-wrap">
+        <div class="gate-panel" id="gatePanel">
+            <div class="gate-panel-header">Sistemas Imperiais // Segurança</div>
+            
+            <div class="gate-content">
+                <p class="gate-eyebrow">Terminal de Comando // Direct Link</p>
+
+                <h1 class="gate-title">CÓDIGO DE ACESSO</h1>
+                <p class="gate-desc">
+                    Área restrita à gerência da mesa. Insira a chave de criptografia do Escudo do Mestre para descriptografar os bancos de dados galácticos.
+                </p>
+
+                <form id="gateForm" class="gate-form" autocomplete="off">
+                    <label class="gate-label" for="gateSenha">Senha do Mestre</label>
+                    <input type="password" id="gateSenha" class="gate-input" placeholder="••••••••••" autocomplete="off"
+                        spellcheck="false">
+                    <button type="submit" class="gate-btn" id="gateBtn">Autenticar Sistema</button>
+                </form>
+
+                <p class="gate-feedback" id="gateFeedback" aria-live="polite"></p>
+                <p class="gate-tentativas" id="gateTentativas"></p>
+            </div>
+        </div>
+
+        <p class="gate-rodape">
+            Avisos de varredura: Invasões forçadas violam as diretivas imperiais. Casos de falha crítica <span class="risco">acionarão o bloqueio do terminal.</span>
+        </p>
+    </main>
+
+    <script>
+        /* ============================================================
+       senhaMestre.js — Terminal de Acesso do Escudo do Mestre
+       Verifica a senha contra ../data/senhasGerais.json (chave "mestre")
+       ============================================================ */
+
+        const CAMINHO_SENHAS = "../data/senhasGerais.json";
+        const CHAVE_SENHA = "mestre"; // Alterado para buscar os dados de acesso do mestre
+        const MAX_TENTATIVAS = 3;
+        const BLOQUEIO_SEGUNDOS = 15;
+
+        let tentativasFalhas = 0;
+        let bloqueado = false;
+        let entradaSenha = null;
+
+        const painel = document.getElementById("gatePanel");
+        const form = document.getElementById("gateForm");
+        const input = document.getElementById("gateSenha");
+        const btn = document.getElementById("gateBtn");
+        const feedback = document.getElementById("gateFeedback");
+        const tentativasEl = document.getElementById("gateTentativas");
+
+        function setFeedback(mensagem, tipo) {
+            feedback.textContent = sender = mensagem;
+            feedback.className = `gate-feedback ${tipo || ""}`;
+        }
+
+        function setPainelEstado(estado) {
+            painel.classList.remove("erro", "sucesso");
+            if (estado) painel.classList.add(estado);
+        }
+
+        async function carregarEntradaSenha() {
+            try {
+                const resp = await fetch(CAMINHO_SENHAS, { cache: "no-store" });
+                if (!resp.ok) throw new Error("status " + resp.status);
+                const dados = await resp.json();
+                entradaSenha = dados[CHAVE_SENHA];
+                if (!entradaSenha) throw new Error("chave não encontrada");
+            } catch (erro) {
+                console.error("Falha ao carregar credenciais:", erro);
+                setFeedback("Falha no link de dados. Tente novamente mais tarde.", "erro");
+                btn.disabled = true;
+            }
+        }
+
+        function atualizarTentativasRestantes() {
+            const restantes = MAX_TENTATIVAS - tentativasFalhas;
+            if (restantes <= 0) {
+                tentativasEl.textContent = "";
+                return;
+            }
+            tentativasEl.textContent = `Tentativas restantes: ${restantes}`;
+        }
+
+        function iniciarBloqueio() {
+            bloqueado = true;
+            input.disabled = true;
+            btn.disabled = true;
+
+            let restante = BLOQUEIO_SEGUNDOS;
+            setFeedback(`Terminal bloqueado preventivamente. Nova tentativa em ${restante}s.`, "erro");
+            tentativasEl.textContent = "";
+
+            const intervalo = setInterval(() => {
+                restante -= 1;
+                if (restante <= 0) {
+                    clearInterval(intervalo);
+                    bloqueado = false;
+                    tentativasFalhas = 0;
+                    input.disabled = false;
+                    btn.disabled = false;
+                    setPainelEstado(null);
+                    setFeedback("Canais limpos. Pronto para nova autenticação.", "info");
+                    input.value = "";
+                    input.focus();
+                } else {
+                    setFeedback(`Terminal bloqueado preventivamente. Nova tentativa em ${restante}s.`, "erro");
+                }
+            }, 1000);
+        }
+
+        function tratarSucesso() {
+            setPainelEstado("sucesso");
+            setFeedback("Código aceito. Carregando Holonet do Mestre...", "sucesso");
+            tentativasEl.textContent = "";
+            input.disabled = true;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                window.location.href = entradaSenha.url;
+            }, 1200);
+        }
+
+        function tratarFalha() {
+            tentativasFalhas += 1;
+            setPainelEstado("erro");
+            setTimeout(() => setPainelEstado(null), 400);
+
+            if (tentativasFalhas >= MAX_TENTATIVAS) {
+                iniciarBloqueio();
+                return;
+            }
+
+            setFeedback("Código incorreto. Acesso ao terminal negado.", "erro");
+            atualizarTentativasRestantes();
+            input.value = "";
+            input.focus();
+        }
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (bloqueado || !entradaSenha) return;
+
+            const valor = input.value.trim();
+            if (!valor) {
+                setFeedback("Insira a chave de autenticação.", "erro");
+                return;
+            }
+
+            if (valor === entradaSenha.senha) {
+                tratarSucesso();
+            } else {
+                tratarFalha();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarEntradaSenha();
+            input.focus();
+        });
+    </script>
+</body>
+
+</html>

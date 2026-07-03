@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Restrito // Loja de Itens Especiais</title>
+    <link rel="stylesheet" href="../styles/LdIE.css">
+    <link rel="icon" type="png" href="../img/light-saber.png">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gate-wrap {
+            width: 100%;
+            max-width: 480px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .gate-panel {
+            width: 100%;
+            background: linear-gradient(165deg, rgba(43, 17, 64, 0.4), var(--vazio-alt));
+            border: 1px solid var(--roxo-glow);
+            border-radius: 4px;
+            padding: 2.25rem 2rem;
+            box-shadow: 0 0 45px rgba(181, 101, 245, 0.18);
+            text-align: center;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gate-panel.sucesso {
+            border-color: #6ee7a0;
+            box-shadow: 0 0 45px rgba(110, 231, 160, 0.3);
+        }
+
+        .gate-panel.erro {
+            animation: gate-shake 0.4s ease;
+            border-color: var(--vermelho-glow);
+            box-shadow: 0 0 45px rgba(255, 59, 59, 0.25);
+        }
+
+        @keyframes gate-shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(7px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gate-panel.erro {
+                animation: none;
+            }
+        }
+
+        .gate-eyebrow {
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--osso-fraco);
+            margin: 0 0 0.6rem;
+        }
+
+        .gate-aurebesh {
+            font-family: var(--fonte-aurebesh);
+            font-size: 1.3rem;
+            color: var(--roxo-glow);
+            opacity: 0.6;
+            margin: 0 0 0.9rem;
+        }
+
+        .gate-title {
+            font-family: var(--fonte-display);
+            font-weight: 900;
+            font-size: clamp(1.5rem, 6vw, 2.1rem);
+            letter-spacing: 0.06em;
+            margin: 0 0 0.9rem;
+            background: linear-gradient(100deg, var(--vermelho-glow), var(--osso) 55%, var(--roxo-glow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .gate-desc {
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: var(--osso-fraco);
+            margin: 0 0 1.75rem;
+        }
+
+        .gate-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            text-align: left;
+        }
+
+        .gate-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--osso-fraco);
+        }
+
+        .gate-input {
+            font-family: var(--fonte-corpo);
+            font-size: 1rem;
+            letter-spacing: 0.12em;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(232, 220, 200, 0.25);
+            color: var(--osso);
+            padding: 0.75rem 0.9rem;
+            border-radius: 2px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .gate-input:focus {
+            border-color: var(--roxo-glow);
+            box-shadow: 0 0 12px rgba(181, 101, 245, 0.35);
+        }
+
+        .gate-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .gate-btn {
+            margin-top: 0.4rem;
+            font-family: var(--fonte-display);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 0.85rem;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--roxo-glow);
+            background: linear-gradient(120deg, rgba(181, 101, 245, 0.25), transparent 160%);
+            color: var(--osso);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: filter 0.2s ease, transform 0.15s ease;
+        }
+
+        .gate-btn:hover {
+            filter: brightness(1.2);
+        }
+
+        .gate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: none;
+        }
+
+        .gate-feedback {
+            min-height: 1.4em;
+            margin: 1rem 0 0;
+            font-size: 0.8rem;
+            letter-spacing: 0.02em;
+        }
+
+        .gate-feedback.erro {
+            color: var(--vermelho-glow);
+        }
+
+        .gate-feedback.sucesso {
+            color: #6ee7a0;
+        }
+
+        .gate-feedback.info {
+            color: var(--osso-fraco);
+        }
+
+        .gate-tentativas {
+            margin: 0.4rem 0 0;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--osso-fraco);
+            opacity: 0.8;
+        }
+
+        .gate-rodape {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--osso-fraco);
+            letter-spacing: 0.03em;
+            max-width: 42ch;
+        }
+
+        .gate-rodape .risco {
+            color: var(--vermelho-glow);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="scanlines"></div>
+
+    <main class="gate-wrap">
+        <div class="gate-panel" id="gatePanel">
+            <p class="gate-eyebrow">Terminal de Acesso // Loja de Itens Especiais</p>
+            <p class="gate-aurebesh">Loja de Itens Especiais</p>
+
+            <h1 class="gate-title">ACESSO RESTRITO</h1>
+            <p class="gate-desc">
+                Este canal está sendo monitorado por partes desconhecidas.
+                Insira a senha concedida pelo intermediário do leilão para prosseguir.
+            </p>
+
+            <form id="gateForm" class="gate-form" autocomplete="off">
+                <label class="gate-label" for="gateSenha">Senha de acesso</label>
+                <input type="password" id="gateSenha" class="gate-input" placeholder="••••••••••" autocomplete="off"
+                    spellcheck="false">
+                <button type="submit" class="gate-btn" id="gateBtn">Autenticar</button>
+            </form>
+
+            <p class="gate-feedback" id="gateFeedback" aria-live="polite"></p>
+            <p class="gate-tentativas" id="gateTentativas"></p>
+        </div>
+
+        <p class="gate-rodape">
+            Toda tentativa de acesso é registrada. Credenciais inválidas repetidas
+            <span class="risco">encerram a conexão automaticamente.</span>
+        </p>
+    </main>
+
+    <script>
+        /* ============================================================
+       senhaLoja.js — Terminal de Acesso da Loja de Itens Especiais
+       Verifica a senha contra ../data/senhasGerais.json (chave "loja")
+       e redireciona para a url informada em caso de sucesso.
+       ============================================================ */
+
+        const CAMINHO_SENHAS = "../data/senhasGerais.json";
+        const CHAVE_SENHA = "loja";
+        const MAX_TENTATIVAS = 3;
+        const BLOQUEIO_SEGUNDOS = 15;
+
+        let tentativasFalhas = 0;
+        let bloqueado = false;
+        let entradaSenha = null;
+
+        const painel = document.getElementById("gatePanel");
+        const form = document.getElementById("gateForm");
+        const input = document.getElementById("gateSenha");
+        const btn = document.getElementById("gateBtn");
+        const feedback = document.getElementById("gateFeedback");
+        const tentativasEl = document.getElementById("gateTentativas");
+
+        function setFeedback(mensagem, tipo) {
+            feedback.textContent = mensagem;
+            feedback.className = `gate-feedback ${tipo || ""}`;
+        }
+
+        function setPainelEstado(estado) {
+            painel.classList.remove("erro", "sucesso");
+            if (estado) painel.classList.add(estado);
+        }
+
+        async function carregarEntradaSenha() {
+            try {
+                const resp = await fetch(CAMINHO_SENHAS, { cache: "no-store" });
+                if (!resp.ok) throw new Error("status " + resp.status);
+                const dados = await resp.json();
+                entradaSenha = dados[CHAVE_SENHA];
+                if (!entradaSenha) throw new Error("chave não encontrada");
+            } catch (erro) {
+                console.error("Falha ao carregar credenciais:", erro);
+                setFeedback("Não foi possível verificar a autenticação. Tente novamente mais tarde.", "erro");
+                btn.disabled = true;
+            }
+        }
+
+        function atualizarTentativasRestantes() {
+            const restantes = MAX_TENTATIVAS - tentativasFalhas;
+            if (restantes <= 0) {
+                tentativasEl.textContent = "";
+                return;
+            }
+            tentativasEl.textContent = `Tentativas restantes antes do bloqueio: ${restantes}`;
+        }
+
+        function iniciarBloqueio() {
+            bloqueado = true;
+            input.disabled = true;
+            btn.disabled = true;
+
+            let restante = BLOQUEIO_SEGUNDOS;
+            setFeedback(`Conexão temporariamente bloqueada. Tentar novamente em ${restante}s.`, "erro");
+            tentativasEl.textContent = "";
+
+            const intervalo = setInterval(() => {
+                restante -= 1;
+                if (restante <= 0) {
+                    clearInterval(intervalo);
+                    bloqueado = false;
+                    tentativasFalhas = 0;
+                    input.disabled = false;
+                    btn.disabled = false;
+                    setPainelEstado(null);
+                    setFeedback("Conexão restabelecida. Você pode tentar novamente.", "info");
+                    input.value = "";
+                    input.focus();
+                } else {
+                    setFeedback(`Conexão temporariamente bloqueada. Tentar novamente em ${restante}s.`, "erro");
+                }
+            }, 1000);
+        }
+
+        function tratarSucesso() {
+            setPainelEstado("sucesso");
+            setFeedback("Acesso concedido. Redirecionando...", "sucesso");
+            tentativasEl.textContent = "";
+            input.disabled = true;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                window.location.href = entradaSenha.url;
+            }, 1200);
+        }
+
+        function tratarFalha() {
+            tentativasFalhas += 1;
+            setPainelEstado("erro");
+            setTimeout(() => setPainelEstado(null), 400);
+
+            if (tentativasFalhas >= MAX_TENTATIVAS) {
+                iniciarBloqueio();
+                return;
+            }
+
+            setFeedback("Senha incorreta. Acesso negado.", "erro");
+            atualizarTentativasRestantes();
+            input.value = "";
+            input.focus();
+        }
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (bloqueado || !entradaSenha) return;
+
+            const valor = input.value.trim();
+            if (!valor) {
+                setFeedback("Digite a senha de acesso.", "erro");
+                return;
+            }
+
+            if (valor === entradaSenha.senha) {
+                tratarSucesso();
+            } else {
+                tratarFalha();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarEntradaSenha();
+            input.focus();
+        });
+    </script>
+</body>
+
+</html>

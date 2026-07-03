@@ -698,6 +698,11 @@ h1 {
     box-shadow: 0 0 8px #5cb85c;
 }
 
+.data-status.warning {
+    background-color: #f0ad4e;
+    box-shadow: 0 0 8px #f0ad4e;
+}
+
 /* ======== CARD HEADER TEXT ======== */
 .card-header > span:first-child {
     font-size: 0.85em;

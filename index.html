@@ -19,14 +19,16 @@
 
         <div class="top-bar">
             <div class="system-info">
-                <a href="mestre/escudo" style="text-decoration: none; color: inherit;">
+                <a href="senhas/mestre" style="text-decoration: none; color: inherit;">
                     <span>SISTEMA: CORELLIAN v5.0</span>
                 </a>
 
                 <span>USUÁRIO: PILOTO_07</span>
             </div>
             <div class="system-status">
-                <span class="status-indicator online"></span><span>ONLINE</span>
+                <a href="senhas/loja" style="text-decoration: none; color: inherit;">
+                    <span class="status-indicator online"></span><span>ONLINE</span>
+                </a>
             </div>
         </div>
 
@@ -39,7 +41,7 @@
                         <li><a href="pages/comunicacao"><i class="fa-solid fa-satellite-dish"></i> COMUNICAÇÃO</a></li>
                         <li><a href="pages/mapa_galatico"><i class="fa-solid fa-globe"></i> MAPA GALÁCTICO</a></li>
                         <li><a href="pages/hierarquias"><i class="fa-solid fa-users"></i> HIERARQUIAS</a></li>
-                        <li><a href="pages/holonet"><i class="fa-solid fa-satellite"></i> HOLONET</a></li>
+                        <!-- <li><a href="pages/holonet"><i class="fa-solid fa-satellite"></i> HOLONET</a></li> -->
                         <li><a href="pages/hangar"><i class="fa-solid fa-warehouse"></i> HANGAR</a></li>
                         <li><a href="pages/p2w"><i class="fa-solid fa-coins"></i> SUPRIMENTOS</a></li>
                         <li><a href="pages/manutencao"><i class="fa-solid fa-wrench"></i> MANUTENÇÃO</a></li>
@@ -120,7 +122,7 @@
                         </p>
                         <div class="card-footer">
                             <a href="pages/ficha" class="access-button">ACESSAR</a>
-                            <span class="data-status ok"></span>
+                            <span class="data-status warning"></span>
                         </div>
                     </div>
 
@@ -143,6 +145,24 @@
                             <span class="data-status ok"></span>
                         </div>
                     </div>
+
+                    <div class="module-card">
+                        <div class="card-header">
+                            <span><i class="fa-solid fa-rocket"></i>TERMINAL DE ACESSO À HOLONET</span>
+                            <span class="module-id">#46-ALPHA</span>
+                        </div>
+                        <p class="card-description">
+                            Terminal de Acesso à Holonet. A Holonet é a rede de comunicação interplanetária que conecta
+                            sistemas estelares, permitindo o acesso a informações estratégicas, notícias e dados de
+                            inteligência. Este terminal oferece uma interface segura para navegar por feeds de notícias,
+                            relatórios de missões e atualizações de status em tempo real. Mantenha-se informado sobre
+                            eventos galácticos e comunicações críticas para a sua operação.
+                        </p>
+                        <div class="card-footer">
+                            <a href="pages/holonet" class="access-button">EXPLORAR</a>
+                            <span class="data-status ok"></span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="activity-log" id="activity-log">
@@ -152,29 +172,14 @@
                         <p class="log-success">> Autenticação do PILOTO_07 bem-sucedida.</p>
                         <p>> Carregando módulos de acesso rápido...</p>
                         <p class="log-warning">> Alerta: Flutuação de energia detectada no setor 4.</p>
-                        <p>> Módulo #47-GAMMA carregado. Status: OK.</p>
-                        <p>> Módulo #12-DELTA carregado. Status: INSTÁVEL.</p>
+                        <p class="log-warning">> Módulo #47-GAMMA carregado. Status: Instável.</p>
+                        <p class="log-success">> Módulo #12-DELTA carregado. Status: OK.</p>
+                        <p class="log-success">> Módulo #46-ALPHA carregado. Status: OK.</p>
                         <p>> Verificando protocolos de segurança...</p>
                         <p class="log-success">> Protocolos confirmados. Conexão segura.</p>
                         <p>> Aguardando comando do usuário...</p>
                     </div>
                 </div>
-
-                <!-- Painel de Atividades do Sistema - Holonet -->
-                <!-- <div class="activity-log" id="activity-log">
-                    <h3 class="log-title">Holonet</h3>
-                    <div class="log-content">
-                        <p>> Conexão estabelecida com o servidor CORELLIAN v3.2...</p>
-                        <p class="log-success">> Autenticação do PILOTO_07 bem-sucedida.</p>
-                        <p>> Carregando módulos de acesso rápido...</p>
-                        <p class="log-warning">> Alerta: Flutuação de energia detectada no setor 4.</p>
-                        <p>> Módulo #47-GAMMA carregado. Status: OK.</p>
-                        <p>> Módulo #12-DELTA carregado. Status: INSTÁVEL.</p>
-                        <p>> Verificando protocolos de segurança...</p>
-                        <p class="log-success">> Protocolos confirmados. Conexão segura.</p>
-                        <p>> Aguardando comando do usuário...</p>
-                    </div>
-                </div> -->
 
                 <div class="system-readout-panel">
                     <h3 class="readout-title">ANÁLISE DE FLUXO DE DADOS</h3>

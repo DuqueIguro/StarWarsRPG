@@ -1,12 +1,12 @@
 {
     "loja": {
         "nome": "Loja de Itens Especiais",
-        "senha": "Leilão_Confederado",
+        "senha": "LUXUMBRA",
         "url": "../terminal/LdIE.html"
     },
     "mapa": {
         "nome": "Mapa dos Tesouros Planetários",
-        "senha": "Terra_Desconhecida",
+        "senha": "forgottenhollow",
         "url": "../terminal/MTP"
     },
     "hangar": {
