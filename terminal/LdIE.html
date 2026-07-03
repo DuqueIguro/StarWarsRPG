@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Arquivo de Aquisições Especiais</title>
 <link rel="stylesheet" href="../styles/LdIE.css">
+<link rel="icon" type="png" href="../img/light-saber.png">
 </head>
 <body>
 
@@ -19,6 +20,7 @@
   <p class="loja-subtitle">Leilão Clandestino <span>//</span> Acesso Nível Sombra</p>
   <div class="header-stats">
     <div>Lotes ativos: <span id="totalLotes">—</span></div>
+    <div>Seus créditos: <span id="creditosPessoais">—</span></div>
     <div>Conexão: <span class="status-blink">INSTÁVEL</span></div>
   </div>
 </header>
@@ -42,6 +44,8 @@
 <main class="lote-grid" id="loteGrid"></main>
 
 <div class="modal-overlay hidden" id="modalOverlay"></div>
+
+<div class="notificacao" id="notificacao"></div>
 
 <footer class="loja-footer">
   <p>Toda transação é final e não rastreável. Nenhuma reclamação será atendida após o fechamento do lance.</p>
