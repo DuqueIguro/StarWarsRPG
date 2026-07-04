@@ -1,107 +1,109 @@
-@font-face {
-    font-family: 'Aurebesh';
-    src: url('../data/Aurebesh.woff') format('woff');
-}
+/* Importa o próprio MCMT */
+@import url('MCMT.css'); 
+
+/* ---------- Sobrescrita e Adaptação da Oficina ---------- */
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #1a110a; /* Cor de fundo escura com tom laranja */
-    color: #f3d1b6; /* Cor de texto clara com tom laranja */
-    background-image:
-        radial-gradient(circle at 1px 1px, rgba(251, 146, 60, 0.1) 1px, transparent 0);
-    background-size: 25px 25px;
+    background-color: var(--bg-deep) !important;
+    color: var(--text-primary) !important;
+    font-family: var(--font-main), monospace !important;
 }
 
+/* Tipografias */
 .font-orbitron {
     font-family: 'Orbitron', sans-serif;
 }
 
 .font-aurebesh {
-    font-family: 'Aurebesh', sans-serif;
+    font-family: 'Aurebesh', monospace !important;
     text-transform: lowercase;
 }
 
-/* Adicionado para espaçamento dos ícones */
+/* Espaçamento dos ícones */
 i.fa-solid {
     margin-right: 10px;
 }
 
+/* Painéis (Substituindo o tom marrom por painéis militares do MCMT) */
 .glass-pane {
-    background-color: rgba(45, 25, 10, 0.6);
+    background-color: var(--bg-panel) !important;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(251, 146, 60, 0.4);
+    border: 1px solid var(--border) !important;
 }
 
-/* NOVO: Estilo para painéis sigilosos */
+/* Painéis Sigilosos (Mantendo a identidade de alerta vermelha adaptada ao tema escuro) */
 .glass-pane-sigiloso {
-    background-color: rgba(45, 10, 10, 0.6); /* Tonalidade vermelha */
+    background-color: rgba(45, 10, 10, 0.4) !important;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(239, 68, 68, 0.4); /* red-500 com opacidade */
+    border: 1px solid rgba(239, 68, 68, 0.3) !important;
 }
 
-
-/* Scrollbar */
+/* Scrollbars customizadas com a paleta do MCMT */
 ::-webkit-scrollbar {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #2d190a;
+    background: var(--bg-deep);
 }
 ::-webkit-scrollbar-thumb {
-    background: #fb923c; /* orange-400 */
-    border-radius: 4px;
+    background: var(--green-dim);
+    border-radius: var(--radius);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #f97316; /* orange-500 */
+    background: var(--green-mid);
 }
 
+/* Itens da Lista de O.S. Normais */
 .os-item {
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    border-left: 4px solid #fdba74; /* orange-300 */
+    border-left: 4px solid var(--green-dim) !important;
+    background-color: var(--bg-card) !important;
 }
 
 .os-item:hover, .os-item.active {
-    background-color: rgba(251, 146, 60, 0.2);
-    border-left-color: #f97316; /* orange-500 */
+    background-color: var(--bg-card-hover) !important;
+    border-left-color: var(--green-neon) !important;
     transform: translateX(5px);
 }
 
-/* NOVOS ESTILOS PARA ITENS SIGILOSOS */
+/* Itens da Lista de O.S. Sigilosas */
 .os-item-sigiloso {
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    border-left: 4px solid #fca5a5; /* red-300 */
+    border-left: 4px solid #fca5a5 !important;
+    background-color: rgba(45, 10, 10, 0.2) !important;
 }
 
 .os-item-sigiloso:hover, .os-item-sigiloso.active {
-    background-color: rgba(220, 38, 38, 0.2); /* red-600 with opacity */
-    border-left-color: #ef4444; /* red-500 */
+    background-color: rgba(220, 38, 38, 0.15) !important;
+    border-left-color: #ef4444 !important;
     transform: translateX(5px);
 }
 
+/* Badges de Status retrabalhadas para o novo esquema de cores */
 .status-em-aberto {
-    background-color: #002f94; /* blue-600 */
-    color: white;
+    background-color: #1e40af !important; /* Blue */
+    color: #f8fafc !important;
 }
 .status-em-progresso {
-    background-color: #c28b00; /* amber-400 */
-    color: #422006;
+    background-color: var(--green-mid) !important;
+    color: var(--bg-deep) !important;
 }
 .status-concluído {
-    background-color: #00792c; /* green-600 */
-    color: white;
+    background-color: #065f46 !important; /* Green */
+    color: #f0fdf4 !important;
 }
 .status-cancelado {
-    background-color: #710000; /* red-600 */
-    color: white;
+    background-color: #7f1d1d !important; /* Red */
+    color: #fef2f2 !important;
 }
 .status-aguardando-peca {
-    background-color: #984000; /* orange-500 */
-    color: #422006;
+    background-color: #b45309 !important; /* Amber/Orange */
+    color: #fef3c7 !important;
 }
 
-/* Estilos específicos para o botão 'Fornecedores' */
+/* Ajuste específico para o Botão Fornecedores se assemelhar ao estilo do MCMT */
 #btn-fornecedores {
     min-width: 160px;
     text-align: center;

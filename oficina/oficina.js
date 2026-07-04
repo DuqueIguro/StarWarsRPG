@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const manifestResponse = await fetch(manifestPath);
             if (!manifestResponse.ok) throw new Error(`Manifesto não encontrado: ${manifestPath}`);
             const manifestData = await manifestResponse.json();
-            
+
             const basePath = manifestPath.substring(0, manifestPath.lastIndexOf('/'));
 
             for (const osFile of manifestData.ordens) {
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const response = await fetch(fullPath);
                     if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
-                    
+
                     const data = await response.json();
                     itemRenderer(data.ordemDeServico, fullPath, container, itemClass);
                 } catch (error) {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             carregarDetalhesOS(file, contentTarget, theme);
             detailsToShow.classList.remove('hidden');
             placeholderToShow.classList.add('hidden');
-            
+
             detailsToHide.classList.add('hidden');
             placeholderToReset.classList.remove('hidden');
 
@@ -59,13 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
             itemDiv.classList.add('active');
         }
     }
-    
+
     function criarItemNaLista(os, file, container, itemClass, themeColors) {
         const itemDiv = document.createElement('div');
         itemDiv.className = `${itemClass} bg-gray-900/50 p-3 rounded-md`;
         itemDiv.dataset.file = file;
         const statusClass = `status-${os.status.toLowerCase().replace(/ /g, '-')}`;
-        
+
         itemDiv.innerHTML = `
             <div class="flex justify-between items-center">
                 <p class="font-bold ${themeColors.title}">${os.titulo}</p>
@@ -85,19 +85,20 @@ document.addEventListener('DOMContentLoaded', () => {
         container.appendChild(itemDiv);
     }
 
-    const exibirItemNormal = (os, file, container, itemClass) => criarItemNaLista(os, file, container, itemClass, { title: 'text-orange-300', subtext: 'text-orange-400'});
-    const exibirItemSigiloso = (os, file, container, itemClass) => criarItemNaLista(os, file, container, itemClass, { title: 'text-red-300', subtext: 'text-red-400'});
-    
+    const exibirItemNormal = (os, file, container, itemClass) => criarItemNaLista(os, file, container, itemClass, { title: 'text-orange-300', subtext: 'text-orange-400' });
+    const exibirItemSigiloso = (os, file, container, itemClass) => criarItemNaLista(os, file, container, itemClass, { title: 'text-red-300', subtext: 'text-red-400' });
+
     async function carregarDetalhesOS(file, contentTarget, themeType) {
         try {
             const response = await fetch(file);
             const data = await response.json();
             const os = data.ordemDeServico;
 
+            // Altere o bloco de definição do tema para usar as classes utilitárias do MCMT
             const theme = themeType === 'sigiloso' ? {
                 main: 'red', title: 'text-red-300', header: 'text-red-400', strong: 'text-red-300', border: 'border-red-800', borderStrong: 'border-red-500'
             } : {
-                main: 'orange', title: 'text-orange-300', header: 'text-orange-400', strong: 'text-orange-300', border: 'border-orange-800', borderStrong: 'border-orange-500'
+                main: 'emerald', title: 'text-[#7bcf9a]', header: 'text-[#5a9e74]', strong: 'text-[#a8f5c0]', border: 'border-[#2a3d35]', borderStrong: 'border-[#3a6b50]'
             };
 
             let servicosHtml = os.itens.map(item => `
@@ -109,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong class="${theme.strong}">Custo (Mão de Obra):</strong> ${(item.detalhes.maoDeObra.custo || 0).toLocaleString()} créditos</p>
                 </div>
             `).join('');
-            
+
             let pecasDescricaoHtml = os.itens.filter(item => item.detalhes.peca && item.detalhes.peca.custo > 0).map(item => `<div class="text-sm text-gray-400 ml-4">${item.detalhes.peca.nome}: ${item.detalhes.peca.custo.toLocaleString()} créditos</div>`).join('');
             let maoDeObraDescricaoHtml = os.itens.filter(item => item.detalhes.maoDeObra && item.detalhes.maoDeObra.custo > 0).map(item => `<div class="text-sm text-gray-400 ml-4">${item.servico}: ${item.detalhes.maoDeObra.custo.toLocaleString()} créditos</div>`).join('');
             let taxasFixasDescricaoHtml = '', adicionaisDescricaoHtml = '';
@@ -140,11 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             percentual = taxa.percentual_sobre_servico_total;
                             tipo = "Total do Serviço";
                         }
-                        
-                    return `<div class="text-sm text-gray-400 ml-4">+${percentual}% ${tipo} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`;
-                }).join('');
+
+                        return `<div class="text-sm text-gray-400 ml-4">+${percentual}% ${tipo} (${taxa.sigla}): ${taxa.custo.toLocaleString()} créditos</div>`;
+                    }).join('');
             }
-            
+
             let pecasSumarioHtml = (os.financeiro.subtotalPecas > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Subtotal (Peças):</strong> ${os.financeiro.subtotalPecas.toLocaleString()} ${os.financeiro.moeda}</div>${pecasDescricaoHtml}` : '';
             let maoDeObraSumarioHtml = (os.financeiro.subtotalMaoDeObra > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Subtotal (Mão de Obra):</strong> ${os.financeiro.subtotalMaoDeObra.toLocaleString()} ${os.financeiro.moeda}</div>${maoDeObraDescricaoHtml}` : '';
             let taxasFixasSumarioHtml = (os.financeiro.subtotalTaxasFixas > 0) ? `<div class="text-lg"><strong class="font-orbitron ${theme.title}">Taxas Fixas:</strong> ${os.financeiro.subtotalTaxasFixas.toLocaleString()} ${os.financeiro.moeda}</div>${taxasFixasDescricaoHtml}` : '';
@@ -187,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             contentTarget.innerHTML = `<p class="text-red-400">Não foi possível carregar os detalhes da ordem de serviço.</p>`;
         }
     }
-    
+
     // Inicia o carregamento de ambas as listas
     carregarManifesto(manifestFile, osListContainer, exibirItemNormal, 'os-item');
     carregarManifesto(manifestSigilosoFile, osListSigilosoContainer, exibirItemSigiloso, 'os-item-sigiloso');
