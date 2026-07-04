@@ -19,16 +19,12 @@
 
         <div class="top-bar">
             <div class="system-info">
-                <a href="senhas/mestre" style="text-decoration: none; color: inherit; cursor: default;">
-                    <span>SISTEMA: CORELLIAN v5.0</span>
-                </a>
+                <span>SISTEMA: CORELLIAN v5.0</span>
 
                 <span style="cursor: default;">USUÁRIO: PILOTO_07</span>
             </div>
             <div class="system-status">
-                <a href="senhas/loja" style="text-decoration: none; color: inherit; cursor: default;">
-                    <span class="status-indicator online"></span><span>ONLINE</span>
-                </a>
+                <span class="status-indicator online"></span><span>ONLINE</span>
             </div>
         </div>
 
@@ -41,7 +37,6 @@
                         <li><a href="pages/comunicacao"><i class="fa-solid fa-satellite-dish"></i> COMUNICAÇÃO</a></li>
                         <li><a href="pages/mapa_galatico"><i class="fa-solid fa-globe"></i> MAPA GALÁCTICO</a></li>
                         <li><a href="pages/hierarquias"><i class="fa-solid fa-users"></i> HIERARQUIAS</a></li>
-                        <!-- <li><a href="pages/holonet"><i class="fa-solid fa-satellite"></i> HOLONET</a></li> -->
                         <li><a href="pages/hangar"><i class="fa-solid fa-warehouse"></i> HANGAR</a></li>
                         <li><a href="pages/p2w"><i class="fa-solid fa-coins"></i> SUPRIMENTOS</a></li>
                         <li><a href="pages/manutencao"><i class="fa-solid fa-wrench"></i> MANUTENÇÃO</a></li>
@@ -52,7 +47,11 @@
                     <h3 class="sidebar-title">STATUS DA FROTA</h3>
                     <ul class="fleet-status">
                         <!-- Master Gear Repair FReighter (Cargueiro de Reparos Engrenagem Mestra) -->
-                        <li><span class="status-indicator online"></span><span>MGRFR-01 | Ativo</span></li>
+                        <li><span class="status-indicator online"></span>
+                            <a href="senhas/mestre" style="text-decoration: none; color: inherit; cursor: default;">
+                                <span>MGRFR-01 | Ativo</span>
+                            </a>
+                        </li>
                         <!-- Chisel Light Atmospheric Superiority Fighter (Caça Leve de Superioridade Atmosférica Cinzel) -->
                         <li><span class="status-indicator mission"></span><span>CLASF-01 | Desativado</span></li>
                         <!-- Grinder Custom UTility Speeder (Speeder Utilitário Customizado Moedor) -->
@@ -87,7 +86,9 @@
                     <div class="imperial-header">
                         <span><i class="fa-solid fa-triangle-exclamation animate-flicker"></i> DIRETRIZ IMPERIAL
                             DETECTADA</span>
-                        <span class="imperial-id">REF: #REBEL_ACTIVIVITY</span>
+                        <a href="senhas/loja" style="text-decoration: none; color: inherit; cursor: default;">
+                            <span class="imperial-id">REF: #REBEL_ACTIVIVITY</span>
+                        </a>
                     </div>
                     <p class="imperial-description">
                         <strong>ALERTA DE SEGURANÇA MÁXIMA:</strong> Atividade de células terroristas Rebeldes detectada
