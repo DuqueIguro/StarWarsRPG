@@ -14,21 +14,26 @@ body {
     font-family: 'Orbitron', sans-serif;
 }
 
+/* Garante que o texto em Aurebesh use a cor esmaecida do MCMT */
 .font-aurebesh {
     font-family: 'Aurebesh', monospace !important;
     text-transform: lowercase;
+    color: var(--text-aurebesh) !important; /* Cor verde-militar do MCMT */
+}
+
+/* Força o título da seção de Registros de Serviço a ficar verde */
+.glass-pane {
+    background-color: var(--bg-panel) !important;
+    backdrop-filter: blur(10px);
+}
+.glass-pane h2 {
+    color: var(--green-bright) !important;
+    border-bottom-color: var(--border-glow) !important;
 }
 
 /* Espaçamento dos ícones */
 i.fa-solid {
     margin-right: 10px;
-}
-
-/* Painéis (Substituindo o tom marrom por painéis militares do MCMT) */
-.glass-pane {
-    background-color: var(--bg-panel) !important;
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border) !important;
 }
 
 /* Painéis Sigilosos (Mantendo a identidade de alerta vermelha adaptada ao tema escuro) */
