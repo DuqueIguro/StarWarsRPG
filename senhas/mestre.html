@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso Restrito // Escudo do Mestre</title>
     <!-- Importando a fonte do Escudo do Mestre -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../styles/escudo.css">
     <link rel="icon" type="image/x-icon" href="../img/D20.ico">
     <style>
@@ -79,15 +80,33 @@
         }
 
         @keyframes gate-shake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-8px); }
-            40% { transform: translateX(7px); }
-            60% { transform: translateX(-5px); }
-            80% { transform: translateX(3px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(7px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .gate-panel.erro { animation: none; }
+            .gate-panel.erro {
+                animation: none;
+            }
         }
 
         .gate-eyebrow {
@@ -235,13 +254,14 @@
     <main class="gate-wrap">
         <div class="gate-panel" id="gatePanel">
             <div class="gate-panel-header">Sistemas Imperiais // Segurança</div>
-            
+
             <div class="gate-content">
                 <p class="gate-eyebrow">Terminal de Comando // Direct Link</p>
 
                 <h1 class="gate-title">CÓDIGO DE ACESSO</h1>
                 <p class="gate-desc">
-                    Área restrita à gerência da mesa. Insira a chave de criptografia do Escudo do Mestre para descriptografar os bancos de dados galácticos.
+                    Área restrita à gerência da mesa. Insira a chave de criptografia do Escudo do Mestre para
+                    descriptografar os bancos de dados galácticos.
                 </p>
 
                 <form id="gateForm" class="gate-form" autocomplete="off">
@@ -257,24 +277,29 @@
         </div>
 
         <p class="gate-rodape">
-            Avisos de varredura: Invasões forçadas violam as diretivas imperiais. Casos de falha crítica <span class="risco">acionarão o bloqueio do terminal.</span>
+            Avisos de varredura: Invasões forçadas violam as diretivas imperiais. Casos de falha crítica <span
+                class="risco">acionarão o bloqueio do terminal.</span>
         </p>
     </main>
 
-    <script>
+    <script type="module">
         /* ============================================================
        senhaMestre.js — Terminal de Acesso do Escudo do Mestre
-       Verifica a senha contra ../data/senhasGerais.json (chave "mestre")
+       Verifica a senha conta
        ============================================================ */
 
-        const CAMINHO_SENHAS = "../data/senhasGerais.json";
-        const CHAVE_SENHA = "mestre"; // Alterado para buscar os dados de acesso do mestre
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const supabaseUrl = 'https://eziyaqhrkfvjjyzeegqt.supabase.co';
+        const supabaseKey = 'sb_publishable_P_C9Fhvg4z1E3OpQC7_VwQ_SwSK12wj';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const CHAVE_SENHA = "mestre";
         const MAX_TENTATIVAS = 3;
         const BLOQUEIO_SEGUNDOS = 15;
 
         let tentativasFalhas = 0;
         let bloqueado = false;
-        let entradaSenha = null;
 
         const painel = document.getElementById("gatePanel");
         const form = document.getElementById("gateForm");
@@ -284,27 +309,13 @@
         const tentativasEl = document.getElementById("gateTentativas");
 
         function setFeedback(mensagem, tipo) {
-            feedback.textContent = sender = mensagem;
+            feedback.textContent = mensagem;
             feedback.className = `gate-feedback ${tipo || ""}`;
         }
 
         function setPainelEstado(estado) {
             painel.classList.remove("erro", "sucesso");
             if (estado) painel.classList.add(estado);
-        }
-
-        async function carregarEntradaSenha() {
-            try {
-                const resp = await fetch(CAMINHO_SENHAS, { cache: "no-store" });
-                if (!resp.ok) throw new Error("status " + resp.status);
-                const dados = await resp.json();
-                entradaSenha = dados[CHAVE_SENHA];
-                if (!entradaSenha) throw new Error("chave não encontrada");
-            } catch (erro) {
-                console.error("Falha ao carregar credenciais:", erro);
-                setFeedback("Falha no link de dados. Tente novamente mais tarde.", "erro");
-                btn.disabled = true;
-            }
         }
 
         function atualizarTentativasRestantes() {
@@ -343,7 +354,7 @@
             }, 1000);
         }
 
-        function tratarSucesso() {
+        function tratarSucesso(urlDestino) {
             setPainelEstado("sucesso");
             setFeedback("Código aceito. Carregando Holonet do Mestre...", "sucesso");
             tentativasEl.textContent = "";
@@ -351,7 +362,7 @@
             btn.disabled = true;
 
             setTimeout(() => {
-                window.location.href = entradaSenha.url;
+                window.location.href = urlDestino;
             }, 1200);
         }
 
@@ -371,25 +382,37 @@
             input.focus();
         }
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            if (bloqueado || !entradaSenha) return;
+            if (bloqueado) return;
 
             const valor = input.value.trim();
             if (!valor) {
-                setFeedback("Insira a chave de autenticação.", "erro");
+                setFeedback("Digite a senha de acesso.", "erro");
                 return;
             }
 
-            if (valor === entradaSenha.senha) {
-                tratarSucesso();
+            btn.disabled = true;
+            input.disabled = true;
+            setFeedback("Sincronizando credenciais...", "info");
+
+            const { data, error } = await supabase
+                .from('storage_access')
+                .select('redirect_url')
+                .eq('key_name', CHAVE_SENHA)
+                .eq('password', valor)
+                .single();
+
+            if (data) {
+                tratarSucesso(data.redirect_url);
             } else {
+                btn.disabled = false;
+                input.disabled = false;
                 tratarFalha();
             }
         });
 
         document.addEventListener("DOMContentLoaded", () => {
-            carregarEntradaSenha();
             input.focus();
         });
     </script>

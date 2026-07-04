@@ -249,21 +249,26 @@
         </p>
     </main>
 
-    <script>
+    <script type="module">
         /* ============================================================
        senhaLoja.js — Terminal de Acesso da Loja de Itens Especiais
-       Verifica a senha contra ../data/senhasGerais.json (chave "loja")
-       e redireciona para a url informada em caso de sucesso.
+       Verifica a senha contra e redireciona para a url informada em caso de sucesso.
        ============================================================ */
 
-        const CAMINHO_SENHAS = "../data/senhasGerais.json";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const supabaseUrl = 'https://eziyaqhrkfvjjyzeegqt.supabase.co';
+        const supabaseKey = 'sb_publishable_P_C9Fhvg4z1E3OpQC7_VwQ_SwSK12wj';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+
         const CHAVE_SENHA = "loja";
         const MAX_TENTATIVAS = 3;
         const BLOQUEIO_SEGUNDOS = 15;
 
         let tentativasFalhas = 0;
         let bloqueado = false;
-        let entradaSenha = null;
+
 
         const painel = document.getElementById("gatePanel");
         const form = document.getElementById("gateForm");
@@ -280,20 +285,6 @@
         function setPainelEstado(estado) {
             painel.classList.remove("erro", "sucesso");
             if (estado) painel.classList.add(estado);
-        }
-
-        async function carregarEntradaSenha() {
-            try {
-                const resp = await fetch(CAMINHO_SENHAS, { cache: "no-store" });
-                if (!resp.ok) throw new Error("status " + resp.status);
-                const dados = await resp.json();
-                entradaSenha = dados[CHAVE_SENHA];
-                if (!entradaSenha) throw new Error("chave não encontrada");
-            } catch (erro) {
-                console.error("Falha ao carregar credenciais:", erro);
-                setFeedback("Não foi possível verificar a autenticação. Tente novamente mais tarde.", "erro");
-                btn.disabled = true;
-            }
         }
 
         function atualizarTentativasRestantes() {
@@ -332,7 +323,7 @@
             }, 1000);
         }
 
-        function tratarSucesso() {
+        function tratarSucesso(urlDestino) {
             setPainelEstado("sucesso");
             setFeedback("Acesso concedido. Redirecionando...", "sucesso");
             tentativasEl.textContent = "";
@@ -340,7 +331,7 @@
             btn.disabled = true;
 
             setTimeout(() => {
-                window.location.href = entradaSenha.url;
+                window.location.href = urlDestino;
             }, 1200);
         }
 
@@ -360,9 +351,10 @@
             input.focus();
         }
 
-        form.addEventListener("submit", (e) => {
+        /* INICIO DE FUNÇÃO DE [Submissão de Autenticação]; esta função faz [a intercepção do formulário para verificar a senha remotamente contra a tabela storage_access no Supabase, retornando a URL apenas se a combinação estiver correta] */
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            if (bloqueado || !entradaSenha) return;
+            if (bloqueado) return;
 
             const valor = input.value.trim();
             if (!valor) {
@@ -370,15 +362,28 @@
                 return;
             }
 
-            if (valor === entradaSenha.senha) {
-                tratarSucesso();
+            btn.disabled = true;
+            input.disabled = true;
+            setFeedback("Sincronizando credenciais...", "info");
+
+            const { data, error } = await supabase
+                .from('storage_access')
+                .select('redirect_url')
+                .eq('key_name', CHAVE_SENHA)
+                .eq('password', valor)
+                .single();
+
+            if (data) {
+                tratarSucesso(data.redirect_url);
             } else {
+                btn.disabled = false;
+                input.disabled = false;
                 tratarFalha();
             }
         });
 
+        /* INICIO DE FUNÇÃO DE [Inicialização do DOM]; esta função faz [o foco automático no campo de input ao carregar a página, dispensando a antiga requisição JSON prévia] */
         document.addEventListener("DOMContentLoaded", () => {
-            carregarEntradaSenha();
             input.focus();
         });
     </script>
