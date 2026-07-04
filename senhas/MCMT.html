@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Restrito // Diagnóstico da Oficina</title>
+    <!-- CSS compartilhado da Oficina/Engrenagem Mestra -->
+    <link rel="stylesheet" href="../styles/MCMT.css">
+    <link rel="icon" type="image/x-icon" href="../img/r2d2.ico">
+    <style>
+        /* Estilização complementar adaptada das variáveis do MCMT.css */
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-deep); /*[cite: 8] */
+            color: var(--text-primary); /*[cite: 8] */
+            font-family: var(--font-main); /*[cite: 8] */
+            font-size: 14px; /*[cite: 8] */
+            line-height: 1.7; /*[cite: 8] */
+            margin: 0;
+            padding: 0;
+        }
+
+        .gate-wrap {
+            width: 100%;
+            max-width: 480px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 10; /* Fica acima do background em Aurebesh[cite: 7] */
+        }
+
+        /* Painel simulando as estruturas de monitoramento e diagnósticos da oficina */
+        .gate-panel {
+            width: 100%;
+            background: var(--bg-panel); /*[cite: 8] */
+            border: 1px solid var(--border); /*[cite: 8] */
+            border-radius: var(--radius); /*[cite: 8] */
+            padding: 2.25rem 2rem;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            position: relative;
+        }
+
+        /* Faixa de autenticação superior herdeira do estilo dos cards da oficina */
+        .gate-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--green-mid), transparent); /*[cite: 8] */
+            opacity: 0.7;
+            transition: opacity 0.25s;
+        }
+
+        .gate-panel.sucesso {
+            border-color: var(--green-bright); /*[cite: 8] */
+            box-shadow: 0 0 20px rgba(123, 207, 154, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .gate-panel.sucesso::before {
+            background: var(--green-neon); /*[cite: 8] */
+            opacity: 1;
+        }
+
+        .gate-panel.erro {
+            animation: gate-shake 0.4s ease;
+            border-color: #ff3b3b;
+            box-shadow: 0 0 20px rgba(255, 59, 59, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .gate-panel.erro::before {
+            background: #ff3b3b;
+            opacity: 1;
+        }
+
+        @keyframes gate-shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(7px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(3px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gate-panel.erro { animation: none; }
+        }
+
+        .hero-eyebrow {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--green-dim); /*[cite: 8] */
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        .gate-aurebesh {
+            font-family: 'Aurebesh', monospace; /*[cite: 8] */
+            font-size: 1.1rem;
+            color: var(--text-aurebesh); /*[cite: 8] */
+            opacity: 0.6;
+            margin: 0 0 0.8rem;
+        }
+
+        .gate-title {
+            font-size: 1.4rem;
+            font-weight: normal;
+            letter-spacing: 0.08em;
+            color: var(--green-bright); /*[cite: 8] */
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin: 0 0 1rem;
+        }
+
+        .gate-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim); /*[cite: 8] */
+            letter-spacing: 0.05em;
+            line-height: 1.6;
+            margin: 0 0 1.75rem;
+            border-left: 2px solid var(--border-glow); /*[cite: 8] */
+            padding-left: 0.8rem;
+            text-align: left;
+        }
+
+        .gate-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            text-align: left;
+        }
+
+        .gate-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--green-dim); /*[cite: 8] */
+        }
+
+        .gate-input {
+            font-family: var(--font-main); /*[cite: 8] */
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            background-color: var(--bg-deep); /*[cite: 8] */
+            border: 1px solid var(--border); /*[cite: 8] */
+            color: var(--green-neon); /*[cite: 8] */
+            padding: 0.75rem 0.9rem;
+            border-radius: var(--radius); /*[cite: 8] */
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .gate-input:focus {
+            border-color: var(--border-glow); /*[cite: 8] */
+            box-shadow: 0 0 8px rgba(90, 158, 116, 0.3);
+        }
+
+        .gate-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Botão estilo Bloco de Comando / Trait */
+        .gate-btn {
+            margin-top: 0.4rem;
+            font-family: var(--font-main); /*[cite: 8] */
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.8rem 1rem;
+            background: var(--bg-card); /*[cite: 8] */
+            border: 1px solid var(--border); /*[cite: 8] */
+            color: var(--green-bright); /*[cite: 8] */
+            border-radius: var(--radius); /*[cite: 8] */
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .gate-btn:hover:not(:disabled) {
+            border-color: var(--border-glow); /*[cite: 8] */
+            background: var(--bg-card-hover); /*[cite: 8] */
+            color: var(--green-neon); /*[cite: 8] */
+            box-shadow: 0 0 10px rgba(90, 158, 116, 0.15);
+        }
+
+        .gate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .gate-feedback {
+            min-height: 1.4em;
+            margin: 1rem 0 0;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .gate-feedback.erro {
+            color: #ff5555;
+        }
+
+        .gate-feedback.sucesso {
+            color: var(--green-neon); /*[cite: 8] */
+        }
+
+        .gate-feedback.info {
+            color: var(--text-dim); /*[cite: 8] */
+        }
+
+        .gate-tentativas {
+            margin: 0.4rem 0 0;
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-dim); /*[cite: 8] */
+        }
+
+        .gate-rodape {
+            text-align: center;
+            font-size: 0.65rem;
+            color: var(--text-dim); /*[cite: 8] */
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            max-width: 44ch;
+        }
+
+        .gate-rodape .risco {
+            color: #ff5555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Contêiner preenchido automaticamente pela função auto-executável do MCMT.js -->
+    <div class="aurebesh-bg"></div>
+
+    <main class="gate-wrap">
+        <div class="gate-panel" id="gatePanel">
+            <span class="hero-eyebrow">Interface de Comando // Oficina</span> 
+            <p class="gate-aurebesh">oficina de reparos</p>
+
+            <h1 class="gate-title">REQUISITAR DIAGNÓSTICO</h1>
+            <p class="gate-desc">
+                Os esquemas de modificações e barramento dos Droids estão bloqueados. Insira a assinatura de barramento do Engenheiro Chefe para liberar o console.
+            </p>
+
+            <form id="gateForm" class="gate-form" autocomplete="off">
+                <label class="gate-label" for="gateSenha">Assinatura de Segurança</label>
+                <input type="password" id="gateSenha" class="gate-input" placeholder="••••••••••" autocomplete="off"
+                    spellcheck="false">
+                <button type="submit" class="gate-btn" id="gateBtn">Ignorar Trava Hidráulica</button>
+            </form>
+
+            <p class="gate-feedback" id="gateFeedback" aria-live="polite"></p>
+            <p class="gate-tentativas" id="gateTentativas"></p>
+        </div>
+
+        <p class="gate-rodape">
+            Aviso do Sistema: Tentativas forçadas redundantes <span class="risco">cortarão a energia hidráulica do console.</span>
+        </p>
+    </main>
+
+    <!-- Inclusão do Script Oficial para gerar a marca d'água -->
+    <script src="../js/MCMT.js"></script>
+    <script>
+        /* ============================================================
+       senhaOficina.js — Terminal de Acesso da Oficina de Reparos
+       Verifica a senha contra ../data/senhasGerais.json (chave "oficina")[cite: 6]
+       ============================================================ */
+
+        const CAMINHO_SENHAS = "../data/senhasGerais.json"; /*[cite: 6] */
+        const CHAVE_SENHA = "oficina"; /*[cite: 6] */
+        const MAX_TENTATIVAS = 3;
+        const BLOQUEIO_SEGUNDOS = 15;
+
+        let tentativasFalhas = 0;
+        let bloqueado = false;
+        let entradaSenha = null;
+
+        const painel = document.getElementById("gatePanel");
+        const form = document.getElementById("gateForm");
+        const input = document.getElementById("gateSenha");
+        const btn = document.getElementById("gateBtn");
+        const feedback = document.getElementById("gateFeedback");
+        const tentativasEl = document.getElementById("gateTentativas");
+
+        function setFeedback(mensagem, tipo) {
+            feedback.textContent = mensagem;
+            feedback.className = `gate-feedback ${tipo || ""}`;
+        }
+
+        function setPainelEstado(estado) {
+            painel.classList.remove("erro", "sucesso");
+            if (estado) painel.classList.add(estado);
+        }
+
+        async function carregarEntradaSenha() {
+            try {
+                const resp = await fetch(CAMINHO_SENHAS, { cache: "no-store" });
+                if (!resp.ok) throw new Error("status " + resp.status);
+                const dados = await resp.json();
+                entradaSenha = dados[CHAVE_SENHA];
+                if (!entradaSenha) throw new Error("chave não encontrada");
+            } catch (erro) {
+                console.error("Falha ao carregar credenciais:", erro);
+                setFeedback("Erro de link no barramento. Tente mais tarde.", "erro");
+                btn.disabled = true;
+            }
+        }
+
+        function atualizarTentativasRestantes() {
+            const restantes = MAX_TENTATIVAS - tentativasFalhas;
+            if (restantes <= 0) {
+                tentativasEl.textContent = "";
+                return;
+            }
+            tentativasEl.textContent = `Ciclos de ignição restantes: ${restantes}`;
+        }
+
+        function iniciarBloqueio() {
+            bloqueado = true;
+            input.disabled = true;
+            btn.disabled = true;
+
+            let restante = BLOQUEIO_SEGUNDOS;
+            setFeedback(`Sobrecarga no console. Resfriamento em curso... ${restante}s.`, "erro");
+            tentativasEl.textContent = "";
+
+            const intervalo = setInterval(() => {
+                restante -= 1;
+                if (restante <= 0) {
+                    clearInterval(intervalo);
+                    bloqueado = false;
+                    tentativasFalhas = 0;
+                    input.disabled = false;
+                    btn.disabled = false;
+                    setPainelEstado(null);
+                    setFeedback("Relés rearmados. Console operacional.", "info");
+                    input.value = "";
+                    input.focus();
+                } else {
+                    setFeedback(`Sobrecarga no console. Resfriamento em curso... ${restante}s.`, "erro");
+                }
+            }, 1000);
+        }
+
+        function tratarSucesso() {
+            setPainelEstado("sucesso");
+            setFeedback("Ignorando travas. Inicializando computadores da oficina...", "sucesso");
+            tentativasEl.textContent = "";
+            input.disabled = true;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                window.location.href = entradaSenha.url; /* Redireciona para o valor mapeado no json[cite: 6] */
+            }, 1200);
+        }
+
+        function tratarFalha() {
+            tentativasFalhas += 1;
+            setPainelEstado("erro");
+            setTimeout(() => setPainelEstado(null), 400);
+
+            if (tentativasFalhas >= MAX_TENTATIVAS) {
+                iniciarBloqueio();
+                return;
+            }
+
+            setFeedback("Assinatura inválida. Acesso hidráulico negado.", "erro");
+            atualizarTentativasRestantes();
+            input.value = "";
+            input.focus();
+        }
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (bloqueado || !entradaSenha) return;
+
+            const valor = input.value.trim();
+            if (!valor) {
+                setFeedback("Insira a assinatura de barramento.", "erro");
+                return;
+            }
+
+            if (valor === entradaSenha.senha) { /* Valida o token "K4l1c0r3MCMT" extraído do json[cite: 6] */
+                tratarSucesso();
+            } else {
+                tratarFalha();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarEntradaSenha();
+            input.focus();
+        });
+    </script>
+</body>
+
+</html>

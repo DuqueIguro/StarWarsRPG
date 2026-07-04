@@ -9,10 +9,10 @@
         "senha": "forgottenhollow",
         "url": "../terminal/MTP"
     },
-    "hangar": {
-        "nome": "Hangar Autorizado",
-        "senha": "kalicore",
-        "url": "../hangar/hangarAutorizado"
+    "oficina": {
+        "nome": "Oficina de Reparos",
+        "senha": "K4l1c0r3MCMT",
+        "url": "../pages/oficina"
     },
     "mestre": {
         "nome": "Escudo do Mestre",
