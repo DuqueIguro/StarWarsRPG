@@ -270,20 +270,24 @@
 
     <!-- Inclusão do Script Oficial para gerar a marca d'água -->
     <script src="../js/MCMT.js"></script>
-    <script>
+    <script type="module">
         /* ============================================================
        senhaOficina.js — Terminal de Acesso da Oficina de Reparos
-       Verifica a senha contra ../data/senhasGerais.json (chave "oficina")[cite: 6]
+       Verifica a senha contra
        ============================================================ */
 
-        const CAMINHO_SENHAS = "../data/senhasGerais.json"; /*[cite: 6] */
+       import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const supabaseUrl = 'https://eziyaqhrkfvjjyzeegqt.supabase.co';
+        const supabaseKey = 'sb_publishable_P_C9Fhvg4z1E3OpQC7_VwQ_SwSK12wj';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
         const CHAVE_SENHA = "oficina"; /*[cite: 6] */
         const MAX_TENTATIVAS = 3;
         const BLOQUEIO_SEGUNDOS = 15;
 
         let tentativasFalhas = 0;
         let bloqueado = false;
-        let entradaSenha = null;
 
         const painel = document.getElementById("gatePanel");
         const form = document.getElementById("gateForm");
@@ -300,20 +304,6 @@
         function setPainelEstado(estado) {
             painel.classList.remove("erro", "sucesso");
             if (estado) painel.classList.add(estado);
-        }
-
-        async function carregarEntradaSenha() {
-            try {
-                const resp = await fetch(CAMINHO_SENHAS, { cache: "no-store" });
-                if (!resp.ok) throw new Error("status " + resp.status);
-                const dados = await resp.json();
-                entradaSenha = dados[CHAVE_SENHA];
-                if (!entradaSenha) throw new Error("chave não encontrada");
-            } catch (erro) {
-                console.error("Falha ao carregar credenciais:", erro);
-                setFeedback("Erro de link no barramento. Tente mais tarde.", "erro");
-                btn.disabled = true;
-            }
         }
 
         function atualizarTentativasRestantes() {
@@ -352,7 +342,7 @@
             }, 1000);
         }
 
-        function tratarSucesso() {
+        function tratarSucesso(urlDestino) {
             setPainelEstado("sucesso");
             setFeedback("Ignorando travas. Inicializando computadores da oficina...", "sucesso");
             tentativasEl.textContent = "";
@@ -360,7 +350,7 @@
             btn.disabled = true;
 
             setTimeout(() => {
-                window.location.href = entradaSenha.url; /* Redireciona para o valor mapeado no json[cite: 6] */
+                window.location.href = urlDestino;
             }, 1200);
         }
 
@@ -380,25 +370,37 @@
             input.focus();
         }
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            if (bloqueado || !entradaSenha) return;
+            if (bloqueado) return;
 
             const valor = input.value.trim();
             if (!valor) {
-                setFeedback("Insira a assinatura de barramento.", "erro");
+                setFeedback("Digite a senha de acesso.", "erro");
                 return;
             }
 
-            if (valor === entradaSenha.senha) { /* Valida o token "K4l1c0r3MCMT" extraído do json[cite: 6] */
-                tratarSucesso();
+            btn.disabled = true;
+            input.disabled = true;
+            setFeedback("Sincronizando credenciais...", "info");
+
+            const { data, error } = await supabase
+                .from('storage_access')
+                .select('redirect_url')
+                .eq('key_name', CHAVE_SENHA)
+                .eq('password', valor)
+                .single();
+
+            if (data) {
+                tratarSucesso(data.redirect_url);
             } else {
+                btn.disabled = false;
+                input.disabled = false;
                 tratarFalha();
             }
         });
 
         document.addEventListener("DOMContentLoaded", () => {
-            carregarEntradaSenha();
             input.focus();
         });
     </script>

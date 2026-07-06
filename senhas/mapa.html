@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso Restrito // Cartografia Galáctica Secreta</title>
     <!-- Importando fontes oficiais do CSS do Mapa -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../styles/mapa_galatico.css">
     <link rel="icon" type="image/x-icon" href="../img/droid.ico">
     <style>
@@ -17,12 +19,14 @@
             align-items: center;
             justify-content: center;
             font-family: 'Roboto Mono', monospace;
-            background-color: #051318; /* --cor-fundo */
-            color: #d1f7ff; /* --cor-texto-principal */
+            background-color: #051318;
+            /* --cor-fundo */
+            color: #d1f7ff;
+            /* --cor-texto-principal */
             margin: 0;
             padding: 0;
             /* Efeito de varredura CRT e linhas de grade originais do mapa */
-            background-image: 
+            background-image:
                 linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%),
                 radial-gradient(circle at 1px 1px, rgba(0, 240, 255, 0.08) 1px, transparent 0);
             background-size: 100% 4px, 25px 25px;
@@ -42,9 +46,12 @@
         /* Container do painel emulando as caixas de dados e blur de vidro */
         .gate-panel {
             width: 100%;
-            background-color: rgba(11, 37, 46, 0.85); /* --cor-painel com opacidade */
-            border: 1px solid rgba(0, 240, 255, 0.4); /* --cor-borda */
-            border-left: 5px solid #00ffff; /* Borda lateral marcante idêntica ao card do mapa */
+            background-color: rgba(11, 37, 46, 0.85);
+            /* --cor-painel com opacidade */
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            /* --cor-borda */
+            border-left: 5px solid #00ffff;
+            /* Borda lateral marcante idêntica ao card do mapa */
             border-radius: 8px;
             padding: 2.25rem 2rem;
             box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
@@ -62,21 +69,40 @@
 
         .gate-panel.erro {
             animation: gate-shake 0.4s ease;
-            border-color: #ff2a2a; /* Vermelho Império */
+            border-color: #ff2a2a;
+            /* Vermelho Império */
             border-left-color: #ff2a2a;
             box-shadow: 0 0 25px rgba(255, 42, 42, 0.3);
         }
 
         @keyframes gate-shake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-8px); }
-            40% { transform: translateX(7px); }
-            60% { transform: translateX(-5px); }
-            80% { transform: translateX(3px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(7px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .gate-panel.erro { animation: none; }
+            .gate-panel.erro {
+                animation: none;
+            }
         }
 
         .gate-eyebrow {
@@ -106,7 +132,8 @@
             font-size: clamp(1.4rem, 6vw, 1.9rem);
             letter-spacing: 3px;
             margin: 0 0 0.9rem;
-            color: #ffffff; /* --cor-titulo */
+            color: #ffffff;
+            /* --cor-titulo */
             text-shadow: 0 0 12px rgba(0, 240, 255, 0.4), 0 0 25px rgba(0, 240, 255, 0.2);
             animation: hologramFlicker 6s infinite;
         }
@@ -243,7 +270,8 @@
 
             <h1 class="gate-title">LINK CRIPTOGRAFADO</h1>
             <p class="gate-desc">
-                O banco de dados das Regiões Desconhecidas e planetas secretos exige assinatura quântica. Forneça o código de descriptografia hiperespacial.
+                O banco de dados das Regiões Desconhecidas e planetas secretos exige assinatura quântica. Forneça o
+                código de descriptografia hiperespacial.
             </p>
 
             <form id="gateForm" class="gate-form" autocomplete="off">
@@ -258,24 +286,30 @@
         </div>
 
         <p class="gate-rodape">
-            Aviso de telemetria: Múltiplas falhas corromperão os dados locais e <span class="risco">suspenderão o cálculo de rota automaticamente.</span>
+            Aviso de telemetria: Múltiplas falhas corromperão os dados locais e <span class="risco">suspenderão o
+                cálculo de rota automaticamente.</span>
         </p>
     </main>
 
-    <script>
+    <script type="module">
         /* ============================================================
        senhaMapa.js — Terminal de Acesso do Mapa Galáctico Secreta
-       Verifica a senha contra ../data/senhasGerais.json (chave "mapa")
+       Verifica a senha contra
        ============================================================ */
 
-        const CAMINHO_SENHAS = "../data/senhasGerais.json";
-        const CHAVE_SENHA = "mapa"; // Busca as diretivas do mapa secreto
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const supabaseUrl = 'https://eziyaqhrkfvjjyzeegqt.supabase.co';
+        const supabaseKey = 'sb_publishable_P_C9Fhvg4z1E3OpQC7_VwQ_SwSK12wj';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+
+        const CHAVE_SENHA = "mapa";
         const MAX_TENTATIVAS = 3;
         const BLOQUEIO_SEGUNDOS = 15;
 
         let tentativasFalhas = 0;
         let bloqueado = false;
-        let entradaSenha = null;
 
         const painel = document.getElementById("gatePanel");
         const form = document.getElementById("gateForm");
@@ -292,20 +326,6 @@
         function setPainelEstado(estado) {
             painel.classList.remove("erro", "sucesso");
             if (estado) painel.classList.add(estado);
-        }
-
-        async function carregarEntradaSenha() {
-            try {
-                const resp = await fetch(CAMINHO_SENHAS, { cache: "no-store" });
-                if (!resp.ok) throw new Error("status " + resp.status);
-                const dados = await resp.json();
-                entradaSenha = dados[CHAVE_SENHA];
-                if (!entradaSenha) throw new Error("chave não encontrada");
-            } catch (erro) {
-                console.error("Falha ao carregar credenciais:", erro);
-                setFeedback("Link de dados fora do ar. Tente novamente mais tarde.", "erro");
-                btn.disabled = true;
-            }
         }
 
         function atualizarTentativasRestantes() {
@@ -344,7 +364,7 @@
             }, 1000);
         }
 
-        function tratarSucesso() {
+        function tratarSucesso(urlDestino) {
             setPainelEstado("sucesso");
             setFeedback("Coordenadas descriptografadas. Abrindo mapa estelar...", "sucesso");
             tentativasEl.textContent = "";
@@ -352,7 +372,7 @@
             btn.disabled = true;
 
             setTimeout(() => {
-                window.location.href = entradaSenha.url;
+                window.location.href = urlDestino;
             }, 1200);
         }
 
@@ -372,25 +392,37 @@
             input.focus();
         }
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            if (bloqueado || !entradaSenha) return;
+            if (bloqueado) return;
 
             const valor = input.value.trim();
             if (!valor) {
-                setFeedback("Forneça a credencial de vetor.", "erro");
+                setFeedback("Digite a senha de acesso.", "erro");
                 return;
             }
 
-            if (valor === entradaSenha.senha) {
-                tratarSucesso();
+            btn.disabled = true;
+            input.disabled = true;
+            setFeedback("Sincronizando credenciais...", "info");
+
+            const { data, error } = await supabase
+                .from('storage_access')
+                .select('redirect_url')
+                .eq('key_name', CHAVE_SENHA)
+                .eq('password', valor)
+                .single();
+
+            if (data) {
+                tratarSucesso(data.redirect_url);
             } else {
+                btn.disabled = false;
+                input.disabled = false;
                 tratarFalha();
             }
         });
 
         document.addEventListener("DOMContentLoaded", () => {
-            carregarEntradaSenha();
             input.focus();
         });
     </script>
