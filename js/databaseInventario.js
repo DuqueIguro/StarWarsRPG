@@ -341,14 +341,14 @@ let itemDatabase = [
     { name: "Projetor de Poço de Gravidade", category: "Peças de Naves", quality: "Excelente", price: 300000, description: "Tecnologia rara e de alto consumo de energia que gera sombras de massa artificiais, capaz de arrancar naves do hiperespaço." },
 
     // -- Projetor de Raio Trator
-    { name: "Projetor de Raio Trator (Fraco)", category: "Peças de Naves", quality: "Baixa", price: 24000, description: "Consegue segurar uma nave, mas qualquer motor mais forte pode escapar. Melhor usá-lo em naves já danificadas." },
-    { name: "Projetor de Raio Trator (Normal)", category: "Peças de Naves", quality: "Normal", price: 40000, description: "Componente chave de cruzadores para capturar naves." },
-    { name: "Projetor de Raio Trator (Boa)", category: "Peças de Naves", quality: "Boa", price: 80000, description: "Um projetor de raio trator padrão, capaz de capturar naves do tamanho de um cargueiro." },
-    { name: "Projetor de Raio Trator (Padrão-Destróier)", category: "Peças de Naves", quality: "Imperial", price: 160000, description: "O projetor padrão encontrado em todos os Destróieres Estelares, símbolo da autoridade Imperial." },
-    { name: "Projetor de Raio Trator", category: "Peças de Naves", quality: "Lendária", price: 320000, description: "Um projetor de raio trator tão poderoso que pode segurar múltiplos caças ou um cargueiro leve com facilidade." },
+    { name: "Projetor de Raio Trator (Fraco)", category: "Peças de Naves", quality: "Baixa", price: 24000, description: "Modelo básico de raio trator. Consegue prender alvos pequenos ou naves já avariadas, mas motores potentes podem romper sua contenção." },
+    { name: "Projetor de Raio Trator (Normal)", category: "Peças de Naves", quality: "Normal", price: 40000, description: "Sistema padrão instalado em diversas naves militares e de patrulha. Ideal para interceptar cargueiros leves e impedir tentativas de fuga." },
+    { name: "Projetor de Raio Trator (Boa)", category: "Peças de Naves", quality: "Boa", price: 80000, description: "Versão reforçada com maior estabilidade de feixe. É capaz de manter cargueiros de médio porte sob controle mesmo durante manobras evasivas." },
+    { name: "Projetor de Raio Trator (Padrão-Destróier)", category: "Peças de Naves", quality: "Imperial", price: 160000, description: "O poderoso modelo empregado pelos Destróieres Estelares. Desenvolvido para subjugar cargueiros pesados, corvetas e outras embarcações que desafiem a autoridade Imperial." },
+    { name: "Projetor de Raio Trator", category: "Peças de Naves", quality: "Lendária", price: 320000, description: "Uma obra-prima da engenharia gravitacional. Seu feixe de altíssima potência pode imobilizar múltiplos esquadrões de caças ou conter embarcações de grande porte com precisão impressionante." },
 
     // -- Projetor de Raio Trator de Campo Amplo
-    { name: "Projetor de Raio Trator de Campo Amplo", category: "Peças de Naves", quality: "Excelente", price: 120000, description: "Um projetor de raio trator tão poderoso que pode segurar múltiplos caças ou um cargueiro leve com facilidade." },
+    { name: "Projetor de Raio Trator de Campo Amplo", category: "Peças de Naves", quality: "Excelente", price: 120000, description: "Projeta um campo gravitacional expandido, permitindo capturar vários alvos menores ao mesmo tempo ou imobilizar uma única nave com muito mais eficiência." },
 
     // -- Repulsor de Emergência
     { name: "Repulsor de Emergência (Baixa)", category: "Peças de Naves", quality: "Baixa", price: 1000, description: "Repulsor com potência reduzida, suporta aterrissagem forçada segura apenas em gravidade padrão. Em gravidade alta não previne completamente." },
