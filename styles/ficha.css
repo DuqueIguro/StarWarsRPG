@@ -205,4 +205,29 @@ label {
     opacity: 1;
 }
 
+.btn-voltar-fixo {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-salvar-fixo {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+}
+
+.container-exportacao {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
 /* eu gosto de batatas  */
