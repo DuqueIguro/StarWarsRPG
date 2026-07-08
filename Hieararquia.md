@@ -118,9 +118,10 @@ StarWarsRPG
 │  ├─ inventarioOficina.js
 │  ├─ LdIE.js
 │  ├─ manutencao.js
-│  ├─ mapaSecreto.js
 │  ├─ mapa_galatico.js
 │  ├─ MCMT.js
+│  ├─ MTP.js
+│  ├─ mtpEffects.js
 │  ├─ organizacoes.js
 │  ├─ p2w.js
 │  ├─ rebeldes.js
