@@ -12,30 +12,53 @@
     <link rel="stylesheet" href="../styles/mapa_galatico.css">
     <link rel="icon" type="image/x-icon" href="../img/droid.ico">
     <style>
-        /* Estilização base adaptada do mapa_galatico.css */
+        :root {
+            --bg: #08080a;
+            --bg-painel: #121016;
+            --linha: rgba(156, 163, 175, 0.22);
+            --texto: #e7e4ee;
+            --texto-dim: #9995a8;
+            --texto-titulo: #f2f0f7;
+
+            /* Cores de facção usadas no chrome do sistema */
+            --neutro: #9ca3af;
+            --euphoria: #bd00ff;
+            --imperio: #ff2a2a;
+            --rebeldes: #2a6bff;
+
+            --sombra-dossie: 0 8px 24px rgba(0, 0, 0, 0.55);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Roboto Mono', monospace;
-            background-color: #051318;
-            /* --cor-fundo */
-            color: #d1f7ff;
-            /* --cor-texto-principal */
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: var(--bg);
+            color: var(--texto);
             margin: 0;
-            padding: 0;
-            /* Efeito de varredura CRT e linhas de grade originais do mapa */
+            padding: 1.5rem;
+            /* Fundo com as mesmas texturas de interferência e radiais do MTP */
             background-image:
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%),
-                radial-gradient(circle at 1px 1px, rgba(0, 240, 255, 0.08) 1px, transparent 0);
-            background-size: 100% 4px, 25px 25px;
+                repeating-linear-gradient(115deg,
+                    rgba(156, 163, 175, 0.035) 0px,
+                    rgba(156, 163, 175, 0.035) 1px,
+                    transparent 1px,
+                    transparent 5px),
+                radial-gradient(ellipse at 15% 0%, rgba(189, 0, 255, 0.07), transparent 45%),
+                radial-gradient(ellipse at 85% 100%, rgba(42, 107, 255, 0.07), transparent 45%),
+                radial-gradient(ellipse at 85% 0%, rgba(255, 42, 42, 0.05), transparent 40%);
+            background-attachment: fixed;
         }
 
         .gate-wrap {
             width: 100%;
             max-width: 480px;
-            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -43,107 +66,167 @@
             z-index: 10;
         }
 
-        /* Container do painel emulando as caixas de dados e blur de vidro */
+        /* Container do painel emulando o formato de corte poligonal e bordas do MTP */
         .gate-panel {
             width: 100%;
-            background-color: rgba(11, 37, 46, 0.85);
-            /* --cor-painel com opacidade */
-            border: 1px solid rgba(0, 240, 255, 0.4);
-            /* --cor-borda */
-            border-left: 5px solid #00ffff;
-            /* Borda lateral marcante idêntica ao card do mapa */
-            border-radius: 8px;
+            background-color: rgba(18, 16, 22, 0.75);
+            border: 1px solid var(--linha);
             padding: 2.25rem 2rem;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            box-shadow: var(--sombra-dossie);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             text-align: center;
+            position: relative;
+            /* Corte diagonal superior direito idêntico ao card do MTP */
+            clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
             transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Dobra de canto estática no painel principal */
+        .gate-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 21px 21px 0;
+            border-color: transparent transparent var(--linha) transparent;
+            filter: drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.4));
+            pointer-events: none;
+            transition: border-color 0.3s;
+        }
+
+        /* Faixa superior multicolorida do MTP aplicado ao painel */
+        .gate-panel::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            height: 4px;
+            background: linear-gradient(90deg,
+                    var(--neutro) 0%, var(--neutro) 25%,
+                    var(--euphoria) 25%, var(--euphoria) 50%,
+                    var(--imperio) 50%, var(--imperio) 75%,
+                    var(--rebeldes) 75%, var(--rebeldes) 100%);
         }
 
         .gate-panel.sucesso {
             border-color: #00ff66;
-            border-left-color: #00ff66;
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.2);
+        }
+        .gate-panel.sucesso::after {
+            border-color: transparent transparent #00ff66 transparent;
         }
 
         .gate-panel.erro {
             animation: gate-shake 0.4s ease;
-            border-color: #ff2a2a;
-            /* Vermelho Império */
-            border-left-color: #ff2a2a;
-            box-shadow: 0 0 25px rgba(255, 42, 42, 0.3);
+            border-color: var(--imperio);
+            box-shadow: 0 0 25px rgba(255, 42, 42, 0.2);
+        }
+        .gate-panel.erro::after {
+            border-color: transparent transparent var(--imperio) transparent;
         }
 
         @keyframes gate-shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            20% {
-                transform: translateX(-8px);
-            }
-
-            40% {
-                transform: translateX(7px);
-            }
-
-            60% {
-                transform: translateX(-5px);
-            }
-
-            80% {
-                transform: translateX(3px);
-            }
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(7px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(3px); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .gate-panel.erro {
-                animation: none;
-            }
+            .gate-panel.erro { animation: none; }
+            .gate-title::before, .gate-title::after { display: none; }
         }
 
         .gate-eyebrow {
+            display: inline-block;
             font-size: 0.68rem;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: #ffffff;
-            opacity: 0.7;
-            margin: 0 0 0.6rem;
+            color: var(--texto-dim);
+            border: 1px solid var(--linha);
+            padding: 0.3rem 0.75rem;
+            border-radius: 2px;
+            margin: 0 0 1rem;
         }
 
         /* Aurebesh adaptado */
         .gate-aurebesh {
             font-family: 'Aurebesh', sans-serif;
             text-transform: lowercase;
-            font-size: 1.1rem;
-            color: #00ffff;
-            opacity: 0.6;
+            font-size: 1rem;
+            color: var(--texto-dim);
+            opacity: 0.75;
             letter-spacing: 2px;
             margin: 0 0 0.9rem;
         }
 
-        /* Efeito de instabilidade oscilante do holograma no título */
+        /* Título com fonte Syncopate e Glitch Vermelho/Azul do MTP */
         .gate-title {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Syncopate', sans-serif;
             font-weight: 700;
-            font-size: clamp(1.4rem, 6vw, 1.9rem);
+            font-size: clamp(1.2rem, 5vw, 1.6rem);
             letter-spacing: 3px;
-            margin: 0 0 0.9rem;
-            color: #ffffff;
-            /* --cor-titulo */
-            text-shadow: 0 0 12px rgba(0, 240, 255, 0.4), 0 0 25px rgba(0, 240, 255, 0.2);
-            animation: hologramFlicker 6s infinite;
+            margin: 0 0 1.2rem;
+            color: var(--texto-titulo);
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        .gate-title::before,
+        .gate-title::after {
+            content: attr(data-texto);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            overflow: hidden;
+            opacity: 0.7;
+        }
+
+        .gate-title::before {
+            color: var(--imperio);
+            animation: glitch-canal-a 5s infinite steps(1);
+            clip-path: inset(0 0 60% 0);
+        }
+
+        .gate-title::after {
+            color: var(--rebeldes);
+            animation: glitch-canal-b 6s infinite steps(1);
+            clip-path: inset(60% 0 0 0);
+        }
+
+        @keyframes glitch-canal-a {
+            0%, 92%, 100% { transform: translate(0, 0); opacity: 0; }
+            93% { transform: translate(-2px, 1px); opacity: 0.6; }
+            95% { transform: translate(2px, -1px); opacity: 0.5; }
+            97% { transform: translate(0, 0); opacity: 0; }
+        }
+
+        @keyframes glitch-canal-b {
+            0%, 88%, 100% { transform: translate(0, 0); opacity: 0; }
+            89% { transform: translate(2px, -1px); opacity: 0.5; }
+            91% { transform: translate(-1px, 1px); opacity: 0.6; }
+            94% { transform: translate(0, 0); opacity: 0; }
         }
 
         .gate-desc {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             line-height: 1.6;
-            color: #d1f7ff;
-            opacity: 0.9;
+            color: var(--texto);
+            border: 1px solid var(--linha);
+            border-left: 2px solid var(--euphoria);
+            padding: 1rem;
+            border-radius: 2px;
+            background-color: rgba(0, 0, 0, 0.3);
             margin: 0 0 1.75rem;
+            text-align: left;
         }
 
         .gate-form {
@@ -154,77 +237,81 @@
         }
 
         .gate-label {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+            font-size: 0.78rem;
+            margin-bottom: 0.2rem;
+            color: var(--texto-dim);
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #ffffff;
         }
 
-        /* Inputs estilizados conforme filtros-container do mapa */
+        .gate-label::before {
+            content: '>';
+            margin-right: 0.5rem;
+            color: var(--euphoria);
+            font-weight: 700;
+        }
+
+        /* Inputs baseados no filtro-input do MTP */
         .gate-input {
-            font-family: 'Roboto Mono', monospace;
+            font-family: 'IBM Plex Mono', monospace;
             font-size: 1rem;
-            letter-spacing: 0.12em;
-            background-color: rgba(5, 19, 24, 0.9);
-            border: 1px solid rgba(0, 240, 255, 0.4);
-            color: #ffffff;
-            padding: 0.75rem 0.9rem;
-            border-radius: 6px;
+            background-color: #050506;
+            border: 1px solid var(--linha);
+            color: var(--texto);
+            padding: 0.7rem 0.85rem;
+            border-radius: 2px;
             outline: none;
-            transition: all 0.25s ease-in-out;
-            box-shadow: inset 0 0 5px rgba(0, 240, 255, 0.1);
+            transition: border-color 0.2s ease;
         }
 
         .gate-input:focus {
-            border-color: #00ffff;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4), inset 0 0 5px rgba(0, 240, 255, 0.2);
+            border-color: var(--euphoria);
+            box-shadow: 0 0 0 1px rgba(189, 0, 255, 0.3);
         }
 
         .gate-input:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
-        /* Botão estilo Interface de Computador de Bordo */
+        /* Botão baseado no back-button / ações do MTP */
         .gate-btn {
-            margin-top: 0.4rem;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
+            margin-top: 0.6rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-size: 0.85rem;
-            padding: 0.8rem 1rem;
-            background-color: rgba(11, 37, 46, 0.8);
-            border: 1px solid rgba(0, 240, 255, 0.4);
-            color: #ffffff;
-            border-radius: 6px;
+            padding: 10px 18px;
+            background-color: transparent;
+            border: 1px solid var(--linha);
+            color: var(--texto-dim);
+            border-radius: 2px;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
         }
 
         .gate-btn:hover:not(:disabled) {
-            background-color: rgba(0, 240, 255, 0.15);
-            color: #00ffff;
-            border-color: #00ffff;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            color: var(--texto-titulo);
+            border-color: var(--euphoria);
+            background-color: rgba(189, 0, 255, 0.08);
         }
 
         .gate-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
         .gate-feedback {
             min-height: 1.4em;
             margin: 1rem 0 0;
-            font-size: 0.8rem;
-            letter-spacing: 0.02em;
+            font-size: 0.85rem;
         }
 
         .gate-feedback.erro {
-            color: #ff2a2a;
-            text-shadow: 0 0 5px rgba(255, 42, 42, 0.3);
+            color: var(--imperio);
         }
 
         .gate-feedback.sucesso {
@@ -233,30 +320,28 @@
         }
 
         .gate-feedback.info {
-            color: #ffffff;
-            opacity: 0.7;
+            color: var(--texto-dim);
         }
 
         .gate-tentativas {
             margin: 0.4rem 0 0;
-            font-size: 0.68rem;
-            letter-spacing: 0.08em;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            color: #ffffff;
-            opacity: 0.5;
+            color: var(--texto-dim);
+            opacity: 0.7;
         }
 
         .gate-rodape {
             text-align: center;
-            font-size: 0.7rem;
-            color: #ffffff;
-            opacity: 0.6;
-            letter-spacing: 0.03em;
+            font-size: 0.75rem;
+            color: var(--texto-dim);
             max-width: 42ch;
+            line-height: 1.5;
         }
 
         .gate-rodape .risco {
-            color: #ff2a2a;
+            color: var(--imperio);
+            font-weight: 600;
         }
     </style>
 </head>
