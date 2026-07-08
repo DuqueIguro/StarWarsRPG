@@ -110,7 +110,7 @@
     },
     {
       "planeta": "Korriban (Moraband)",
-      "codigo": "KOR"
+      "codigo": "MOR"
     },
     {
       "planeta": "Kuat",
@@ -199,6 +199,90 @@
     {
       "planeta": "Zeffo",
       "codigo": "ZEF"
+    },
+    {
+      "planeta": "Atollon",
+      "codigo": "ATL"
+    },
+    {
+      "planeta": "Asterion",
+      "codigo": "AST"
+    },
+    {
+      "planeta": "Brentaal IV",
+      "codigo": "BIV"
+    },
+    {
+      "planeta": "Caelum",
+      "codigo": "CAE"
+    },
+    {
+      "planeta": "Concord Dawn",
+      "codigo": "CND"
+    },
+    {
+      "planeta": "Euphoria",
+      "codigo": "EUP"
+    },
+    {
+      "planeta": "Ferrus",
+      "codigo": "FRS"
+    },
+    {
+      "planeta": "Florrum",
+      "codigo": "FLR"
+    },
+    {
+      "planeta": "Garel",
+      "codigo": "GAR"
+    },
+    {
+      "planeta": "Helion",
+      "codigo": "HEL"
+    },
+    {
+      "planeta": "Jedha",
+      "codigo": "JED"
+    },
+    {
+      "planeta": "Jabiim",
+      "codigo": "JAB"
+    },
+    {
+      "planeta": "Kirneh",
+      "codigo": "KRN"
+    },
+    {
+      "planeta": "Mapuzo",
+      "codigo": "MPZ"
+    },
+    {
+      "planeta": "Nur",
+      "codigo": "NUR"
+    },
+    {
+      "planeta": "Nyxis",
+      "codigo": "NYX"
+    },
+    {
+      "planeta": "Orionis",
+      "codigo": "ORI"
+    },
+    {
+      "planeta": "Solaris",
+      "codigo": "SOL"
+    },
+    {
+      "planeta": "Tanalorr",
+      "codigo": "TAN"
+    },
+    {
+      "planeta": "Umbriel",
+      "codigo": "UBR"
+    },
+    {
+      "planeta": "Voltrix",
+      "codigo": "VTX"
     }
   ],
   "codigos_locais_extras":[
@@ -215,8 +299,12 @@
         "codigo": "SIG"
     },
     {
-        "indentificador": "Oficina",
-        "codigo": "OFI"
+        "indentificador": "Oficina Parte Baixa",
+        "codigo": "MT1"
+    },
+    {
+        "indentificador": "Oficina Parte Alta",
+        "codigo": "MT2"
     },
     {
         "indentificador": "Vacuo Espacial",
