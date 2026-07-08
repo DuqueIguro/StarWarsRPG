@@ -552,3 +552,211 @@ header .font-aurebesh {
         display: none;
     }
 }
+
+/* ==========================================================================
+   MTP — CAMADA DE ANIMAÇÕES E HOLOGRAMAS (vivo, não estático)
+   ========================================================================== */
+
+/* ---------- Scanline vertical animada sobre o container ---------- */
+.container {
+    isolation: isolate;
+}
+
+.mtp-scanline {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.mtp-scanline::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 90px;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(189, 0, 255, 0.05) 35%,
+        rgba(42, 107, 255, 0.10) 50%,
+        rgba(189, 0, 255, 0.05) 65%,
+        transparent 100%
+    );
+    animation: mtp-scan-drift 7s linear infinite;
+}
+
+@keyframes mtp-scan-drift {
+    0%   { top: -90px; }
+    100% { top: 100%; }
+}
+
+/* ---------- Partículas de poeira holográfica ---------- */
+.mtp-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.mtp-particle {
+    position: absolute;
+    bottom: -10px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    opacity: 0;
+    animation-name: mtp-particle-rise;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    filter: blur(0.3px);
+}
+
+.mtp-particle.p-neutro   { background: var(--neutro);   box-shadow: 0 0 6px var(--neutro); }
+.mtp-particle.p-euphoria { background: var(--euphoria); box-shadow: 0 0 8px var(--euphoria); }
+.mtp-particle.p-imperio  { background: var(--imperio);  box-shadow: 0 0 8px var(--imperio); }
+.mtp-particle.p-rebeldes { background: var(--rebeldes); box-shadow: 0 0 8px var(--rebeldes); }
+
+@keyframes mtp-particle-rise {
+    0%   { transform: translate(0, 0) scale(0.6); opacity: 0; }
+    10%  { opacity: 0.8; }
+    50%  { transform: translate(var(--drift, 20px), -50vh) scale(1); opacity: 0.6; }
+    90%  { opacity: 0.3; }
+    100% { transform: translate(calc(var(--drift, 20px) * 2), -100vh) scale(0.4); opacity: 0; }
+}
+
+/* ---------- Sequência de boot digitada no topo ---------- */
+.mtp-boot {
+    max-width: 640px;
+    margin: 0 auto 1.5rem;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: var(--euphoria);
+    opacity: 0.8;
+    min-height: 3.2em;
+    white-space: pre-wrap;
+}
+
+.mtp-boot .mtp-cursor {
+    display: inline-block;
+    width: 7px;
+    height: 1em;
+    background: var(--euphoria);
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: mtp-blink 1s step-start infinite;
+}
+
+@keyframes mtp-blink {
+    50% { opacity: 0; }
+}
+
+/* ---------- Faixa superior do container: gradiente correndo, não fixo ---------- */
+.container::before {
+    background-size: 200% 100%;
+    animation: mtp-strip-run 5s linear infinite;
+}
+
+@keyframes mtp-strip-run {
+    0%   { background-position: 0% 0; }
+    100% { background-position: -100% 0; }
+}
+
+/* ---------- Cards: hologram sweep + glitch hiccup ocasional ---------- */
+.planeta-card {
+    position: relative;
+}
+
+.planeta-card .holo-sweep {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        100deg,
+        transparent 40%,
+        rgba(255,255,255,0.06) 48%,
+        rgba(255,255,255,0.10) 50%,
+        rgba(255,255,255,0.06) 52%,
+        transparent 60%
+    );
+    background-size: 250% 250%;
+    background-position: 150% 150%;
+    transition: background-position 0.9s ease;
+    z-index: 1;
+}
+
+.planeta-card:hover .holo-sweep {
+    background-position: -50% -50%;
+}
+
+/* Pulso contínuo e sutil na borda do card (nunca fica 100% parado) */
+.planeta-card {
+    animation: surgirDossie 0.4s ease both, mtp-card-idle-pulse 6s ease-in-out infinite;
+}
+
+@keyframes mtp-card-idle-pulse {
+    0%, 100% { box-shadow: var(--sombra-dossie); }
+    50%      { box-shadow: var(--sombra-dossie), 0 0 14px -4px var(--cor-tema, var(--neutro)); }
+}
+
+/* Glitch hiccup — classe aplicada via JS em cards aleatórios */
+.planeta-card.mtp-glitching {
+    animation: mtp-glitch-hop 0.35s steps(2) 1;
+}
+
+@keyframes mtp-glitch-hop {
+    0%   { transform: translate(0,0); filter: none; }
+    20%  { transform: translate(-2px, 1px); filter: hue-rotate(15deg); }
+    40%  { transform: translate(2px, -1px); filter: hue-rotate(-10deg); }
+    60%  { transform: translate(-1px, 0);   filter: hue-rotate(8deg); }
+    100% { transform: translate(0,0); filter: none; }
+}
+
+/* Carimbo de facção (::before) ganha um respiro lento em vez de ficar fixo */
+.planeta-card::before {
+    animation: mtp-carimbo-breathe 5s ease-in-out infinite;
+}
+
+@keyframes mtp-carimbo-breathe {
+    0%, 100% { opacity: 0.08; transform: rotate(18deg) scale(1); }
+    50%      { opacity: 0.14; transform: rotate(18deg) scale(1.04); }
+}
+
+/* Ícone do header com leve flutuação */
+h1 i {
+    display: inline-block;
+    animation: mtp-icon-float 3.2s ease-in-out infinite;
+}
+
+@keyframes mtp-icon-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-3px) rotate(-4deg); }
+}
+
+/* Filtro: borda "escaneando" enquanto o campo está focado */
+.filtro-input:focus {
+    animation: mtp-input-scan 1.6s ease-in-out infinite;
+}
+
+@keyframes mtp-input-scan {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(189, 0, 255, 0.3); }
+    50%      { box-shadow: 0 0 0 1px rgba(189, 0, 255, 0.55), 0 0 10px rgba(189,0,255,0.25); }
+}
+
+/* Respeita usuários com preferência por menos movimento */
+@media (prefers-reduced-motion: reduce) {
+    .mtp-scanline::before,
+    .mtp-particle,
+    .container::before,
+    .planeta-card,
+    .planeta-card::before,
+    h1 i,
+    .filtro-input:focus {
+        animation: none !important;
+    }
+}
