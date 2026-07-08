@@ -702,6 +702,11 @@ h1 {
     background-color: #f0ad4e;
     box-shadow: 0 0 8px #f0ad4e;
 }
+    
+.data-status.error {
+    background-color: #d9534f;
+    box-shadow: 0 0 8px #d9534f;
+}
 
 /* ======== CARD HEADER TEXT ======== */
 .card-header > span:first-child {
