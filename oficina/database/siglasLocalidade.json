@@ -285,38 +285,50 @@
       "codigo": "VTX"
     }
   ],
-  "codigos_locais_extras":[
+  "codigos_locais_extras": [
     {
-        "indentificador": "Engrenagem Mestra",
-        "codigo": "EGM"
+      "indentificador": "Engrenagem Mestra",
+      "codigo": "EGM"
     },
     {
-        "indentificador": "Desconhecido(Uknown)",
-        "codigo": "UKN"
+      "indentificador": "Desconhecido(Uknown)",
+      "codigo": "UKN"
     },
     {
-        "indentificador": "Sigiloso",
-        "codigo": "SIG"
+      "indentificador": "Sigiloso",
+      "codigo": "SIG"
     },
     {
-        "indentificador": "Oficina Parte Baixa",
-        "codigo": "MT1"
+      "indentificador": "Oficina Parte Baixa",
+      "codigo": "MT1"
     },
     {
-        "indentificador": "Oficina Parte Alta",
-        "codigo": "MT2"
+      "indentificador": "Oficina Parte Alta",
+      "codigo": "MT2"
     },
     {
-        "indentificador": "Vacuo Espacial",
-        "codigo": "VCE"
+      "indentificador": "Vacuo Espacial",
+      "codigo": "VCE"
     },
     {
-        "indentificador": "Underground Coruscant",
-        "codigo": "UND"
+      "indentificador": "Underground Coruscant",
+      "codigo": "UND"
     },
     {
-        "indentificador": "Estação Espacial",
-        "codigo": "EST"
+      "indentificador": "Laboratório ALPHA",
+      "codigo": "α"
+    },
+    {
+      "indentificador": "Fábrica BETA",
+      "codigo": "β"
+    },
+    {
+      "indentificador": "Fábrica DELTA",
+      "codigo": "δ"
+    },
+    {
+      "indentificador": "Estação Espacial",
+      "codigo": "EST"
     }
   ]
 }
