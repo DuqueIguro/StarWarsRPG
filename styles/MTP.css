@@ -1,0 +1,500 @@
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@font-face {
+    font-family: 'Aurebesh';
+    src: url('../data/Aurebesh.woff') format('woff');
+}
+
+/* ==========================================================================
+   TERMINAL SECRETO — Dossiê de Facções
+   Identidade própria: cinza / roxo / vermelho / azul (cores das facções).
+   Nada de ciano, nada de Orbitron — isto NÃO é o mapa público.
+   ========================================================================== */
+
+:root {
+    --bg: #08080a;
+    --bg-painel: #121016;
+    --linha: rgba(156, 163, 175, 0.22);
+    --texto: #e7e4ee;
+    --texto-dim: #9995a8;
+    --texto-titulo: #f2f0f7;
+
+    /* As 4 cores de facção também comandam o chrome da interface */
+    --neutro: #9ca3af;
+    --euphoria: #bd00ff;
+    --imperio: #ff2a2a;
+    --rebeldes: #2a6bff;
+
+    --sombra-dossie: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'IBM Plex Mono', monospace;
+    background-color: var(--bg);
+    color: var(--texto);
+    margin: 0;
+    padding: 2rem;
+    background-image:
+        repeating-linear-gradient(115deg,
+            rgba(156, 163, 175, 0.035) 0px,
+            rgba(156, 163, 175, 0.035) 1px,
+            transparent 1px,
+            transparent 5px),
+        radial-gradient(ellipse at 15% 0%, rgba(189, 0, 255, 0.07), transparent 45%),
+        radial-gradient(ellipse at 85% 100%, rgba(42, 107, 255, 0.07), transparent 45%),
+        radial-gradient(ellipse at 85% 0%, rgba(255, 42, 42, 0.05), transparent 40%);
+    background-attachment: fixed;
+}
+
+.font-aurebesh {
+    font-family: 'Aurebesh', sans-serif;
+    text-transform: lowercase;
+    letter-spacing: 2px;
+}
+
+/* ---------- Estrutura geral ---------- */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 1px solid var(--linha);
+    background-color: rgba(18, 16, 22, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 2rem;
+    border-radius: 4px;
+    position: relative;
+}
+
+/* Faixa de "interferência de sinal": as 4 facções brigando pelo mesmo canal */
+.container::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    height: 4px;
+    background: linear-gradient(90deg,
+            var(--neutro) 0%, var(--neutro) 25%,
+            var(--euphoria) 25%, var(--euphoria) 50%,
+            var(--imperio) 50%, var(--imperio) 75%,
+            var(--rebeldes) 75%, var(--rebeldes) 100%);
+    border-radius: 4px 4px 0 0;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--linha);
+    padding-bottom: 1.5rem;
+    position: relative;
+}
+
+.gate-eyebrow-secreto,
+header .selo-classificado {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--texto-dim);
+    border: 1px solid var(--linha);
+    padding: 0.3rem 0.75rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-family: 'Syncopate', sans-serif;
+    font-weight: 700;
+    color: var(--texto-titulo);
+    font-size: 2.1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 0.5rem 0 0;
+    position: relative;
+    display: inline-block;
+}
+
+/* Glitch de canal cruzado (vermelho/azul) em vez do flicker holográfico ciano */
+h1::before,
+h1::after {
+    content: attr(data-texto);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow: hidden;
+    opacity: 0.7;
+}
+
+h1::before {
+    color: var(--imperio);
+    animation: glitch-canal-a 5s infinite steps(1);
+    clip-path: inset(0 0 60% 0);
+}
+
+h1::after {
+    color: var(--rebeldes);
+    animation: glitch-canal-b 6s infinite steps(1);
+    clip-path: inset(60% 0 0 0);
+}
+
+@keyframes glitch-canal-a {
+    0%, 92%, 100% { transform: translate(0, 0); opacity: 0; }
+    93% { transform: translate(-2px, 1px); opacity: 0.6; }
+    95% { transform: translate(2px, -1px); opacity: 0.5; }
+    97% { transform: translate(0, 0); opacity: 0; }
+}
+
+@keyframes glitch-canal-b {
+    0%, 88%, 100% { transform: translate(0, 0); opacity: 0; }
+    89% { transform: translate(2px, -1px); opacity: 0.5; }
+    91% { transform: translate(-1px, 1px); opacity: 0.6; }
+    94% { transform: translate(0, 0); opacity: 0; }
+}
+
+h1 i {
+    margin-right: 0.85rem;
+    color: var(--euphoria);
+}
+
+header .font-aurebesh {
+    font-size: 1rem;
+    color: var(--texto-dim);
+    margin-top: 0.6rem;
+    opacity: 0.75;
+}
+
+/* ---------- Filtros: barra de consulta de terminal ---------- */
+
+.filtros-container {
+    background-color: rgba(8, 8, 10, 0.75);
+    padding: 1.25rem 1.5rem;
+    border-radius: 3px;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    border: 1px solid var(--linha);
+    border-left: 3px solid var(--neutro);
+    align-items: flex-start;
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filtro-grupo label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 0.78rem;
+    margin-bottom: 0.5rem;
+    color: var(--texto-dim);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    letter-spacing: 1px;
+}
+
+.filtro-grupo label::before {
+    content: '>';
+    margin-right: 0.5rem;
+    color: var(--euphoria);
+    font-weight: 700;
+}
+
+.filtro-grupo label i {
+    display: none; /* substituído pelo prefixo '>' acima, mantendo o layout do HTML intacto */
+}
+
+.filtro-input {
+    background-color: #050506;
+    border: 1px solid var(--linha);
+    color: var(--texto);
+    padding: 0.7rem 0.85rem;
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: border-color 0.2s ease;
+}
+
+.filtro-input:focus {
+    outline: none;
+    border-color: var(--euphoria);
+    box-shadow: 0 0 0 1px rgba(189, 0, 255, 0.3);
+}
+
+/* ---------- Grade de dossiês (cards) ---------- */
+
+#mapa-galactico {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+@keyframes surgirDossie {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.planeta-card {
+    --cor-tema: var(--neutro);
+    --cor-tema-clara: #d1d5db;
+
+    background-color: var(--bg-painel);
+    border: 1px solid var(--linha);
+    border-radius: 2px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--sombra-dossie);
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+    animation: surgirDossie 0.4s ease both;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+/* Dobra de canto do "papel" do dossiê */
+.planeta-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  
+  /* Cria o triângulo perfeito usando bordas */
+  border-style: solid;
+  border-width: 0 20px 20px 0;
+  background: linear-gradient(135deg, transparent 50%, var(--cor-tema) 50%);
+  
+  /* Sombra leve para dar profundidade à dobra */
+  filter: drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.5));
+  
+  pointer-events: none; /* Garante que não atrapalhe cliques */
+}
+
+/* Carimbo giratório da facção, atrás do conteúdo */
+.planeta-card::before {
+    content: attr(data-facao);
+    position: absolute;
+    right: -2.5rem;
+    top: 2.2rem;
+    font-family: 'Syncopate', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--cor-tema);
+    opacity: 0.08;
+    transform: rotate(18deg);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.planeta-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--cor-tema);
+}
+
+.planeta-card h2 {
+    font-family: 'Syncopate', sans-serif;
+    font-weight: 700;
+    margin: 0 0 0.35rem 0;
+    color: var(--texto-titulo);
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+}
+
+.planeta-card h2 i {
+    margin-right: 0.75rem;
+    font-size: 1rem;
+    color: var(--cor-tema);
+}
+
+.planeta-aurebesh {
+    color: var(--texto-dim);
+    font-size: 0.95rem;
+    margin: 0 0 0.75rem 0;
+    line-height: 1;
+    opacity: 0.6;
+}
+
+.planeta-card .regiao {
+    font-size: 0.85rem;
+    color: var(--cor-tema-clara);
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--linha);
+    padding-bottom: 1rem;
+    letter-spacing: 0.3px;
+}
+
+.description-box {
+    border: 1px solid var(--linha);
+    border-left: 2px solid var(--cor-tema);
+    padding: 1rem;
+    border-radius: 2px;
+    margin-top: auto;
+    margin-bottom: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.description-box p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--texto);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    font-size: 0.85rem;
+    margin: auto;
+    width: 100%;
+}
+
+.info-box {
+    border: 1px solid var(--linha);
+    padding: 0.75rem;
+    border-radius: 2px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.info-box strong {
+    color: var(--cor-tema-clara);
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.35rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-box strong i {
+    margin-right: 0.5rem;
+    width: 14px;
+    color: var(--cor-tema);
+}
+
+.info-box span {
+    color: var(--texto);
+}
+
+.info-box ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.info-box ul li {
+    color: var(--texto);
+    margin-bottom: 0.25rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.info-box ul li::before {
+    content: '·';
+    color: var(--cor-tema);
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+}
+
+.info-box ul li:last-child {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Cores por facção — agora a base do tema, não um extra
+   ========================================================================== */
+
+.card-imperio {
+    --cor-tema: var(--imperio);
+    --cor-tema-clara: #ff9d9d;
+}
+
+.card-rebeldes {
+    --cor-tema: var(--rebeldes);
+    --cor-tema-clara: #9dbcff;
+}
+
+.card-neutro {
+    --cor-tema: var(--neutro);
+    --cor-tema-clara: #d1d5db;
+}
+
+.card-euphoria {
+    --cor-tema: var(--euphoria);
+    --cor-tema-clara: #e0a3ff;
+}
+
+[class*="card-"] h2,
+[class*="card-"] h2 i {
+    color: var(--texto-titulo);
+}
+
+[class*="card-"] .info-box strong,
+[class*="card-"] .regiao {
+    color: var(--cor-tema-clara);
+}
+
+/* ---------- Mensagem vazia ---------- */
+
+#mensagem-nenhum-resultado {
+    text-align: center;
+    color: var(--texto-dim);
+    padding: 2rem;
+    font-style: normal;
+    border: 1px dashed var(--linha);
+    border-radius: 2px;
+}
+
+/* ---------- Botão voltar ---------- */
+
+.back-button {
+    display: inline-block;
+    margin-bottom: 2rem;
+    padding: 9px 18px;
+    background-color: transparent;
+    border: 1px solid var(--linha);
+    color: var(--texto-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.back-button:hover {
+    color: var(--texto-titulo);
+    border-color: var(--euphoria);
+    background-color: rgba(189, 0, 255, 0.08);
+}
+
+.back-button i {
+    margin-right: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    h1::before,
+    h1::after {
+        animation: none;
+        display: none;
+    }
+}

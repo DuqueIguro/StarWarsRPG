@@ -1,6 +1,7 @@
 
 ```
 StarWarsRPG
+├─ .nojekyll
 ├─ 404.html
 ├─ backups
 │  ├─ Escudo
@@ -16,6 +17,11 @@ StarWarsRPG
 │  ├─ Aurebesh.woff
 │  ├─ contatosRebeldes.json
 │  ├─ durtoc.json
+│  ├─ ficha
+│  │  ├─ dadosClasses.json
+│  │  ├─ dadosClassesPrestigio.json
+│  │  ├─ dadosRacas.json
+│  │  └─ dadosTamanhos.json
 │  ├─ holonet
 │  │  ├─ ConflitoNews.json
 │  │  ├─ EconomiaNews.json
@@ -30,9 +36,7 @@ StarWarsRPG
 │  │  └─ tripulantes.json
 │  ├─ p2w.json
 │  ├─ planetasSecretos.json
-│  ├─ planetas_database.json
-│  ├─ senhasGerais.json
-│  └─ senhasRebeldes.json
+│  └─ planetas_database.json
 ├─ hangar
 │  ├─ fichas.js
 │  ├─ fuel.js
@@ -55,6 +59,7 @@ StarWarsRPG
 │  ├─ contatoCaminho.png
 │  ├─ contatoMassassi.png
 │  ├─ contatoOrion.png
+│  ├─ d20.png
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
 │  ├─ DurtocDocumento.png
@@ -64,6 +69,7 @@ StarWarsRPG
 │  ├─ error-404.ico
 │  ├─ HNN.ico
 │  ├─ imperio.png
+│  ├─ light-saber.png
 │  ├─ livepix.jpeg
 │  ├─ livepix.png
 │  ├─ mandalorian.ico
@@ -151,7 +157,6 @@ StarWarsRPG
 │  ├─ comunicacao.html
 │  ├─ durtoc.html
 │  ├─ ficha.html
-│  ├─ hangar.html
 │  ├─ hierarquiaGerais.html
 │  ├─ hierarquiaImperio.html
 │  ├─ hierarquias.html
@@ -159,7 +164,6 @@ StarWarsRPG
 │  ├─ inventario.html
 │  ├─ invetarioOficina.html
 │  ├─ manutencao.html
-│  ├─ mapaSecreto.html
 │  ├─ mapa_galatico.html
 │  ├─ oficina.html
 │  ├─ p2w.html
@@ -172,8 +176,10 @@ StarWarsRPG
 │  ├─ massassi.html
 │  └─ orion.html
 ├─ senhas
+│  ├─ hangar.html
 │  ├─ loja.html
 │  ├─ mapa.html
+│  ├─ MCMT.html
 │  └─ mestre.html
 ├─ styles
 │  ├─ 404.css
