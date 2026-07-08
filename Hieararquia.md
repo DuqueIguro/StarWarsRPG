@@ -37,6 +37,7 @@ StarWarsRPG
 │  ├─ p2w.json
 │  ├─ planetasSecretos.json
 │  └─ planetas_database.json
+├─ ficha.json
 ├─ hangar
 │  ├─ fichas.js
 │  ├─ fuel.js
@@ -100,7 +101,7 @@ StarWarsRPG
 ├─ index.html
 ├─ js
 │  ├─ backupFicha.js
-│  ├─ dadosClassesFIcha.js
+│  ├─ dadosClassesFicha.js
 │  ├─ dadosRacasFicha.js
 │  ├─ dadosTamanhosFicha.js
 │  ├─ databaseInventario.js
@@ -198,6 +199,7 @@ StarWarsRPG
 │  ├─ manutencao.css
 │  ├─ mapa_galatico.css
 │  ├─ MCMT.css
+│  ├─ MTP.css
 │  ├─ oficina.css
 │  ├─ organizacoes.css
 │  ├─ p2w.css
