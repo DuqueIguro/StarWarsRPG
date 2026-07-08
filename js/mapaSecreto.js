@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mapaGalactico = document.getElementById('mapa-galactico');
     const buscaPlanetaInput = document.getElementById('busca-planeta');
     const filtroRegiaoSelect = document.getElementById('filtro-regiao');
-    const buscaSetorInput = document.getElementById('busca-setor');
+    const filtroAfiliacaoSelect = document.getElementById('filtro-afiliacao'); // Captura o novo elemento
     const mensagemNenhumResultado = document.getElementById('mensagem-nenhum-resultado');
     
     let planetasData = [];
@@ -16,9 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            // Ordena os planetas em ordem alfabética por nome na carga inicial
             data.planetas.sort((a, b) => a.nome.localeCompare(b.nome));
-            
             planetasData = data.planetas;
             popularFiltros(planetasData);
             renderizarPlanetas(planetasData);
@@ -56,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const affiliationItems = planeta.afiliacao.split(',').map(item => `<li>${item.trim()}</li>`).join('');
             const speciesItems = planeta.principais_especies.map(item => `<li>${item.trim()}</li>`).join('');
 
-            // TEMPLATE DO CARD ATUALIZADO COM ÍCONES
             card.innerHTML = `
                 <h2><i class="fa-solid fa-earth-americas"></i> ${planeta.nome}</h2>
                 <p class="font-aurebesh planeta-aurebesh">${planeta.nome}</p>
@@ -89,26 +86,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Função para filtrar os planetas
+    // Função para filtrar os planetas (Corrigida e Atualizada)
     function filtrarPlanetas() {
         const termoPlaneta = buscaPlanetaInput.value.toLowerCase();
         const regiaoSelecionada = filtroRegiaoSelect.value;
-        const termoSetor = buscaSetorInput.value.toLowerCase();
+        const afiliacaoSelecionada = filtroAfiliacaoSelect.value; // Obtém o valor do filtro de afiliação
 
         let planetasFiltrados = planetasData.filter(planeta => {
             const matchPlaneta = planeta.nome.toLowerCase().includes(termoPlaneta);
             const matchRegiao = regiaoSelecionada === '' || planeta.regiao === regiaoSelecionada;
-            const matchSetor = planeta.setor.toLowerCase().includes(termoSetor);
-            return matchPlaneta && matchRegiao && matchSetor;
+            
+            // Tratamento caso a propriedade afiliacao_id não exista em algum registro do seu JSON
+            const idFacao = planeta.afiliacao_id ? planeta.afiliacao_id.toLowerCase() : 'neutro';
+            const matchAfiliacao = afiliacaoSelecionada === '' || idFacao === afiliacaoSelecionada;
+
+            return matchPlaneta && matchRegiao && matchAfiliacao;
         });
         
         planetasFiltrados.sort((a, b) => a.nome.localeCompare(b.nome));
-
         renderizarPlanetas(planetasFiltrados);
     }
 
-    // Adicionar listeners para os filtros
+    // Ouvintes de eventos vinculados perfeitamente com os IDs do HTML
     buscaPlanetaInput.addEventListener('input', filtrarPlanetas);
     filtroRegiaoSelect.addEventListener('change', filtrarPlanetas);
-    buscaSetorInput.addEventListener('input', filtrarPlanetas);
+    filtroAfiliacaoSelect.addEventListener('change', filtrarPlanetas);
 });
