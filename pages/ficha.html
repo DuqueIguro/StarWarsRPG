@@ -14,6 +14,9 @@
 
     <link rel="icon" type="image/x-icon" href="../img/mandalorian.ico">
     <link rel="stylesheet" href="../styles/ficha.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/ficha.js" defer></script>
 </head>
 
 <body class="p-4 sm:p-6 md:p-8">
@@ -56,21 +59,29 @@
         <section class="section-container">
             <h3 class="text-xl mb-4">INFORMAÇÕES DO PERSONAGEM</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div><label for="nome">NOME</label><input type="text" id="nome"></div>
-                <div><label for="jogador">JOGADOR</label><input type="text" id="jogador"></div>
-                <div><label for="classe">CLASSE</label><select id="classe" class="p-2"></select></div>
-                <div><label for="nivel">NÍVEL</label><input type="number" id="nivel" value="1" min="1"></div>
-                <div><label for="especie">ESPÉCIE</label><select id="especie" class="p-2"></select></div>
+                <div><label for="nome">NOME</label><input type="text" id="nome" data-json-path="biografia.nome"></div>
+                <div><label for="jogador">JOGADOR</label><input type="text" id="jogador"
+                        data-json-path="biografia.jogador"></div>
+                <div><label for="classe">CLASSE</label><select id="classe" data-json-path="biografia.classe"
+                        class="p-2"></select></div>
+                <div><label for="nivel">NÍVEL</label><input type="number" id="nivel" data-json-path="biografia.nivel"
+                        value="1" min="1"></div>
+                <div><label for="especie">ESPÉCIE</label><select id="especie" data-json-path="biografia.especie"
+                        class="p-2"></select></div>
                 <div class="col-span-full lg:col-span-2">
                     <label>NOTAS DA ESPÉCIE</label>
                     <p id="notas-raciais" class="text-sm text-gray-400 min-h-[40px] pt-2"></p>
                 </div>
-                <div><label for="tamanho">TAMANHO</label><select id="tamanho" class="p-2"></select></div>
-                <div><label for="idade">IDADE</label><input type="text" id="idade"></div>
-                <div><label for="sexo">SEXO</label><input type="text" id="sexo"></div>
-                <div><label for="peso">PESO</label><input type="text" id="peso"></div>
-                <div><label for="altura">ALTURA</label><input type="text" id="altura"></div>
-                <div><label for="destino">DESTINO</label><input type="text" id="destino"></div>
+                <div><label for="tamanho">TAMANHO</label><select id="tamanho" data-json-path="biografia.tamanho"
+                        class="p-2"></select></div>
+                <div><label for="idade">IDADE</label><input type="text" id="idade" data-json-path="biografia.idade">
+                </div>
+                <div><label for="sexo">SEXO</label><input type="text" id="sexo" data-json-path="biografia.sexo"></div>
+                <div><label for="peso">PESO</label><input type="text" id="peso" data-json-path="biografia.peso"></div>
+                <div><label for="altura">ALTURA</label><input type="text" id="altura" data-json-path="biografia.altura">
+                </div>
+                <div><label for="destino">DESTINO</label><input type="text" id="destino"
+                        data-json-path="biografia.destino"></div>
             </div>
         </section>
 
@@ -87,7 +98,8 @@
                     <div class="space-y-3">
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="vig-base" class="col-span-2">FORÇA/VIGOR</label>
-                            <input type="number" id="vig-base" data-json-path="atributosBase.vigor" class="col-span-1 text-center" value="10">
+                            <input type="number" id="vig-base" data-json-path="atributosBase.vigor"
+                                class="col-span-1 text-center" value="10">
                             <div id="vig-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="vig-mod" class="stat-mod text-lg">+0</div>
@@ -99,7 +111,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="des-base" class="col-span-2">DESTREZA</label>
-                            <input type="number" id="des-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="des-base" data-json-path="atributosBase.destreza"
+                                class="col-span-1 text-center" value="10">
                             <div id="des-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="des-mod" class="stat-mod text-lg">+0</div>
@@ -111,7 +124,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="con-base" class="col-span-2">CONSTITUIÇÃO</label>
-                            <input type="number" id="con-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="con-base" data-json-path="atributosBase.constituicao"
+                                class="col-span-1 text-center" value="10">
                             <div id="con-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="con-mod" class="stat-mod text-lg">+0</div>
@@ -123,7 +137,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="int-base" class="col-span-2">INTELIGÊNCIA</label>
-                            <input type="number" id="int-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="int-base" data-json-path="atributosBase.inteligencia"
+                                class="col-span-1 text-center" value="10">
                             <div id="int-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="int-mod" class="stat-mod text-lg">+0</div>
@@ -135,7 +150,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="sab-base" class="col-span-2">SABEDORIA</label>
-                            <input type="number" id="sab-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="sab-base" data-json-path="atributosBase.sabedoria"
+                                class="col-span-1 text-center" value="10">
                             <div id="sab-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="sab-mod" class="stat-mod text-lg">+0</div>
@@ -147,7 +163,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="car-base" class="col-span-2">CARISMA</label>
-                            <input type="number" id="car-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="car-base" data-json-path="atributosBase.carisma"
+                                class="col-span-1 text-center" value="10">
                             <div id="car-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="car-mod" class="stat-mod text-lg">+0</div>
@@ -182,15 +199,27 @@
                         </div>
                         <div class="grid grid-cols-4 gap-2 items-center">
                             <label>Classe</label>
-                            <input type="number" id="def-classe-fort" value="0" class="text-center">
-                            <input type="number" id="def-classe-ref" value="0" class="text-center">
-                            <input type="number" id="def-classe-von" value="0" class="text-center">
+                            <input type="number" id="def-classe-fort"
+                                data-json-path="modificadoresManuais.defesas.fortitude.classe" value="0"
+                                class="text-center">
+                            <input type="number" id="def-classe-ref"
+                                data-json-path="modificadoresManuais.defesas.reflexo.classe" value="0"
+                                class="text-center">
+                            <input type="number" id="def-classe-von"
+                                data-json-path="modificadoresManuais.defesas.vontade.classe" value="0"
+                                class="text-center">
                         </div>
                         <div class="grid grid-cols-4 gap-2 items-center">
                             <label>Armadura</label>
-                            <input type="number" id="def-armadura-fort" value="0" class="text-center">
-                            <input type="number" id="def-armadura-ref" value="0" class="text-center">
-                            <input type="number" id="def-armadura-von" value="0" class="text-center">
+                            <input type="number" id="def-armadura-fort"
+                                data-json-path="modificadoresManuais.defesas.fortitude.armadura" value="0"
+                                class="text-center">
+                            <input type="number" id="def-armadura-ref"
+                                data-json-path="modificadoresManuais.defesas.reflexo.armadura" value="0"
+                                class="text-center">
+                            <input type="number" id="def-armadura-von"
+                                data-json-path="modificadoresManuais.defesas.vontade.armadura" value="0"
+                                class="text-center">
                         </div>
                         <div class="grid grid-cols-4 gap-2 items-center">
                             <label>Tamanho</label>
@@ -202,9 +231,15 @@
                         </div>
                         <div class="grid grid-cols-4 gap-2 items-center">
                             <label>Outros</label>
-                            <input type="number" id="def-outros-fort" value="0" class="text-center">
-                            <input type="number" id="def-outros-ref" value="0" class="text-center">
-                            <input type="number" id="def-outros-von" value="0" class="text-center">
+                            <input type="number" id="def-outros-fort"
+                                data-json-path="modificadoresManuais.defesas.fortitude.outros" value="0"
+                                class="text-center">
+                            <input type="number" id="def-outros-ref"
+                                data-json-path="modificadoresManuais.defesas.reflexo.outros" value="0"
+                                class="text-center">
+                            <input type="number" id="def-outros-von"
+                                data-json-path="modificadoresManuais.defesas.vontade.outros" value="0"
+                                class="text-center">
                         </div>
                     </div>
                 </section>
@@ -239,26 +274,21 @@
                                         title="Definir Vida para o Máximo">Max »</button>
                                 </div>
                             </div>
-                            <input type="number" id="pv-atual" class="hidden" value="10">
+                            <input type="number" id="pv-atual" data-json-path="recursos.pontosVidaAtual" class="hidden"
+                                value="10">
                         </div>
 
                         <div>
-                            <label for="pv-total">PV MÁXIMO</label>
+                            <label for="pv-total">MOD. PV MÁXIMO</label>
                             <div class="flex items-center gap-1">
-                                <input type="number" id="pv-total" value="10" class="w-full">
-                                <button id="reset-pv-btn" title="Restaurar cálculo automático"
-                                    class="p-1 text-yellow-400 hover:text-yellow-300 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
+                                <input type="number" id="pv-total-mod"
+                                    data-json-path="modificadoresManuais.status.modVidaMaxima" value="0"
+                                    class="w-full text-center">
                             </div>
                         </div>
 
-                        <div><label for="velocidade">VELOCIDADE</label><input type="number" id="velocidade" value="6">
+                        <div><label for="velocidade">VELOCIDADE</label><input type="number" id="velocidade"
+                                data-json-path="modificadoresManuais.status.velocidadeDeslocamento" value="6">
                         </div>
                         <div>
                             <label for="iniciativa">INICIATIVA</label>
@@ -270,14 +300,15 @@
                                 </svg>
                             </div>
                         </div>
-                        <div><label for="bab">ATAQUE BASE</label><input type="number" id="bab" value="0"></div>
+                        <div><label for="bab">ATAQUE BASE</label><input type="number" id="bab"
+                                data-json-path="modificadoresManuais.combate.ataqueGeral" value="0"></div>
                         <div><label for="dano-limite">DANO LIMITE</label>
                             <div id="dano-limite-total" class="stat-mod text-lg text-center">10</div>
                         </div>
                         <div><label for="pontos-forca">PONTOS DE FORÇA</label><input type="number" id="pontos-forca"
-                                value="1"></div>
+                                data-json-path="recursos.pontosForca" value="1"></div>
                         <div><label for="pontos-destino">PONTOS DE DESTINO</label><input type="number"
-                                id="pontos-destino" value="1"></div>
+                                id="pontos-destino" data-json-path="recursos.pontosDestino" value="1"></div>
                     </div>
 
                     <hr class="border-stone-700 my-4">
@@ -307,7 +338,7 @@
 
                 <section class="section-container">
                     <h3 class="text-xl mb-4">CONDIÇÃO</h3>
-                    <select id="condicao" class="w-full">
+                    <select id="condicao" data-json-path="recursos.condicao" class="w-full">
                         <option value="0">Normal</option>
                         <option value="-1">-1 em todos os testes</option>
                         <option value="-2">-2 em todos os testes</option>
@@ -318,7 +349,8 @@
                 </section>
 
                 <section class="section-container">
-                    <h3 class="text-xl mb-4">LADO NEGRO</h3><input type="number" id="lado-negro" value="0" min="0">
+                    <h3 class="text-xl mb-4">LADO NEGRO</h3><input type="number" id="lado-negro"
+                        data-json-path="recursos.pontosLadoNegro" value="0" min="0">
                 </section>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -389,7 +421,8 @@
 
                 <section class="section-container">
                     <h3 class="text-xl mb-4">ANOTAÇÕES</h3>
-                    <textarea rows="8" placeholder="Faça suas anotações da sessão aqui..."></textarea>
+                    <textarea id="anotacoes" data-json-path="campanha.anotacoes" rows="8" class="w-full"
+                        placeholder="Faça suas anotações da sessão aqui..."></textarea>
                 </section>
             </div>
         </div>
@@ -405,7 +438,8 @@
                     </div>
                 </div>
             </div>
-            <div class="mb-4"><label for="creditos">CRÉDITOS</label><input type="number" id="creditos" value="1000">
+            <div class="mb-4"><label for="creditos">CRÉDITOS</label><input type="number" id="creditos"
+                    data-json-path="recursos.creditos" value="1000">
             </div>
             <div class="grid grid-cols-12 gap-2 text-xs font-bold text-yellow-400 mb-2">
                 <div class="col-span-6">ITEM</div>
@@ -432,6 +466,7 @@
         <input type="file" id="importar-ficha-input" accept="application/json" class="hidden">
     </div>
 
+<script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             corePlugins: {
@@ -439,7 +474,9 @@
             }
         }
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/dadosClassesFicha.js"></script>
+    <script src="../js/dadosRacasFicha.js"></script>
+    <script src="../js/dadosTamanhosFicha.js"></script>
     <script src="../js/ficha.js" defer></script>
 </body>
 
