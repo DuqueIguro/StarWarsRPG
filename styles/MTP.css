@@ -145,17 +145,53 @@ h1::after {
 }
 
 @keyframes glitch-canal-a {
-    0%, 92%, 100% { transform: translate(0, 0); opacity: 0; }
-    93% { transform: translate(-2px, 1px); opacity: 0.6; }
-    95% { transform: translate(2px, -1px); opacity: 0.5; }
-    97% { transform: translate(0, 0); opacity: 0; }
+
+    0%,
+    92%,
+    100% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+
+    93% {
+        transform: translate(-2px, 1px);
+        opacity: 0.6;
+    }
+
+    95% {
+        transform: translate(2px, -1px);
+        opacity: 0.5;
+    }
+
+    97% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
 }
 
 @keyframes glitch-canal-b {
-    0%, 88%, 100% { transform: translate(0, 0); opacity: 0; }
-    89% { transform: translate(2px, -1px); opacity: 0.5; }
-    91% { transform: translate(-1px, 1px); opacity: 0.6; }
-    94% { transform: translate(0, 0); opacity: 0; }
+
+    0%,
+    88%,
+    100% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+
+    89% {
+        transform: translate(2px, -1px);
+        opacity: 0.5;
+    }
+
+    91% {
+        transform: translate(-1px, 1px);
+        opacity: 0.6;
+    }
+
+    94% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
 }
 
 h1 i {
@@ -212,7 +248,8 @@ header .font-aurebesh {
 }
 
 .filtro-grupo label i {
-    display: none; /* substituído pelo prefixo '>' acima, mantendo o layout do HTML intacto */
+    display: none;
+    /* substituído pelo prefixo '>' acima, mantendo o layout do HTML intacto */
 }
 
 .filtro-input {
@@ -240,8 +277,15 @@ header .font-aurebesh {
 }
 
 @keyframes surgirDossie {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .planeta-card {
@@ -264,22 +308,31 @@ header .font-aurebesh {
 
 /* Dobra de canto do "papel" do dossiê */
 .planeta-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 0;
-  height: 0;
-  
-  /* Cria o triângulo perfeito usando bordas */
-  border-style: solid;
-  border-width: 0 20px 20px 0;
-  background: linear-gradient(135deg, transparent 50%, var(--cor-tema) 50%);
-  
-  /* Sombra leve para dar profundidade à dobra */
-  filter: drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.5));
-  
-  pointer-events: none; /* Garante que não atrapalhe cliques */
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+
+    /* Define o formato do triângulo perfeito */
+    border-style: solid;
+    border-width: 0 21px 21px 0;
+
+    /* A cor de baixo/esquerda recebe a cor da borda opaca; o resto fica transparente */
+    border-color: transparent transparent var(--linha) transparent;
+
+    /* Sombra para dar profundidade realista à dobra */
+    filter: drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.4));
+
+    pointer-events: none;
+    transition: border-color 0.25s ease;
+    /* Transição suave idêntica à do card */
+}
+
+/* A dobra ganha a cor viva da respectiva facção */
+.planeta-card:hover::after {
+    border-color: transparent transparent var(--cor-tema) transparent;
 }
 
 /* Carimbo giratório da facção, atrás do conteúdo */
@@ -492,6 +545,7 @@ header .font-aurebesh {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     h1::before,
     h1::after {
         animation: none;
