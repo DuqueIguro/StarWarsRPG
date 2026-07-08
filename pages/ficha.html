@@ -14,14 +14,15 @@
 
     <link rel="icon" type="image/x-icon" href="../img/mandalorian.ico">
     <link rel="stylesheet" href="../styles/ficha.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/ficha.js" defer></script>
 </head>
 
 <body class="p-4 sm:p-6 md:p-8">
 
-    <!-- Botão de voltar fixo no canto superior esquerdo -->
     <a href="https://starwars.duqueiguro.xyz/"
-        style="position:fixed;top:24px;left:24px;z-index:1000;display:flex;align-items:center;gap:6px;text-decoration:none"
-        class="px-3 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
+        class="btn-voltar-fixo px-3 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
         title="Voltar para a página inicial">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
@@ -30,16 +31,14 @@
         Voltar
     </a>
 
-    <!-- Botão de salvar fixo no canto superior direito -->
-    <button id="btn-save" style="position:fixed;top:24px;right:24px;z-index:1000"
-        class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
+    <button id="btn-save"
+        class="btn-salvar-fixo px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
         title="Salvar Ficha">
         Salvar
     </button>
     <div id="notificacao" class="ocultday">
-    ✅ Ficha salva com sucesso!
+        ✅ Ficha salva com sucesso!
     </div>
-
 
     <div id="dice-modal">
         <div class="modal-content">
@@ -57,53 +56,50 @@
             <h2 class="text-2xl md:text-3xl text-gray-300">FICHA DE PERSONAGEM</h2>
         </header>
 
-        <!-- LADO SUPERIOR -->
         <section class="section-container">
             <h3 class="text-xl mb-4">INFORMAÇÕES DO PERSONAGEM</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div><label for="nome">NOME</label><input type="text" id="nome"></div>
-                <div><label for="jogador">JOGADOR</label><input type="text" id="jogador"></div>
-                <div><label for="classe">CLASSE</label><select id="classe" class="p-2"></select></div>
-                <div><label for="nivel">NÍVEL</label><input type="number" id="nivel" value="1" min="1"></div>
-                <div>
-                    <label for="especie">ESPÉCIE</label>
-                    <select id="especie" class="p-2"></select>
-                </div>
+                <div><label for="nome">NOME</label><input type="text" id="nome" data-json-path="biografia.nome"></div>
+                <div><label for="jogador">JOGADOR</label><input type="text" id="jogador"
+                        data-json-path="biografia.jogador"></div>
+                <div><label for="classe">CLASSE</label><select id="classe" data-json-path="biografia.classe"
+                        class="p-2"></select></div>
+                <div><label for="nivel">NÍVEL</label><input type="number" id="nivel" data-json-path="biografia.nivel"
+                        value="1" min="1"></div>
+                <div><label for="especie">ESPÉCIE</label><select id="especie" data-json-path="biografia.especie"
+                        class="p-2"></select></div>
                 <div class="col-span-full lg:col-span-2">
                     <label>NOTAS DA ESPÉCIE</label>
                     <p id="notas-raciais" class="text-sm text-gray-400 min-h-[40px] pt-2"></p>
                 </div>
-                <div>
-                    <label for="tamanho">TAMANHO</label>
-                    <select id="tamanho" class="p-2"></select>
+                <div><label for="tamanho">TAMANHO</label><select id="tamanho" data-json-path="biografia.tamanho"
+                        class="p-2"></select></div>
+                <div><label for="idade">IDADE</label><input type="text" id="idade" data-json-path="biografia.idade">
                 </div>
-                <div><label for="idade">IDADE</label><input type="text" id="idade"></div>
-                <div><label for="sexo">SEXO</label><input type="text" id="sexo"></div>
-                <div><label for="peso">PESO</label><input type="text" id="peso"></div>
-                <div><label for="altura">ALTURA</label><input type="text" id="altura"></div>
-                <div><label for="destino">DESTINO</label><input type="text" id="destino"></div>
+                <div><label for="sexo">SEXO</label><input type="text" id="sexo" data-json-path="biografia.sexo"></div>
+                <div><label for="peso">PESO</label><input type="text" id="peso" data-json-path="biografia.peso"></div>
+                <div><label for="altura">ALTURA</label><input type="text" id="altura" data-json-path="biografia.altura">
+                </div>
+                <div><label for="destino">DESTINO</label><input type="text" id="destino"
+                        data-json-path="biografia.destino"></div>
             </div>
         </section>
 
-        <!-- CENTRO -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- LADO ESQUERDO -->
             <div class="lg:col-span-1 space-y-6">
-                <!-- Atributos -->
                 <section class="section-container">
                     <h3 class="text-xl mb-4">ATRIBUTOS</h3>
-
                     <div class="grid grid-cols-5 items-center gap-2 text-center text-xs text-yellow-400 font-bold mb-2">
                         <div class="col-span-2">ATRIBUTO</div>
                         <div>BASE</div>
                         <div>FINAL</div>
                         <div>MOD.</div>
                     </div>
-
                     <div class="space-y-3">
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="vig-base" class="col-span-2">FORÇA/VIGOR</label>
-                            <input type="number" id="vig-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="vig-base" data-json-path="atributosBase.vigor"
+                                class="col-span-1 text-center" value="10">
                             <div id="vig-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="vig-mod" class="stat-mod text-lg">+0</div>
@@ -115,7 +111,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="des-base" class="col-span-2">DESTREZA</label>
-                            <input type="number" id="des-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="des-base" data-json-path="atributosBase.destreza"
+                                class="col-span-1 text-center" value="10">
                             <div id="des-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="des-mod" class="stat-mod text-lg">+0</div>
@@ -127,7 +124,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="con-base" class="col-span-2">CONSTITUIÇÃO</label>
-                            <input type="number" id="con-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="con-base" data-json-path="atributosBase.constituicao"
+                                class="col-span-1 text-center" value="10">
                             <div id="con-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="con-mod" class="stat-mod text-lg">+0</div>
@@ -139,7 +137,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="int-base" class="col-span-2">INTELIGÊNCIA</label>
-                            <input type="number" id="int-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="int-base" data-json-path="atributosBase.inteligencia"
+                                class="col-span-1 text-center" value="10">
                             <div id="int-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="int-mod" class="stat-mod text-lg">+0</div>
@@ -151,7 +150,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="sab-base" class="col-span-2">SABEDORIA</label>
-                            <input type="number" id="sab-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="sab-base" data-json-path="atributosBase.sabedoria"
+                                class="col-span-1 text-center" value="10">
                             <div id="sab-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="sab-mod" class="stat-mod text-lg">+0</div>
@@ -163,7 +163,8 @@
                         </div>
                         <div class="grid grid-cols-5 items-center gap-2">
                             <label for="car-base" class="col-span-2">CARISMA</label>
-                            <input type="number" id="car-base" class="col-span-1 text-center" value="10">
+                            <input type="number" id="car-base" data-json-path="atributosBase.carisma"
+                                class="col-span-1 text-center" value="10">
                             <div id="car-final" class="stat-box py-1 text-xl">10</div>
                             <div class="flex items-center justify-center gap-1">
                                 <div id="car-mod" class="stat-mod text-lg">+0</div>
@@ -176,7 +177,6 @@
                     </div>
                 </section>
 
-                <!-- Defesas -->
                 <section class="section-container">
                     <h3 class="text-xl mb-4">DEFESAS</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -199,15 +199,27 @@
                         </div>
                         <div class="grid grid-cols-4 gap-2 items-center">
                             <label>Classe</label>
-                            <input type="number" id="def-classe-fort" value="0" class="text-center">
-                            <input type="number" id="def-classe-ref" value="0" class="text-center">
-                            <input type="number" id="def-classe-von" value="0" class="text-center">
+                            <input type="number" id="def-classe-fort"
+                                data-json-path="modificadoresManuais.defesas.fortitude.classe" value="0"
+                                class="text-center">
+                            <input type="number" id="def-classe-ref"
+                                data-json-path="modificadoresManuais.defesas.reflexo.classe" value="0"
+                                class="text-center">
+                            <input type="number" id="def-classe-von"
+                                data-json-path="modificadoresManuais.defesas.vontade.classe" value="0"
+                                class="text-center">
                         </div>
                         <div class="grid grid-cols-4 gap-2 items-center">
                             <label>Armadura</label>
-                            <input type="number" id="def-armadura-fort" value="0" class="text-center">
-                            <input type="number" id="def-armadura-ref" value="0" class="text-center">
-                            <input type="number" id="def-armadura-von" value="0" class="text-center">
+                            <input type="number" id="def-armadura-fort"
+                                data-json-path="modificadoresManuais.defesas.fortitude.armadura" value="0"
+                                class="text-center">
+                            <input type="number" id="def-armadura-ref"
+                                data-json-path="modificadoresManuais.defesas.reflexo.armadura" value="0"
+                                class="text-center">
+                            <input type="number" id="def-armadura-von"
+                                data-json-path="modificadoresManuais.defesas.vontade.armadura" value="0"
+                                class="text-center">
                         </div>
                         <div class="grid grid-cols-4 gap-2 items-center">
                             <label>Tamanho</label>
@@ -219,41 +231,27 @@
                         </div>
                         <div class="grid grid-cols-4 gap-2 items-center">
                             <label>Outros</label>
-                            <input type="number" id="def-outros-fort" value="0" class="text-center">
-                            <input type="number" id="def-outros-ref" value="0" class="text-center">
-                            <input type="number" id="def-outros-von" value="0" class="text-center">
+                            <input type="number" id="def-outros-fort"
+                                data-json-path="modificadoresManuais.defesas.fortitude.outros" value="0"
+                                class="text-center">
+                            <input type="number" id="def-outros-ref"
+                                data-json-path="modificadoresManuais.defesas.reflexo.outros" value="0"
+                                class="text-center">
+                            <input type="number" id="def-outros-von"
+                                data-json-path="modificadoresManuais.defesas.vontade.outros" value="0"
+                                class="text-center">
                         </div>
                     </div>
                 </section>
 
-                <!-- Combate -->
                 <section class="section-container">
                     <h3 class="text-xl mb-4">COMBATE</h3>
                     <div class="grid grid-cols-2 gap-4 items-center">
-                        <!-- PV MAXIMO -->
-                        <div>
-                            <label for="pv-total">PV MAXIMO</label>
-                            <div class="flex items-center gap-1">
-                                <input type="number" id="pv-total" value="10" class="w-full">
-                                <button id="reset-pv-btn" title="Restaurar cálculo automático"
-                                    class="p-1 text-yellow-400 hover:text-yellow-300 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
 
-                        <br>
-
-                        <!-- BARRA DE VIDA -->
-                        <div>
+                        <div class="col-span-2">
                             <label for="pv-atual-display">PONTOS DE VIDA</label>
-                            <div id="hp-control-bar"
-                                class="flex items-center justify-between rounded-md p-1 mt-1 somepoha">
+
+                            <div id="hp-control-bar" class="flex items-center justify-between rounded-md p-1 mt-1">
 
                                 <div class="hp-btn-group hp-btn-group-negative">
                                     <button data-action="set" data-amount="0" class="hp-btn"
@@ -276,32 +274,45 @@
                                         title="Definir Vida para o Máximo">Max »</button>
                                 </div>
                             </div>
-                            <input type="number" id="pv-atual" class="hidden" value="10">
+                            <input type="number" id="pv-atual" data-json-path="recursos.pontosVidaAtual" class="hidden"
+                                value="10">
                         </div>
 
-                        <br>
-
-                        <div><label for="velocidade">VELOCIDADE</label><input type="number" id="velocidade" value="6">
+                        <div>
+                            <label for="pv-total">MOD. PV MÁXIMO</label>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="pv-total-mod"
+                                    data-json-path="modificadoresManuais.status.modVidaMaxima" value="0"
+                                    class="w-full text-center">
+                            </div>
                         </div>
-                        <div><label for="iniciativa">INICIATIVA</label>
+
+                        <div><label for="velocidade">VELOCIDADE</label><input type="number" id="velocidade"
+                                data-json-path="modificadoresManuais.status.velocidadeDeslocamento" value="6">
+                        </div>
+                        <div>
+                            <label for="iniciativa">INICIATIVA</label>
                             <div class="flex items-center justify-center gap-2">
-                                <div id="iniciativa-total" class="stat-mod text-lg text-center">= +0</div><svg
-                                    class="dice-icon w-6 h-6 rollable" viewBox="0 0 24 24">
+                                <div id="iniciativa-total" class="stat-mod text-lg text-center"> = +0</div>
+                                <svg class="dice-icon w-6 h-6 rollable" viewBox="0 0 24 24">
                                     <path
                                         d="M12 2.02c.86 0 1.68.17 2.45.5l5.55 2.22c1.54.62 2.45 2.2 2.45 3.85v6.82c0 1.65-.91 3.23-2.45 3.85l-5.55 2.22a4.95 4.95 0 0 1-4.9 0l-5.55-2.22A4.95 4.95 0 0 1 1.55 15.4V8.59c0-1.65.91-3.23 2.45-3.85l5.55-2.22c.77-.33 1.59-.5 2.45-.5m0 1.98c-.58 0-1.15.1-1.68.3l-5.55 2.22c-.93.37-1.52 1.29-1.52 2.3v6.82c0 1.01.59 1.93 1.52 2.3l5.55 2.22c.53.2 1.1.3 1.68.3s1.15-.1 1.68-.3l5.55-2.22c.93-.37 1.52-1.29 1.52-2.3V8.59c0-1.01-.59-1.93-1.52-2.3l-5.55-2.22A3.01 3.01 0 0 0 12 4zM11 7h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2z" />
                                 </svg>
                             </div>
                         </div>
-                        <div><label for="bab">ATAQUE BASE</label><input type="number" id="bab" value="0"></div>
+                        <div><label for="bab">ATAQUE BASE</label><input type="number" id="bab"
+                                data-json-path="modificadoresManuais.combate.ataqueGeral" value="0"></div>
                         <div><label for="dano-limite">DANO LIMITE</label>
                             <div id="dano-limite-total" class="stat-mod text-lg text-center">10</div>
                         </div>
                         <div><label for="pontos-forca">PONTOS DE FORÇA</label><input type="number" id="pontos-forca"
-                                value="1"></div>
+                                data-json-path="recursos.pontosForca" value="1"></div>
                         <div><label for="pontos-destino">PONTOS DE DESTINO</label><input type="number"
-                                id="pontos-destino" value="1"></div>
+                                id="pontos-destino" data-json-path="recursos.pontosDestino" value="1"></div>
                     </div>
+
                     <hr class="border-stone-700 my-4">
+
                     <h4 class="text-lg font-semibold text-yellow-400 mb-2">ROLAGEM PERSONALIZADA</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-end">
                         <div>
@@ -325,10 +336,9 @@
                     </div>
                 </section>
 
-                <!-- Condição -->
                 <section class="section-container">
                     <h3 class="text-xl mb-4">CONDIÇÃO</h3>
-                    <select id="condicao" class="w-full">
+                    <select id="condicao" data-json-path="recursos.condicao" class="w-full">
                         <option value="0">Normal</option>
                         <option value="-1">-1 em todos os testes</option>
                         <option value="-2">-2 em todos os testes</option>
@@ -338,14 +348,12 @@
                     </select>
                 </section>
 
-                <!-- Lado Negro -->
                 <section class="section-container">
-                    <h3 class="text-xl mb-4">LADO NEGRO</h3><input type="number" id="lado-negro" value="0" min="0">
+                    <h3 class="text-xl mb-4">LADO NEGRO</h3><input type="number" id="lado-negro"
+                        data-json-path="recursos.pontosLadoNegro" value="0" min="0">
                 </section>
 
-                <!-- Informações Textuais-->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Talentos -->
                     <section class="section-container">
                         <h3 class="text-xl mb-4">TALENTOS</h3>
                         <div id="talentos-list" class="space-y-2"></div>
@@ -354,11 +362,12 @@
                                 <button id="add-talento-btn"
                                     class="px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-xs">Adicionar
                                     Talento</button>
-                                <button id="add-class-talents-btn" class="px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-xs">Adicionar Talentos de Classe</button>
+                                <button id="add-class-talents-btn"
+                                    class="px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-xs">Adicionar
+                                    Talentos de Classe</button>
                             </div>
                         </section>
                     </section>
-                    <!-- Poderes da Força -->
                     <section class="section-container">
                         <h3 class="text-xl mb-4">PODERES DA FORÇA</h3>
                         <div id="poderes-list" class="space-y-2"></div>
@@ -366,7 +375,6 @@
                             class="mt-2 px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-xs">Adicionar
                             Poder</button>
                     </section>
-                    <!-- Idiomas -->
                     <section class="section-container">
                         <h3 class="text-xl mb-4">IDIOMAS</h3>
                         <div id="idiomas-list" class="space-y-2"></div>
@@ -374,7 +382,6 @@
                             class="mt-2 px-3 py-1 bg-yellow-400 text-stone-900 font-bold rounded hover:bg-yellow-500 transition text-xs">Adicionar
                             Idioma</button>
                     </section>
-                    <!-- Aptidões -->
                     <section class="section-container">
                         <h3 class="text-xl mb-4">APTIDÕES</h3>
                         <div id="aptidoes-list" class="space-y-2"></div>
@@ -385,7 +392,6 @@
                 </div>
             </div>
 
-            <!-- LADO DIREITO -->
             <div class="lg:col-span-2 space-y-6">
                 <section id="pericias" class="section-container">
                     <div class="flex justify-between items-center mb-4">
@@ -415,12 +421,12 @@
 
                 <section class="section-container">
                     <h3 class="text-xl mb-4">ANOTAÇÕES</h3>
-                    <textarea rows="8" placeholder="Faça suas anotações da sessão aqui..."></textarea>
+                    <textarea id="anotacoes" data-json-path="campanha.anotacoes" rows="8" class="w-full"
+                        placeholder="Faça suas anotações da sessão aqui..."></textarea>
                 </section>
             </div>
         </div>
 
-        <!-- INVENTÁRIO AGORA OCUPA TODA A LARGURA -->
         <section class="section-container mt-6">
             <div class="flex justify-between items-baseline mb-2">
                 <h3 class="text-xl mb-0">EQUIPAMENTO</h3>
@@ -432,7 +438,8 @@
                     </div>
                 </div>
             </div>
-            <div class="mb-4"><label for="creditos">CRÉDITOS</label><input type="number" id="creditos" value="1000">
+            <div class="mb-4"><label for="creditos">CRÉDITOS</label><input type="number" id="creditos"
+                    data-json-path="recursos.creditos" value="1000">
             </div>
             <div class="grid grid-cols-12 gap-2 text-xs font-bold text-yellow-400 mb-2">
                 <div class="col-span-6">ITEM</div>
@@ -448,17 +455,18 @@
 
     </div>
 
-    <!-- Botões de Exportar/Importar Ficha -->
-    <div style="display:flex;justify-content:center;gap:1rem;margin:2rem 0;">
-        <button id="exportar-ficha-btn" class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm">Exportar Ficha</button>
-        <button id="importar-ficha-btn" class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm">Importar Ficha</button>
-        <input type="file" id="importar-ficha-input" accept="application/json" style="display:none">
+    <div class="container-exportacao">
+        <button id="exportar-ficha-btn"
+            class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm">Exportar
+            Ficha</button>
+        <button id="importar-ficha-btn"
+            class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm">Importar
+            Ficha</button>
+
+        <input type="file" id="importar-ficha-input" accept="application/json" class="hidden">
     </div>
 
-    <script src="../js/dadosRacasFicha.js"></script>
-    <script src="../js/dadosClassesFicha.js"></script>
-    <script src="../js/dadosTamanhosFicha.js"></script>
-
+<script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             corePlugins: {
@@ -466,9 +474,10 @@
             }
         }
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/dadosClassesFicha.js"></script>
+    <script src="../js/dadosRacasFicha.js"></script>
+    <script src="../js/dadosTamanhosFicha.js"></script>
     <script src="../js/ficha.js" defer></script>
-    <script src="../js/backupFicha.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,259 @@
+{
+  "ficha": {
+    "biografia": {
+      "nome": null,
+      "jogador": null,
+      "classe": null,
+      "nivel": null,
+      "especie": null,
+      "tamanho": null,
+      "idade": null,
+      "sexo": null,
+      "peso": null,
+      "altura": null,
+      "destino": null
+    },
+    "atributosBase": {
+      "vigor": null,
+      "destreza": null,
+      "constituicao": null,
+      "inteligencia": null,
+      "sabedoria": null,
+      "carisma": null
+    },
+    "recursos": {
+      "pontosVidaAtual": null,
+      "condicao": null,
+      "pontosForca": null,
+      "pontosDestino": null,
+      "pontosLadoNegro": null,
+      "creditos": null
+    },
+    "modificadoresManuais": {
+      "atributos": {
+        "vigor": null,
+        "destreza": null,
+        "constituicao": null,
+        "inteligencia": null,
+        "sabedoria": null,
+        "carisma": null
+      },
+      "status": {
+        "vidaMaxima": null,
+        "limiarDano": null,
+        "velocidadeDeslocamento": null,
+        "capacidadeCarga": null
+      },
+      "defesas": {
+        "fortitude": null,
+        "reflexo": null,
+        "vontade": null
+      },
+      "combate": {
+        "ataqueGeral": null,
+        "danoGeral": null
+      }
+    },
+    "pericias": {
+      "acrobacia": {
+        "nome": "Acrobacia",
+        "atributoBase": "des",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "conhecimento_burocracia": {
+        "nome": "Conhecimento (Burocracia)",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "conhecimento_ciencias_biologicas": {
+        "nome": "Conhecimento (Ciências Biológicas)",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "conhecimento_ciencias_exatas": {
+        "nome": "Conhecimento (Ciências Exatas)",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "conhecimento_ciencias_humanas": {
+        "nome": "Conhecimento (Ciências Humanas)",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "conhecimento_taticas": {
+        "nome": "Conhecimento (Táticas)",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "conhecimento_tecnologia": {
+        "nome": "Conhecimento (Tecnologia)",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "conhecimento_tradicoes_galacticas": {
+        "nome": "Conhecimento (Tradições Galácticas)",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "enganacao": {
+        "nome": "Enganação",
+        "atributoBase": "car",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "escalar": {
+        "nome": "Escalar",
+        "atributoBase": "vig",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "furtividade": {
+        "nome": "Furtividade",
+        "atributoBase": "des",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "iniciativa": {
+        "nome": "Iniciativa",
+        "atributoBase": "des",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "mecanica": {
+        "nome": "Mecânica",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "montar": {
+        "nome": "Montar",
+        "atributoBase": "des",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "nadar": {
+        "nome": "Nadar",
+        "atributoBase": "vig",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "obter_informacao": {
+        "nome": "Obter Informação",
+        "atributoBase": "car",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "percepcao": {
+        "nome": "Percepção",
+        "atributoBase": "sab",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "persuasao": {
+        "nome": "Persuasão",
+        "atributoBase": "car",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "pilotar": {
+        "nome": "Pilotar",
+        "atributoBase": "des",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "resistencia": {
+        "nome": "Resistência",
+        "atributoBase": "con",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "saltar": {
+        "nome": "Saltar",
+        "atributoBase": "vig",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "sobrevivencia": {
+        "nome": "Sobrevivência",
+        "atributoBase": "sab",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "tratar_ferimentos": {
+        "nome": "Tratar Ferimentos",
+        "atributoBase": "sab",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "usar_a_forca": {
+        "nome": "Usar a Força",
+        "atributoBase": "sab",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      },
+      "usar_computadores": {
+        "nome": "Usar Computadores",
+        "atributoBase": "int",
+        "treinada": false,
+        "foco": false,
+        "bonusManual": null
+      }
+    },
+    "combate": {
+      "armas": [
+        {
+          "id": null,
+          "nome": null,
+          "atributoBaseAtaque": null,
+          "dadoDano": null,
+          "notasCritico": null
+        }
+      ]
+    },
+    "inventario": {
+      "equipamentos": [
+        {
+          "id": null,
+          "nome": null,
+          "custo": null,
+          "peso": null
+        }
+      ]
+    },
+    "campanha": {
+      "anotacoes": null
+    }
+  }
+}
