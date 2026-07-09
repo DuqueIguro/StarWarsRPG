@@ -1,683 +1,990 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terminal de Acesso - Star Wars RPG</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-:root {
-    --bg-dark: #050a13;
-    --text-main: #a7b0c2;
-    --text-bright: #ffffff;
-    --tech-blue: #00aaff;
-    --tech-cyan: #00ffff;
-    --imp-red: #d9534f;
-    --imp-crimson: #ff4d4d;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal de Acesso - Star Wars RPG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050a13;
+            --text-main: #a7b0c2;
+            --text-bright: #ffffff;
+            --tech-blue: #00aaff;
+            --tech-cyan: #00ffff;
+            --imp-red: #d9534f;
+            --imp-crimson: #ff4d4d;
+        }
 
-* { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-}
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
 
-body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    font-family: 'Orbitron', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    background-image:
-        radial-gradient(circle at top right, rgba(139, 0, 0, 0.18), transparent 45%),
-        radial-gradient(circle at bottom left, rgba(0, 170, 255, 0.12), transparent 50%);
-}
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-image:
+                radial-gradient(circle at top right, rgba(139, 0, 0, 0.18), transparent 45%),
+                radial-gradient(circle at bottom left, rgba(0, 170, 255, 0.12), transparent 50%);
+        }
 
-/* ---------- Starfield canvas ---------- */
-#stars {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-}
+        /* ---------- Starfield canvas ---------- */
+        #stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
 
-/* ---------- Scanlines overlay ---------- */
-.scanlines {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-        to bottom,
-        transparent,
-        transparent 3px,
-        rgba(0,0,0,0.10) 3px,
-        rgba(0,0,0,0.10) 4px
-    );
-    animation: scan-drift 10s linear infinite;
-}
-@keyframes scan-drift {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 100px; }
-}
+        /* ---------- Scanlines overlay ---------- */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            pointer-events: none;
+            background: repeating-linear-gradient(to bottom,
+                    transparent,
+                    transparent 3px,
+                    rgba(0, 0, 0, 0.10) 3px,
+                    rgba(0, 0, 0, 0.10) 4px);
+            animation: scan-drift 10s linear infinite;
+        }
 
-.vignette {
-    position: fixed;
-    inset: 0;
-    z-index: 49;
-    pointer-events: none;
-    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.6) 100%);
-}
+        @keyframes scan-drift {
+            0% {
+                background-position: 0 0;
+            }
 
-/* ---------- Top / bottom status bars ---------- */
-.top-bar, .bottom-bar {
-    position: fixed;
-    left: 0; right: 0;
-    padding: 10px 24px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.7em;
-    letter-spacing: 1px;
-    z-index: 20;
-    color: var(--tech-blue);
-    text-shadow: 0 0 6px rgba(0,170,255,0.4);
-}
-.top-bar { top: 0; border-bottom: 1px solid rgba(0,170,255,0.2); }
-.bottom-bar { bottom: 0; border-top: 1px solid rgba(217,83,79,0.2); color: #7a889f; }
+            100% {
+                background-position: 0 100px;
+            }
+        }
 
-.status-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    display: inline-block; margin-right: 6px;
-    background: var(--tech-cyan);
-    box-shadow: 0 0 8px var(--tech-cyan);
-    animation: pulse-online 2.2s ease-in-out infinite;
-}
-@keyframes pulse-online {
-    0%, 100% { box-shadow: 0 0 6px var(--tech-cyan); }
-    50% { box-shadow: 0 0 18px var(--tech-cyan), 0 0 30px rgba(0,255,255,0.4); }
-}
+        .vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 49;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.6) 100%);
+        }
 
-/* ---------- Login container ---------- */
-.gate-wrap {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 440px;
-    padding: 1.5rem;
-}
+        /* ---------- Top / bottom status bars ---------- */
+        .top-bar,
+        .bottom-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7em;
+            letter-spacing: 1px;
+            z-index: 20;
+            color: var(--tech-blue);
+            text-shadow: 0 0 6px rgba(0, 170, 255, 0.4);
+        }
 
-.gate-panel {
-    background-color: rgba(0, 0, 0, 0.72);
-    border: 1px solid #1e3a59;
-    border-image: linear-gradient(135deg, var(--tech-blue), var(--imp-red)) 1;
-    border-radius: 10px;
-    padding: 2.2rem 2rem 1.8rem;
-    box-shadow: 0 0 30px rgba(0,170,255,0.15), 0 0 30px rgba(217,83,79,0.1);
-    position: relative;
-    overflow: hidden;
-    animation: panel-breathe 4s ease-in-out infinite;
-}
-@keyframes panel-breathe {
-    0%, 100% { box-shadow: 0 0 30px rgba(0,170,255,0.15), 0 0 30px rgba(217,83,79,0.1); }
-    50% { box-shadow: 0 0 45px rgba(0,170,255,0.3), 0 0 45px rgba(217,83,79,0.22); }
-}
+        .top-bar {
+            top: 0;
+            border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+        }
 
-.gate-panel.erro { animation: gate-shake 0.4s ease, panel-breathe 4s ease-in-out infinite; border-color: var(--imp-crimson) !important; }
-.gate-panel.sucesso { animation: panel-success-glow 1.2s ease-in-out infinite; }
-@keyframes panel-success-glow {
-    0%, 100% { box-shadow: 0 0 25px rgba(0,255,150,0.35); }
-    50% { box-shadow: 0 0 55px rgba(0,255,150,0.6); }
-}
-@keyframes gate-shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-10px); }
-    40% { transform: translateX(9px); }
-    60% { transform: translateX(-6px); }
-    80% { transform: translateX(4px); }
-}
+        .bottom-bar {
+            bottom: 0;
+            border-top: 1px solid rgba(217, 83, 79, 0.2);
+            color: #7a889f;
+        }
 
-.gate-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--tech-blue), var(--imp-red), var(--tech-blue));
-    background-size: 200% 100%;
-    animation: strip-run 3s linear infinite;
-}
-@keyframes strip-run {
-    0% { background-position: 0% 0; }
-    100% { background-position: -200% 0; }
-}
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            background: var(--tech-cyan);
+            box-shadow: 0 0 8px var(--tech-cyan);
+            animation: pulse-online 2.2s ease-in-out infinite;
+        }
 
-/* Corner brackets like the imperial deco */
-.gate-panel .corner {
-    position: absolute;
-    width: 18px; height: 18px;
-    border-color: var(--tech-cyan);
-    opacity: 0.8;
-}
-.corner.tl { top: 8px; left: 8px; border-top: 2px solid; border-left: 2px solid; }
-.corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid; border-right: 2px solid; }
+        @keyframes pulse-online {
 
-.emblem {
-    width: 62px; height: 62px;
-    margin: 0 auto 0.8rem;
-    border-radius: 50%;
-    border: 2px solid var(--tech-blue);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    box-shadow: 0 0 20px rgba(0,170,255,0.4);
-    animation: emblem-spin 12s linear infinite;
-}
-.emblem::before, .emblem::after {
-    content: '';
-    position: absolute;
-    inset: 8px;
-    border-radius: 50%;
-    border: 1px dashed rgba(217,83,79,0.6);
-}
-.emblem::after { inset: 16px; border-color: rgba(0,255,255,0.5); animation: emblem-spin-rev 8s linear infinite; }
-@keyframes emblem-spin { 100% { transform: rotate(360deg); } }
-@keyframes emblem-spin-rev { 100% { transform: rotate(-360deg); } }
-.emblem svg { width: 26px; height: 26px; fill: var(--tech-cyan); filter: drop-shadow(0 0 6px var(--tech-cyan)); animation: emblem-spin-rev 12s linear infinite; }
+            0%,
+            100% {
+                box-shadow: 0 0 6px var(--tech-cyan);
+            }
 
-.gate-eyebrow {
-    text-align: center;
-    font-size: 0.62rem;
-    letter-spacing: 0.25em;
-    color: var(--tech-blue);
-    text-transform: uppercase;
-    margin-bottom: 0.4rem;
-    opacity: 0.85;
-}
+            50% {
+                box-shadow: 0 0 18px var(--tech-cyan), 0 0 30px rgba(0, 255, 255, 0.4);
+            }
+        }
 
-.gate-title {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 900;
-    letter-spacing: 3px;
-    margin: 0 0 0.3rem;
-    color: var(--text-bright);
-    text-shadow: 0 0 10px rgba(0,170,255,0.6), 0 0 24px rgba(217,83,79,0.3);
-    position: relative;
-}
-.gate-title::before, .gate-title::after {
-    content: attr(data-text);
-    position: absolute; left: 0; top: 0; width: 100%;
-    overflow: hidden; opacity: 0;
-}
-.gate-title.glitching::before {
-    color: var(--tech-cyan);
-    clip-path: polygon(0 15%, 100% 15%, 100% 35%, 0 35%);
-    transform: translateX(-3px);
-    opacity: 0.8;
-    animation: glitch-a 0.18s steps(1) forwards;
-}
-.gate-title.glitching::after {
-    color: var(--imp-crimson);
-    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
-    transform: translateX(3px);
-    opacity: 0.8;
-    animation: glitch-b 0.18s steps(1) forwards;
-}
-@keyframes glitch-a { 0% { transform: translateX(-3px);} 100% { transform: translateX(0); opacity:0;} }
-@keyframes glitch-b { 0% { transform: translateX(3px);} 100% { transform: translateX(0); opacity:0;} }
+        /* ---------- Login container ---------- */
+        .gate-wrap {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 1.5rem;
+        }
 
-.gate-sub {
-    text-align: center;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    color: #627595;
-    margin-bottom: 1.6rem;
-    font-family: 'Courier New', monospace;
-    min-height: 1.4em;
-}
-.gate-sub .cursor-blink { animation: blink-cursor 1s step-end infinite; }
-@keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .gate-panel {
+            background-color: rgba(0, 0, 0, 0.72);
+            border: 1px solid #1e3a59;
+            border-image: linear-gradient(135deg, var(--tech-blue), var(--imp-red)) 1;
+            border-radius: 10px;
+            padding: 2.2rem 2rem 1.8rem;
+            box-shadow: 0 0 30px rgba(0, 170, 255, 0.15), 0 0 30px rgba(217, 83, 79, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: panel-breathe 4s ease-in-out infinite;
+        }
 
-.gate-form { display: flex; flex-direction: column; gap: 1.1rem; }
+        @keyframes panel-breathe {
 
-.field {
-    position: relative;
-}
-.field label {
-    display: block;
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--tech-cyan);
-    margin-bottom: 0.4rem;
-    text-shadow: 0 0 6px rgba(0,255,255,0.3);
-}
-.field .input-wrap {
-    display: flex;
-    align-items: center;
-    background: rgba(0,0,0,0.55);
-    border: 1px solid #1e3a59;
-    border-radius: 6px;
-    padding: 0 0.7rem;
-    transition: border-color 0.25s, box-shadow 0.25s;
-}
-.field .input-wrap svg {
-    width: 16px; height: 16px;
-    fill: var(--tech-blue);
-    opacity: 0.8;
-    flex-shrink: 0;
-}
-.field input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text-bright);
-    font-family: 'Courier New', monospace;
-    font-size: 0.95rem;
-    letter-spacing: 1px;
-    padding: 0.75rem 0.6rem;
-}
-.field .input-wrap.focused {
-    border-color: var(--tech-cyan);
-    box-shadow: 0 0 14px rgba(0,255,255,0.35);
-}
-.field .input-wrap.focused svg { fill: var(--tech-cyan); }
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(0, 170, 255, 0.15), 0 0 30px rgba(217, 83, 79, 0.1);
+            }
 
-.gate-btn {
-    margin-top: 0.4rem;
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, rgba(0,170,255,0.18), rgba(217,83,79,0.18));
-    border: 1px solid var(--tech-blue);
-    color: var(--text-bright);
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    letter-spacing: 3px;
-    font-size: 0.8rem;
-    padding: 0.85rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: box-shadow 0.25s, transform 0.15s;
-}
-.gate-btn::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -60%;
-    width: 40%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: skewX(-20deg);
-    animation: btn-sweep 2.6s ease-in-out infinite;
-}
-@keyframes btn-sweep {
-    0% { left: -60%; }
-    50% { left: 130%; }
-    100% { left: 130%; }
-}
-.gate-btn:hover:not(:disabled) {
-    box-shadow: 0 0 20px rgba(0,170,255,0.5), 0 0 20px rgba(217,83,79,0.3);
-    transform: translateY(-1px);
-}
-.gate-btn:active:not(:disabled) { transform: translateY(1px) scale(0.98); }
-.gate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+            50% {
+                box-shadow: 0 0 45px rgba(0, 170, 255, 0.3), 0 0 45px rgba(217, 83, 79, 0.22);
+            }
+        }
 
-/* progress bar during "authentication" */
-.auth-progress {
-    height: 4px;
-    width: 100%;
-    background: rgba(255,255,255,0.06);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 0.9rem;
-    display: none;
-}
-.auth-progress.show { display: block; }
-.auth-progress .bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--tech-blue), var(--tech-cyan));
-    box-shadow: 0 0 10px var(--tech-cyan);
-    transition: width 1.4s cubic-bezier(.4,0,.2,1);
-}
+        .gate-panel.erro {
+            animation: gate-shake 0.4s ease, panel-breathe 4s ease-in-out infinite;
+            border-color: var(--imp-crimson) !important;
+        }
 
-.gate-feedback {
-    text-align: center;
-    min-height: 1.4em;
-    margin-top: 0.9rem;
-    font-size: 0.72rem;
-    letter-spacing: 0.05em;
-    font-family: 'Courier New', monospace;
-}
-.gate-feedback.erro { color: var(--imp-crimson); text-shadow: 0 0 6px rgba(255,77,77,0.5); }
-.gate-feedback.ok { color: #5cffa0; text-shadow: 0 0 6px rgba(92,255,160,0.5); }
-.gate-feedback.info { color: var(--tech-blue); }
+        .gate-panel.sucesso {
+            animation: panel-success-glow 1.2s ease-in-out infinite;
+        }
 
-/* Mini terminal log under the panel */
-.mini-log {
-    margin-top: 1.4rem;
-    border-top: 1px dashed rgba(0,170,255,0.2);
-    padding-top: 0.7rem;
-    height: 62px;
-    overflow: hidden;
-    font-family: 'Courier New', monospace;
-    font-size: 0.62rem;
-    color: #536078;
-    line-height: 1.5;
-}
-.mini-log p { margin: 0 0 2px; opacity: 0; animation: log-fade-in 0.4s forwards; }
-@keyframes log-fade-in { to { opacity: 1; } }
-.mini-log .ok-log { color: #4caf7d; }
-.mini-log .warn-log { color: #d9a441; }
+        @keyframes panel-success-glow {
 
-.remember-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.62rem;
-    color: #7a889f;
-    letter-spacing: 0.05em;
-    margin-top: -0.4rem;
-}
-.remember-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-.remember-row input[type="checkbox"] {
-    appearance: none; width: 13px; height: 13px;
-    border: 1px solid var(--tech-blue); border-radius: 2px;
-    cursor: pointer; position: relative; background: rgba(0,0,0,0.4);
-}
-.remember-row input[type="checkbox"]:checked {
-    background: var(--tech-blue); box-shadow: 0 0 8px var(--tech-blue);
-}
-.remember-row a { color: var(--imp-crimson); text-decoration: none; }
-.remember-row a:hover { text-decoration: underline; }
+            0%,
+            100% {
+                box-shadow: 0 0 25px rgba(0, 255, 150, 0.35);
+            }
 
-/* Success checkmark overlay */
-.success-check {
-    display: none;
-    width: 70px; height: 70px;
-    margin: 0 auto 1rem;
-    position: relative;
-}
-.success-check.show { display: block; animation: pop-in 0.4s ease; }
-@keyframes pop-in { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.success-check svg { width: 100%; height: 100%; }
-.success-check circle {
-    fill: none; stroke: #5cffa0; stroke-width: 3;
-    stroke-dasharray: 190; stroke-dashoffset: 190;
-    animation: draw-circle 0.6s ease forwards;
-    filter: drop-shadow(0 0 8px #5cffa0);
-}
-.success-check path {
-    fill: none; stroke: #5cffa0; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round;
-    stroke-dasharray: 40; stroke-dashoffset: 40;
-    animation: draw-check 0.4s ease 0.5s forwards;
-}
-@keyframes draw-circle { to { stroke-dashoffset: 0; } }
-@keyframes draw-check { to { stroke-dashoffset: 0; } }
+            50% {
+                box-shadow: 0 0 55px rgba(0, 255, 150, 0.6);
+            }
+        }
 
-.hidden-block { display: none !important; }
+        @keyframes gate-shake {
 
-@media (max-width: 480px) {
-    .gate-panel { padding: 1.7rem 1.3rem 1.4rem; }
-    .top-bar, .bottom-bar { font-size: 0.58em; padding: 8px 12px; }
-}
-</style>
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-10px);
+            }
+
+            40% {
+                transform: translateX(9px);
+            }
+
+            60% {
+                transform: translateX(-6px);
+            }
+
+            80% {
+                transform: translateX(4px);
+            }
+        }
+
+        .gate-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--tech-blue), var(--imp-red), var(--tech-blue));
+            background-size: 200% 100%;
+            animation: strip-run 3s linear infinite;
+        }
+
+        @keyframes strip-run {
+            0% {
+                background-position: 0% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Corner brackets like the imperial deco */
+        .gate-panel .corner {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-color: var(--tech-cyan);
+            opacity: 0.8;
+        }
+
+        .corner.tl {
+            top: 8px;
+            left: 8px;
+            border-top: 2px solid;
+            border-left: 2px solid;
+        }
+
+        .corner.br {
+            bottom: 8px;
+            right: 8px;
+            border-bottom: 2px solid;
+            border-right: 2px solid;
+        }
+
+        .emblem {
+            width: 62px;
+            height: 62px;
+            margin: 0 auto 0.8rem;
+            border-radius: 50%;
+            border: 2px solid var(--tech-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
+            animation: emblem-spin 12s linear infinite;
+        }
+
+        .emblem::before,
+        .emblem::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            border: 1px dashed rgba(217, 83, 79, 0.6);
+        }
+
+        .emblem::after {
+            inset: 16px;
+            border-color: rgba(0, 255, 255, 0.5);
+            animation: emblem-spin-rev 8s linear infinite;
+        }
+
+        @keyframes emblem-spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes emblem-spin-rev {
+            100% {
+                transform: rotate(-360deg);
+            }
+        }
+
+        .emblem svg {
+            width: 26px;
+            height: 26px;
+            fill: var(--tech-cyan);
+            filter: drop-shadow(0 0 6px var(--tech-cyan));
+            animation: emblem-spin-rev 12s linear infinite;
+        }
+
+        .gate-eyebrow {
+            text-align: center;
+            font-size: 0.62rem;
+            letter-spacing: 0.25em;
+            color: var(--tech-blue);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+            opacity: 0.85;
+        }
+
+        .gate-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin: 0 0 0.3rem;
+            color: var(--text-bright);
+            text-shadow: 0 0 10px rgba(0, 170, 255, 0.6), 0 0 24px rgba(217, 83, 79, 0.3);
+            position: relative;
+        }
+
+        .gate-title::before,
+        .gate-title::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .gate-title.glitching::before {
+            color: var(--tech-cyan);
+            clip-path: polygon(0 15%, 100% 15%, 100% 35%, 0 35%);
+            transform: translateX(-3px);
+            opacity: 0.8;
+            animation: glitch-a 0.18s steps(1) forwards;
+        }
+
+        .gate-title.glitching::after {
+            color: var(--imp-crimson);
+            clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+            transform: translateX(3px);
+            opacity: 0.8;
+            animation: glitch-b 0.18s steps(1) forwards;
+        }
+
+        @keyframes glitch-a {
+            0% {
+                transform: translateX(-3px);
+            }
+
+            100% {
+                transform: translateX(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes glitch-b {
+            0% {
+                transform: translateX(3px);
+            }
+
+            100% {
+                transform: translateX(0);
+                opacity: 0;
+            }
+        }
+
+        .gate-sub {
+            text-align: center;
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            color: #627595;
+            margin-bottom: 1.6rem;
+            font-family: 'Courier New', monospace;
+            min-height: 1.4em;
+        }
+
+        .gate-sub .cursor-blink {
+            animation: blink-cursor 1s step-end infinite;
+        }
+
+        @keyframes blink-cursor {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .gate-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .field {
+            position: relative;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.62rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--tech-cyan);
+            margin-bottom: 0.4rem;
+            text-shadow: 0 0 6px rgba(0, 255, 255, 0.3);
+        }
+
+        .field .input-wrap {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid #1e3a59;
+            border-radius: 6px;
+            padding: 0 0.7rem;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .field .input-wrap svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--tech-blue);
+            opacity: 0.8;
+            flex-shrink: 0;
+        }
+
+        .field input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-bright);
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            padding: 0.75rem 0.6rem;
+        }
+
+        .field .input-wrap.focused {
+            border-color: var(--tech-cyan);
+            box-shadow: 0 0 14px rgba(0, 255, 255, 0.35);
+        }
+
+        .field .input-wrap.focused svg {
+            fill: var(--tech-cyan);
+        }
+
+        .gate-btn {
+            margin-top: 0.4rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(0, 170, 255, 0.18), rgba(217, 83, 79, 0.18));
+            border: 1px solid var(--tech-blue);
+            color: var(--text-bright);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-size: 0.8rem;
+            padding: 0.85rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: box-shadow 0.25s, transform 0.15s;
+        }
+
+        .gate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -60%;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: skewX(-20deg);
+            animation: btn-sweep 2.6s ease-in-out infinite;
+        }
+
+        @keyframes btn-sweep {
+            0% {
+                left: -60%;
+            }
+
+            50% {
+                left: 130%;
+            }
+
+            100% {
+                left: 130%;
+            }
+        }
+
+        .gate-btn:hover:not(:disabled) {
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.5), 0 0 20px rgba(217, 83, 79, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .gate-btn:active:not(:disabled) {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .gate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* progress bar during "authentication" */
+        .auth-progress {
+            height: 4px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.9rem;
+            display: none;
+        }
+
+        .auth-progress.show {
+            display: block;
+        }
+
+        .auth-progress .bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--tech-blue), var(--tech-cyan));
+            box-shadow: 0 0 10px var(--tech-cyan);
+            transition: width 1.4s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .gate-feedback {
+            text-align: center;
+            min-height: 1.4em;
+            margin-top: 0.9rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            font-family: 'Courier New', monospace;
+        }
+
+        .gate-feedback.erro {
+            color: var(--imp-crimson);
+            text-shadow: 0 0 6px rgba(255, 77, 77, 0.5);
+        }
+
+        .gate-feedback.ok {
+            color: #5cffa0;
+            text-shadow: 0 0 6px rgba(92, 255, 160, 0.5);
+        }
+
+        .gate-feedback.info {
+            color: var(--tech-blue);
+        }
+
+        /* Mini terminal log under the panel */
+        .mini-log {
+            margin-top: 1.4rem;
+            border-top: 1px dashed rgba(0, 170, 255, 0.2);
+            padding-top: 0.7rem;
+            height: 62px;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            font-size: 0.62rem;
+            color: #536078;
+            line-height: 1.5;
+        }
+
+        .mini-log p {
+            margin: 0 0 2px;
+            opacity: 0;
+            animation: log-fade-in 0.4s forwards;
+        }
+
+        @keyframes log-fade-in {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .mini-log .ok-log {
+            color: #4caf7d;
+        }
+
+        .mini-log .warn-log {
+            color: #d9a441;
+        }
+
+        .remember-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.62rem;
+            color: #7a889f;
+            letter-spacing: 0.05em;
+            margin-top: -0.4rem;
+        }
+
+        .remember-row label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .remember-row input[type="checkbox"] {
+            appearance: none;
+            width: 13px;
+            height: 13px;
+            border: 1px solid var(--tech-blue);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .remember-row input[type="checkbox"]:checked {
+            background: var(--tech-blue);
+            box-shadow: 0 0 8px var(--tech-blue);
+        }
+
+        .remember-row a {
+            color: var(--imp-crimson);
+            text-decoration: none;
+        }
+
+        .remember-row a:hover {
+            text-decoration: underline;
+        }
+
+        /* Success checkmark overlay */
+        .success-check {
+            display: none;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+
+        .success-check.show {
+            display: block;
+            animation: pop-in 0.4s ease;
+        }
+
+        @keyframes pop-in {
+            from {
+                transform: scale(0.4);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-check svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .success-check circle {
+            fill: none;
+            stroke: #5cffa0;
+            stroke-width: 3;
+            stroke-dasharray: 190;
+            stroke-dashoffset: 190;
+            animation: draw-circle 0.6s ease forwards;
+            filter: drop-shadow(0 0 8px #5cffa0);
+        }
+
+        .success-check path {
+            fill: none;
+            stroke: #5cffa0;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 40;
+            stroke-dashoffset: 40;
+            animation: draw-check 0.4s ease 0.5s forwards;
+        }
+
+        @keyframes draw-circle {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes draw-check {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .hidden-block {
+            display: none !important;
+        }
+
+        @media (max-width: 480px) {
+            .gate-panel {
+                padding: 1.7rem 1.3rem 1.4rem;
+            }
+
+            .top-bar,
+            .bottom-bar {
+                font-size: 0.58em;
+                padding: 8px 12px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<canvas id="stars"></canvas>
-<div class="scanlines"></div>
-<div class="vignette"></div>
+    <canvas id="stars"></canvas>
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
 
-<div class="top-bar">
-    <span><span class="status-dot"></span>SISTEMA: CORELLIAN v5.0</span>
-    <span id="clock">00:00:00</span>
-</div>
-
-<main class="gate-wrap">
-    <div class="gate-panel" id="gatePanel">
-        <span class="corner tl"></span>
-        <span class="corner br"></span>
-
-        <div class="emblem">
-            <svg viewBox="0 0 24 24"><path d="M12 2 2 7v6c0 5.2 3.8 9.6 10 11 6.2-1.4 10-5.8 10-11V7l-10-5z"/></svg>
-        </div>
-
-        <p class="gate-eyebrow">Rede Corelliana // Hub Central</p>
-        <h1 class="gate-title" id="gateTitle" data-text="TERMINAL DE ACESSO">TERMINAL DE ACESSO</h1>
-        <p class="gate-sub" id="bootLine">&nbsp;</p>
-
-        <div class="success-check" id="successCheck">
-            <svg viewBox="0 0 52 52">
-                <circle cx="26" cy="26" r="23"/>
-                <path d="M15 27l7 7 15-15"/>
-            </svg>
-        </div>
-
-        <form class="gate-form" id="gateForm" autocomplete="off">
-            <div class="field">
-                <label for="userInput">Identificação</label>
-                <div class="input-wrap" id="userWrap">
-                    <svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5z"/></svg>
-                    <input type="text" id="userInput" placeholder="Digite seu nome de usuário" autocomplete="off" spellcheck="false">
-                </div>
-            </div>
-
-            <div class="field">
-                <label for="passInput">Senha de Acesso</label>
-                <div class="input-wrap" id="passWrap">
-                    <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 0 1 6 0v3H9z"/></svg>
-                    <input type="password" id="passInput" placeholder="••••••••••" autocomplete="off" spellcheck="false">
-                </div>
-            </div>
-
-            <div class="remember-row">
-                <label><input type="checkbox" id="rememberBox"> Lembrar credenciais</label>
-                <a href="#" id="forgotLink">Esqueci a senha</a>
-            </div>
-
-            <button type="submit" class="gate-btn" id="gateBtn">Iniciar Sessão</button>
-
-            <div class="auth-progress" id="authProgress"><div class="bar" id="authBar"></div></div>
-            <p class="gate-feedback" id="gateFeedback"></p>
-        </form>
-
-        <div class="mini-log" id="miniLog"></div>
+    <div class="top-bar">
+        <span><span class="status-dot"></span>SISTEMA: CORELLIAN v5.0</span>
+        <span id="clock">00:00:00</span>
     </div>
-</main>
 
-<div class="bottom-bar">
-    <span>© ABY 04 - FROTA ESTELAR LOCAL | SETOR LOTHAL</span>
-    <span>STATUS: ONLINE</span>
-</div>
+    <main class="gate-wrap">
+        <div class="gate-panel" id="gatePanel">
+            <span class="corner tl"></span>
+            <span class="corner br"></span>
 
-<script>
-/* ---------------- Clock ---------------- */
-(function () {
-    const el = document.getElementById('clock');
-    function tick() {
-        const n = new Date();
-        el.textContent = String(n.getHours()).padStart(2,'0') + ':' +
-                          String(n.getMinutes()).padStart(2,'0') + ':' +
-                          String(n.getSeconds()).padStart(2,'0');
-    }
-    tick(); setInterval(tick, 1000);
-})();
+            <div class="emblem">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2 2 7v6c0 5.2 3.8 9.6 10 11 6.2-1.4 10-5.8 10-11V7l-10-5z" />
+                </svg>
+            </div>
 
-/* ---------------- Starfield ---------------- */
-(function () {
-    const canvas = document.getElementById('stars');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        stars = [];
-        const count = Math.floor((canvas.width * canvas.height) / 6000);
-        for (let i = 0; i < count; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                r: Math.random() * 1.4 + 0.2,
-                speed: Math.random() * 0.25 + 0.03,
-                twinkle: Math.random() * Math.PI * 2,
-                color: Math.random() < 0.15 ? '217,83,79' : (Math.random() < 0.5 ? '0,170,255' : '255,255,255')
+            <p class="gate-eyebrow">Rede Corelliana // Hub Central</p>
+            <h1 class="gate-title" id="gateTitle" data-text="TERMINAL DE ACESSO">TERMINAL DE ACESSO</h1>
+            <p class="gate-sub" id="bootLine">&nbsp;</p>
+
+            <div class="success-check" id="successCheck">
+                <svg viewBox="0 0 52 52">
+                    <circle cx="26" cy="26" r="23" />
+                    <path d="M15 27l7 7 15-15" />
+                </svg>
+            </div>
+
+            <form class="gate-form" id="gateForm" autocomplete="off">
+                <div class="field">
+                    <label for="userInput">Identificação</label>
+                    <div class="input-wrap" id="userWrap">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5z" />
+                        </svg>
+                        <input type="text" id="userInput" placeholder="Digite seu nome de usuário" autocomplete="off"
+                            spellcheck="false">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="passInput">Senha de Acesso</label>
+                    <div class="input-wrap" id="passWrap">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 0 1 6 0v3H9z" />
+                        </svg>
+                        <input type="password" id="passInput" placeholder="••••••••••" autocomplete="off"
+                            spellcheck="false">
+                    </div>
+                </div>
+
+                <div class="remember-row">
+                    <label><input type="checkbox" id="rememberBox"> Lembrar credenciais</label>
+                    <a href="#" id="forgotLink">Esqueci a senha</a>
+                </div>
+
+                <button type="submit" class="gate-btn" id="gateBtn">Iniciar Sessão</button>
+
+                <div class="auth-progress" id="authProgress">
+                    <div class="bar" id="authBar"></div>
+                </div>
+                <p class="gate-feedback" id="gateFeedback"></p>
+            </form>
+
+            <div class="mini-log" id="miniLog"></div>
+        </div>
+    </main>
+
+    <div class="bottom-bar">
+        <span>© ABY 04 - FROTA ESTELAR LOCAL | SETOR LOTHAL</span>
+        <span>STATUS: ONLINE</span>
+    </div>
+
+    <script>
+        /* ---------------- Clock ---------------- */
+        (function () {
+            const el = document.getElementById('clock');
+            function tick() {
+                const n = new Date();
+                el.textContent = String(n.getHours()).padStart(2, '0') + ':' +
+                    String(n.getMinutes()).padStart(2, '0') + ':' +
+                    String(n.getSeconds()).padStart(2, '0');
+            }
+            tick(); setInterval(tick, 1000);
+        })();
+
+        /* ---------------- Starfield ---------------- */
+        (function () {
+            const canvas = document.getElementById('stars');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                stars = [];
+                const count = Math.floor((canvas.width * canvas.height) / 6000);
+                for (let i = 0; i < count; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        r: Math.random() * 1.4 + 0.2,
+                        speed: Math.random() * 0.25 + 0.03,
+                        twinkle: Math.random() * Math.PI * 2,
+                        color: Math.random() < 0.15 ? '217,83,79' : (Math.random() < 0.5 ? '0,170,255' : '255,255,255')
+                    });
+                }
+            }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (const s of stars) {
+                    s.twinkle += 0.02;
+                    const alpha = 0.4 + Math.sin(s.twinkle) * 0.4;
+                    ctx.beginPath();
+                    ctx.fillStyle = `rgba(${s.color},${Math.max(0, alpha)})`;
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fill();
+                    s.y += s.speed;
+                    if (s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
+                }
+                requestAnimationFrame(draw);
+            }
+            window.addEventListener('resize', resize);
+            resize(); draw();
+        })();
+
+        /* ---------------- Boot typing line ---------------- */
+        (function () {
+            const el = document.getElementById('bootLine');
+            const msgs = [
+                '> sincronizando com a HoloNet...',
+                '> verificando assinatura biométrica...',
+                '> aguardando credenciais do usuário...'
+            ];
+            let mIdx = 0, cIdx = 0;
+            function typeStep() {
+                const msg = msgs[mIdx];
+                if (cIdx <= msg.length) {
+                    el.innerHTML = msg.slice(0, cIdx) + '<span class="cursor-blink">_</span>';
+                    cIdx++;
+                    setTimeout(typeStep, 28);
+                } else {
+                    setTimeout(() => {
+                        cIdx = 0;
+                        mIdx = (mIdx + 1) % msgs.length;
+                        typeStep();
+                    }, 1400);
+                }
+            }
+            typeStep();
+        })();
+
+        /* ---------------- Random title glitch ---------------- */
+        (function () {
+            const title = document.getElementById('gateTitle');
+            function trigger() {
+                title.classList.add('glitching');
+                setTimeout(() => title.classList.remove('glitching'), 220);
+                setTimeout(trigger, 3500 + Math.random() * 5000);
+            }
+            setTimeout(trigger, 2500);
+        })();
+
+        /* ---------------- Input focus glow ---------------- */
+        (function () {
+            const pairs = [['userInput', 'userWrap'], ['passInput', 'passWrap']];
+            pairs.forEach(([inputId, wrapId]) => {
+                const input = document.getElementById(inputId);
+                const wrap = document.getElementById(wrapId);
+                input.addEventListener('focus', () => wrap.classList.add('focused'));
+                input.addEventListener('blur', () => wrap.classList.remove('focused'));
             });
-        }
-    }
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (const s of stars) {
-            s.twinkle += 0.02;
-            const alpha = 0.4 + Math.sin(s.twinkle) * 0.4;
-            ctx.beginPath();
-            ctx.fillStyle = `rgba(${s.color},${Math.max(0,alpha)})`;
-            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-            ctx.fill();
-            s.y += s.speed;
-            if (s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
-        }
-        requestAnimationFrame(draw);
-    }
-    window.addEventListener('resize', resize);
-    resize(); draw();
-})();
+        })();
 
-/* ---------------- Boot typing line ---------------- */
-(function () {
-    const el = document.getElementById('bootLine');
-    const msgs = [
-        '> sincronizando com a HoloNet...',
-        '> verificando assinatura biométrica...',
-        '> aguardando credenciais do usuário...'
-    ];
-    let mIdx = 0, cIdx = 0;
-    function typeStep() {
-        const msg = msgs[mIdx];
-        if (cIdx <= msg.length) {
-            el.innerHTML = msg.slice(0, cIdx) + '<span class="cursor-blink">_</span>';
-            cIdx++;
-            setTimeout(typeStep, 28);
-        } else {
+        /* ---------------- Mini log stream ---------------- */
+        function logLine(text, cls) {
+            const log = document.getElementById('miniLog');
+            const p = document.createElement('p');
+            if (cls) p.className = cls;
+            p.textContent = text;
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight;
+            while (log.children.length > 5) log.removeChild(log.firstChild);
+        }
+        logLine('> Conexão estabelecida com o servidor CORELLIAN v5.0');
+        logLine('> Terminal pronto. Insira suas credenciais.', 'ok-log');
+
+        /* ---------------- Forgot password easter egg ---------------- */
+        document.getElementById('forgotLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            logLine('> ALERTA: Contate o Mestre da Campanha diretamente.', 'warn-log');
+            const fb = document.getElementById('gateFeedback');
+            fb.className = 'gate-feedback info';
+            fb.textContent = 'Recuperação indisponível. Fale com o Mestre da Campanha.';
+        });
+
+        /* ---------------- Login logic (pure front-end, simple by design) ---------------- */
+        const form = document.getElementById('gateForm');
+        const panel = document.getElementById('gatePanel');
+        const btn = document.getElementById('gateBtn');
+        const feedback = document.getElementById('gateFeedback');
+        const progressWrap = document.getElementById('authProgress');
+        const progressBar = document.getElementById('authBar');
+        const successCheck = document.getElementById('successCheck');
+        const userInput = document.getElementById('userInput');
+        const passInput = document.getElementById('passInput');
+
+        function setFeedback(msg, type) {
+            feedback.textContent = msg;
+            feedback.className = 'gate-feedback ' + (type || '');
+        }
+
+        function setPanelState(state) {
+            panel.classList.remove('erro', 'sucesso');
+            if (state) panel.classList.add(state);
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const user = userInput.value.trim();
+            const pass = passInput.value.trim();
+
+            if (!user || !pass) {
+                setPanelState('erro');
+                setTimeout(() => setPanelState(null), 400);
+                setFeedback('Preencha usuário e senha para continuar.', 'erro');
+                logLine('> FALHA: campos vazios detectados.', 'warn-log');
+                return;
+            }
+
+            btn.disabled = true;
+            userInput.disabled = true;
+            passInput.disabled = true;
+            setFeedback('Sincronizando credenciais...', 'info');
+            logLine('> Enviando pacote de autenticação...');
+
+            progressWrap.classList.add('show');
+            progressBar.style.width = '0%';
+            requestAnimationFrame(() => { progressBar.style.width = '100%'; });
+
             setTimeout(() => {
-                cIdx = 0;
-                mIdx = (mIdx + 1) % msgs.length;
-                typeStep();
-            }, 1400);
-        }
-    }
-    typeStep();
-})();
+                logLine('> Assinatura validada.', 'ok-log');
+                setFeedback('Acesso concedido. Bem-vindo(a), ' + user + '.', 'ok');
+                setPanelState('sucesso');
+                successCheck.classList.add('show');
+                form.classList.add('hidden-block');
 
-/* ---------------- Random title glitch ---------------- */
-(function () {
-    const title = document.getElementById('gateTitle');
-    function trigger() {
-        title.classList.add('glitching');
-        setTimeout(() => title.classList.remove('glitching'), 220);
-        setTimeout(trigger, 3500 + Math.random() * 5000);
-    }
-    setTimeout(trigger, 2500);
-})();
+                if (document.getElementById('rememberBox').checked) {
+                    logLine('> Credenciais memorizadas neste terminal.', 'ok-log');
+                }
 
-/* ---------------- Input focus glow ---------------- */
-(function () {
-    const pairs = [['userInput','userWrap'], ['passInput','passWrap']];
-    pairs.forEach(([inputId, wrapId]) => {
-        const input = document.getElementById(inputId);
-        const wrap = document.getElementById(wrapId);
-        input.addEventListener('focus', () => wrap.classList.add('focused'));
-        input.addEventListener('blur', () => wrap.classList.remove('focused'));
-    });
-})();
-
-/* ---------------- Mini log stream ---------------- */
-function logLine(text, cls) {
-    const log = document.getElementById('miniLog');
-    const p = document.createElement('p');
-    if (cls) p.className = cls;
-    p.textContent = text;
-    log.appendChild(p);
-    log.scrollTop = log.scrollHeight;
-    while (log.children.length > 5) log.removeChild(log.firstChild);
-}
-logLine('> Conexão estabelecida com o servidor CORELLIAN v5.0');
-logLine('> Terminal pronto. Insira suas credenciais.', 'ok-log');
-
-/* ---------------- Forgot password easter egg ---------------- */
-document.getElementById('forgotLink').addEventListener('click', (e) => {
-    e.preventDefault();
-    logLine('> ALERTA: Contate o Mestre da Campanha diretamente.', 'warn-log');
-    const fb = document.getElementById('gateFeedback');
-    fb.className = 'gate-feedback info';
-    fb.textContent = 'Recuperação indisponível. Fale com o Mestre da Campanha.';
-});
-
-/* ---------------- Login logic (pure front-end, simple by design) ---------------- */
-const form = document.getElementById('gateForm');
-const panel = document.getElementById('gatePanel');
-const btn = document.getElementById('gateBtn');
-const feedback = document.getElementById('gateFeedback');
-const progressWrap = document.getElementById('authProgress');
-const progressBar = document.getElementById('authBar');
-const successCheck = document.getElementById('successCheck');
-const userInput = document.getElementById('userInput');
-const passInput = document.getElementById('passInput');
-
-function setFeedback(msg, type) {
-    feedback.textContent = msg;
-    feedback.className = 'gate-feedback ' + (type || '');
-}
-
-function setPanelState(state) {
-    panel.classList.remove('erro', 'sucesso');
-    if (state) panel.classList.add(state);
-}
-
-form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const user = userInput.value.trim();
-    const pass = passInput.value.trim();
-
-    if (!user || !pass) {
-        setPanelState('erro');
-        setTimeout(() => setPanelState(null), 400);
-        setFeedback('Preencha usuário e senha para continuar.', 'erro');
-        logLine('> FALHA: campos vazios detectados.', 'warn-log');
-        return;
-    }
-
-    btn.disabled = true;
-    userInput.disabled = true;
-    passInput.disabled = true;
-    setFeedback('Sincronizando credenciais...', 'info');
-    logLine('> Enviando pacote de autenticação...');
-
-    progressWrap.classList.add('show');
-    progressBar.style.width = '0%';
-    requestAnimationFrame(() => { progressBar.style.width = '100%'; });
-
-    setTimeout(() => {
-        logLine('> Assinatura validada.', 'ok-log');
-        setFeedback('Acesso concedido. Bem-vindo(a), ' + user + '.', 'ok');
-        setPanelState('sucesso');
-        successCheck.classList.add('show');
-        form.classList.add('hidden-block');
-
-        if (document.getElementById('rememberBox').checked) {
-            logLine('> Credenciais memorizadas neste terminal.', 'ok-log');
-        }
-
-        setTimeout(() => {
-            window.location.href = 'https://starwars.duqueiguro.xyz/';
-        }, 1600);
-    }, 1500);
-});
-</script>
+                setTimeout(() => {
+                    window.location.href = 'https://starwars.duqueiguro.xyz/';
+                }, 1600);
+            }, 1500);
+        });
+    </script>
 
 </body>
+
 </html>
