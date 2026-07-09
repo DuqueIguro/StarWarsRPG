@@ -7,6 +7,7 @@
     <title>Terminal de Acesso - Star Wars RPG</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../img/droid.ico">
     <style>
         :root {
             --bg-dark: #050a13;
@@ -856,9 +857,10 @@
         (function () {
             const el = document.getElementById('bootLine');
             const msgs = [
-                '> sincronizando com a HoloNet...',
-                '> verificando assinatura biométrica...',
-                '> aguardando credenciais do usuário...'
+                '> Sincronizando com a HoloNet...',
+                '> Verificando assinatura biométrica...',
+                '> Conexão segura estabelecida com o servidor CORELLIAN v5.0',
+                '> Aguardando credenciais do usuário...'
             ];
             let mIdx = 0, cIdx = 0;
             function typeStep() {
@@ -872,7 +874,7 @@
                         cIdx = 0;
                         mIdx = (mIdx + 1) % msgs.length;
                         typeStep();
-                    }, 1400);
+                    }, 2000);
                 }
             }
             typeStep();
