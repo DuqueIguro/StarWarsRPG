@@ -9,27 +9,33 @@ body {
     font-family: 'Orbitron', sans-serif;
 }
 
-/* Efeito de Linhas de Scan de Monitor Antigo */
+/* Efeito de Scanline CRT Retrofuturista */
 body::before {
     content: " ";
     display: block;
     position: fixed;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
     z-index: 9999;
     background-size: 100% 4px, 6px 100%;
     pointer-events: none;
 }
 
-/* Efeitos Neon */
 .neon-border {
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.15), inset 0 0 8px rgba(56, 189, 248, 0.05);
-    border: 1px solid rgba(56, 189, 248, 0.35);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.25), inset 0 0 10px rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.neon-border-orange {
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.25), inset 0 0 10px rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.4);
 }
 
 .hologram-effect {
-    background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0.02) 100%);
+    background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0.01) 100%);
     position: relative;
     overflow: hidden;
 }
@@ -38,39 +44,70 @@ body::before {
     content: " ";
     display: block;
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(rgba(56, 189, 248, 0.08) 50%, transparent 50%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(56, 189, 248, 0.06) 50%, transparent 50%);
     background-size: 100% 10px;
-    animation: hologram-scan 6s linear infinite;
+    animation: hologram-scan 10s linear infinite;
     pointer-events: none;
 }
 
 @keyframes hologram-scan {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
 }
 
 .flicker {
-    animation: flicker-anim 0.2s infinite;
+    animation: flicker-anim 0.25s infinite;
 }
 
 @keyframes flicker-anim {
-    0% { opacity: 0.93; }
-    50% { opacity: 1; }
-    100% { opacity: 0.96; }
+    0% {
+        opacity: 0.92;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.95;
+    }
 }
 
-/* Custom Scrollbar para o Console */
+/* Inputs limpos sem setas padrão */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
 }
+
 ::-webkit-scrollbar-track {
     background: #020617;
 }
+
 ::-webkit-scrollbar-thumb {
     background: #1e293b;
     border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: #38bdf8;
 }
