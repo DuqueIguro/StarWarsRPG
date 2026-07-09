@@ -102,19 +102,19 @@
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         <div>
                             <label class="block text-[9px] text-slate-400">CAP. SUBLUZ (L)</label>
-                            <input id="customSubCap" type="number" value="1000" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
+                            <input id="customSubCap" type="number" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
                         </div>
                         <div>
                             <label class="block text-[9px] text-slate-400">ATUAL SUBLUZ (L)</label>
-                            <input id="customSubLevel" type="number" value="300" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
+                            <input id="customSubLevel" type="number" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
                         </div>
                         <div>
                             <label class="block text-[9px] text-slate-400">CAP. HYPER (KG)</label>
-                            <input id="customHypCap" type="number" value="100" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
+                            <input id="customHypCap" type="number" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
                         </div>
                         <div>
                             <label class="block text-[9px] text-slate-400">ATUAL HYPER (KG)</label>
-                            <input id="customHypLevel" type="number" value="12" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
+                            <input id="customHypLevel" type="number" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
                         </div>
                     </div>
                     <button onclick="registerCustomShip()" class="w-full py-2 bg-cyan-500/20 hover:bg-cyan-500/40 text-cyan-300 text-xs font-bold rounded border border-cyan-500 transition cursor-pointer uppercase tracking-wider">
@@ -193,10 +193,10 @@
                         <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        TABELA DE PREÇOS (AUTORIZADA PELO GRUPO DURTOC)
+                        TABELA DE PREÇOS
                     </h3>
                     <div class="flex items-center gap-1.5 text-green-400 bg-green-950/30 px-3 py-1 rounded border border-green-800 text-[10px] font-bold tracking-widest uppercase">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span> VALORES FIXADOS
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span> VALORES
                     </div>
                 </div>
 
@@ -209,7 +209,7 @@
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-bold text-white">Gás Tibanna Refinado</span>
-                            <span class="orbitron font-extrabold text-lg text-cyan-300 neon-text-cyan">2 💳 / L</span>
+                            <span class="orbitron font-extrabold text-lg text-cyan-300 neon-text-cyan">10 💳 / L</span>
                         </div>
                     </div>
 
@@ -221,7 +221,7 @@
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-bold text-white">Coaxium Líquido Puro</span>
-                            <span class="orbitron font-extrabold text-lg text-orange-300">45 💳 / Kg</span>
+                            <span class="orbitron font-extrabold text-lg text-orange-300">20.000 💳 / Kg</span>
                         </div>
                     </div>
                 </div>
@@ -300,9 +300,9 @@
                         <div>
                             <span class="block text-sm font-bold text-cyan-300">Cilindro de Tibanna</span>
                             <span class="text-xs text-slate-400">Conteúdo: 20L de Gás Criogênico</span>
-                            <span class="block text-amber-400 text-xs font-bold mt-1">Preço Fixo: 50 💳</span>
+                            <span class="block text-amber-400 text-xs font-bold mt-1">Preço: 250 💳</span>
                         </div>
-                        <button onclick="buyCanister('tibanna', 50)" class="bg-cyan-600 hover:bg-cyan-500 text-black py-2.5 px-4 rounded font-bold text-xs transition cursor-pointer select-none">
+                        <button onclick="buyCanister('tibanna', 250)" class="bg-cyan-600 hover:bg-cyan-500 text-black py-2.5 px-4 rounded font-bold text-xs transition cursor-pointer select-none">
                             Comprar
                         </button>
                     </div>
@@ -312,9 +312,9 @@
                         <div>
                             <span class="block text-sm font-bold text-orange-300">Cápsula de Coaxium</span>
                             <span class="text-xs text-slate-400">Conteúdo: 2Kg de Massa Refinada</span>
-                            <span class="block text-amber-400 text-xs font-bold mt-1">Preço Fixo: 100 💳</span>
+                            <span class="block text-amber-400 text-xs font-bold mt-1">Preço Fixo: 45000 💳</span>
                         </div>
-                        <button onclick="buyCanister('coaxium', 100)" class="bg-orange-600 hover:bg-orange-500 text-black py-2.5 px-4 rounded font-bold text-xs transition cursor-pointer select-none">
+                        <button onclick="buyCanister('coaxium', 45000)" class="bg-orange-600 hover:bg-orange-500 text-black py-2.5 px-4 rounded font-bold text-xs transition cursor-pointer select-none">
                             Comprar
                         </button>
                     </div>

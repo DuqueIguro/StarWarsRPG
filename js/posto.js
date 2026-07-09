@@ -32,7 +32,7 @@ function loadFromStorage(key) {
 
 // --- ESTADO INICIAL ---
 let shipsData = {};
-let PRICES = { sublight: 2, hyperdrive: 45 }; // Preços de mercado fixados
+let PRICES = { sublight: 10, hyperdrive: 20000 }; // Preços de mercado fixados
 let userCredits = 15000;
 let currentShipKey = '';
 
