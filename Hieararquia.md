@@ -87,6 +87,7 @@ StarWarsRPG
 │  │  ├─ lihua.jpeg
 │  │  ├─ rapinFloo.jpeg
 │  │  └─ renTaiSol.jpeg
+│  ├─ posto.png
 │  ├─ r2d2.ico
 │  ├─ rebelde.png
 │  ├─ sabres.ico
@@ -109,6 +110,7 @@ StarWarsRPG
 │  ├─ durtoc.js
 │  ├─ escudo.js
 │  ├─ ficha.js
+│  ├─ frotaRebeldes.js
 │  ├─ hangar.js
 │  ├─ hierarquiaGerais.js
 │  ├─ hierarquiaImperio.js
@@ -124,10 +126,12 @@ StarWarsRPG
 │  ├─ mtpEffects.js
 │  ├─ organizacoes.js
 │  ├─ p2w.js
+│  ├─ posto.js
 │  ├─ rebeldes.js
 │  └─ selecaoRebelde.js
 ├─ mestre
 │  ├─ escudo.html
+│  ├─ frotaMestre.html
 │  └─ redirecionamentos.html
 ├─ oficina
 │  ├─ database
@@ -159,6 +163,7 @@ StarWarsRPG
 │  ├─ comunicacao.html
 │  ├─ durtoc.html
 │  ├─ ficha.html
+│  ├─ frotaRebeldes.html
 │  ├─ hierarquiaGerais.html
 │  ├─ hierarquiaImperio.html
 │  ├─ hierarquias.html
@@ -169,6 +174,7 @@ StarWarsRPG
 │  ├─ mapa_galatico.html
 │  ├─ oficina.html
 │  ├─ p2w.html
+│  ├─ posto.html
 │  ├─ rebeldes.html
 │  └─ selecaoRebelde.html
 ├─ README.md
@@ -190,6 +196,7 @@ StarWarsRPG
 │  ├─ escudo.css
 │  ├─ ficha.css
 │  ├─ fornecedores.css
+│  ├─ frotaRebeldes.css
 │  ├─ hangar.css
 │  ├─ hierarquiaGeral.css
 │  ├─ hierarquias.css
@@ -204,6 +211,7 @@ StarWarsRPG
 │  ├─ oficina.css
 │  ├─ organizacoes.css
 │  ├─ p2w.css
+│  ├─ posto.css
 │  ├─ rebeldes.css
 │  ├─ selecaoRebelde.css
 │  └─ style.css
