@@ -591,6 +591,11 @@ h1 {
     text-shadow: 0 0 5px rgba(240, 173, 78, 0.5) !important;
 }
 
+.log-error {
+    color: var(--imp-crimson) !important;
+    text-shadow: 0 0 5px rgba(255, 77, 77, 0.5) !important;
+}
+
 /* ======== SYSTEM READOUT PANEL ======== */
 .system-readout-panel {
     background: rgba(6, 12, 24, 0.7);
