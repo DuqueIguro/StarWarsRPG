@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,14 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles/posto.css">
 </head>
-<body class="p-4 md:p-8 selection:bg-cyan-500 selection:text-black">
 
-    <!-- Fundo Cósmico Estrelado Canvas -->
+<body class="p-4 md:p-8 selection:bg-cyan-500 selection:text-black">
+<!-- Estrelas Cósmicas ao Fundo -->
     <canvas id="spaceCanvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none"></canvas>
 
     <!-- Header Principal -->
-    <header class="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center p-4 rounded-lg bg-slate-950/80 border border-slate-800 backdrop-blur-md gap-4">
-        <div class="flex flex-wrap items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+    <header class="max-w-7xl mx-auto mb-8 flex flex-col lg:flex-row justify-between items-center p-4 rounded-lg bg-slate-950/90 border border-slate-800 backdrop-blur-md gap-4">
+        <div class="flex flex-wrap items-center gap-4 w-full lg:w-auto justify-between lg:justify-start">
             <div class="flex items-center gap-4">
                 <div class="p-3 bg-cyan-950/50 rounded-full border border-cyan-500/30">
                     <svg class="w-8 h-8 text-cyan-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,33 +24,30 @@
                 </div>
                 <div>
                     <h1 class="orbitron text-2xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-sky-200">AURORA-9</h1>
-                    <p class="text-xs tracking-wider text-cyan-500/70">POSTO DE ABASTECIMENTO SUBLUZ E HIPERESPAÇO</p>
+                    <p class="text-xs tracking-wider text-cyan-500/70">POSTO DE REABASTECIMENTO ESPACIAL À DERIVA</p>
                 </div>
             </div>
             
-            <!-- Botão de Voltar para a Home -->
-            <a href="https://starwars.duqueiguro.xyz" class="orbitron text-xs font-bold bg-slate-900 hover:bg-cyan-950 text-cyan-400 hover:text-cyan-200 px-4 py-2.5 rounded border border-cyan-500/40 hover:border-cyan-400 transition-all duration-300 flex items-center gap-2">
+            <!-- Botão de Voltar -->
+            <a href="https://starwars.duqueiguro.xyz" class="orbitron text-xs font-bold bg-slate-900 hover:bg-red-950/40 text-red-400 hover:text-red-200 px-4 py-2.5 rounded border border-red-500/40 hover:border-red-400 transition-all duration-300 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                 VOLTAR AO SISTEMA
             </a>
         </div>
 
-        <!-- Terminal Info & Créditos Editáveis -->
-        <div class="flex flex-wrap gap-4 items-center justify-end w-full md:w-auto">
+        <!-- Terminal Créditos Editável -->
+        <div class="flex flex-wrap gap-4 items-center justify-end w-full lg:w-auto">
             <div class="px-4 py-2 bg-slate-900 rounded border border-slate-800 text-right hidden sm:block">
-                <span class="block text-[10px] text-slate-500">COORDENADAS</span>
-                <span class="text-xs text-amber-400">X: 147.9 | Y: -289.4</span>
-            </div>
-            <div class="px-4 py-2 bg-slate-900 rounded border border-slate-800 text-right hidden sm:block">
-                <span class="block text-[10px] text-slate-500">STATUS</span>
-                <span class="text-xs text-green-400 flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span> ONLINE
-                </span>
+                <span class="block text-[10px] text-slate-500">SETOR GALÁCTICO</span>
+                <span class="text-xs text-amber-400">BORDA EXTERIOR (4-B)</span>
             </div>
             <div class="px-4 py-1.5 bg-cyan-950/40 rounded border border-cyan-500/40 flex items-center gap-3 w-full sm:w-auto justify-between">
                 <div class="text-left sm:text-right w-full">
-                    <label for="userCreditsInput" class="block text-[10px] text-cyan-400/70 font-bold uppercase tracking-wider">CRÉDITOS IMPERIAIS 💳</label>
-                    <input id="userCreditsInput" type="number" class="orbitron font-bold text-cyan-300 bg-transparent border-b border-cyan-500/30 focus:border-cyan-400 focus:outline-none text-lg w-32 text-left sm:text-right" value="15000">
+                    <label for="userCreditsInput" class="block text-[10px] text-cyan-400/70 font-bold uppercase tracking-wider">SALDO DO PILOTO (EDITÁVEL) 💳</label>
+                    <div class="flex items-center gap-2">
+                        <input id="userCreditsInput" type="number" class="orbitron font-bold text-cyan-300 bg-transparent border-b border-cyan-500/30 focus:border-cyan-400 focus:outline-none text-xl w-36 text-left sm:text-right" value="15000">
+                        <span class="text-cyan-400 text-sm">Créditos</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,47 +55,47 @@
 
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        <!-- LADO ESQUERDO: Painel Holográfico da Estação & Seletor/Gerenciador de Naves (5 Colunas) -->
+        <!-- LADO ESQUERDO: Painel Holográfico da Estação & Seletor/Cadastro de Naves -->
         <div class="lg:col-span-5 flex flex-col gap-6">
 
-            <!-- Painel Holográfico de Status / Radar -->
+            <!-- Painel de Monitoramento Holográfico -->
             <div class="rounded-lg p-4 bg-slate-950/80 neon-border backdrop-blur-md flex flex-col">
                 <div class="flex justify-between items-center mb-2 border-b border-cyan-950 pb-2">
-                    <span class="orbitron font-bold text-xs text-cyan-400 tracking-wider">MAPA DE ENGATE DE TUBULAÇÃO</span>
-                    <span class="text-[10px] text-cyan-500/50">DOCKING PORT #3 ACTIVE</span>
+                    <span class="orbitron font-bold text-xs text-cyan-400 tracking-wider">VARREDURA DA COMPORTA DE FLUXO</span>
+                    <span class="text-[10px] text-cyan-500/50 animate-pulse">SINAL SENSORIAL CONECTADO</span>
                 </div>
 
-                <div class="w-full h-40 bg-cyan-950/20 rounded relative border border-cyan-900/40 overflow-hidden flex items-center justify-center">
+                <div class="w-full h-48 bg-cyan-950/10 rounded relative border border-cyan-900/40 overflow-hidden flex items-center justify-center">
                     <canvas id="stationCanvas" class="w-full h-full absolute inset-0"></canvas>
                     <div class="absolute top-2 left-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-cyan-400 border border-cyan-500/20 pointer-events-none">
-                        VISTA HOLO-SENSORIAL
+                        PROJEÇÃO HOLOGRÁFICA
                     </div>
                 </div>
             </div>
 
-            <!-- Seletor e Cadastro de Naves do Usuário -->
+            <!-- Seletor e Cadastro de Naves -->
             <div class="rounded-lg p-5 bg-slate-950/80 neon-border backdrop-blur-md">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="orbitron text-sm font-bold text-cyan-300 tracking-wider flex items-center gap-2">
                         <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
-                        1. SUAS NAVES ACOPLADAS
+                        1. SUAS NAVES NO HANGAR
                     </h3>
-                    <button onclick="toggleShipForm()" id="btnToggleForm" class="text-xs text-cyan-400 hover:text-cyan-200 underline font-bold cursor-pointer">+ Nova Nave</button>
+                    <button onclick="toggleShipForm()" id="btnToggleForm" class="text-xs text-cyan-400 hover:text-cyan-200 underline font-bold cursor-pointer">+ Cadastrar Nave</button>
                 </div>
 
-                <!-- Formulário de Nova Nave (Sempre visível se não houver naves) -->
-                <div id="customShipForm" class="mb-4 p-4 bg-slate-900/50 border border-cyan-500/20 rounded flex flex-col gap-3">
-                    <div class="text-xs font-bold text-cyan-400 orbitron tracking-wider border-b border-cyan-950 pb-1">CADASTRAR TRANSPONDER DE NAVE</div>
+                <!-- Formulário de Cadastro de Nave -->
+                <div id="customShipForm" class="mb-4 p-4 bg-slate-900/60 border border-cyan-500/20 rounded flex flex-col gap-3">
+                    <div class="text-xs font-bold text-cyan-400 orbitron tracking-wider border-b border-cyan-950 pb-1 uppercase">Sinalizador de Transponder</div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[10px] text-slate-400">NOME / MODELO DA NAVE</label>
+                            <label class="block text-[10px] text-slate-400">DESIGNADOR DA NAVE</label>
                             <input id="customName" type="text" placeholder="Ex: Millennium Falcon" class="w-full p-2 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300 focus:outline-none focus:border-cyan-500">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-slate-400">MENSAGEM DO COCKPIT (OPCIONAL)</label>
-                            <input id="customQuote" type="text" placeholder="Ex: Modificações corellianas..." class="w-full p-2 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300 focus:outline-none focus:border-cyan-500">
+                            <label class="block text-[10px] text-slate-400">SAUDAÇÃO DO COCKPIT</label>
+                            <input id="customQuote" type="text" placeholder="Ex: Que a Força esteja com você..." class="w-full p-2 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300 focus:outline-none focus:border-cyan-500">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -109,44 +104,45 @@
                             <input id="customSubCap" type="number" value="1000" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
                         </div>
                         <div>
-                            <label class="block text-[9px] text-slate-400">NÍVEL SUBLUZ (L)</label>
-                            <input id="customSubLevel" type="number" value="200" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
+                            <label class="block text-[9px] text-slate-400">ATUAL SUBLUZ (L)</label>
+                            <input id="customSubLevel" type="number" value="300" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
                         </div>
                         <div>
                             <label class="block text-[9px] text-slate-400">CAP. HYPER (KG)</label>
                             <input id="customHypCap" type="number" value="100" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
                         </div>
                         <div>
-                            <label class="block text-[9px] text-slate-400">NÍVEL HYPER (KG)</label>
-                            <input id="customHypLevel" type="number" value="10" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
+                            <label class="block text-[9px] text-slate-400">ATUAL HYPER (KG)</label>
+                            <input id="customHypLevel" type="number" value="12" class="w-full p-1.5 bg-slate-950 border border-slate-800 rounded text-xs text-cyan-300">
                         </div>
                     </div>
                     <button onclick="registerCustomShip()" class="w-full py-2 bg-cyan-500/20 hover:bg-cyan-500/40 text-cyan-300 text-xs font-bold rounded border border-cyan-500 transition cursor-pointer uppercase tracking-wider">
-                        Conectar Transponder à Comporta
+                        Ativar Acoplamento no Posto
                     </button>
                 </div>
 
-                <label class="block text-xs text-cyan-500/80 mb-2">Selecione a nave ativa no painel:</label>
+                <!-- Seletor de naves registradas -->
+                <label class="block text-xs text-cyan-500/80 mb-2">Selecione o transponder conectado:</label>
                 <div class="flex gap-2 mb-4">
                     <select id="shipSelect" onchange="selectShip()" class="flex-grow p-2.5 bg-slate-900 border border-cyan-500/30 rounded text-cyan-300 focus:outline-none focus:border-cyan-400 font-mono text-sm cursor-pointer">
-                        <!-- Preenchido via Javascript -->
+                        <!-- Carregado via JS -->
                     </select>
-                    <button onclick="deleteCurrentShip()" id="btnDeleteShip" class="px-3 bg-red-950/40 hover:bg-red-900/40 border border-red-800 text-red-400 rounded text-xs transition cursor-pointer" title="Remover nave">
+                    <button onclick="deleteCurrentShip()" id="btnDeleteShip" class="px-3 bg-red-950/40 hover:bg-red-900/40 border border-red-800 text-red-400 rounded text-xs transition cursor-pointer" title="Remover nave ativa">
                         🗑️
                     </button>
                 </div>
 
-                <!-- Status da Nave Selecionada -->
+                <!-- Status Detalhado da Nave Ativa -->
                 <div id="shipStatusPanel" class="bg-slate-900/80 rounded p-4 border border-cyan-950/60 flex flex-col gap-3">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-cyan-400/80">Transponder Ativo</span>
+                        <span class="text-xs text-cyan-400/80">Sinal de Transponder</span>
                         <span class="text-sm font-bold text-white orbitron" id="shipName">NENHUMA NAVE</span>
                     </div>
 
                     <!-- Indicador Combustivel Subluz -->
                     <div>
                         <div class="flex justify-between items-center text-xs mb-1">
-                            <span class="text-cyan-400">Tanque Subluz (Tibanna/Deutério)</span>
+                            <span class="text-cyan-400">Tanque de Subluz (Tibanna)</span>
                             <span id="shipSublightText" class="text-cyan-300 font-bold">0 / 0 L</span>
                         </div>
                         <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-cyan-950">
@@ -157,7 +153,7 @@
                     <!-- Indicador Combustivel Hiperespaço -->
                     <div>
                         <div class="flex justify-between items-center text-xs mb-1">
-                            <span class="text-orange-400">Tanque Hiperespaço (Coaxium)</span>
+                            <span class="text-orange-400">Reator de Hiperespaço (Coaxium)</span>
                             <span id="shipHyperdriveText" class="text-orange-300 font-bold">0 / 0 Kg</span>
                         </div>
                         <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-orange-950">
@@ -167,7 +163,7 @@
                 </div>
             </div>
 
-            <!-- Holograma Assistência Durtoc -->
+            <!-- Caixa de Dialogo Holográfica D-09 -->
             <div class="rounded-lg p-4 bg-cyan-950/20 border border-cyan-500/20 hologram-effect flex items-start gap-4">
                 <div class="w-16 h-16 rounded border border-cyan-400/40 bg-cyan-950/50 flex-shrink-0 relative overflow-hidden flex items-center justify-center">
                     <svg class="w-12 h-12 text-cyan-400/80 flicker" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -177,115 +173,111 @@
                     <div class="absolute bottom-0 w-full bg-cyan-950/80 text-[8px] text-cyan-300 text-center py-0.5">D-09 VIRTUAL</div>
                 </div>
                 <div class="flex-grow">
-                    <span class="orbitron text-[10px] text-cyan-400 font-bold block mb-1">REDE DE ASSISTÊNCIA DO POSTO:</span>
+                    <span class="orbitron text-[10px] text-cyan-400 font-bold block mb-1">ASTRONAVEGADOR DE SERVIÇO:</span>
                     <p class="text-xs text-cyan-300/80 leading-snug italic" id="droidQuote">
-                        "Cadastre uma nave informando os transponders corretos para liberar as travas magnéticas das bombas de fluxo."
+                        "Cadastre sua nave no painel acima para abrir os bloqueios de fluxo de gás e calibrar as conexões de reabastecimento."
                     </p>
                 </div>
             </div>
 
         </div>
 
-        <!-- LADO DIREITO: Painel de Compra e Abastecimento Direto (7 Colunas) -->
+        <!-- LADO DIREITO: Painel de Abastecimento e Compra de Cilindros -->
         <div class="lg:col-span-7 flex flex-col gap-6">
 
-            <!-- TABELA DE PREÇOS EDITÁVEL -->
+            <!-- TABELA DE PREÇOS FIXA -->
             <div class="rounded-lg p-5 bg-slate-950/80 neon-border backdrop-blur-md">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
                     <h3 class="orbitron text-sm font-bold text-cyan-300 tracking-wider flex items-center gap-2">
                         <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        TABELA DE VALORES DO SETOR (EDITÁVEL)
+                        TABELA DE PREÇOS (AUTORIZADA PELO GRUPO DURTOC)
                     </h3>
-                    <span class="text-[10px] text-cyan-400 bg-cyan-950/30 px-2 py-0.5 rounded border border-cyan-800 uppercase tracking-widest">Ajuste de Mercado</span>
+                    <div class="flex items-center gap-1.5 text-green-400 bg-green-950/30 px-3 py-1 rounded border border-green-800 text-[10px] font-bold tracking-widest uppercase">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span> VALORES FIXADOS
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Preços Subluz -->
-                    <div class="p-3 bg-slate-900 rounded border border-cyan-950 flex flex-col justify-between">
-                        <div class="flex justify-between items-center border-b border-cyan-950 pb-2 mb-2">
-                            <span class="text-sm font-bold text-cyan-400">1. COMBUSTÍVEL SUBLUZ</span>
-                            <span class="text-[10px] text-cyan-500">Unidade: Litros (L)</span>
+                    <!-- Tibanna Fixa -->
+                    <div class="p-4 bg-slate-900 rounded border border-cyan-950">
+                        <div class="flex justify-between items-center mb-2 pb-1 border-b border-cyan-950/50">
+                            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Combustível Subluz</span>
+                            <span class="text-[10px] text-cyan-500">Unidade: Litro (L)</span>
                         </div>
-                        <div class="flex items-center justify-between gap-4 py-1">
-                            <span class="text-xs text-white">Taxa por Litro:</span>
-                            <div class="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded border border-slate-800">
-                                <input id="priceSublightInput" type="number" class="w-16 bg-transparent text-right font-bold text-cyan-300 focus:outline-none" value="2">
-                                <span class="text-xs text-cyan-500">💳</span>
-                            </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold text-white">Gás Tibanna Refinado</span>
+                            <span class="orbitron font-extrabold text-lg text-cyan-300 neon-text-cyan">2 💳 / L</span>
                         </div>
                     </div>
 
-                    <!-- Preços Hiperespaço -->
-                    <div class="p-3 bg-slate-900 rounded border border-orange-950 flex flex-col justify-between">
-                        <div class="flex justify-between items-center border-b border-orange-950 pb-2 mb-2">
-                            <span class="text-sm font-bold text-orange-400">2. MÓDULO HIPERDRIVE</span>
-                            <span class="text-[10px] text-orange-500">Unidade: Quilos (Kg)</span>
+                    <!-- Coaxium Fixo -->
+                    <div class="p-4 bg-slate-900 rounded border border-orange-950">
+                        <div class="flex justify-between items-center mb-2 pb-1 border-b border-orange-950/50">
+                            <span class="text-xs font-bold text-orange-400 uppercase tracking-wider">Combustível Hiperespacial</span>
+                            <span class="text-[10px] text-orange-500">Unidade: Quilo (Kg)</span>
                         </div>
-                        <div class="flex items-center justify-between gap-4 py-1">
-                            <span class="text-xs text-white">Taxa por Quilo:</span>
-                            <div class="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded border border-slate-800">
-                                <input id="priceHyperdriveInput" type="number" class="w-16 bg-transparent text-right font-bold text-orange-300 focus:outline-none" value="45">
-                                <span class="text-xs text-orange-500">💳</span>
-                            </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold text-white">Coaxium Líquido Puro</span>
+                            <span class="orbitron font-extrabold text-lg text-orange-300">45 💳 / Kg</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- BOMBA DE ABASTECIMENTO DIRETO -->
+            <!-- BOMBA DE FLUXO DIRETO -->
             <div class="rounded-lg p-5 bg-slate-950/80 neon-border backdrop-blur-md">
                 <h3 class="orbitron text-sm font-bold text-cyan-300 tracking-wider mb-4 flex items-center gap-2">
                     <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    2. SELETOR DE DISTRIBUIÇÃO E ABASTECIMENTO
+                    2. BOMBA DE REABASTECIMENTO INTERATIVO
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Painel Abastecer Subluz -->
+                    <!-- Abastecer Subluz -->
                     <div class="bg-slate-900/60 p-4 rounded border border-cyan-950 flex flex-col justify-between">
                         <div>
-                            <span class="orbitron block text-xs font-bold text-cyan-400 tracking-widest uppercase mb-1">MANGUEIRA A: SUBLUZ (TIBANNA)</span>
-                            <span class="text-[11px] text-slate-400">Alimentação pressurizada de propulsores iônicos</span>
+                            <span class="orbitron block text-xs font-bold text-cyan-400 tracking-wider uppercase mb-1">MANGUEIRA ALFA (SUBLUZ)</span>
+                            <span class="text-[11px] text-slate-400">Acopladores magnéticos de fluxo criogênico</span>
                         </div>
 
                         <div class="my-4 bg-black p-3 rounded text-center border border-cyan-950">
                             <div class="text-2xl font-bold orbitron text-cyan-400" id="sublightPumpDisplay">0.00 L</div>
-                            <div class="text-xs text-slate-400">Debitando: <span id="sublightCostDisplay" class="text-cyan-300">0</span> 💳</div>
+                            <div class="text-xs text-slate-400">Debitado: <span id="sublightCostDisplay" class="text-cyan-300">0</span> 💳</div>
                         </div>
 
                         <div class="flex flex-col gap-2">
                             <button id="btnPumpSublight" 
-                                    class="w-full py-4 bg-cyan-950/80 hover:bg-cyan-900/80 text-cyan-300 hover:text-white border border-cyan-500 rounded font-bold orbitron text-xs tracking-wider transition active:scale-95 cursor-pointer select-none text-center">
-                                SEGURE PARA INJETAR 🎚️
+                                    class="w-full py-4 bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 hover:text-white border border-cyan-500/50 hover:border-cyan-400 rounded font-bold orbitron text-xs tracking-widest transition active:scale-95 cursor-pointer select-none text-center">
+                                SEGURE PARA ABASTECER 🎚️
                             </button>
-                            <button onclick="fillFully('sublight')" class="w-full py-2 bg-cyan-950/20 hover:bg-cyan-950/50 text-cyan-400/80 hover:text-cyan-300 border border-cyan-800/40 hover:border-cyan-600 rounded text-xs transition cursor-pointer">
-                                Encher Linha de Tanque
+                            <button onclick="fillFully('sublight')" class="w-full py-2 bg-cyan-950/20 hover:bg-cyan-950/40 text-cyan-400 hover:text-cyan-300 border border-cyan-800/40 hover:border-cyan-600 rounded text-xs transition cursor-pointer">
+                                Encher Linha de Combustível
                             </button>
                         </div>
                     </div>
 
-                    <!-- Painel Abastecer Hiperespaço -->
+                    <!-- Abastecer Hiperespaço -->
                     <div class="bg-slate-900/60 p-4 rounded border border-orange-950 flex flex-col justify-between">
                         <div>
-                            <span class="orbitron block text-xs font-bold text-orange-400 tracking-widest uppercase mb-1">MANGUEIRA B: COAXIUM LÍQUIDO</span>
-                            <span class="text-[11px] text-slate-400">Injeção estável de hipermatéria purificada</span>
+                            <span class="orbitron block text-xs font-bold text-orange-400 tracking-wider uppercase mb-1">MANGUEIRA BETA (COAXIUM)</span>
+                            <span class="text-[11px] text-slate-400">Válvula isolada contra radiação gama de dobra</span>
                         </div>
 
                         <div class="my-4 bg-black p-3 rounded text-center border border-orange-950">
                             <div class="text-2xl font-bold orbitron text-orange-400" id="hyperdrivePumpDisplay">0.00 Kg</div>
-                            <div class="text-xs text-slate-400">Debitando: <span id="hyperdriveCostDisplay" class="text-orange-300">0</span> 💳</div>
+                            <div class="text-xs text-slate-400">Debitado: <span id="hyperdriveCostDisplay" class="text-orange-300">0</span> 💳</div>
                         </div>
 
                         <div class="flex flex-col gap-2">
                             <button id="btnPumpHyperdrive" 
-                                    class="w-full py-4 bg-orange-950/80 hover:bg-orange-900/80 text-orange-300 hover:text-white border border-orange-500 rounded font-bold orbitron text-xs tracking-wider transition active:scale-95 cursor-pointer select-none text-center">
-                                SEGURE PARA INJETAR 🔥
+                                    class="w-full py-4 bg-orange-950/60 hover:bg-orange-900/80 text-orange-300 hover:text-white border border-orange-500/50 hover:border-orange-400 rounded font-bold orbitron text-xs tracking-widest transition active:scale-95 cursor-pointer select-none text-center">
+                                SEGURE PARA ABASTECER 🔥
                             </button>
-                            <button onclick="fillFully('hyperdrive')" class="w-full py-2 bg-orange-950/20 hover:bg-orange-950/50 text-orange-400/80 hover:text-orange-300 border border-orange-800/40 hover:border-orange-600 rounded text-xs transition cursor-pointer">
-                                Encher Linha de Tanque
+                            <button onclick="fillFully('hyperdrive')" class="w-full py-2 bg-orange-950/20 hover:bg-orange-950/40 text-orange-400 hover:text-orange-300 border border-orange-800/40 hover:border-orange-600 rounded text-xs transition cursor-pointer">
+                                Encher Linha de Coaxium
                             </button>
                         </div>
                     </div>
@@ -298,30 +290,30 @@
                     <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
-                    3. ADQUIRIR CANISTERS EMBALADOS (PARA INVENTÁRIO)
+                    3. COMPRA DE CILINDROS SELADOS (PARA INVENTÁRIO)
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Canister de Tibanna -->
-                    <div class="p-4 bg-slate-900 rounded border border-cyan-900/40 flex justify-between items-center">
+                    <!-- Canister Tibanna -->
+                    <div class="p-4 bg-slate-900/80 rounded border border-cyan-900/40 flex justify-between items-center hover:border-cyan-500/40 transition">
                         <div>
                             <span class="block text-sm font-bold text-cyan-300">Cilindro de Tibanna</span>
-                            <span class="text-xs text-slate-400">Suporte: 20L autônomos</span>
-                            <span class="block text-amber-400 text-xs font-bold mt-1">Custo unitário: 50 💳</span>
+                            <span class="text-xs text-slate-400">Conteúdo: 20L de Gás Criogênico</span>
+                            <span class="block text-amber-400 text-xs font-bold mt-1">Preço Fixo: 50 💳</span>
                         </div>
-                        <button onclick="buyCanister('tibanna', 50)" class="bg-cyan-600 hover:bg-cyan-500 text-black py-2 px-4 rounded font-bold text-xs transition cursor-pointer">
+                        <button onclick="buyCanister('tibanna', 50)" class="bg-cyan-600 hover:bg-cyan-500 text-black py-2.5 px-4 rounded font-bold text-xs transition cursor-pointer select-none">
                             Comprar
                         </button>
                     </div>
 
-                    <!-- Núcleo de Coaxium Líquido -->
-                    <div class="p-4 bg-slate-900 rounded border border-orange-900/40 flex justify-between items-center">
+                    <!-- Canister Coaxium -->
+                    <div class="p-4 bg-slate-900/80 rounded border border-orange-900/40 flex justify-between items-center hover:border-orange-500/40 transition">
                         <div>
                             <span class="block text-sm font-bold text-orange-300">Cápsula de Coaxium</span>
-                            <span class="text-xs text-slate-400">Suporte: 2Kg blindados</span>
-                            <span class="block text-amber-400 text-xs font-bold mt-1">Custo unitário: 100 💳</span>
+                            <span class="text-xs text-slate-400">Conteúdo: 2Kg de Massa Refinada</span>
+                            <span class="block text-amber-400 text-xs font-bold mt-1">Preço Fixo: 100 💳</span>
                         </div>
-                        <button onclick="buyCanister('coaxium', 100)" class="bg-orange-600 hover:bg-orange-500 text-black py-2 px-4 rounded font-bold text-xs transition cursor-pointer">
+                        <button onclick="buyCanister('coaxium', 100)" class="bg-orange-600 hover:bg-orange-500 text-black py-2.5 px-4 rounded font-bold text-xs transition cursor-pointer select-none">
                             Comprar
                         </button>
                     </div>
@@ -332,30 +324,29 @@
 
     </main>
 
-    <!-- Console de Operações / Logs de Transação -->
-    <footer class="max-w-7xl mx-auto mt-8 p-4 rounded-lg bg-slate-950/80 border border-slate-900 backdrop-blur-md">
+    <!-- Console de Histórico de Logs Galácticos -->
+    <footer class="max-w-7xl mx-auto mt-8 p-4 rounded-lg bg-slate-950/90 border border-slate-900 backdrop-blur-md">
         <div class="flex justify-between items-center mb-2">
-            <span class="orbitron text-xs font-bold text-cyan-400">MONITORAMENTO DE DADOS DA ESTAÇÃO</span>
-            <span class="text-[9px] text-cyan-500/50">SECURE COOKIE LOG PROTOCOL</span>
+            <span class="orbitron text-xs font-bold text-cyan-400">REGISTRO DE VENDAS E FLUXO DA ESTAÇÃO AURORA-9</span>
+            <span class="text-[9px] text-cyan-500/50">PROTOCOLO DE SINAL ENCRIPTADO IMPERIAL</span>
         </div>
-        <div id="logConsole" class="bg-black/90 p-3 rounded h-24 overflow-y-auto font-mono text-[11px] text-cyan-300/80 leading-relaxed border border-cyan-950">
-            <!-- Logs iniciais inseridos via JS -->
+        <div id="logConsole" class="bg-black/90 p-3 rounded h-32 overflow-y-auto font-mono text-[11px] text-cyan-300/80 leading-relaxed border border-cyan-950">
+            <!-- Os logs de compras serão carregados dinamicamente via Javascript -->
         </div>
     </footer>
 
-    <!-- Notificações Toast -->
-    <div id="notificationToast" class="fixed bottom-6 right-6 p-4 rounded-lg bg-slate-950 border border-cyan-500 text-cyan-300 text-sm font-mono shadow-2xl transition-all duration-300 translate-y-20 opacity-0 pointer-events-none z-50">
+    <!-- Sistema de Notificação Customizado (Sem usar alerts de navegador que quebram o iframe) -->
+    <div id="notificationToast" class="fixed bottom-6 right-6 p-4 rounded-lg bg-slate-950 border border-cyan-500 text-cyan-300 text-sm font-mono shadow-2xl transition-all duration-300 translate-y-20 opacity-0 pointer-events-none z-50 max-w-sm">
         <div class="flex items-center gap-3">
-            <div id="toastIcon">⚠️</div>
+            <div id="toastIcon" class="text-xl">⚠️</div>
             <div>
-                <div id="toastTitle" class="orbitron font-bold text-xs uppercase text-cyan-400">SISTEMA</div>
-                <div id="toastMessage">Iniciando varredura...</div>
+                <div id="toastTitle" class="orbitron font-bold text-xs uppercase text-cyan-400">DIRETRIZ</div>
+                <div id="toastMessage" class="text-xs text-slate-300 mt-0.5">Mensagem do terminal.</div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts de Lógica -->
-    <canvas id="spaceCanvas" class="hidden"></canvas>
+    <!-- SCRIPT DE INTELIGÊNCIA E EXECUÇÃO -->
     <script src="../js/posto.js"></script>
 </body>
 </html>
