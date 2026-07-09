@@ -1,0 +1,93 @@
+body {
+    font-family: 'Share Tech Mono', monospace;
+    background-color: #030712;
+    color: #38bdf8;
+    overflow-x: hidden;
+}
+
+.orbitron {
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Efeito de Scanline CRT */
+body::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 9999;
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+}
+
+/* Brilhos Neon */
+.neon-border {
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2), inset 0 0 10px rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.neon-border-orange {
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.2), inset 0 0 10px rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+}
+
+.neon-text-orange {
+    text-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
+}
+
+.neon-text-cyan {
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+
+/* Holograma do Durtoc */
+.hologram-effect {
+    background: linear-gradient(180deg, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0.02) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hologram-effect::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(56, 189, 248, 0.1) 50%, transparent 50%);
+    background-size: 100% 12px;
+    animation: hologram-scan 8s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes hologram-scan {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+.flicker {
+    animation: flicker-anim 0.15s infinite;
+}
+
+@keyframes flicker-anim {
+    0% {
+        opacity: 0.95;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.98;
+    }
+}
