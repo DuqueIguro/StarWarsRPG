@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Tático da Resistência</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="../img/d20.png">
+    <style>
+        body { font-family: 'Share Tech Mono', monospace; background-color: #050a10; color: #4da8da; }
+        .neon-border { border: 1px solid #4da8da; box-shadow: 0 0 8px rgba(77, 168, 218, 0.4); background: rgba(5, 10, 16, 0.85); }
+        .panel-header { background: linear-gradient(90deg, rgba(77,168,218,0.2) 0%, transparent 100%); border-bottom: 1px solid #4da8da; }
+        .combat-input { background-color: #020610; border: 1px solid #4da8da; color: white; padding: 4px; width: 100%; border-radius: 4px; }
+        
+        /* Holograma 3D */
+        .holo-container { perspective: 800px; display: flex; justify-content: center; align-items: center; height: 100px; position: relative; }
+        .holo-spin { animation: spin 8s linear infinite; transform-style: preserve-3d; }
+        .holo-img { filter: sepia(100%) hue-rotate(160deg) saturate(500%) brightness(1.2); mix-blend-mode: screen; width: 60px; transform: rotateX(20deg); }
+        @keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        
+        .status-pill { padding: 4px 8px; font-size: 10px; font-weight: bold; text-align: center; border-radius: 4px; border: 1px solid; }
+    </style>
+</head>
+<body class="min-h-screen p-8 text-[#4da8da]">
+
+    <header class="mb-12 text-center">
+        <h1 class="text-4xl font-bold uppercase tracking-widest text-[#4da8da]">Comando Central da Resistência</h1>
+    </header>
+
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <aside class="lg:col-span-1 neon-border p-6 rounded-lg h-fit">
+            <div class="panel-header p-2 mb-6 uppercase font-bold text-center">> Adicionar Unidade</div>
+            <select id="fAction" class="combat-input mb-2">
+                <option value="Diretiva Orion">Diretiva Orion</option>
+                <option value="Movimento Astara">Movimento Astara</option>
+                <option value="O Caminho">O Caminho</option>
+                <option value="Grupo Massassi">Grupo Massassi</option>
+            </select>
+            <input type="text" id="sImg" class="combat-input mb-2" placeholder="URL da Imagem">
+            <input type="number" id="sShield" class="combat-input mb-2" placeholder="Escudo">
+            <input type="number" id="sHull" class="combat-input mb-2" placeholder="Vida">
+            <input type="number" id="sCost" class="combat-input mb-2" placeholder="Custo">
+            <button onclick="addShip()" class="w-full bg-[#4da8da] text-black font-bold py-2 uppercase hover:bg-white transition-all rounded">Registrar no Comando</button>
+            <div id="globalMsg" class="mt-4 text-xs font-bold text-center"></div>
+        </aside>
+
+        <section class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6" id="factionsContainer"></section>
+    </main>
+
+    <script>
+        const factions = {
+            "Diretiva Orion": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
+            "Movimento Astara": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
+            "O Caminho": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
+            "Grupo Massassi": { credits: 10000, budget: 5000, spent: 0, fleet: [] }
+        };
+
+        function renderAll() {
+            const container = document.getElementById('factionsContainer');
+            container.innerHTML = '';
+
+            for (const [name, data] of Object.entries(factions)) {
+                let statusText = "OPERACIONAL";
+                let statusColor = "border-green-500 text-green-500";
+                
+                if (data.spent > data.budget) {
+                    statusText = "CONSEQUÊNCIAS ATIVADAS!";
+                    statusColor = "border-red-500 text-red-500 animate-pulse";
+                } else if (data.spent === data.budget) {
+                    statusText = "NO LIMITE!";
+                    statusColor = "border-orange-500 text-orange-500";
+                } else if (data.spent >= (data.budget * 0.9)) {
+                    statusText = "QUASE NO LIMITE!";
+                    statusColor = "border-yellow-500 text-yellow-500";
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'neon-border p-5 rounded-lg';
+                card.innerHTML = `
+                    <div class="panel-header p-2 mb-4 uppercase font-bold text-center">${name}</div>
+                    <div class="grid grid-cols-2 gap-2 mb-4 text-[10px]">
+                        <div>Créditos: <input type="number" class="combat-input" value="${data.credits}" onchange="factions['${name}'].credits = parseInt(this.value)"></div>
+                        <div>Orçamento: <input type="number" class="combat-input" value="${data.budget}" onchange="factions['${name}'].budget = parseInt(this.value); renderAll()"></div>
+                    </div>
+                    <div class="mb-4 text-center">
+                        <div class="text-xs font-bold mb-2">GASTO: ${data.spent} / ${data.budget}</div>
+                        <div class="status-pill ${statusColor}">${statusText}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${data.fleet.map(s => `
+                            <div class="border border-[#4da8da]/30 p-2 text-center rounded bg-black/40">
+                                <div class="holo-container"><div class="holo-spin"><img src="${s.img}" class="holo-img" onerror="this.src='https://placehold.co/100x100/000/fff?text=NO+IMG'"></div></div>
+                                <div class="text-[10px] mt-2 font-bold">UNIDADE</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function addShip() {
+            const fName = document.getElementById('fAction').value;
+            const cost = parseInt(document.getElementById('sCost').value) || 0;
+            const data = factions[fName];
+
+            if (data.credits < cost) {
+                document.getElementById('globalMsg').textContent = "Créditos insuficientes!";
+                return;
+            }
+
+            data.credits -= cost;
+            data.spent += cost;
+            data.fleet.push({
+                img: document.getElementById('sImg').value,
+                cost: cost
+            });
+            renderAll();
+        }
+
+        window.onload = renderAll;
+    </script>
+</body>
+</html>

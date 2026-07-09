@@ -1,0 +1,238 @@
+body {
+    font-family: 'Share Tech Mono', monospace;
+    background-color: #050a10;
+    color: #4da8da;
+    background-image:
+        linear-gradient(rgba(77, 168, 218, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77, 168, 218, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center center;
+    overflow-x: clip;
+    margin: 0;
+    padding: 0;
+}
+
+.neon-border {
+    border: 1px solid #4da8da;
+    box-shadow: 0 0 8px rgba(77, 168, 218, 0.4), inset 0 0 8px rgba(77, 168, 218, 0.2);
+    background: rgba(5, 10, 16, 0.85);
+    backdrop-filter: blur(4px);
+}
+
+.panel-header {
+    background: linear-gradient(90deg, rgba(77, 168, 218, 0.2) 0%, transparent 100%);
+    border-bottom: 1px solid #4da8da;
+}
+
+.ship-card {
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- X VERMELHO DE DESTRUIÇÃO --- */
+.destroyed-x {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    pointer-events: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 2px solid #ff3333;
+    box-shadow: inset 0 0 30px rgba(255, 0, 0, 0.6);
+    background: rgba(200, 0, 0, 0.15);
+}
+
+.destroyed-x::before,
+.destroyed-x::after {
+    content: '';
+    position: absolute;
+    width: 140%;
+    height: 4px;
+    background-color: #ff3333;
+    box-shadow: 0 0 15px #ff0000, 0 0 5px #ffffff;
+}
+
+.destroyed-x::before {
+    transform: rotate(45deg);
+}
+
+.destroyed-x::after {
+    transform: rotate(-45deg);
+}
+
+.is-destroyed .destroyed-x {
+    display: flex;
+}
+
+.is-destroyed .health-bar-fill,
+.is-destroyed .shield-bar-fill {
+    background-color: #ff3333 !important;
+    box-shadow: 0 0 10px #ff3333 !important;
+}
+
+.is-destroyed .neon-border {
+    border-color: #ff3333;
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.4), inset 0 0 8px rgba(255, 51, 51, 0.2);
+}
+
+/* --- EFEITO HOLOGRÁFICO 3D VOLUMÉTRICO REAL --- */
+.holo-container {
+    perspective: 800px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: relative;
+}
+
+.holo-float-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-style: preserve-3d;
+    /* Inclina levemente para vermos a "espessura" 3D gerada pelas camadas */
+    transform: rotateX(-15deg);
+    animation: holo-float 4s ease-in-out infinite;
+}
+
+.holo-spin-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-style: preserve-3d;
+    animation: holo-spin-3d 12s linear infinite;
+}
+
+.holo-image {
+    position: absolute;
+    max-height: 80%;
+    mix-blend-mode: screen;
+    object-fit: contain;
+    /* Filtro Azul Holográfico Padrão */
+    filter: sepia(100%) hue-rotate(160deg) saturate(400%) brightness(1.2);
+}
+
+.holo-main {
+    opacity: 0.9;
+    filter: sepia(100%) hue-rotate(160deg) saturate(400%) brightness(1.2) drop-shadow(0 0 12px #4da8da);
+}
+
+.holo-layer {
+    opacity: 0.15;
+}
+
+.projector-base {
+    width: 40%;
+    height: 12px;
+    background: radial-gradient(ellipse at center, rgba(77, 168, 218, 0.9) 0%, transparent 70%);
+    border-radius: 50%;
+    box-shadow: 0 0 20px 5px rgba(77, 168, 218, 0.4);
+    margin-bottom: 10px;
+}
+
+@keyframes holo-spin-3d {
+    from {
+        transform: rotateY(0deg);
+    }
+
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+@keyframes holo-float {
+
+    0%,
+    100% {
+        transform: rotateX(-15deg) translateY(0);
+    }
+
+    50% {
+        transform: rotateX(-15deg) translateY(-8px);
+    }
+}
+
+/* Se destruída: Continua girando, mas em VERMELHO ESCURO */
+.is-destroyed .holo-image {
+    filter: grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(500%) brightness(0.5) !important;
+}
+
+.is-destroyed .holo-main {
+    filter: grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(500%) brightness(0.5) drop-shadow(0 0 10px #ff3333) !important;
+}
+
+.is-destroyed .projector-base {
+    background: radial-gradient(ellipse at center, rgba(255, 51, 51, 0.6) 0%, transparent 70%);
+    box-shadow: 0 0 15px 5px rgba(255, 51, 51, 0.3);
+}
+
+/* --- CORES DAS BARRAS DE STATUS --- */
+.status-bar-bg {
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Vida/Casco - VERDE */
+.health-bar-fill {
+    height: 100%;
+    background-color: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+}
+
+/* Escudo - AZUL CLARO */
+.shield-bar-fill {
+    height: 100%;
+    background-color: #3b82f6;
+    box-shadow: 0 0 8px #3b82f6;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+}
+
+.hologram-text {
+    text-shadow: 0 0 5px rgba(77, 168, 218, 0.8);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #050a10;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4da8da;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ffffff;
+}
+
+.combat-input {
+    background-color: #020610;
+    border: 1px solid #4da8da;
+    color: white;
+}
+
+.combat-input:focus {
+    outline: none;
+    box-shadow: 0 0 5px #4da8da;
+    border-color: white;
+}
