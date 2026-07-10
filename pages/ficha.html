@@ -15,6 +15,11 @@
     <link rel="icon" type="image/x-icon" href="../img/mandalorian.ico">
     <link rel="stylesheet" href="../styles/ficha.css">
 
+    <!-- Biblioteca oficial do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Script de conexão (deve vir depois da biblioteca) -->
+    <script src="../js/supabase.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../js/ficha.js" defer></script>
 </head>
@@ -466,7 +471,7 @@
         <input type="file" id="importar-ficha-input" accept="application/json" class="hidden">
     </div>
 
-<script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             corePlugins: {

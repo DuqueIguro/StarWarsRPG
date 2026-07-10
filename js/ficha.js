@@ -58,7 +58,22 @@ const defaultState = {
     }
 };
 
-let _internalState = JSON.parse(JSON.stringify(defaultState));
+/* INÍCIO DE FUNÇÃO DE [Inicialização do Estado]; Verifica se há backup no navegador */
+if (typeof _internalState === 'undefined') {
+    const savedState = localStorage.getItem('starWarsFichaAutoSave');
+    if (savedState) {
+        try {
+            var _internalState = JSON.parse(savedState);
+            console.log("[Backup] Ficha restaurada do auto-save local.");
+        } catch (e) {
+            console.error("[Backup] Erro ao ler auto-save. Carregando ficha limpa.");
+            var _internalState = JSON.parse(JSON.stringify(defaultState));
+        }
+    } else {
+        var _internalState = JSON.parse(JSON.stringify(defaultState));
+    }
+}
+/* FIM DE FUNÇÃO DE [Inicialização do Estado] */
 
 const appState = new Proxy(_internalState, {
     set(target, property, value, receiver) {
@@ -79,13 +94,139 @@ function setStateByPath(path, value) {
     const lastKey = keys[keys.length - 1];
     current[lastKey] = value;
 
-    // NOVIDADE: Recalcula a matemática após qualquer alteração de estado!
     if (typeof calcularMatematicaDaFicha === 'function') {
         calcularMatematicaDaFicha();
     }
-    // console.log(`[Estado] ${path} = ${value}`);
+
+    // NOVIDADE: Auto-save silencioso no navegador
+    localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
 }
-/* FIM DE FUNÇÃO DE [Gerenciamento de Estado] */
+
+/* INICIO DE FUNÇÃO DE [Integração Supabase - Variáveis Globais]; armazena o ID do banco de dados */
+let personagemIdAtual = null;
+/* FIM DE FUNÇÃO DE [Integração Supabase - Variáveis Globais] */
+
+/* INICIO DE FUNÇÃO DE [Integração Supabase - Carregar Ficha]; busca a ficha no banco de dados e sobrepõe o cache local */
+async function carregarFichaDoBanco() {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !userData.user) {
+        console.warn("[Banco de Dados] Usuário não autenticado. Operando apenas no modo offline (localStorage).");
+        return;
+    }
+
+    const userId = userData.user.id;
+
+    // Busca o primeiro personagem deste usuário
+    const { data: personagens, error: selectError } = await supabase
+        .from('personagens')
+        .select('*')
+        .eq('user_id', userId)
+        .limit(1);
+
+    if (selectError) {
+        console.error("[Banco de Dados] Erro ao buscar personagem:", selectError);
+        return;
+    }
+
+    if (personagens && personagens.length > 0) {
+        const personagemDb = personagens[0];
+        personagemIdAtual = personagemDb.id;
+
+        // Mescla os dados do banco com o estado local
+        Object.assign(appState, personagemDb.dados_ficha);
+
+        // Garante que as colunas isoladas do banco tenham prioridade sobre o JSON
+        setStateByPath('biografia.nome', personagemDb.nome);
+        setStateByPath('recursos.creditos', personagemDb.creditos);
+
+        // Atualiza o auto-save local para refletir a nuvem
+        localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
+
+        if (typeof sincronizarTelaComEstado === 'function') sincronizarTelaComEstado();
+        if (typeof renderizarListasDinamicas === 'function') renderizarListasDinamicas();
+        if (typeof renderizarArmas === 'function') renderizarArmas();
+        if (typeof renderizarEquipamentos === 'function') renderizarEquipamentos();
+        if (typeof calcularMatematicaDaFicha === 'function') calcularMatematicaDaFicha();
+
+        console.log("[Banco de Dados] Ficha carregada e sincronizada com sucesso da nuvem.");
+    } else {
+        console.log("[Banco de Dados] Nenhum personagem encontrado para este usuário. Uma nova entrada será criada ao salvar.");
+    }
+}
+/* FIM DE FUNÇÃO DE [Integração Supabase - Carregar Ficha] */
+
+/* INICIO DE FUNÇÃO DE [Integração Supabase - Salvar Ficha]; envia os dados consolidados para o banco de dados */
+async function salvarFichaNoBanco() {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !userData.user) {
+        alert("Aviso: Você não está logado. A ficha foi salva apenas no cache local do navegador.");
+        return;
+    }
+
+    const userId = userData.user.id;
+    const nomePersonagem = appState.biografia.nome || 'Desconhecido';
+    const creditosAtuais = parseInt(appState.recursos.creditos) || 0;
+
+    const dadosFicha = JSON.parse(JSON.stringify(_internalState));
+
+    const payload = {
+        user_id: userId,
+        nome: nomePersonagem,
+        creditos: creditosAtuais,
+        dados_ficha: dadosFicha,
+        updated_at: new Date().toISOString()
+    };
+
+    let dbError = null;
+
+    if (personagemIdAtual) {
+        const { error } = await supabase
+            .from('personagens')
+            .update(payload)
+            .eq('id', personagemIdAtual);
+        dbError = error;
+    } else {
+        const { data, error } = await supabase
+            .from('personagens')
+            .insert([payload])
+            .select();
+
+        if (data && data.length > 0) {
+            personagemIdAtual = data[0].id;
+        }
+        dbError = error;
+    }
+
+    const notif = document.getElementById('notificacao');
+    if (dbError) {
+        console.error("[Banco de Dados] Falha ao salvar:", dbError);
+        if (notif) {
+            notif.textContent = '❌ Erro ao salvar na nuvem!';
+            notif.classList.remove('ocultday');
+            notif.classList.add('visivel');
+            setTimeout(() => {
+                notif.classList.remove('visivel');
+                notif.classList.add('ocultday');
+            }, 2500);
+        }
+    } else {
+        console.log("[Banco de Dados] Salvo na nuvem com sucesso.");
+        if (notif) {
+            notif.textContent = '☁️ Ficha salva na nuvem com sucesso!';
+            notif.classList.remove('ocultday');
+            notif.classList.add('visivel');
+            setTimeout(() => {
+                notif.classList.remove('visivel');
+                notif.classList.add('ocultday');
+            }, 2500);
+        }
+    }
+}
+/* FIM DE FUNÇÃO DE [Integração Supabase - Salvar Ficha] */
+
+
 function calcularMatematicaDaFicha() {
     const nivel = parseInt(appState.biografia.nivel) || 1;
     const classeKey = appState.biografia.classe;
@@ -112,13 +253,25 @@ function calcularMatematicaDaFicha() {
         if (document.getElementById(`${cfg.id}-mod`)) document.getElementById(`${cfg.id}-mod`).textContent = (modificador >= 0 ? '+' : '') + modificador;
     }
 
-    // 2. Calcular Defesas (Classe + Tamanho + Outros)
+    // 2. Calcular Defesas (Classe + Tamanho + Outros + Armadura + Manual)
     const bonusClasse = (classeKey && DADOS_CLASSES[classeKey]) ? DADOS_CLASSES[classeKey].bonusDefesa : { fort: 0, ref: 0, von: 0 };
     const bonusTamanho = (tamanhoKey && DADOS_TAMANHOS[tamanhoKey]) ? DADOS_TAMANHOS[tamanhoKey].modDefesaReflexo : 0;
 
-    const calcDefesa = (tipo, modAttr) => 10 + nivel + modAttr + 
-        (bonusClasse[tipo] || 0) + (tipo === 'ref' ? bonusTamanho : 0) + 
-        (parseInt(appState.modificadoresManuais.defesas[tipo === 'von' ? 'vontade' : tipo === 'ref' ? 'reflexo' : 'fortitude'].outros) || 0);
+    if (document.getElementById('def-tamanho-ref')) {
+        document.getElementById('def-tamanho-ref').value = bonusTamanho;
+    }
+
+    const calcDefesa = (tipo, modAttr) => {
+        const manualKey = tipo === 'von' ? 'vontade' : (tipo === 'ref' ? 'reflexo' : 'fortitude');
+        const manual = appState.modificadoresManuais.defesas[manualKey];
+
+        return 10 + nivel + modAttr +
+            (bonusClasse[tipo] || 0) +
+            (tipo === 'ref' ? bonusTamanho : 0) +
+            (parseInt(manual.classe) || 0) +
+            (parseInt(manual.armadura) || 0) +
+            (parseInt(manual.outros) || 0);
+    };
 
     const defFort = calcDefesa('fort', mods.con);
     if (document.getElementById('def-fort')) document.getElementById('def-fort').textContent = defFort;
@@ -132,7 +285,7 @@ function calcularMatematicaDaFicha() {
         pvBase = classeData.pvIniciais + ((nivel - 1) * classeData.dadoVida) + (mods.con * nivel);
     }
     const pvMaximoFinal = pvBase + (parseInt(appState.modificadoresManuais.status.modVidaMaxima) || 0);
-    
+
     let pvExibicao = (appState.recursos.pontosVidaAtual !== null) ? appState.recursos.pontosVidaAtual : pvMaximoFinal;
     const pvDisplay = document.getElementById('pv-atual-display');
     if (pvDisplay) pvDisplay.textContent = `${pvExibicao} / ${pvMaximoFinal}`;
@@ -244,6 +397,41 @@ function initFicha() {
             skillsContainer.insertAdjacentHTML('beforeend', skillHTML);
         });
     }
+
+    /* INÍCIO DE FUNÇÃO DE [Sincronização Tela-Estado]; Popula o HTML com os dados do appState ao carregar ou importar */
+    function sincronizarTelaComEstado() {
+        const stateInputs = document.querySelectorAll('[data-json-path]');
+        stateInputs.forEach(input => {
+            const path = input.dataset.jsonPath;
+            const value = getValueFromPath(appState, path);
+
+            if (value !== undefined && value !== null) {
+                if (input.type === 'checkbox') {
+                    input.checked = value;
+                } else if (input.tagName === 'SELECT') {
+                    input.value = value;
+                } else {
+                    input.value = value;
+                }
+            }
+        });
+    }
+
+    // Configuração do Botão "Salvar" vinculado ao Supabase
+    const btnSave = document.getElementById('btn-save');
+    if (btnSave) {
+        // Substituindo o antigo addEventListener
+        const novoBtnSave = btnSave.cloneNode(true);
+        btnSave.parentNode.replaceChild(novoBtnSave, btnSave);
+
+        novoBtnSave.addEventListener('click', async () => {
+            // Mantém a gravação local por redundância
+            localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
+            // Inicia o salvamento no servidor
+            await salvarFichaNoBanco();
+        });
+    }
+    /* FIM DE FUNÇÃO DE [Sincronização Tela-Estado] */
 
     /* INÍCIO DE FUNÇÃO DE [Sincronização de Inputs com o Estado]; esta função escuta alterações no ecrã e atualiza o JSON dinamicamente */
     function bindInputsToState() {
@@ -394,26 +582,6 @@ function initFicha() {
             }
         });
     });
-
-
-    // addItemBtn.addEventListener('click', createItemRow);
-    // equipmentList.addEventListener('click', (e) => {
-    //     if (e.target.classList.contains('remove-item-btn')) {
-    //         e.target.parentElement.remove();
-    //     }
-    // });
-
-    // addWeaponBtn.addEventListener('click', createWeaponRow);
-    // weaponList.addEventListener('click', (e) => {
-    //     if (e.target.classList.contains('remove-weapon-btn')) {
-    //         e.target.closest('.weapon-block-container').remove();
-    //         const lastContainer = weaponList.querySelector('.weapon-block-container:last-child');
-    //         if (lastContainer) {
-    //             lastContainer.querySelector('hr').classList.add('hidden');
-    //         }
-    //     }
-    // });
-
 
     /* INÍCIO DE FUNÇÃO DE [Listas de Objetos - Armas e Equipamentos]; esta função mapeia os arrays de objetos para o Estado e reconstrói o HTML */
     function renderizarArmas() {
@@ -619,6 +787,33 @@ function initFicha() {
     renderizarEquipamentos();
     /* FIM DE FUNÇÃO DE [Listas Dinâmicas] */
 
+    /* INICIO DE FUNÇÃO DE [Adicionar Talentos de Classe]; esta função insere os talentos iniciais no array de estado */
+    const addClassTalentsBtn = document.getElementById('add-class-talents-btn');
+    if (addClassTalentsBtn) {
+        addClassTalentsBtn.addEventListener('click', () => {
+            const classeKey = appState.biografia.classe;
+
+            if (!classeKey || !DADOS_CLASSES[classeKey]) return;
+
+            const talentosClasse = DADOS_CLASSES[classeKey].talentosIniciais || [];
+            let talentosAtuais = getValueFromPath(appState, 'caracteristicas.talentos') || [];
+            let adicionouAlgo = false;
+
+            talentosClasse.forEach(talento => {
+                if (!talentosAtuais.includes(talento)) {
+                    talentosAtuais.push(talento);
+                    adicionouAlgo = true;
+                }
+            });
+
+            if (adicionouAlgo) {
+                setStateByPath('caracteristicas.talentos', talentosAtuais);
+                renderizarListasDinamicas();
+            }
+        });
+    }
+    /* FIM DE FUNÇÃO DE [Adicionar Talentos de Classe] */
+
 
 
     /* INÍCIO DE FUNÇÃO DE [Controle da Barra de Vida corrigido] */
@@ -637,7 +832,7 @@ function initFicha() {
             const nivel = parseInt(appState.biografia.nivel) || 1;
             const classeKey = appState.biografia.classe;
             const modsCon = Math.floor(((parseInt(appState.atributosBase.constituicao) || 10) - 10) / 2);
-            
+
             let pvBase = 0;
             if (classeKey && DADOS_CLASSES[classeKey]) {
                 const classeData = DADOS_CLASSES[classeKey];
@@ -725,28 +920,21 @@ function initFicha() {
                     const importedData = JSON.parse(e.target.result);
 
                     if (importedData.ficha) {
-                        // 1. Atualiza o Estado (Proxy) fundindo os dados novos com o defaultState
+                        // Atualiza o Estado
                         Object.assign(appState, importedData.ficha);
 
-                        // 2. Atualiza o HTML visualmente para refletir o JSON e sobrepor o cache do navegador
-                        const stateInputs = document.querySelectorAll('[data-json-path]');
-                        stateInputs.forEach(input => {
-                            const path = input.dataset.jsonPath;
-                            const value = getValueFromPath(importedData.ficha, path);
+                        // Força o auto-save do novo JSON importado
+                        localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
 
-                            if (value !== undefined && value !== null) {
-                                if (input.type === 'checkbox') {
-                                    input.checked = value;
-                                } else {
-                                    input.value = value;
-                                }
-                            }
-                        });
+                        // Usa a nova função para atualizar a tela
+                        sincronizarTelaComEstado();
                         renderizarListasDinamicas();
+                        renderizarArmas();
+                        renderizarEquipamentos();
+                        calcularMatematicaDaFicha();
 
                         console.log("[Importação] Ficha carregada com sucesso!");
 
-                        // Exibe a notificação na tela
                         const notif = document.getElementById('notificacao');
                         if (notif) {
                             notif.textContent = '✅ Ficha importada com sucesso!';
@@ -781,6 +969,9 @@ function initFicha() {
     popularEspecies();
     popularClasses();
     popularTamanhos();
+    sincronizarTelaComEstado();
     calcularMatematicaDaFicha();
+
+    carregarFichaDoBanco();
 }
 initFicha();
