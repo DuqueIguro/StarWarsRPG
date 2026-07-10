@@ -29,12 +29,24 @@
     <a href="https://starwars.duqueiguro.xyz/"
         class="btn-voltar-fixo px-3 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
         title="Voltar para a página inicial">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
         </svg>
         Voltar
     </a>
+
+    <button id="btn-save"
+        class="btn-salvar-fixo px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
+        title="Salvar Ficha">
+        Salvar
+    </button>
+
+    <button id="btn-logout"
+        class="hidden px-4 py-2 bg-red-900 text-red-200 border border-red-700 font-bold rounded shadow-lg hover:bg-red-800 transition text-sm fixed top-4 right-28 z-50"
+        title="Encerrar Sessão">
+        Sair
+    </button>
 
     <button id="btn-save"
         class="btn-salvar-fixo px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
@@ -482,7 +494,6 @@
     <script src="../js/dadosClassesFicha.js"></script>
     <script src="../js/dadosRacasFicha.js"></script>
     <script src="../js/dadosTamanhosFicha.js"></script>
-    <script src="../js/ficha.js" defer></script>
 </body>
 
 </html>

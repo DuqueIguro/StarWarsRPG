@@ -108,17 +108,23 @@ let personagemIdAtual = null;
 
 /* INICIO DE FUNÇÃO DE [Integração Supabase - Carregar Ficha]; busca a ficha no banco de dados e sobrepõe o cache local */
 async function carregarFichaDoBanco() {
-    const { data: userData, error: userError } = await supabase.auth.getUser();
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+    const btnLogout = document.getElementById('btn-logout');
 
     if (userError || !userData.user) {
         console.warn("[Banco de Dados] Usuário não autenticado. Operando apenas no modo offline (localStorage).");
+        if (btnLogout) btnLogout.classList.add('hidden');
         return;
     }
+
+    // Se passou pela verificação, o utilizador está logado. Mostramos o botão de sair.
+    if (btnLogout) btnLogout.classList.remove('hidden');
 
     const userId = userData.user.id;
 
     // Busca o primeiro personagem deste usuário
-    const { data: personagens, error: selectError } = await supabase
+    const { data: personagens, error: selectError } = await supabaseClient
         .from('personagens')
         .select('*')
         .eq('user_id', userId)
@@ -158,7 +164,7 @@ async function carregarFichaDoBanco() {
 
 /* INICIO DE FUNÇÃO DE [Integração Supabase - Salvar Ficha]; envia os dados consolidados para o banco de dados */
 async function salvarFichaNoBanco() {
-    const { data: userData, error: userError } = await supabase.auth.getUser();
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
     if (userError || !userData.user) {
         alert("Aviso: Você não está logado. A ficha foi salva apenas no cache local do navegador.");
@@ -182,13 +188,13 @@ async function salvarFichaNoBanco() {
     let dbError = null;
 
     if (personagemIdAtual) {
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('personagens')
             .update(payload)
             .eq('id', personagemIdAtual);
         dbError = error;
     } else {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('personagens')
             .insert([payload])
             .select();
@@ -225,6 +231,31 @@ async function salvarFichaNoBanco() {
     }
 }
 /* FIM DE FUNÇÃO DE [Integração Supabase - Salvar Ficha] */
+
+/* INICIO DE FUNÇÃO DE [Integração Supabase - Logout]; encerra a sessão e limpa a memória local para segurança */
+const btnLogout = document.getElementById('btn-logout');
+if (btnLogout) {
+    btnLogout.addEventListener('click', async () => {
+        // Confirmação simples para evitar cliques acidentais
+        const confirmar = confirm("Tem a certeza que deseja sair? As alterações não guardadas serão perdidas.");
+        if (!confirmar) return;
+
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) {
+            console.error("[Logout] Erro ao desconectar:", error);
+            alert("Erro ao encerrar a sessão. Tente novamente.");
+        } else {
+            // CRÍTICO: Limpar o auto-save local impede que o próximo jogador 
+            // a fazer login no mesmo computador veja a ficha anterior por uma fração de segundo.
+            localStorage.removeItem('starWarsFichaAutoSave');
+
+            console.log("[Logout] Sessão encerrada com sucesso.");
+            window.location.href = 'login.html';
+        }
+    });
+}
+/* FIM DE FUNÇÃO DE [Integração Supabase - Logout] */
 
 
 function calcularMatematicaDaFicha() {

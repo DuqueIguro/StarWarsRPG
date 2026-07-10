@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal de Acesso - Star Wars RPG</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="../img/droid.ico">
@@ -756,19 +758,19 @@
 
             <form class="gate-form" id="gateForm" autocomplete="off">
                 <div class="field">
-                    <label for="userInput">Identificação</label>
+                    <label for="userInput">Identificação (E-mail)</label>
                     <div class="input-wrap" id="userWrap">
                         <svg viewBox="0 0 24 24">
                             <path
                                 d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5z" />
                         </svg>
-                        <input type="text" id="userInput" placeholder="Digite seu nome de usuário" autocomplete="off"
+                        <input type="email" id="userInput" placeholder="jedi@republica.com" autocomplete="off"
                             spellcheck="false">
                     </div>
                 </div>
 
                 <div class="field">
-                    <label for="passInput">Senha de Acesso</label>
+                    <label for="passInput">Senha Atual / Provisória</label>
                     <div class="input-wrap" id="passWrap">
                         <svg viewBox="0 0 24 24">
                             <path
@@ -779,12 +781,28 @@
                     </div>
                 </div>
 
+                <div class="field hidden-block" id="newPassField" style="margin-top: 1.1rem;">
+                    <label for="newPassInput">Nova Senha de Acesso</label>
+                    <div class="input-wrap" id="newPassWrap">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 0 1 6 0v3H9z" />
+                        </svg>
+                        <input type="password" id="newPassInput" placeholder="Nova senha segura..." autocomplete="off"
+                            spellcheck="false">
+                    </div>
+                </div>
+
                 <div class="remember-row">
                     <label><input type="checkbox" id="rememberBox"> Lembrar credenciais</label>
                     <a href="#" id="forgotLink">Esqueci a senha</a>
                 </div>
 
-                <button type="submit" class="gate-btn" id="gateBtn">Iniciar Sessão</button>
+                <div style="display: flex; gap: 10px; margin-top: 0.4rem;">
+                    <button type="submit" class="gate-btn" id="gateBtn" style="flex: 1;">Acessar</button>
+                    <button type="button" class="gate-btn" id="regBtn"
+                        style="flex: 1; border-color: var(--imp-red); color: var(--imp-red);">Registrar</button>
+                </div>
 
                 <div class="auth-progress" id="authProgress">
                     <div class="bar" id="authBar"></div>
@@ -924,16 +942,31 @@
             fb.textContent = 'Recuperação indisponível. Fale com o Mestre da Campanha.';
         });
 
-        /* ---------------- Login logic (pure front-end, simple by design) ---------------- */
+        /* ---------------- Integração Supabase e Lógica de Terminal ---------------- */
         const form = document.getElementById('gateForm');
         const panel = document.getElementById('gatePanel');
         const btn = document.getElementById('gateBtn');
+        const btnReg = document.getElementById('regBtn'); // Novo botão
         const feedback = document.getElementById('gateFeedback');
         const progressWrap = document.getElementById('authProgress');
         const progressBar = document.getElementById('authBar');
         const successCheck = document.getElementById('successCheck');
         const userInput = document.getElementById('userInput');
         const passInput = document.getElementById('passInput');
+        const newPassField = document.getElementById('newPassField');
+        const newPassInput = document.getElementById('newPassInput');
+        const newPassWrap = document.getElementById('newPassWrap');
+        let modoTrocaSenha = false;
+
+        // 1. Verificação de sessão (redireciona se já estiver logado)
+        async function verificarSessaoAtiva() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                logLine('> Sessão ativa detectada. Redirecionando...', 'ok-log');
+                setTimeout(() => { window.location.href = 'ficha.html'; }, 800);
+            }
+        }
+        verificarSessaoAtiva();
 
         function setFeedback(msg, type) {
             feedback.textContent = msg;
@@ -945,45 +978,148 @@
             if (state) panel.classList.add(state);
         }
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+        // Função compartilhada para sucesso visual
+        function animacaoSucesso(email) {
+            logLine('> Assinatura validada no banco de dados.', 'ok-log');
+            setFeedback('Acesso concedido. Bem-vindo(a), ' + email.split('@')[0] + '.', 'ok');
+            setPanelState('sucesso');
+            successCheck.classList.add('show');
+            form.classList.add('hidden-block');
 
-            const user = userInput.value.trim();
-            const pass = passInput.value.trim();
+            setTimeout(() => {
+                window.location.href = 'ficha.html';
+            }, 1600);
+        }
 
-            if (!user || !pass) {
-                setPanelState('erro');
-                setTimeout(() => setPanelState(null), 400);
-                setFeedback('Preencha usuário e senha para continuar.', 'erro');
-                logLine('> FALHA: campos vazios detectados.', 'warn-log');
-                return;
-            }
-
+        // Função compartilhada para iniciar carregamento visual
+        function iniciarCarregamento(mensagem) {
             btn.disabled = true;
+            btnReg.disabled = true;
             userInput.disabled = true;
             passInput.disabled = true;
-            setFeedback('Sincronizando credenciais...', 'info');
-            logLine('> Enviando pacote de autenticação...');
+            setFeedback(mensagem, 'info');
+            logLine('> Transmitindo pacote para o núcleo CORELLIAN...');
 
             progressWrap.classList.add('show');
             progressBar.style.width = '0%';
             requestAnimationFrame(() => { progressBar.style.width = '100%'; });
+        }
 
-            setTimeout(() => {
-                logLine('> Assinatura validada.', 'ok-log');
-                setFeedback('Acesso concedido. Bem-vindo(a), ' + user + '.', 'ok');
-                setPanelState('sucesso');
-                successCheck.classList.add('show');
-                form.classList.add('hidden-block');
+        // Função compartilhada para falhas
+        function resetarCarregamento() {
+            btn.disabled = false;
+            btnReg.disabled = false;
+            userInput.disabled = false;
+            passInput.disabled = false;
+            progressWrap.classList.remove('show');
+            progressBar.style.width = '0%';
+        }
 
-                if (document.getElementById('rememberBox').checked) {
-                    logLine('> Credenciais memorizadas neste terminal.', 'ok-log');
-                }
+        newPassInput.addEventListener('focus', () => newPassWrap.classList.add('focused'));
+        newPassInput.addEventListener('blur', () => newPassWrap.classList.remove('focused'));
 
-                setTimeout(() => {
-                    window.location.href = 'https://starwars.duqueiguro.xyz/';
-                }, 1600);
-            }, 1500);
+        btnReg.textContent = 'Trocar Senha';
+
+        // 2. Lógica de Login e Cancelar Troca
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            if (modoTrocaSenha) {
+                // Se o formulário for submetido no modo de troca, o botão principal funciona como "Cancelar"
+                modoTrocaSenha = false;
+                newPassField.classList.add('hidden-block');
+                btnReg.textContent = "Trocar Senha";
+                btn.textContent = "Acessar";
+                btnReg.style.borderColor = "var(--imp-red)";
+                btnReg.style.color = "var(--imp-red)";
+                newPassInput.value = "";
+                setFeedback('Reconfiguração cancelada.', 'info');
+                logLine('> Modo de troca abortado.', 'warn-log');
+                return;
+            }
+
+            const email = userInput.value.trim();
+            const pass = passInput.value.trim();
+
+            if (!email || !pass) {
+                setPanelState('erro');
+                setTimeout(() => setPanelState(null), 400);
+                setFeedback('Preencha identificação e senha.', 'erro');
+                logLine('> FALHA: parâmetros vazios.', 'warn-log');
+                return;
+            }
+
+            iniciarCarregamento('Verificando credenciais no sistema...');
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+
+            if (error) {
+                setPanelState('erro');
+                setTimeout(() => setPanelState(null), 400);
+                setFeedback('Credenciais rejeitadas pelo sistema.', 'erro');
+                logLine('> ERRO: ' + error.message, 'warn-log');
+                resetarCarregamento();
+            } else {
+                animacaoSucesso(email);
+            }
+        });
+
+        // 3. Lógica de Trocar Senha
+        btnReg.addEventListener('click', async function () {
+            if (!modoTrocaSenha) {
+                // Altera a interface para o modo de troca
+                modoTrocaSenha = true;
+                newPassField.classList.remove('hidden-block');
+                btnReg.textContent = "Confirmar Troca";
+                btn.textContent = "Cancelar";
+                btnReg.style.borderColor = "var(--tech-cyan)";
+                btnReg.style.color = "var(--tech-cyan)";
+                setFeedback('Insira a credencial atual e a nova senha.', 'info');
+                logLine('> Modo de reconfiguração ativado.', 'info-log');
+                return;
+            }
+
+            const email = userInput.value.trim();
+            const oldPass = passInput.value.trim();
+            const newPass = newPassInput.value.trim();
+
+            if (!email || !oldPass || !newPass) {
+                setPanelState('erro');
+                setTimeout(() => setPanelState(null), 400);
+                setFeedback('Preencha todos os campos obrigatórios.', 'erro');
+                logLine('> FALHA: parâmetros insuficientes.', 'warn-log');
+                return;
+            }
+
+            iniciarCarregamento('Autenticando protocolo de segurança...');
+
+            // Passo 1: Autenticar com a senha antiga
+            const { error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password: oldPass });
+
+            if (signInError) {
+                setPanelState('erro');
+                setTimeout(() => setPanelState(null), 400);
+                setFeedback('Senha atual incorreta.', 'erro');
+                logLine('> ERRO: ' + signInError.message, 'warn-log');
+                resetarCarregamento();
+                return;
+            }
+
+            logLine('> Autenticação confirmada. Gravando nova criptografia...');
+
+            // Passo 2: Atualizar para a nova senha
+            const { error: updateError } = await supabaseClient.auth.updateUser({ password: newPass });
+
+            if (updateError) {
+                setPanelState('erro');
+                setTimeout(() => setPanelState(null), 400);
+                setFeedback('Falha ao atualizar a senha.', 'erro');
+                logLine('> ERRO: ' + updateError.message, 'warn-log');
+                resetarCarregamento();
+            } else {
+                logLine('> Credencial atualizada com sucesso.', 'ok-log');
+                animacaoSucesso(email);
+            }
         });
     </script>
 
