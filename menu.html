@@ -26,7 +26,7 @@
                 <span id="user-display" style="cursor: default; transition: color 0.3s;">USUÁRIO: NÃO IDENTIFICADO</span>
             </div>
             <div class="system-status" style="display: flex; align-items: center; gap: 15px;">
-                <a id="btn-login" href="" class="access-button" style="padding: 4px 12px; font-size: 0.75em; display: none;">LOGIN</a>
+                <a id="btn-login" href="./" class="access-button" style="padding: 4px 12px; font-size: 0.75em; display: none;">LOGIN</a>
                 <button id="btn-logout" class="access-button" style="padding: 4px 12px; font-size: 0.75em; border-color: var(--imp-red); color: var(--imp-red); cursor: pointer; display: none;">SAIR</button>
                 
                 <div style="display: flex; align-items: center;">
@@ -346,9 +346,12 @@
                 const btnLogin = document.getElementById('btn-login');
                 const btnLogout = document.getElementById('btn-logout');
                 
-                // Elementos do Módulo da Ficha
+/* INICIO DE FUNÇÃO DE [Controlo de Estado Dinâmico de Rede]; esta função altera o ícone e texto de Online/Offline com base na sessão */
+                // Elementos do Módulo da Ficha e do Status de Conexão
                 const fichaLink = document.querySelector('a[href="./pages/ficha.html"]');
                 const fichaStatus = fichaLink ? fichaLink.parentElement.querySelector('.data-status') : null;
+                const connectionIndicator = document.getElementById('connection-indicator');
+                const connectionText = document.getElementById('connection-text');
 
                 const { data: { session } } = await supabaseClient.auth.getSession();
 
@@ -360,6 +363,12 @@
                     
                     btnLogin.style.display = 'none';
                     btnLogout.style.display = 'inline-block';
+
+                    if (connectionIndicator && connectionText) {
+                        connectionIndicator.className = 'status-indicator online';
+                        connectionText.textContent = 'ONLINE';
+                        connectionText.style.color = 'var(--text-main)';
+                    }
 
                     // Libera visualmente o módulo da Ficha de Personagem
                     if (fichaLink && fichaStatus) {
@@ -373,7 +382,14 @@
                     
                     btnLogin.style.display = 'inline-block';
                     btnLogout.style.display = 'none';
+
+                    if (connectionIndicator && connectionText) {
+                        connectionIndicator.className = 'status-indicator offline';
+                        connectionText.textContent = 'OFFLINE';
+                        connectionText.style.color = 'var(--imp-red)';
+                    }
                 }
+                /* FIM DE FUNÇÃO DE [Controlo de Estado Dinâmico de Rede] */
 
                 // Ação do Botão Sair
                 btnLogout.addEventListener('click', async () => {
