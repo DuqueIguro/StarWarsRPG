@@ -22,15 +22,23 @@ body {
     font-family: var(--font-data);
     background-color: var(--bg-space);
     color: #f3f4f6;
-    /* Linhas de grade futuristas + Gradiente Espacial */
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Camada Isolada para o Fundo: Impede que a GPU redesenhe a grade ao rolar a página */
+body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
     background-image: 
         linear-gradient(var(--grid-color) 1px, transparent 1px),
         linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
         radial-gradient(circle at 50% 50%, #0c0a09 0%, #020202 100%);
     background-size: 30px 30px, 30px 30px, 100% 100%;
-    background-attachment: fixed;
-    position: relative;
-    overflow-x: hidden;
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* Efeito de Scanline clássico de monitores CRT sci-fi */
@@ -38,7 +46,7 @@ body::before {
     content: " ";
     display: block;
     position: fixed;
-    top: 0; left: 0; bottom: 0; right: 0;
+top: 0; left: 0; bottom: 0; right: 0;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
     z-index: 99999;
     background-size: 100% 4px, 6px 100%;
@@ -46,7 +54,10 @@ body::before {
 }
 
 /* Títulos Energizados */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     font-family: var(--cyber-font);
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -67,15 +78,13 @@ h2 {
    PAINEIS HOLOGRÁFICOS (Containers)
    ========================================================================== */
 .section-container {
-    background: var(--panel-bg);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: rgba(12, 10, 10, 0.92); /* Fundo sólido translúcido: remove o peso do blur na GPU */
     border: 1px solid var(--panel-border);
     border-radius: 0.75rem;
     padding: 1.75rem;
     margin-bottom: 1.75rem;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(251, 191, 36, 0.03);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.5), inset 0 0 5px rgba(251, 191, 36, 0.02);
+    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out, transform 0.2s ease-out;
     position: relative;
     overflow: hidden;
 }
@@ -83,8 +92,8 @@ h2 {
 /* Cantoneiras Sci-Fi nos Paineis ao passar o mouse */
 .section-container:hover {
     transform: translateY(-4px);
-    border-color: rgba(251, 191, 36, 0.5);
-    box-shadow: 0 12px 40px 0 rgba(251, 191, 36, 0.12), inset 0 0 20px rgba(251, 191, 36, 0.05);
+    border-color: rgba(251, 191, 36, 0.4);
+    box-shadow: 0 8px 25px 0 rgba(251, 191, 36, 0.08), inset 0 0 10px rgba(251, 191, 36, 0.04);
 }
 
 .section-container h3 {
@@ -99,7 +108,10 @@ h2 {
 /* ==========================================================================
    INPUTS INTERATIVOS & SELETORES
    ========================================================================== */
-input[type="text"], input[type="number"], textarea, select {
+input[type="text"],
+input[type="number"],
+textarea,
+select {
     background-color: rgba(20, 17, 16, 0.8);
     border: 1px solid rgba(161, 98, 7, 0.3);
     color: #ffffff;
@@ -113,7 +125,9 @@ input[type="text"], input[type="number"], textarea, select {
     transition: all 0.25s ease-in-out;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
     outline: none;
     border-color: var(--neon-blue);
     background-color: rgba(10, 15, 20, 0.9);
@@ -133,7 +147,7 @@ label {
     transition: color 0.2s;
 }
 
-div:focus-within > label {
+div:focus-within>label {
     color: var(--neon-blue);
 }
 
@@ -146,7 +160,7 @@ div:focus-within > label {
     padding: 0.75rem;
     border-radius: 0.5rem;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     transition: all 0.3s ease;
 }
 
@@ -175,8 +189,10 @@ div:focus-within > label {
    BOTÕES E MICROINTERAÇÕES
    ========================================================================== */
 /* Botões Amarelos Principais */
-button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn), 
-.btn-voltar-fixo, .btn-salvar-fixo, #btn-login {
+button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn),
+.btn-voltar-fixo,
+.btn-salvar-fixo,
+#btn-login {
     font-family: var(--font-cyber) !important;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -187,13 +203,16 @@ button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn),
 }
 
 button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):hover,
-.btn-voltar-fixo:hover, .btn-salvar-fixo:hover, #btn-login:hover {
+.btn-voltar-fixo:hover,
+.btn-salvar-fixo:hover,
+#btn-login:hover {
     transform: translateY(-2px) scale(1.03) !important;
     box-shadow: 0 0 20px var(--neon-yellow) !important;
 }
 
 button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):active,
-.btn-voltar-fixo:active, .btn-salvar-fixo:active {
+.btn-voltar-fixo:active,
+.btn-salvar-fixo:active {
     transform: translateY(1px) scale(0.97) !important;
 }
 
@@ -224,7 +243,7 @@ button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):active,
     align-items: center;
     padding: 0.2rem;
     border-radius: 0.5rem;
-    box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.8);
 }
 
 .hp-btn-group-negative {
@@ -249,8 +268,13 @@ button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):active,
     border-radius: 0.375rem;
 }
 
-.hp-btn-group-negative .hp-btn { color: #fca5a5; }
-.hp-btn-group-positive .hp-btn { color: #6ee7b7; }
+.hp-btn-group-negative .hp-btn {
+    color: #fca5a5;
+}
+
+.hp-btn-group-positive .hp-btn {
+    color: #6ee7b7;
+}
 
 .hp-btn-group-negative .hp-btn:hover {
     background-color: var(--neon-red);
@@ -277,9 +301,12 @@ button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):active,
    ========================================================================== */
 #dice-modal {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(3, 2, 2, 0.85);
-    backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px); */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -328,7 +355,7 @@ button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):active,
     top: 24px;
     right: 24px;
     background: rgba(16, 185, 129, 0.15);
-    backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px); */
     color: #ffffff;
     border: 1px solid var(--neon-green);
     padding: 1rem 1.5rem;
@@ -355,7 +382,7 @@ button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):active,
 /* Checkboxes Customizados */
 input[type="checkbox"] {
     appearance: none;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     border: 2px solid rgba(161, 98, 7, 0.5);
     border-radius: 0.25rem;
     cursor: pointer;
@@ -372,7 +399,8 @@ input[type="checkbox"]:checked {
 input[type="checkbox"]:checked::before {
     content: "✓";
     position: absolute;
-    top: 50%; left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     color: #ffffff;
     font-size: 0.85rem;
@@ -383,19 +411,40 @@ input[type="checkbox"]:checked::before {
    ANIMAÇÕES DE SISTEMA (KEYFRAMES)
    ========================================================================== */
 @keyframes pulseGlowBlue {
-    0% { text-shadow: 0 0 8px rgba(6, 182, 212, 0.4); }
-    100% { text-shadow: 0 0 18px rgba(6, 182, 212, 0.9), 0 0 28px rgba(6, 182, 212, 0.4); }
+    0% {
+        text-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+    }
+
+    100% {
+        text-shadow: 0 0 18px rgba(6, 182, 212, 0.9), 0 0 28px rgba(6, 182, 212, 0.4);
+    }
 }
 
 @keyframes flashGlow {
-    0%, 100% { filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.3)); }
-    50% { filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.7)); }
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.3));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.7));
+    }
 }
 
 @keyframes diceSpin {
-    0% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(0.7) rotate(180deg); filter: blur(1px); }
-    100% { transform: scale(1) rotate(360deg); }
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(0.7) rotate(180deg);
+        filter: blur(1px);
+    }
+
+    100% {
+        transform: scale(1) rotate(360deg);
+    }
 }
 
 /* eu gosto de batatas  */
