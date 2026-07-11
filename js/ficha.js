@@ -107,130 +107,130 @@ let personagemIdAtual = null;
 /* FIM DE FUNÇÃO DE [Integração Supabase - Variáveis Globais] */
 
 /* INICIO DE FUNÇÃO DE [Integração Supabase - Carregar Ficha]; busca a ficha no banco de dados e sobrepõe o cache local */
-async function carregarFichaDoBanco() {
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+// async function carregarFichaDoBanco() {
+//     const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
-    const btnLogout = document.getElementById('btn-logout');
+//     const btnLogout = document.getElementById('btn-logout');
 
-    if (userError || !userData.user) {
-        console.warn("[Banco de Dados] Usuário não autenticado. Operando apenas no modo offline (localStorage).");
-        if (btnLogout) btnLogout.classList.add('hidden');
-        return;
-    }
+//     if (userError || !userData.user) {
+//         console.warn("[Banco de Dados] Usuário não autenticado. Operando apenas no modo offline (localStorage).");
+//         if (btnLogout) btnLogout.classList.add('hidden');
+//         return;
+//     }
 
-    // Se passou pela verificação, o utilizador está logado. Mostramos o botão de sair.
-    if (btnLogout) btnLogout.classList.remove('hidden');
+//     // Se passou pela verificação, o utilizador está logado. Mostramos o botão de sair.
+//     if (btnLogout) btnLogout.classList.remove('hidden');
 
-    const userId = userData.user.id;
+//     const userId = userData.user.id;
 
-    // Busca o primeiro personagem deste usuário
-    const { data: personagens, error: selectError } = await supabaseClient
-        .from('personagens')
-        .select('*')
-        .eq('user_id', userId)
-        .limit(1);
+//     // Busca o primeiro personagem deste usuário
+//     const { data: personagens, error: selectError } = await supabaseClient
+//         .from('personagens')
+//         .select('*')
+//         .eq('user_id', userId)
+//         .limit(1);
 
-    if (selectError) {
-        console.error("[Banco de Dados] Erro ao buscar personagem:", selectError);
-        return;
-    }
+//     if (selectError) {
+//         console.error("[Banco de Dados] Erro ao buscar personagem:", selectError);
+//         return;
+//     }
 
-    if (personagens && personagens.length > 0) {
-        const personagemDb = personagens[0];
-        personagemIdAtual = personagemDb.id;
+//     if (personagens && personagens.length > 0) {
+//         const personagemDb = personagens[0];
+//         personagemIdAtual = personagemDb.id;
 
-        // Mescla os dados do banco com o estado local
-        Object.assign(appState, personagemDb.dados_ficha);
+//         // Mescla os dados do banco com o estado local
+//         Object.assign(appState, personagemDb.dados_ficha);
 
-        // Garante que as colunas isoladas do banco tenham prioridade sobre o JSON
-        setStateByPath('biografia.nome', personagemDb.nome);
-        setStateByPath('recursos.creditos', personagemDb.creditos);
+//         // Garante que as colunas isoladas do banco tenham prioridade sobre o JSON
+//         setStateByPath('biografia.nome', personagemDb.nome);
+//         setStateByPath('recursos.creditos', personagemDb.creditos);
 
-        // Atualiza o auto-save local para refletir a nuvem
-        localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
+//         // Atualiza o auto-save local para refletir a nuvem
+//         localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
 
-        if (typeof sincronizarTelaComEstado === 'function') sincronizarTelaComEstado();
-        if (typeof renderizarListasDinamicas === 'function') renderizarListasDinamicas();
-        if (typeof renderizarArmas === 'function') renderizarArmas();
-        if (typeof renderizarEquipamentos === 'function') renderizarEquipamentos();
-        if (typeof calcularMatematicaDaFicha === 'function') calcularMatematicaDaFicha();
+//         if (typeof sincronizarTelaComEstado === 'function') sincronizarTelaComEstado();
+//         if (typeof renderizarListasDinamicas === 'function') renderizarListasDinamicas();
+//         if (typeof renderizarArmas === 'function') renderizarArmas();
+//         if (typeof renderizarEquipamentos === 'function') renderizarEquipamentos();
+//         if (typeof calcularMatematicaDaFicha === 'function') calcularMatematicaDaFicha();
 
-        console.log("[Banco de Dados] Ficha carregada e sincronizada com sucesso da nuvem.");
-    } else {
-        console.log("[Banco de Dados] Nenhum personagem encontrado para este usuário. Uma nova entrada será criada ao salvar.");
-    }
-}
-/* FIM DE FUNÇÃO DE [Integração Supabase - Carregar Ficha] */
+//         console.log("[Banco de Dados] Ficha carregada e sincronizada com sucesso da nuvem.");
+//     } else {
+//         console.log("[Banco de Dados] Nenhum personagem encontrado para este usuário. Uma nova entrada será criada ao salvar.");
+//     }
+// }
+// /* FIM DE FUNÇÃO DE [Integração Supabase - Carregar Ficha] */
 
-/* INICIO DE FUNÇÃO DE [Integração Supabase - Salvar Ficha]; envia os dados consolidados para o banco de dados */
-async function salvarFichaNoBanco() {
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+// /* INICIO DE FUNÇÃO DE [Integração Supabase - Salvar Ficha]; envia os dados consolidados para o banco de dados */
+// async function salvarFichaNoBanco() {
+//     const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
-    if (userError || !userData.user) {
-        alert("Aviso: Você não está logado. A ficha foi salva apenas no cache local do navegador.");
-        return;
-    }
+//     if (userError || !userData.user) {
+//         alert("Aviso: Você não está logado. A ficha foi salva apenas no cache local do navegador.");
+//         return;
+//     }
 
-    const userId = userData.user.id;
-    const nomePersonagem = appState.biografia.nome || 'Desconhecido';
-    const creditosAtuais = parseInt(appState.recursos.creditos) || 0;
+//     const userId = userData.user.id;
+//     const nomePersonagem = appState.biografia.nome || 'Desconhecido';
+//     const creditosAtuais = parseInt(appState.recursos.creditos) || 0;
 
-    const dadosFicha = JSON.parse(JSON.stringify(_internalState));
+//     const dadosFicha = JSON.parse(JSON.stringify(_internalState));
 
-    const payload = {
-        user_id: userId,
-        nome: nomePersonagem,
-        creditos: creditosAtuais,
-        dados_ficha: dadosFicha,
-        updated_at: new Date().toISOString()
-    };
+//     const payload = {
+//         user_id: userId,
+//         nome: nomePersonagem,
+//         creditos: creditosAtuais,
+//         dados_ficha: dadosFicha,
+//         updated_at: new Date().toISOString()
+//     };
 
-    let dbError = null;
+//     let dbError = null;
 
-    if (personagemIdAtual) {
-        const { error } = await supabaseClient
-            .from('personagens')
-            .update(payload)
-            .eq('id', personagemIdAtual);
-        dbError = error;
-    } else {
-        const { data, error } = await supabaseClient
-            .from('personagens')
-            .insert([payload])
-            .select();
+//     if (personagemIdAtual) {
+//         const { error } = await supabaseClient
+//             .from('personagens')
+//             .update(payload)
+//             .eq('id', personagemIdAtual);
+//         dbError = error;
+//     } else {
+//         const { data, error } = await supabaseClient
+//             .from('personagens')
+//             .insert([payload])
+//             .select();
 
-        if (data && data.length > 0) {
-            personagemIdAtual = data[0].id;
-        }
-        dbError = error;
-    }
+//         if (data && data.length > 0) {
+//             personagemIdAtual = data[0].id;
+//         }
+//         dbError = error;
+//     }
 
-    const notif = document.getElementById('notificacao');
-    if (dbError) {
-        console.error("[Banco de Dados] Falha ao salvar:", dbError);
-        if (notif) {
-            notif.textContent = '❌ Erro ao salvar na nuvem!';
-            notif.classList.remove('ocultday');
-            notif.classList.add('visivel');
-            setTimeout(() => {
-                notif.classList.remove('visivel');
-                notif.classList.add('ocultday');
-            }, 2500);
-        }
-    } else {
-        console.log("[Banco de Dados] Salvo na nuvem com sucesso.");
-        if (notif) {
-            notif.textContent = '☁️ Ficha salva na nuvem com sucesso!';
-            notif.classList.remove('ocultday');
-            notif.classList.add('visivel');
-            setTimeout(() => {
-                notif.classList.remove('visivel');
-                notif.classList.add('ocultday');
-            }, 2500);
-        }
-    }
-}
-/* FIM DE FUNÇÃO DE [Integração Supabase - Salvar Ficha] */
+//     const notif = document.getElementById('notificacao');
+//     if (dbError) {
+//         console.error("[Banco de Dados] Falha ao salvar:", dbError);
+//         if (notif) {
+//             notif.textContent = '❌ Erro ao salvar na nuvem!';
+//             notif.classList.remove('ocultday');
+//             notif.classList.add('visivel');
+//             setTimeout(() => {
+//                 notif.classList.remove('visivel');
+//                 notif.classList.add('ocultday');
+//             }, 2500);
+//         }
+//     } else {
+//         console.log("[Banco de Dados] Salvo na nuvem com sucesso.");
+//         if (notif) {
+//             notif.textContent = '☁️ Ficha salva na nuvem com sucesso!';
+//             notif.classList.remove('ocultday');
+//             notif.classList.add('visivel');
+//             setTimeout(() => {
+//                 notif.classList.remove('visivel');
+//                 notif.classList.add('ocultday');
+//             }, 2500);
+//         }
+//     }
+// }
+// /* FIM DE FUNÇÃO DE [Integração Supabase - Salvar Ficha] */
 
 /* INICIO DE FUNÇÃO DE [Integração Supabase - Logout]; encerra a sessão e limpa a memória local para segurança */
 const btnLogout = document.getElementById('btn-logout');
@@ -379,12 +379,13 @@ function initFicha() {
             option.textContent = raca.nome;
             selectEspecie.appendChild(option);
         }
+
         selectEspecie.addEventListener('change', (e) => {
             setStateByPath('biografia.especie', e.target.value);
-            // Atualiza nota racial visualmente
+
             const raca = DADOS_RACAS[e.target.value];
             document.getElementById('notas-raciais').textContent = raca ? raca.notas : '';
-            calcularMatematicaDaFicha(); // <--- Adicionar esta chamada
+            calcularMatematicaDaFicha();
         });
     }
 
@@ -429,7 +430,6 @@ function initFicha() {
         });
     }
 
-    /* INÍCIO DE FUNÇÃO DE [Sincronização Tela-Estado]; Popula o HTML com os dados do appState ao carregar ou importar */
     function sincronizarTelaComEstado() {
         const stateInputs = document.querySelectorAll('[data-json-path]');
         stateInputs.forEach(input => {
@@ -446,6 +446,13 @@ function initFicha() {
                 }
             }
         });
+
+        // Adicione este bloco: Atualiza o texto da nota racial na tela
+        const racaSelecionada = appState.biografia.especie;
+        const notasElement = document.getElementById('notas-raciais');
+        if (notasElement && typeof DADOS_RACAS !== 'undefined') {
+            notasElement.textContent = (racaSelecionada && DADOS_RACAS[racaSelecionada]) ? DADOS_RACAS[racaSelecionada].notas : '';
+        }
     }
 
     // Configuração do Botão "Salvar" vinculado ao Supabase
@@ -902,7 +909,11 @@ function initFicha() {
     if (exportBtn) {
         exportBtn.addEventListener('click', () => {
             // Pegamos o estado atual através do Proxy
-            const dataToSave = { ficha: appState };
+            const fichaParaExportar = JSON.parse(JSON.stringify(_internalState));
+            if (fichaParaExportar.recursos && fichaParaExportar.recursos.creditos !== undefined) {
+                delete fichaParaExportar.recursos.creditos;
+            }
+            const dataToSave = { ficha: fichaParaExportar };
 
             // Converte para string JSON com indentação de 2 espaços para ficar bonito e legível
             const dataStr = JSON.stringify(dataToSave, null, 2);
@@ -1003,6 +1014,181 @@ function initFicha() {
     sincronizarTelaComEstado();
     calcularMatematicaDaFicha();
 
-    carregarFichaDoBanco();
+    // Exportação das funções para o escopo global (usado pelo Supabase)
+    window.apiRenderizarListas = renderizarListasDinamicas;
+    window.apiRenderizarArmas = renderizarArmas;
+    window.apiRenderizarEquipamentos = renderizarEquipamentos;
 }
+
+
+/* INICIO DE FUNÇÃO DE [Sincronização e Supabase]; gerencia carregamento, salvamento e exclusão na nuvem */
+function sincronizarTelaComEstadoGlobal() {
+    const obterValorDoCaminho = (obj, path) => path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    
+    document.querySelectorAll('[data-json-path]').forEach(input => {
+        const value = obterValorDoCaminho(appState, input.dataset.jsonPath);
+        if (value !== undefined && value !== null) {
+            if (input.type === 'checkbox') input.checked = value;
+            else input.value = value;
+        }
+    });
+
+    // Adicione este bloco: Atualiza o texto da nota racial na tela
+    const racaSelecionada = appState.biografia.especie;
+    const notasElement = document.getElementById('notas-raciais');
+    if (notasElement && typeof DADOS_RACAS !== 'undefined') {
+        notasElement.textContent = (racaSelecionada && DADOS_RACAS[racaSelecionada]) ? DADOS_RACAS[racaSelecionada].notas : '';
+    }
+}
+
+async function carregarFichaDoBanco() {
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+    const btnLogout = document.getElementById('btn-logout');
+
+    if (userError || !userData.user) {
+        if (btnLogout) btnLogout.classList.add('hidden');
+        return;
+    }
+
+    if (btnLogout) btnLogout.classList.remove('hidden');
+
+    const { data: personagens, error: selectError } = await supabaseClient
+        .from('personagens').select('*').eq('user_id', userData.user.id).limit(1);
+
+    if (!selectError && personagens && personagens.length > 0) {
+        const dbFicha = personagens[0];
+        personagemIdAtual = dbFicha.id;
+
+        Object.assign(appState, dbFicha.dados_ficha);
+        setStateByPath('biografia.nome', dbFicha.nome);
+        setStateByPath('recursos.creditos', dbFicha.creditos);
+
+        sincronizarTelaComEstadoGlobal();
+
+        if (typeof window.apiRenderizarListas === 'function') window.apiRenderizarListas();
+        if (typeof window.apiRenderizarArmas === 'function') window.apiRenderizarArmas();
+        if (typeof window.apiRenderizarEquipamentos === 'function') window.apiRenderizarEquipamentos();
+        if (typeof calcularMatematicaDaFicha === 'function') calcularMatematicaDaFicha();
+
+        console.log("[Banco de Dados] Ficha carregada da nuvem com todas as listas e equipamentos.");
+    } else {
+        console.log("[Banco de Dados] Nenhum personagem encontrado na nuvem para este usuário.");
+    }
+}
+
+async function salvarFichaNoBanco() {
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !userData.user) {
+        alert("Sessão inválida. O progresso foi salvo apenas localmente.");
+        return;
+    }
+
+    const payload = {
+        user_id: userData.user.id,
+        nome: appState.biografia.nome || 'Desconhecido',
+        creditos: parseInt(appState.recursos.creditos) || 0,
+        dados_ficha: JSON.parse(JSON.stringify(_internalState)),
+        updated_at: new Date().toISOString()
+    };
+
+    let dbError = null;
+    if (personagemIdAtual) {
+        const { error } = await supabaseClient.from('personagens').update(payload).eq('id', personagemIdAtual);
+        dbError = error;
+    } else {
+        const { data, error } = await supabaseClient.from('personagens').insert([payload]).select();
+        if (data && data.length > 0) personagemIdAtual = data[0].id;
+        dbError = error;
+    }
+
+    const notif = document.getElementById('notificacao');
+    if (!dbError) {
+        console.log("[Banco de Dados] Salvo na nuvem com sucesso!");
+        if (notif) {
+            notif.textContent = '☁️ Ficha salva na nuvem com sucesso!';
+            notif.classList.remove('ocultday');
+            notif.classList.add('visivel');
+            setTimeout(() => {
+                notif.classList.remove('visivel');
+                notif.classList.add('ocultday');
+            }, 2500);
+        }
+    } else {
+        console.error("[Banco de Dados] Erro ao salvar:", dbError);
+        alert("Erro ao salvar na nuvem. Verifique a sua conexão.");
+    }
+}
+
 initFicha();
+
+setTimeout(() => {
+    const btnSave = document.getElementById('btn-save');
+    if (btnSave) {
+        const newBtnSave = btnSave.cloneNode(true);
+        btnSave.parentNode.replaceChild(newBtnSave, btnSave);
+        newBtnSave.addEventListener('click', async () => {
+            localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
+            await salvarFichaNoBanco();
+        });
+    }
+
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+        const newBtnLogout = btnLogout.cloneNode(true);
+        btnLogout.parentNode.replaceChild(newBtnLogout, btnLogout);
+        newBtnLogout.addEventListener('click', async () => {
+            if (!confirm("Tem certeza que deseja sair? O progresso não salvo será perdido.")) return;
+            const { error } = await supabaseClient.auth.signOut();
+            if (!error) {
+                localStorage.removeItem('starWarsFichaAutoSave');
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
+    const btnDeletar = document.getElementById('deletar-ficha-btn');
+    if (btnDeletar) {
+        const newBtnDeletar = btnDeletar.cloneNode(true);
+        btnDeletar.parentNode.replaceChild(newBtnDeletar, btnDeletar);
+        newBtnDeletar.addEventListener('click', async () => {
+            if (!personagemIdAtual) {
+                alert("Ainda não há nenhuma ficha vinculada na nuvem para deletar.");
+                return;
+            }
+
+            const confirmacao = confirm("CUIDADO: Você quer mesmo deletar esta ficha? Os dados não poderão ser recuperados.");
+            if (!confirmacao) return;
+
+            const senha = prompt("Para confirmar a exclusão, digite sua senha de acesso:");
+            if (!senha) {
+                alert("Exclusão cancelada. Senha não fornecida.");
+                return;
+            }
+
+            const { data: userData } = await supabaseClient.auth.getUser();
+            const { error: authError } = await supabaseClient.auth.signInWithPassword({
+                email: userData.user.email,
+                password: senha
+            });
+
+            if (authError) {
+                alert("Senha incorreta. Exclusão abortada por segurança.");
+                return;
+            }
+
+            const { error: deleteError } = await supabaseClient.from('personagens').delete().eq('id', personagemIdAtual);
+
+            if (deleteError) {
+                alert("Erro interno ao deletar ficha no banco de dados.");
+                console.error(deleteError);
+            } else {
+                alert("Ficha obliterada com sucesso da nuvem. O terminal será resetado.");
+                localStorage.removeItem('starWarsFichaAutoSave');
+                window.location.reload();
+            }
+        });
+    }
+
+    carregarFichaDoBanco();
+}, 400);
+/* FIM DE FUNÇÃO DE [Sincronização e Supabase] */

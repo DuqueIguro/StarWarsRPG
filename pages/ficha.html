@@ -36,12 +36,6 @@
         Voltar
     </a>
 
-    <button id="btn-save"
-        class="btn-salvar-fixo px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm"
-        title="Salvar Ficha">
-        Salvar
-    </button>
-
     <button id="btn-logout"
         class="hidden px-4 py-2 bg-red-900 text-red-200 border border-red-700 font-bold rounded shadow-lg hover:bg-red-800 transition text-sm fixed top-4 right-28 z-50"
         title="Encerrar Sessão">
@@ -472,17 +466,27 @@
 
     </div>
 
-    <div class="container-exportacao">
+    <div class="container-exportacao flex gap-2 justify-center mt-8">
         <button id="exportar-ficha-btn"
             class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm">Exportar
             Ficha</button>
         <button id="importar-ficha-btn"
             class="px-4 py-2 bg-yellow-400 text-stone-900 font-bold rounded shadow-lg hover:bg-yellow-500 transition text-sm">Importar
             Ficha</button>
+        <button id="deletar-ficha-btn"
+            class="px-4 py-2 bg-red-900 text-red-200 border border-red-700 font-bold rounded shadow-lg hover:bg-red-800 transition text-sm">⚠️Deletar
+            Ficha⚠️</button>
 
         <input type="file" id="importar-ficha-input" accept="application/json" class="hidden">
     </div>
 
+    <script>
+        const originalWarn = console.warn;
+        console.warn = function (...args) {
+            if (typeof args[0] === 'string' && args[0].includes('tailwindcss.com should not be used in production')) return;
+            originalWarn.apply(console, args);
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
