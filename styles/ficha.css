@@ -1,233 +1,401 @@
+/* ==========================================================================
+   VARIÁVEIS DE CORES E ANIMAÇÕES HOLOGRÁFICAS
+   ========================================================================== */
+:root {
+    --bg-space: #050404;
+    --grid-color: rgba(6, 182, 212, 0.04);
+    --neon-yellow: #fbbf24;
+    --neon-blue: #06b6d4;
+    --neon-green: #10b981;
+    --neon-red: #ef4444;
+    --panel-bg: rgba(15, 12, 12, 0.75);
+    --panel-border: rgba(251, 191, 36, 0.2);
+    --panel-glow: rgba(251, 191, 36, 0.05);
+    --font-cyber: 'Orbitron', sans-serif;
+    --font-data: 'Rajdhani', sans-serif;
+}
+
+/* ==========================================================================
+   ESTILOS GERAIS E FUNDO ANIMADO
+   ========================================================================== */
 body {
-    font-family: 'Rajdhani', sans-serif;
-    background-color: #0c0a09; /* stone-950 */
-    color: #F3F4F6; /* text-gray-100 */
-    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+    font-family: var(--font-data);
+    background-color: var(--bg-space);
+    color: #f3f4f6;
+    /* Linhas de grade futuristas + Gradiente Espacial */
+    background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, #0c0a09 0%, #020202 100%);
+    background-size: 30px 30px, 30px 30px, 100% 100%;
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
 }
-h1, h2, h3 {
-    font-family: 'Orbitron', sans-serif;
-    color: #facc15; /* yellow-400 */
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+
+/* Efeito de Scanline clássico de monitores CRT sci-fi */
+body::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 99999;
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
 }
+
+/* Títulos Energizados */
+h1, h2, h3, h4 {
+    font-family: var(--cyber-font);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+h1 {
+    color: #ffffff;
+    text-shadow: 0 0 10px var(--neon-blue), 0 0 20px rgba(6, 182, 212, 0.5);
+    animation: pulseGlowBlue 3s infinite alternate;
+}
+
+h2 {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+}
+
+/* ==========================================================================
+   PAINEIS HOLOGRÁFICOS (Containers)
+   ========================================================================== */
 .section-container {
-    background-color: rgba(28, 25, 23, 0.8); /* stone-900 with opacity */
-    backdrop-filter: blur(4px);
-    border: 1px solid #a16207; /* yellow-700 */
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--panel-border);
+    border-radius: 0.75rem;
+    padding: 1.75rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(251, 191, 36, 0.03);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
 }
+
+/* Cantoneiras Sci-Fi nos Paineis ao passar o mouse */
+.section-container:hover {
+    transform: translateY(-4px);
+    border-color: rgba(251, 191, 36, 0.5);
+    box-shadow: 0 12px 40px 0 rgba(251, 191, 36, 0.12), inset 0 0 20px rgba(251, 191, 36, 0.05);
+}
+
+.section-container h3 {
+    color: var(--neon-yellow);
+    border-left: 4px solid var(--neon-yellow);
+    padding-left: 0.75rem;
+    margin-bottom: 1.25rem;
+    font-size: 1.25rem;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+}
+
+/* ==========================================================================
+   INPUTS INTERATIVOS & SELETORES
+   ========================================================================== */
 input[type="text"], input[type="number"], textarea, select {
-    background-color: #1c1917; /* stone-900 */
-    border: 1px solid #57534e; /* stone-600 */
-    color: #F9FAFB; /* text-gray-50 */
-    border-radius: 0.375rem;
-    padding: 0.5rem;
-    width: 100%;
-    transition: all 0.2s ease-in-out;
-}
-input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
-    outline: none;
-    border-color: #facc15; /* yellow-400 */
-    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.4);
-}
-label {
+    background-color: rgba(20, 17, 16, 0.8);
+    border: 1px solid rgba(161, 98, 7, 0.3);
+    color: #ffffff;
+    font-family: var(--font-data);
+    font-size: 1.05rem;
     font-weight: 600;
-    color: #D1D5DB; /* text-gray-300 */
+    border-radius: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    width: 100%;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    transition: all 0.25s ease-in-out;
 }
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--neon-blue);
+    background-color: rgba(10, 15, 20, 0.9);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.4), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: scale(1.01);
+}
+
+label {
+    font-family: var(--font-cyber);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #9ca3af;
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    transition: color 0.2s;
+}
+
+div:focus-within > label {
+    color: var(--neon-blue);
+}
+
+/* ==========================================================================
+   BLOCOS DE ATRIBUTOS E STATUS
+   ========================================================================== */
 .stat-box {
-    background-color: #292524; /* stone-800 */
+    background: linear-gradient(135deg, rgba(41, 37, 36, 0.7), rgba(28, 25, 23, 0.9));
+    border: 1px solid rgba(251, 191, 36, 0.15);
     padding: 0.75rem;
     border-radius: 0.5rem;
     text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
 }
+
+.stat-box:hover {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+}
+
 .stat-value {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
+    font-size: 2rem;
     font-weight: 700;
-    font-family: 'Orbitron', sans-serif;
+    font-family: var(--font-cyber);
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
+
 .stat-mod {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-    font-weight: 600;
-    color: #facc15; /* yellow-400 */
+    font-size: 1.35rem;
+    font-weight: 700;
+    font-family: var(--font-cyber);
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
 }
+
+/* ==========================================================================
+   BOTÕES E MICROINTERAÇÕES
+   ========================================================================== */
+/* Botões Amarelos Principais */
+button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn), 
+.btn-voltar-fixo, .btn-salvar-fixo, #btn-login {
+    font-family: var(--font-cyber) !important;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):hover,
+.btn-voltar-fixo:hover, .btn-salvar-fixo:hover, #btn-login:hover {
+    transform: translateY(-2px) scale(1.03) !important;
+    box-shadow: 0 0 20px var(--neon-yellow) !important;
+}
+
+button:not(.hp-btn):not(.remove-btn):not(.remove-weapon-btn):active,
+.btn-voltar-fixo:active, .btn-salvar-fixo:active {
+    transform: translateY(1px) scale(0.97) !important;
+}
+
+/* Ícone de Dado Animado */
 .dice-icon {
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    fill: #facc15; /* yellow-400 */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    fill: var(--neon-yellow);
+    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
 }
+
 .dice-icon:hover {
-    transform: scale(1.2) rotate(15deg);
-    fill: #fde047; /* yellow-300 */
+    transform: scale(1.3) rotate(45deg);
+    fill: #ffffff;
+    filter: drop-shadow(0 0 12px var(--neon-blue));
 }
-/* Estilos do Modal de Rolagem de Dados */
+
+/* Animação acionada quando o dado roda (via JS futuramente se quiser colocar a classe) */
+.dice-spinning {
+    animation: diceSpin 0.6s ease-out-in;
+}
+
+/* ==========================================================================
+   SISTEMA DE CONTROLE DE PONTOS DE VIDA (HP)
+   ========================================================================== */
+.hp-btn-group {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem;
+    border-radius: 0.5rem;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);
+}
+
+.hp-btn-group-negative {
+    background: linear-gradient(180deg, #450a0a, #1a0505);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.hp-btn-group-positive {
+    background: linear-gradient(180deg, #064e3b, #022c22);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.hp-btn {
+    background-color: transparent;
+    border: none;
+    font-weight: 800;
+    padding: 0.5rem 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: var(--font-cyber);
+    font-size: 0.85rem;
+    border-radius: 0.375rem;
+}
+
+.hp-btn-group-negative .hp-btn { color: #fca5a5; }
+.hp-btn-group-positive .hp-btn { color: #6ee7b7; }
+
+.hp-btn-group-negative .hp-btn:hover {
+    background-color: var(--neon-red);
+    color: #ffffff;
+    box-shadow: 0 0 15px var(--neon-red);
+}
+
+.hp-btn-group-positive .hp-btn:hover {
+    background-color: var(--neon-green);
+    color: #ffffff;
+    box-shadow: 0 0 15px var(--neon-green);
+}
+
+#pv-atual-display {
+    color: #ffffff;
+    font-family: var(--font-cyber);
+    font-size: 1.6rem;
+    text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+    animation: flashGlow 4s infinite alternate;
+}
+
+/* ==========================================================================
+   MODAL DE ROLAGEM DE DADOS SUPER SCI-FI
+   ========================================================================== */
 #dice-modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(3, 2, 2, 0.85);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 10000;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s, visibility 0.3s;
 }
+
 #dice-modal.show {
     opacity: 1;
     visibility: visible;
 }
+
 .modal-content {
-    background-color: #1c1917;
-    border: 2px solid #facc15;
-    padding: 2rem;
-    border-radius: 0.5rem;
+    background: linear-gradient(145deg, #0f172a, #020617);
+    border: 2px solid var(--neon-blue);
+    padding: 2.5rem;
+    border-radius: 1rem;
     text-align: center;
-    box-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
-    transform: scale(0.9);
-    transition: transform 0.3s;
+    box-shadow: 0 0 40px rgba(6, 182, 212, 0.4), inset 0 0 20px rgba(6, 182, 212, 0.1);
+    transform: scale(0.8) rotateX(-20deg);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 90%;
+    width: 400px;
 }
+
 #dice-modal.show .modal-content {
-    transform: scale(1);
+    transform: scale(1) rotateX(0deg);
 }
-.modal-content h3 {
-    margin-bottom: 1rem;
-}
+
 #roll-result {
-    font-size: 3rem;
-    font-family: 'Orbitron', sans-serif;
-    color: #facc15;
-    margin: 1rem 0;
-}
-#roll-breakdown {
-    font-size: 1rem;
-    color: #D1D5DB;
-}
-/* Estilo base para os GRUPOS de botões (negativo e positivo) */
-.hp-btn-group {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.1rem;
-    border-radius: 0.375rem;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
-}
-
-/* Cor para o grupo NEGATIVO (vermelho) */
-.hp-btn-group-negative {
-    background: linear-gradient(to bottom, #7f1d1d, #521313);
-    border: 1px solid #dc2626;
-}
-
-/* Cor para o grupo POSITIVO (verde) */
-.hp-btn-group-positive {
-    background: linear-gradient(to bottom, #166534, #14532d);
-    border: 1px solid #22c55e;
-}
-
-/* Estilo para TODOS os botões dentro da barra */
-.hp-btn {
-    background-color: transparent;
-    border: none;
-    font-weight: bold;
-    padding: 0.5rem 0.75rem;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.9rem;
-    border-radius: 0.25rem;
-}
-
-.hp-btn-group-negative .hp-btn {
-    color: #fecaca;
-}
-
-.hp-btn-group-positive .hp-btn {
-    color: #a7f3d0;
-}
-
-.hp-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
+    font-size: 4rem;
+    font-family: var(--font-cyber);
     color: #ffffff;
+    text-shadow: 0 0 20px var(--neon-blue), 0 0 40px rgba(6, 182, 212, 0.6);
+    margin: 1.5rem 0;
+    font-weight: 700;
 }
 
-#pv-atual-display {
-    color: #fefce8;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-    flex-shrink: 0;
-}
-
-#hp-control-bar {
-    align-items: center; /* Garante centralização vertical dos botões e do valor de PV */
-}
-#talentos-button, #add-talento-btn, #add-class-talents-btn{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 1rem;
-    text-align: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 3rem;
-    min-width: 10rem;
-}
-
-
-
+/* ==========================================================================
+   NOTIFICAÇÕES, SELETORES E EXTRA
+   ========================================================================== */
 #notificacao {
     position: fixed;
-    top: 80px;
-    right: 10px;
-    background-color: rgba(48, 192, 115, 0.5) ; /* verde */
-    color: white;
-    padding: 12px 16px;
-    border-radius: 8px;
-    box-shadow: 5px 5px 20px rgba(0, 255, 170, 0.35);
-    font-weight: bold;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
-
+    top: 24px;
+    right: 24px;
+    background: rgba(16, 185, 129, 0.15);
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    border: 1px solid var(--neon-green);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+    font-family: var(--font-cyber);
+    font-size: 0.9rem;
+    font-weight: 700;
+    z-index: 11000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .ocultday {
     opacity: 0;
+    transform: translateX(100px);
     pointer-events: none;
 }
 
 .visivel {
     opacity: 1;
+    transform: translateX(0);
 }
 
-.btn-voltar-fixo {
-    position: fixed;
-    top: 24px;
-    left: 24px;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
+/* Checkboxes Customizados */
+input[type="checkbox"] {
+    appearance: none;
+    background-color: rgba(0,0,0,0.5);
+    border: 2px solid rgba(161, 98, 7, 0.5);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
 }
 
-.btn-salvar-fixo {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 1000;
+input[type="checkbox"]:checked {
+    background-color: var(--neon-blue);
+    border-color: #ffffff;
+    box-shadow: 0 0 10px var(--neon-blue);
 }
 
-.container-exportacao {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin: 2rem 0;
+input[type="checkbox"]:checked::before {
+    content: "✓";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   ANIMAÇÕES DE SISTEMA (KEYFRAMES)
+   ========================================================================== */
+@keyframes pulseGlowBlue {
+    0% { text-shadow: 0 0 8px rgba(6, 182, 212, 0.4); }
+    100% { text-shadow: 0 0 18px rgba(6, 182, 212, 0.9), 0 0 28px rgba(6, 182, 212, 0.4); }
+}
+
+@keyframes flashGlow {
+    0%, 100% { filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.3)); }
+    50% { filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.7)); }
+}
+
+@keyframes diceSpin {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(0.7) rotate(180deg); filter: blur(1px); }
+    100% { transform: scale(1) rotate(360deg); }
 }
 
 /* eu gosto de batatas  */
