@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub Central - Star Wars RPG</title>
+    <link rel="stylesheet" href="../styles/menu.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/x-icon" href="img/droid.ico">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+</head>
+
+<body>
+
+    <div class="main-container">
+
+        <div class="top-bar">
+            <div class="system-info">
+                <span>SISTEMA: CORELLIAN v5.0</span>
+                <span id="user-display" style="cursor: default; transition: color 0.3s;">USUÁRIO: NÃO IDENTIFICADO</span>
+            </div>
+            <div class="system-status" style="display: flex; align-items: center; gap: 15px;">
+                <a id="btn-login" href="" class="access-button" style="padding: 4px 12px; font-size: 0.75em; display: none;">LOGIN</a>
+                <button id="btn-logout" class="access-button" style="padding: 4px 12px; font-size: 0.75em; border-color: var(--imp-red); color: var(--imp-red); cursor: pointer; display: none;">SAIR</button>
+                
+                <div style="display: flex; align-items: center;">
+                    <span id="connection-indicator" class="status-indicator"></span>
+                    <span id="connection-text" style="transition: color 0.3s;">VERIFICANDO...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+
+            <aside class="sidebar">
+                <div class="sidebar-module">
+                    <h3 class="sidebar-title">NAVEGAÇÃO RÁPIDA</h3>
+                    <ul class="nav-links">
+                        <li><a href="pages/comunicacao"><i class="fa-solid fa-satellite-dish"></i> COMUNICAÇÃO</a></li>
+                        <li><a href="pages/mapa_galatico"><i class="fa-solid fa-globe"></i> MAPA GALÁCTICO</a></li>
+                        <li><a href="pages/hierarquias"><i class="fa-solid fa-users"></i> HIERARQUIAS</a></li>
+                        <li><a href="senhas/hangar"><i class="fa-solid fa-warehouse"></i> HANGAR</a></li>
+                        <li><a href="pages/posto"><i class="fa-solid fa-gas-pump"></i> POSTO DE COMBUSTÍVEL</a></li>
+                        <li><a href="pages/p2w"><i class="fa-solid fa-coins"></i> SUPRIMENTOS</a></li>
+                        <li><a href="pages/manutencao"><i class="fa-solid fa-wrench"></i> MANUTENÇÃO</a></li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-module">
+                    <h3 class="sidebar-title">STATUS DA FROTA</h3>
+                    <ul class="fleet-status">
+                        <!-- Master Gear Repair FReighter (Cargueiro de Reparos Engrenagem Mestra) -->
+                        <li><span class="status-indicator online"></span>
+                            <a href="senhas/mestre" style="text-decoration: none; color: inherit; cursor: default;">
+                                <span>MGRFR-01 | Ativo</span>
+                            </a>
+                        </li>
+                        <!-- Chisel Light Atmospheric Superiority Fighter (Caça Leve de Superioridade Atmosférica Cinzel) -->
+                        <li><span class="status-indicator mission"></span><span>CLASF-01 | Desativado</span></li>
+                        <!-- Grinder Custom UTility Speeder (Speeder Utilitário Customizado Moedor) -->
+                        <li><span class="status-indicator offline"></span><span>GCUTS-01 | Ausente</span></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-module">
+                    <h3 class="sidebar-title">INTEGRIDADE DO SISTEMA</h3>
+                    <div class="system-integrity">
+                        <label><i class="fa-solid fa-shield-halved"></i> ESCUDOS</label>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar warning" style="width: 55%;"></div>
+                        </div>
+                        <label><i class="fa-solid fa-heart-pulse"></i> SUPORTE DE VIDA</label>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 100%;"></div>
+                        </div>
+                        <label><i class="fa-solid fa-jet-fighter-up"></i> HIPERPROPULSOR</label>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar " style="width: 87%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <h1><i class="fa-solid fa-terminal"></i> PAINEL DE ACESSO</h1>
+
+                <!-- INÍCIO DO PAINEL DE ALERTA IMPERIAL -->
+                <div class="imperial-alert-panel" onclick="window.location.href='pages/rebeldes'">
+                    <div class="imperial-header">
+                        <span><i class="fa-solid fa-triangle-exclamation animate-flicker"></i> DIRETRIZ IMPERIAL
+                            DETECTADA</span>
+                        <a href="senhas/loja" style="text-decoration: none; color: inherit; cursor: default;">
+                            <span class="imperial-id">REF: #REBEL_ACTIVIVITY</span>
+                        </a>
+                    </div>
+                    <p class="imperial-description">
+                        <strong>ALERTA DE SEGURANÇA MÁXIMA:</strong> Atividade de células terroristas Rebeldes detectada
+                        nos setores adjacentes. Varreduras de Holonet indicam comunicações criptografadas e tráfego
+                        não autorizado de naves de carga. Qualquer sinal de insubordinação ou inteligência sobre os
+                        grupos Rebelde deve ser reportada imediatamente ao Oficial de Segurança do Império mais próximo.
+                        Rebeldes devem ser reportada imediatamente ao Oficial de Segurança do Império mais próximo.
+                        A cumplicidade com traidores resulta em prisão imediata.
+                    </p>
+                    <div class="imperial-footer">
+                        <span class="access-text">RREDIRECIONAR PARA MONITORAMENTO DE DISSEMINAÇÃO <i
+                                class="fa-solid fa-arrow-right"></i></span>
+                        <span class="data-status danger-pulse"></span>
+                    </div>
+                </div>
+                <!-- FIM DO PAINEL DE ALERTA IMPERIAL -->
+
+                <div class="hub-container">
+                    <div class="module-card">
+                        <div class="card-header">
+                            <span><i class="fa-solid fa-user-astronaut"></i>TERMINAL DE REGISTROS DE PESSOAL E
+                                IDENTIFICAÇÃO </span>
+
+                            <span class="module-id">#47-GAMMA</span>
+                        </div>
+                        <p class="card-description">
+                            Módulo de Registros de Pessoal e Identificação Biométrica. Esta interface permite o acesso e
+                            gerenciamento do seu dossiê operacional. É seu dever manter todos os dados atualizados,
+                            incluindo certificações de pilotagem, proficiência em armamentos e histórico de serviço. A
+                            precisão do seu perfil afeta diretamente a atribuição de missões, seus níveis de acesso e a
+                            liquidação de pagamentos. Dados incorretos podem resultar em falha de protocolo.
+                        </p>
+                        <div class="card-footer">
+                            <a href="./pages/ficha.html" class="access-button">INDISPONÍVEL</a>
+                            <span class="data-status error"></span>
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="card-header">
+                            <span><i class="fa-solid fa-rocket"></i>TERMINAL DE REQUISIÇÃO E ACESSO AO MERCADO
+                                GALÁCTICO</span>
+                            <span class="module-id">#12-DELTA</span>
+                        </div>
+                        <p class="card-description">
+                            Terminal de Requisição e Acesso ao Mercado Galáctico. Gerencie o conteúdo do seu
+                            compartimento de carga pessoal e acesse nossa rede de fornecedores afiliados. O sistema
+                            integra mercados em toda a galáxia, desde os comerciantes de peças robustas e material de
+                            sobrevivência na Orla Exterior até os fabricantes de equipamentos de precisão nos Mundos do
+                            Núcleo. Utilize seus créditos para requisitar suprimentos, armamentos ou componentes de
+                            nave. Todas as transações são criptografadas e registradas.
+                        </p>
+                        <div class="card-footer">
+                            <a href="pages/inventario" class="access-button">EXPLORAR</a>
+                            <span class="data-status ok"></span>
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="card-header">
+                            <span><i class="fa-solid fa-rocket"></i>TERMINAL DE ACESSO À HOLONET</span>
+                            <span class="module-id">#46-ALPHA</span>
+                        </div>
+                        <p class="card-description">
+                            Terminal de Acesso à Holonet. A Holonet é a rede de comunicação interplanetária que conecta
+                            sistemas estelares, permitindo o acesso a informações estratégicas, notícias e dados de
+                            inteligência. Este terminal oferece uma interface segura para navegar por feeds de notícias,
+                            relatórios de missões e atualizações de status em tempo real. Mantenha-se informado sobre
+                            eventos galácticos e comunicações críticas para a sua operação.
+                        </p>
+                        <div class="card-footer">
+                            <a href="pages/holonet" class="access-button">EXPLORAR</a>
+                            <span class="data-status ok"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-log" id="activity-log">
+                    <h3 class="log-title">LOG DE ATIVIDADES DO SISTEMA</h3>
+                    <div class="log-content">
+                        <p>> Conexão estabelecida com o servidor CORELLIAN v5.0...</p>
+                        <p class="log-success">> Autenticação do PILOTO_07 bem-sucedida.</p>
+                        <p>> Carregando módulos de acesso rápido...</p>
+                        <p class="log-warning">> Alerta: Flutuação de energia detectada no setor 4.</p>
+                        <p class="log-error">> Módulo #47-GAMMA carregado. Status: ERROR.</p>
+                        <p class="log-success">> Módulo #12-DELTA carregado. Status: OK.</p>
+                        <p class="log-success">> Módulo #46-ALPHA carregado. Status: OK.</p>
+                        <p>> Verificando protocolos de segurança...</p>
+                        <p class="log-success">> Protocolos confirmados. Conexão segura.</p>
+                        <p>> Aguardando comando do usuário...</p>
+                    </div>
+                </div>
+
+                <div class="system-readout-panel">
+                    <h3 class="readout-title">ANÁLISE DE FLUXO DE DADOS</h3>
+                    <div class="readout-item">
+                        <span>UPLINK STATUS</span>
+                        <div class="readout-bar-container">
+                            <div class="readout-bar" style="width: 100%; background-color: #5cb85c; color: #5cb85c;">
+                            </div>
+                        </div>
+                        <span class="status-text ok">ESTÁVEL</span>
+                    </div>
+                    <div class="readout-item">
+                        <span>ENCRIPTAÇÃO</span>
+                        <div class="readout-bar-container">
+                            <div class="readout-bar" style="width: 100%; background-color: #00aaff; color: #00aaff;">
+                            </div>
+                        </div>
+                        <span class="status-text info">AES-256</span>
+                    </div>
+                    <div class="readout-item">
+                        <span>PACOTES DE DADOS</span>
+                        <div class="readout-bar-container">
+                            <div class="readout-bar" style="width: 75%; background-color: #f0ad4e; color: #f0ad4e;">
+                            </div>
+                        </div>
+                        <span class="status-text warning">PERDA PARCIAL</span>
+                    </div>
+                </div>
+
+            </main>
+
+        </div>
+
+        <div class="bottom-bar">
+            <span onclick="window.location.href='senhas/MCMT'"
+                style="background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;cursor:default;outline:none;text-decoration:none;"
+                tabindex="0">© ABY 04 - FROTA ESTELAR LOCAL | SETOR LOTHAL</span>
+            <span class="system-time">HORA DO SISTEMA: 13:37:00</span>
+        </div>
+
+    </div>
+
+    <!-- ======== EFEITOS DE TERMINAL ======== -->
+    <script>
+        (function () {
+
+            /* ---- Relógio real no rodapé ---- */
+            const clockEl = document.querySelector('.system-time');
+            if (clockEl) {
+                function updateClock() {
+                    const now = new Date();
+                    const h = String(now.getHours()).padStart(2, '0');
+                    const m = String(now.getMinutes()).padStart(2, '0');
+                    const s = String(now.getSeconds()).padStart(2, '0');
+                    clockEl.textContent = `HORA DO SISTEMA: ${h}:${m}:${s}`;
+                }
+                updateClock();
+                setInterval(updateClock, 1000);
+            }
+
+            /* ---- Efeito de digitação no log ---- */
+            const logContent = document.querySelector('.log-content');
+            if (logContent) {
+                const lines = Array.from(logContent.querySelectorAll('p'));
+                const classes = lines.map(p => p.className);
+                const texts = lines.map(p => p.textContent.trim());
+
+                // Limpa e esconde tudo
+                logContent.innerHTML = '';
+
+                // Adiciona cursor
+                const cursor = document.createElement('span');
+                cursor.className = 'log-cursor';
+                logContent.appendChild(cursor);
+
+                let lineIndex = 0;
+
+                function typeLine() {
+                    if (lineIndex >= texts.length) {
+                        // Deixa cursor piscando no final
+                        logContent.appendChild(cursor);
+                        // Rola para o final
+                        logContent.scrollTop = logContent.scrollHeight;
+                        return;
+                    }
+
+                    const p = document.createElement('p');
+                    if (classes[lineIndex]) p.className = classes[lineIndex];
+
+                    const text = texts[lineIndex];
+                    logContent.insertBefore(p, cursor);
+
+                    let charIndex = 0;
+                    const speed = 18; // ms por caractere
+
+                    function typeChar() {
+                        if (charIndex < text.length) {
+                            p.textContent += text[charIndex];
+                            charIndex++;
+                            logContent.scrollTop = logContent.scrollHeight;
+                            setTimeout(typeChar, speed);
+                        } else {
+                            lineIndex++;
+                            // Pausa entre linhas
+                            const pause = lineIndex < texts.length ? 280 : 500;
+                            setTimeout(typeLine, pause);
+                        }
+                    }
+                    typeChar();
+                }
+
+                // Começa após pequeno delay de boot
+                setTimeout(typeLine, 600);
+            }
+
+            /* ---- Glitch ocasional no título ---- */
+            const h1 = document.querySelector('h1');
+            if (h1) {
+                // Guarda o texto sem o ícone para o data-text
+                h1.setAttribute('data-text', h1.textContent.trim());
+
+                function triggerGlitch() {
+                    h1.classList.add('glitch-active');
+                    setTimeout(() => h1.classList.remove('glitch-active'), 200);
+
+                    // Agenda próximo glitch: entre 4s e 14s
+                    const next = 4000 + Math.random() * 10000;
+                    setTimeout(triggerGlitch, next);
+                }
+
+                // Primeiro glitch após 3s
+                setTimeout(triggerGlitch, 3000);
+            }
+
+            /* ---- Glitch rápido de pixel no container (noise) ---- */
+            const container = document.querySelector('.main-container');
+            if (container) {
+                function triggerNoise() {
+                    container.style.transform = `translateX(${(Math.random() - 0.5) * 1.5}px)`;
+                    setTimeout(() => {
+                        container.style.transform = '';
+                    }, 80);
+                    const next = 6000 + Math.random() * 12000;
+                    setTimeout(triggerNoise, next);
+                }
+                setTimeout(triggerNoise, 5000);
+            }
+
+            /* ---- Lógica Dinâmica de Autenticação Supabase ---- */
+            (async function checkAuth() {
+                if (typeof supabaseClient === 'undefined') return;
+
+                const userDisplay = document.getElementById('user-display');
+                const btnLogin = document.getElementById('btn-login');
+                const btnLogout = document.getElementById('btn-logout');
+                
+                // Elementos do Módulo da Ficha
+                const fichaLink = document.querySelector('a[href="./pages/ficha.html"]');
+                const fichaStatus = fichaLink ? fichaLink.parentElement.querySelector('.data-status') : null;
+
+                const { data: { session } } = await supabaseClient.auth.getSession();
+
+                if (session && session.user) {
+                    // Estado: Logado
+                    const emailPrefix = session.user.email.split('@')[0].toUpperCase();
+                    userDisplay.textContent = 'USUÁRIO: ' + emailPrefix;
+                    userDisplay.style.color = 'var(--tech-cyan)';
+                    
+                    btnLogin.style.display = 'none';
+                    btnLogout.style.display = 'inline-block';
+
+                    // Libera visualmente o módulo da Ficha de Personagem
+                    if (fichaLink && fichaStatus) {
+                        fichaLink.textContent = "ACESSAR";
+                        fichaStatus.className = 'data-status ok';
+                    }
+                } else {
+                    // Estado: Deslogado
+                    userDisplay.textContent = 'USUÁRIO: NÃO IDENTIFICADO';
+                    userDisplay.style.color = 'var(--imp-red)';
+                    
+                    btnLogin.style.display = 'inline-block';
+                    btnLogout.style.display = 'none';
+                }
+
+                // Ação do Botão Sair
+                btnLogout.addEventListener('click', async () => {
+                    await supabaseClient.auth.signOut();
+                    window.location.reload();
+                });
+            })();
+
+        })();
+    </script>
+
+</body>
+
+</html>

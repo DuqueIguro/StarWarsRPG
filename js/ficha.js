@@ -962,8 +962,17 @@ function initFicha() {
                     const importedData = JSON.parse(e.target.result);
 
                     if (importedData.ficha) {
-                        // Atualiza o Estado
+                        /* INICIO DE FUNÇÃO DE [Blindagem de Importação de Créditos]; esta função impede que o arquivo JSON sobrescreva o dinheiro oficial do banco de dados */
+                        if (importedData.ficha.recursos && importedData.ficha.recursos.creditos !== undefined) {
+                            delete importedData.ficha.recursos.creditos;
+                        }
+
+                        const creditosAutenticos = appState.recursos.creditos;
+
                         Object.assign(appState, importedData.ficha);
+
+                        appState.recursos.creditos = creditosAutenticos;
+                        /* FIM DE FUNÇÃO DE [Blindagem de Importação de Créditos] */
 
                         // Força o auto-save do novo JSON importado
                         localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
@@ -1024,7 +1033,7 @@ function initFicha() {
 /* INICIO DE FUNÇÃO DE [Sincronização e Supabase]; gerencia carregamento, salvamento e exclusão na nuvem */
 function sincronizarTelaComEstadoGlobal() {
     const obterValorDoCaminho = (obj, path) => path.split('.').reduce((acc, part) => acc && acc[part], obj);
-    
+
     document.querySelectorAll('[data-json-path]').forEach(input => {
         const value = obterValorDoCaminho(appState, input.dataset.jsonPath);
         if (value !== undefined && value !== null) {
@@ -1044,13 +1053,16 @@ function sincronizarTelaComEstadoGlobal() {
 async function carregarFichaDoBanco() {
     const { data: userData, error: userError } = await supabaseClient.auth.getUser();
     const btnLogout = document.getElementById('btn-logout');
+    const btnLogin = document.getElementById('btn-login');
 
     if (userError || !userData.user) {
         if (btnLogout) btnLogout.classList.add('hidden');
+        if (btnLogin) btnLogin.classList.remove('hidden'); // Mostra Login se não estiver logado
         return;
     }
 
-    if (btnLogout) btnLogout.classList.remove('hidden');
+    if (btnLogout) btnLogout.classList.remove('hidden'); // Mostra Sair se estiver logado
+    if (btnLogin) btnLogin.classList.add('hidden');
 
     const { data: personagens, error: selectError } = await supabaseClient
         .from('personagens').select('*').eq('user_id', userData.user.id).limit(1);
@@ -1083,11 +1095,17 @@ async function salvarFichaNoBanco() {
         return;
     }
 
+    // Prepara o JSON da ficha limpo, removendo os créditos de dentro dele
+    const jsonLimpo = JSON.parse(JSON.stringify(_internalState));
+    if (jsonLimpo.recursos && jsonLimpo.recursos.creditos !== undefined) {
+        delete jsonLimpo.recursos.creditos;
+    }
+
     const payload = {
         user_id: userData.user.id,
         nome: appState.biografia.nome || 'Desconhecido',
-        creditos: parseInt(appState.recursos.creditos) || 0,
-        dados_ficha: JSON.parse(JSON.stringify(_internalState)),
+        creditos: parseInt(appState.recursos.creditos) || 0, // Salva APENAS na coluna matemática blindada (RLS)
+        dados_ficha: jsonLimpo,                              // Salva o JSON sem os créditos
         updated_at: new Date().toISOString()
     };
 
@@ -1141,7 +1159,7 @@ setTimeout(() => {
             const { error } = await supabaseClient.auth.signOut();
             if (!error) {
                 localStorage.removeItem('starWarsFichaAutoSave');
-                window.location.href = 'login.html';
+                window.location.href = '../menu.html';
             }
         });
     }
