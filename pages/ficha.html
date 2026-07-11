@@ -24,7 +24,7 @@
 
     <div class="flex flex-wrap justify-between items-center gap-4 mb-8 bg-stone-900/60 backdrop-blur-md p-4 rounded-xl border border-stone-800/80 shadow-2xl">
         <a href="../index.html" class="btn-voltar-fixo px-5 py-2.5 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-400 border border-cyan-500/40 font-bold rounded-lg text-sm transition-all duration-300 flex items-center gap-2">
-            🛸 Voltar ao Hangar
+            🛸 Voltar ao Terminal Princial
         </a>
         
         <div class="flex items-center gap-3">
@@ -39,9 +39,9 @@
 
     <header class="text-center mb-10">
         <h1 class="text-3xl sm:text-5xl font-black mb-2 tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-200 to-amber-300">
-            SAGA CRITICAL TERMINAL
+            TERMINAL DE REGISTROS DE PESSOAL E IDENTIFICAÇÃO
         </h1>
-        <p class="text-stone-400 font-medium tracking-wide uppercase text-xs sm:text-sm">Sistema de Monitoramento de Ativos Galácticos v4.0</p>
+        <p class="text-stone-400 font-medium tracking-wide uppercase text-xs sm:text-sm">Sistema de Monitoramento de Ativos Galácticos v5.1</p>
     </header>
 
     <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -222,14 +222,14 @@
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-stone-800/60">
-                    <div>
+                    <!-- <div>
                         <label class="text-cyan-400">Pontos de Força</label>
                         <input type="number" data-json-path="recursos.pontosForca" min="0">
                     </div>
                     <div>
                         <label class="text-purple-400">Pontos de Destino</label>
                         <input type="number" data-json-path="recursos.pontosDestino" min="0">
-                    </div>
+                    </div> -->
                     <div>
                         <label class="text-red-400">Lado Negro</label>
                         <input type="number" data-json-path="recursos.pontosLadoNegro" min="0">
@@ -288,20 +288,6 @@
             </section>
 
             <section class="section-container">
-                <h3>Diretrizes de Combate</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                    <div>
-                        <label>Bônus Base de Ataque (BBA)</label>
-                        <div id="bba-display" class="w-full text-center py-2.5 bg-stone-900 border border-stone-800 rounded-lg font-bold text-white text-lg">0</div>
-                    </div>
-                    <div>
-                        <label>Modificador de Ataque Manual Geral</label>
-                        <input type="number" data-json-path="modificadoresManuais.combate.attackGeral">
-                    </div>
-                </div>
-            </section>
-
-            <section class="section-container">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 border-b border-stone-800 pb-3">
                     <h3 class="m-0 border-0 p-0">Matriz de Perícias (Skills)</h3>
                     <input type="text" id="search-pericia" placeholder="Filtrar diretrizes de perícia..." class="max-w-xs text-sm">
@@ -315,6 +301,20 @@
                     <svg class="col-span-2 w-5 h-5 mx-auto" viewBox="0 0 24 24" fill="currentColor"><path d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M7,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,9,7,9z"/></svg>
                 </div>
                 <div id="pericias" class="flex flex-col gap-2 max-h-96 overflow-y-auto pr-1"></div>
+            </section>
+
+            <section class="section-container">
+                <h3>Diretrizes de Combate</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                    <div>
+                        <label>Bônus Base de Ataque (BBA)</label>
+                        <div id="bba-display" class="w-full text-center py-2.5 bg-stone-900 border border-stone-800 rounded-lg font-bold text-white text-lg">0</div>
+                    </div>
+                    <div>
+                        <label>Modificador de Ataque Manual Geral</label>
+                        <input type="number" data-json-path="modificadoresManuais.combate.attackGeral">
+                    </div>
+                </div>
             </section>
 
             <section class="section-container">
