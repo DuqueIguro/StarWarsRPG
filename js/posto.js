@@ -32,62 +32,126 @@ function loadFromStorage(key) {
 
 // --- ESTADO INICIAL ---
 let shipsData = {};
-let PRICES = { sublight: 10, hyperdrive: 20000 }; // Preços de mercado fixados
-let userCredits = 15000;
+let PRICES = { sublight: 10, hyperdrive: 20000 };
+let userCredits = 0; // Controlado pelo Supabase agora
 let currentShipKey = '';
+
+// --- VARIÁVEIS DO BANCO DE DADOS (SUPABASE) ---
+let currentUser = null;
+let currentPersonagemId = null;
+
+const registarLog = async (personagemId, tipoEvento, descricao, mudancaCreditos = 0) => {
+    if (!personagemId) return;
+    await supabaseClient.from('logs_auditoria').insert([{
+        personagem_id: personagemId,
+        tipo_evento: tipoEvento,
+        descricao: descricao,
+        mudanca_creditos: mudancaCreditos
+    }]);
+};
 
 let pumpInterval = null;
 let currentPumpingAmount = 0;
+let initialPumpingCredits = 0; // Guarda o dinheiro antes de começar a abastecer
+let isPumpingActive = false;   // Previne que a base de dados grave múltiplas vezes
 let audioContext = null;
 let pumpOsc = null;
 let pumpGain = null;
 
 // --- INICIALIZAÇÃO DE ELEMENTOS E EVENTOS ---
-document.addEventListener('DOMContentLoaded', () => {
-    loadSavedDatabase();
+document.addEventListener('DOMContentLoaded', async () => {
     initDOMEvents();
     setupCanvases();
-    addLog("Terminal de transponder inicializado. Sinal de rede local ativo.");
+    addLog("Terminal de transponder inicializado. Autenticando com o Banco Galáctico...");
+    await carregarDadosDoBanco();
 });
 
-function loadSavedDatabase() {
-    // Carrega créditos salvos
-    const savedCredits = loadFromStorage('posto_credits');
-    if (savedCredits !== null) {
-        userCredits = parseFloat(savedCredits);
-    }
-    document.getElementById('userCreditsInput').value = userCredits;
+async function carregarDadosDoBanco() {
+    const creditsEl = document.getElementById('userCreditsInput');
+    creditsEl.value = "AUTENTICANDO...";
 
-    // Carrega naves cadastradas do usuário
-    const savedShips = loadFromStorage('posto_ships');
-    if (savedShips && Object.keys(savedShips).length > 0) {
-        shipsData = savedShips;
-    } else {
-        // Inicia vazio para o usuário registrar as dele
-        shipsData = {};
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !userData.user) {
+        creditsEl.value = "NÃO LOGADO";
+        addLog("ERRO: O acesso ao terminal requer autenticação biométrica.");
+        return;
+    }
+    currentUser = userData.user;
+
+    const { data: personagens, error: pError } = await supabaseClient
+        .from('personagens')
+        .select('id, creditos')
+        .eq('user_id', currentUser.id)
+        .limit(1);
+
+    if (pError || !personagens || personagens.length === 0) {
+        creditsEl.value = "S/ PERSONAGEM";
+        addLog("ERRO: Nenhum registro de piloto ativo encontrado.");
+        return;
     }
 
-    // Carrega última seleção de nave
+    currentPersonagemId = personagens[0].id;
+    userCredits = personagens[0].creditos || 0;
+    creditsEl.value = Math.floor(userCredits);
+    addLog("Conexão segura estabelecida. Sincronização de carteira concluída.");
+
+    // FASE 2: Puxar Naves Reais do Inventário
+    const { data: invData, error: invError } = await supabaseClient
+        .from('inventario')
+        .select('*')
+        .eq('personagem_id', currentPersonagemId);
+
+    shipsData = {};
+    if (!invError && invData) {
+        invData.forEach(dbItem => {
+            let baseItem = {};
+            // Mistura os dados base da loja com os dados gravados no JSONB do jogador
+            if (dbItem.item_id && typeof itemDatabase !== 'undefined') {
+                baseItem = itemDatabase.find(i => i.id === dbItem.item_id) || {};
+            }
+            const itemFinal = { ...baseItem, ...dbItem.dados_customizados };
+
+            // Verifica se o item é da categoria Nave
+            const isShip = itemFinal.category === 'Naves Prontas' || itemFinal.categoria === 'Naves Prontas' || itemFinal.categoria === 'Nave';
+
+            if (isShip) {
+                shipsData[dbItem.id] = {
+                    db_id: dbItem.id,
+                    name: itemFinal.name || itemFinal.nome || 'Nave Desconhecida',
+                    subCap: itemFinal.subCap || null, // Se for nulo, a nave veio da loja e precisa ser calibrada
+                    subLevel: itemFinal.subLevel !== undefined ? itemFinal.subLevel : null,
+                    hypCap: itemFinal.hypCap || null,
+                    hypLevel: itemFinal.hypLevel !== undefined ? itemFinal.hypLevel : null,
+                    quote: itemFinal.quote || "Sinalizador ativo do cockpit.",
+                    dados_originais: itemFinal // Guarda a raiz do item para não apagarmos os atributos base ao atualizar
+                };
+            }
+        });
+    }
+
+    const chavesNaves = Object.keys(shipsData);
     const savedSelection = loadFromStorage('posto_selected_ship');
-    if (savedSelection && shipsData[savedSelection]) {
-        currentShipKey = savedSelection;
+
+    // Seleciona a última nave ou a primeira da lista
+    if (chavesNaves.length > 0) {
+        if (savedSelection && shipsData[savedSelection]) {
+            currentShipKey = savedSelection;
+        } else {
+            currentShipKey = chavesNaves[0];
+        }
+    } else {
+        currentShipKey = '';
     }
 
     rebuildShipSelect();
 }
 
 function initDOMEvents() {
-    // Edição direta de Créditos
-    document.getElementById('userCreditsInput').addEventListener('input', (e) => {
-        userCredits = Math.max(0, parseFloat(e.target.value) || 0);
-        saveToStorage('posto_credits', userCredits);
-        updateShipUI();
-    });
-
     // Configurar botões de segurar para reabastecimento interativo
     setupPumpTrigger('btnPumpSublight', 'sublight');
     setupPumpTrigger('btnPumpHyperdrive', 'hyperdrive');
 }
+
 
 function setupPumpTrigger(btnId, type) {
     const btn = document.getElementById(btnId);
@@ -180,14 +244,11 @@ function rebuildShipSelect() {
         opt.textContent = "Nenhum transponder conectado";
         select.appendChild(opt);
         currentShipKey = '';
-        document.getElementById('customShipForm').classList.remove('hidden');
-        document.getElementById('shipStatusPanel').classList.add('opacity-40');
         document.getElementById('btnDeleteShip').disabled = true;
         updateEmptyUI();
         return;
     }
 
-    document.getElementById('shipStatusPanel').classList.remove('opacity-40');
     document.getElementById('btnDeleteShip').disabled = false;
 
     keys.forEach(key => {
@@ -197,68 +258,8 @@ function rebuildShipSelect() {
         select.appendChild(opt);
     });
 
-    if (!shipsData[currentShipKey]) {
-        currentShipKey = keys[0];
-    }
     select.value = currentShipKey;
     selectShip();
-}
-
-function toggleShipForm() {
-    const form = document.getElementById('customShipForm');
-    form.classList.toggle('hidden');
-}
-
-function registerCustomShip() {
-    const name = document.getElementById('customName').value.trim();
-    const quote = document.getElementById('customQuote').value.trim() || "Sinalizador ativo do cockpit.";
-    const subCap = Math.max(1, parseInt(document.getElementById('customSubCap').value) || 100);
-    const subLevel = Math.max(0, parseInt(document.getElementById('customSubLevel').value) || 0);
-    const hypCap = Math.max(1, parseInt(document.getElementById('customHypCap').value) || 10);
-    const hypLevel = Math.max(0, parseInt(document.getElementById('customHypLevel').value) || 0);
-
-    if (!name) {
-        showToast("ALERTA", "Forneça o nome ou modelo identificador da sua nave.", "❌");
-        return;
-    }
-
-    const key = 'nave_' + Date.now();
-    shipsData[key] = {
-        name: name,
-        subCap: subCap,
-        subLevel: Math.min(subLevel, subCap),
-        hypCap: hypCap,
-        hypLevel: Math.min(hypLevel, hypCap),
-        quote: quote
-    };
-
-    saveToStorage('posto_ships', shipsData);
-    currentShipKey = key;
-    saveToStorage('posto_selected_ship', key);
-    rebuildShipSelect();
-
-    // Limpa formulário
-    document.getElementById('customName').value = '';
-    document.getElementById('customQuote').value = '';
-    document.getElementById('customShipForm').classList.add('hidden');
-
-    addLog(`SUCESSO: Nave [${name}] acoplada à estação Aurora-9.`);
-    showToast("CONECTADA", `Transponder de ${name} sincronizado.`, "🛸");
-}
-
-function deleteCurrentShip() {
-    if (!currentShipKey || !shipsData[currentShipKey]) return;
-
-    const name = shipsData[currentShipKey].name;
-    delete shipsData[currentShipKey];
-    saveToStorage('posto_ships', shipsData);
-
-    addLog(`ALERTA: Nave [${name}] realizou a despressurização e desacoplou.`);
-    showToast("DESACOPLADA", `${name} removeu os cabos de fluxo.`, "🗑️");
-
-    currentShipKey = '';
-    saveToStorage('posto_selected_ship', '');
-    rebuildShipSelect();
 }
 
 function selectShip() {
@@ -282,29 +283,146 @@ function updateShipUI() {
         return;
     }
 
+    // LÓGICA DE PRIMEIRO ACESSO: Nave existe mas não tem tanques
+    if (ship.subCap === null || ship.hypCap === null) {
+        document.getElementById('shipStatusPanel').classList.add('opacity-40', 'pointer-events-none');
+        document.getElementById('customShipForm').classList.remove('hidden');
+        document.getElementById('customName').value = ship.name;
+        document.getElementById('customName').readOnly = true; // Impede alterar o nome da nave da loja
+        document.getElementById('customQuote').value = ship.quote;
+        document.getElementById('customSubCap').value = "";
+        document.getElementById('customSubLevel').value = "";
+        document.getElementById('customHypCap').value = "";
+        document.getElementById('customHypLevel').value = "";
+
+        showToast("D-09 INFORMA", "Nova nave detectada. Por favor, calibre a capacidade dos tanques para iniciar o abastecimento.", "⚙️");
+        return;
+    } else {
+        document.getElementById('shipStatusPanel').classList.remove('opacity-40', 'pointer-events-none');
+        document.getElementById('customShipForm').classList.add('hidden');
+        document.getElementById('customName').readOnly = false;
+    }
+
     document.getElementById('shipName').textContent = ship.name;
 
-    // Subluz
     const subPercent = (ship.subLevel / ship.subCap) * 100;
     document.getElementById('shipSublightText').textContent = `${Math.floor(ship.subLevel)} / ${ship.subCap} L`;
     document.getElementById('shipSublightBar').style.width = `${subPercent}%`;
 
-    // Hiperespaço
     const hypPercent = (ship.hypLevel / ship.hypCap) * 100;
     document.getElementById('shipHyperdriveText').textContent = `${Math.floor(ship.hypLevel)} / ${ship.hypCap} Kg`;
     document.getElementById('shipHyperdriveBar').style.width = `${hypPercent}%`;
-
-    // Créditos
-    document.getElementById('userCreditsInput').value = Math.floor(userCredits);
 }
 
 function updateEmptyUI() {
+    document.getElementById('shipStatusPanel').classList.add('opacity-40', 'pointer-events-none');
+    document.getElementById('customShipForm').classList.remove('hidden');
+    document.getElementById('customName').value = "";
+    document.getElementById('customName').readOnly = false;
+
     document.getElementById('shipName').textContent = "SEM CONEXÃO";
     document.getElementById('shipSublightText').textContent = "0 / 0 L";
     document.getElementById('shipSublightBar').style.width = "0%";
     document.getElementById('shipHyperdriveText').textContent = "0 / 0 Kg";
     document.getElementById('shipHyperdriveBar').style.width = "0%";
     document.getElementById('droidQuote').textContent = "Cadastre sua nave no painel acima para abrir os bloqueios de fluxo de gás e calibrar as conexões de reabastecimento.";
+}
+
+async function registerCustomShip() {
+    if (!currentPersonagemId) return showToast("ERRO", "Nenhum piloto autenticado.", "❌");
+
+    const name = document.getElementById('customName').value.trim();
+    const quote = document.getElementById('customQuote').value.trim() || "Sinalizador ativo do cockpit.";
+    const subCap = Math.max(1, parseInt(document.getElementById('customSubCap').value) || 100);
+    const subLevel = Math.max(0, parseInt(document.getElementById('customSubLevel').value) || 0);
+    const hypCap = Math.max(1, parseInt(document.getElementById('customHypCap').value) || 10);
+    const hypLevel = Math.max(0, parseInt(document.getElementById('customHypLevel').value) || 0);
+
+    if (!name) return showToast("ALERTA", "Forneça o nome ou modelo identificador da sua nave.", "❌");
+
+    const btnForm = document.querySelector('#customShipForm button');
+    const originalText = btnForm.textContent;
+    btnForm.disabled = true;
+    btnForm.textContent = "PROCESSANDO...";
+
+    // CENÁRIO A (UPDATE): A nave já existe na DB (veio da loja) e estava sem tanque configurado
+    if (currentShipKey && shipsData[currentShipKey] && shipsData[currentShipKey].subCap === null) {
+        const shipToUpdate = shipsData[currentShipKey];
+
+        // Fundimos os dados novos com a matriz original para não perder IDs da loja, categoria, etc.
+        const novosDadosCustomizados = {
+            ...shipToUpdate.dados_originais,
+            subCap: subCap,
+            subLevel: Math.min(subLevel, subCap),
+            hypCap: hypCap,
+            hypLevel: Math.min(hypLevel, hypCap),
+            quote: quote
+        };
+
+        const { error } = await supabaseClient.from('inventario')
+            .update({ dados_customizados: novosDadosCustomizados })
+            .eq('id', shipToUpdate.db_id);
+
+        if (!error) {
+            await registarLog(currentPersonagemId, 'CALIBRACAO_NAVE', `Tanques calibrados para a nave ${name}.`);
+            showToast("CALIBRADA", `Tanques de ${name} configurados.`, "✅");
+        }
+    }
+    // CENÁRIO B (INSERT): Criando uma nave totalmente nova direto pelo formulário do Posto
+    else {
+        const novaNaveDB = {
+            name: name,
+            category: "Naves Prontas",
+            tipo_inventario: "equipamento",
+            subCap: subCap,
+            subLevel: Math.min(subLevel, subCap),
+            hypCap: hypCap,
+            hypLevel: Math.min(hypLevel, hypCap),
+            quote: quote
+        };
+
+        const { data, error } = await supabaseClient.from('inventario').insert([{
+            personagem_id: currentPersonagemId,
+            user_id: currentUser.id,
+            item_id: null, // Sem ligação à loja
+            quantidade: 1,
+            origem: 'manual',
+            dados_customizados: novaNaveDB
+        }]).select();
+
+        if (!error && data && data.length > 0) {
+            await registarLog(currentPersonagemId, 'CRIACAO_MANUAL', `Nave registrada via Aurora-9: ${name}`);
+            showToast("CONECTADA", `Transponder de ${name} sincronizado.`, "🛸");
+        }
+    }
+
+    btnForm.disabled = false;
+    btnForm.textContent = originalText;
+
+    // Recarrega o banco inteiro para aplicar a matriz correta ao ecrã
+    await carregarDadosDoBanco();
+}
+
+async function deleteCurrentShip() {
+    if (!currentShipKey || !shipsData[currentShipKey]) return;
+    const ship = shipsData[currentShipKey];
+
+    const confirmar = confirm(`ATENÇÃO: Deseja realmente sucatear a nave [${ship.name}]? Ela será excluída de todos os inventários de forma irreversível.`);
+    if (!confirmar) return;
+
+    // A deleção ocorre diretamente na nuvem
+    const { error } = await supabaseClient.from('inventario').delete().eq('id', ship.db_id);
+
+    if (!error) {
+        addLog(`ALERTA: Nave [${ship.name}] foi descartada do inventário.`);
+        showToast("DESACOPLADA", `${ship.name} removida com sucesso.`, "🗑️");
+        await registarLog(currentPersonagemId, 'DESCARTE_ITEM', `Nave sucateada no Posto Aurora-9: ${ship.name}`);
+        currentShipKey = '';
+        saveToStorage('posto_selected_ship', '');
+        await carregarDadosDoBanco();
+    } else {
+        showToast("ERRO", "Falha ao remover a nave do servidor.", "❌");
+    }
 }
 
 // --- OPERAÇÃO INTERATIVA DE ABASTECIMENTO ---
@@ -316,6 +434,9 @@ function startPumping(type) {
     }
 
     currentPumpingAmount = 0;
+    isPumpingActive = true;
+    initialPumpingCredits = userCredits; // Congela o saldo inicial para a auditoria final
+
     startPumpOscillator(type);
 
     pumpInterval = setInterval(() => {
@@ -361,83 +482,157 @@ function startPumping(type) {
         }
 
         updateShipUI();
-        saveToStorage('posto_ships', shipsData);
-        saveToStorage('posto_credits', userCredits);
+        document.getElementById('userCreditsInput').value = Math.floor(userCredits);
 
         if (Math.random() < 0.2) playBeep(type === 'sublight' ? 300 : 600, 0.02);
     }, 80);
 }
 
-function stopPumping() {
+async function stopPumping() {
     if (pumpInterval) {
         clearInterval(pumpInterval);
         pumpInterval = null;
         stopPumpOscillator();
-        if (currentPumpingAmount > 0) {
-            addLog(`COMPRA DE FLUXO: Abastecidos +${currentPumpingAmount.toFixed(2)} na nave [${shipsData[currentShipKey].name}].`);
-            playBeep(220, 0.2);
-        }
+    }
+
+    // Quando o jogador solta o botão, dispara 1 única gravação massiva na nuvem
+    if (currentPumpingAmount > 0 && isPumpingActive) {
+        isPumpingActive = false;
+        const ship = shipsData[currentShipKey];
+        const totalCost = initialPumpingCredits - userCredits;
+
+        // Bloqueia a UI para evitar bugs de transação dupla
+        document.getElementById('btnPumpSublight').disabled = true;
+        document.getElementById('btnPumpHyperdrive').disabled = true;
+
+        // 1. Desconta os Créditos
+        await supabaseClient.from('personagens').update({ creditos: Math.floor(userCredits) }).eq('id', currentPersonagemId);
+
+        // 2. Atualiza o Nível de Combustível da Nave
+        const novosDados = { ...ship.dados_originais, subLevel: ship.subLevel, hypLevel: ship.hypLevel };
+        await supabaseClient.from('inventario').update({ dados_customizados: novosDados }).eq('id', ship.db_id);
+
+        addLog(`COMPRA DE FLUXO: Abastecidos +${currentPumpingAmount.toFixed(2)} na nave [${ship.name}].`);
+        await registarLog(currentPersonagemId, 'ABASTECIMENTO', `Aeronave [${ship.name}] abastecida. +${currentPumpingAmount.toFixed(2)} combustível.`, -Math.floor(totalCost));
+        playBeep(220, 0.2);
+
+        document.getElementById('btnPumpSublight').disabled = false;
+        document.getElementById('btnPumpHyperdrive').disabled = false;
     }
 }
 
-function fillFully(type) {
+async function fillFully(type) {
     const ship = shipsData[currentShipKey];
     if (!ship) return;
 
     const price = PRICES[type];
+    let cost = 0;
+    let amount = 0;
+    let logMsg = "";
+
     if (type === 'sublight') {
         const needed = ship.subCap - ship.subLevel;
         if (needed <= 0) return;
-        const cost = needed * price;
+        cost = needed * price;
         if (userCredits < cost) {
-            const afford = userCredits / price;
-            if (afford <= 0) return;
-            ship.subLevel += afford;
+            amount = userCredits / price;
+            if (amount <= 0) return;
+            ship.subLevel += amount;
+            cost = userCredits;
             userCredits = 0;
-            addLog(`COMPRA PARCIAL: Abastecido +${afford.toFixed(2)}L de Tibanna. Saldo esgotado.`);
+            logMsg = `COMPRA PARCIAL: Abastecido +${amount.toFixed(2)}L de Tibanna. Saldo esgotado.`;
         } else {
+            amount = needed;
             ship.subLevel = ship.subCap;
             userCredits -= cost;
-            addLog(`COMPRA COMPLETA: Enchimento automático de +${needed.toFixed(2)}L de Gás Tibanna.`);
+            logMsg = `COMPRA COMPLETA: Enchimento automático de +${amount.toFixed(2)}L de Gás Tibanna.`;
             showToast("SUCESSO", "Tanque de Tibanna preenchido.", "⛽");
         }
     } else {
         const needed = ship.hypCap - ship.hypLevel;
         if (needed <= 0) return;
-        const cost = needed * price;
+        cost = needed * price;
         if (userCredits < cost) {
-            const afford = userCredits / price;
-            if (afford <= 0) return;
-            ship.hypLevel += afford;
+            amount = userCredits / price;
+            if (amount <= 0) return;
+            ship.hypLevel += amount;
+            cost = userCredits;
             userCredits = 0;
-            addLog(`COMPRA PARCIAL: Carregados +${afford.toFixed(2)}Kg de Coaxium. Saldo esgotado.`);
+            logMsg = `COMPRA PARCIAL: Carregados +${amount.toFixed(2)}Kg de Coaxium. Saldo esgotado.`;
         } else {
+            amount = needed;
             ship.hypLevel = ship.hypCap;
             userCredits -= cost;
-            addLog(`COMPRA COMPLETA: Carregamento completo de +${needed.toFixed(2)}Kg de Coaxium Puro.`);
+            logMsg = `COMPRA COMPLETA: Carregamento completo de +${amount.toFixed(2)}Kg de Coaxium Puro.`;
             showToast("SUCESSO", "Reator de Coaxium alimentado.", "🔋");
         }
     }
+
     updateShipUI();
-    saveToStorage('posto_ships', shipsData);
-    saveToStorage('posto_credits', userCredits);
+    document.getElementById('userCreditsInput').value = Math.floor(userCredits);
+
+    document.body.style.pointerEvents = 'none'; // Blindagem de transação
+
+    await supabaseClient.from('personagens').update({ creditos: Math.floor(userCredits) }).eq('id', currentPersonagemId);
+
+    const novosDados = { ...ship.dados_originais, subLevel: ship.subLevel, hypLevel: ship.hypLevel };
+    await supabaseClient.from('inventario').update({ dados_customizados: novosDados }).eq('id', ship.db_id);
+
+    addLog(logMsg);
+    await registarLog(currentPersonagemId, 'ABASTECIMENTO', logMsg, -Math.floor(cost));
+
+    document.body.style.pointerEvents = 'auto';
 }
 
 // --- COMPRA DE EMBALAGENS PORTÁTEIS (CILINDROS) ---
-function buyCanister(type, price) {
+async function buyCanister(type, price) {
     initAudio();
     if (userCredits < price) {
         showToast("COMPRA FALHOU", "Créditos insuficientes para o empacotamento.", "❌");
         return;
     }
 
-    userCredits -= price;
-    updateShipUI();
-    saveToStorage('posto_credits', userCredits);
+    document.body.style.pointerEvents = 'none'; // Prevenir duplo clique fantasma
 
-    const name = type === 'tibanna' ? "Cilindro de Tibanna (20L)" : "Cápsula de Coaxium (2Kg)";
-    addLog(`SUCESSO: Adquirido ${name} para o inventário da nave.`);
-    showToast("DESPACHADO", `${name} enviado ao compartimento de carga.`, "📦");
+    userCredits -= price;
+    document.getElementById('userCreditsInput').value = Math.floor(userCredits);
+
+    const name = type === 'tibanna' ? "Cilindro de Tibanna" : "Cápsula de Coaxium";
+    const desc = type === 'tibanna' ? "Conteúdo: 20L de Gás Criogênico" : "Conteúdo: 2Kg de Massa Refinada";
+
+    const newItemDB = {
+        name: name,
+        description: desc,
+        price: price,
+        quality: "Normal",
+        category: "Equipamento", // Cairá certinho no novo separador de categorias que fizemos
+        tipo_inventario: "equipamento",
+        is_custom: true
+    };
+
+    // 1. Debitar
+    await supabaseClient.from('personagens').update({ creditos: Math.floor(userCredits) }).eq('id', currentPersonagemId);
+
+    // 2. Injetar Item na Nuvem
+    const { error } = await supabaseClient.from('inventario').insert([{
+        personagem_id: currentPersonagemId,
+        user_id: currentUser.id,
+        item_id: null,
+        quantidade: 1,
+        origem: 'loja_posto',
+        dados_customizados: newItemDB
+    }]);
+
+    document.body.style.pointerEvents = 'auto';
+
+    if (!error) {
+        addLog(`SUCESSO: Adquirido ${name} para o inventário.`);
+        showToast("DESPACHADO", `${name} enviado ao compartimento de carga.`, "📦");
+        await registarLog(currentPersonagemId, 'COMPRA_POSTO', `Adquiriu um ${name} no Posto Aurora-9.`, -price);
+    } else {
+        showToast("ERRO", "Falha de logística. Operação revertida.", "❌");
+        await carregarDadosDoBanco(); // Restaura dados se houver quebra de rede
+    }
 }
 
 // --- SISTEMA DE LOGS DO CONSOLE ---
