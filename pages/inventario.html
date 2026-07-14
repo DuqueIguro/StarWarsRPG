@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciador de Inventário - Star Wars RPG</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             corePlugins: {
@@ -13,7 +14,9 @@
             }
         }
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +29,8 @@
 
 <body class="min-h-screen p-4 md:p-8">
 
-    <button id="open-cart-btn" class="fixed bottom-6 right-6 z-30 btn-cart-toggle text-white font-orbitron font-bold py-3 px-5 rounded-full flex items-center gap-2 cursor-pointer transition-transform hover:scale-110 active:scale-95">
+    <button id="open-cart-btn"
+        class="fixed bottom-6 right-6 z-30 btn-cart-toggle text-white font-orbitron font-bold py-3 px-5 rounded-full flex items-center gap-2 cursor-pointer transition-transform hover:scale-110 active:scale-95">
         <span>🛒</span> VER CARRINHO
     </button>
 
@@ -40,7 +44,8 @@
             style="text-decoration:none;">
             <span class="text-lg">&#8592;</span> Voltar
         </a>
-        <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento de Recursos</h1>
+        <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento
+            de Recursos</h1>
         <p class="font-aurebesh text-lg text-cyan-500">Terminal de Gerenciamento de Recursos</p>
         <button id="reset-btn"
             class="absolute top-0 right-0 btn-danger font-orbitron text-xs py-1 px-3 rounded-md border border-red-700 bg-red-900/80 hover:bg-red-700/80 transition-colors shadow-md font-bold">
@@ -53,8 +58,10 @@
             <div class="glass-pane p-4 rounded-lg text-center">
                 <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS PESSOAIS</h2>
                 <p class="font-aurebesh text-md text-yellow-500">Creditos Pessoais</p>
-                <div id="personal-credits" contenteditable="true"
-                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all" tabindex="0">1000</div>
+                <div id="personal-credits"
+                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all text-stone-300 cursor-not-allowed select-none"
+                    title="Os créditos são lidos diretamente da base de dados e não podem ser alterados manualmente nesta interface.">
+                    VERIFICANDO...</div>
             </div>
         </div>
 
@@ -63,7 +70,8 @@
                 <button data-tab="lojas"
                     class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-active">LOJAS</button>
                 <button data-tab="personagem"
-                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO PESSOAL</button>
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO
+                    PESSOAL</button>
             </nav>
         </div>
 
@@ -109,7 +117,8 @@
                         </div>
                         <div class="md:pl-4 md:border-l border-cyan-700 flex-shrink-0 flex items-center">
                             <button id="add-custom-item-btn"
-                                class="btn-success font-bold py-2 px-4 rounded-md w-full h-fit">Adicionar Item Customizado</button>
+                                class="btn-success font-bold py-2 px-4 rounded-md w-full h-fit">Adicionar Item
+                                Customizado</button>
                         </div>
                     </div>
                 </div>
@@ -129,7 +138,8 @@
         class="fixed top-0 right-0 h-full w-full md:w-1/3 lg:w-1/4 glass-pane p-4 transform translate-x-full z-40 flex flex-col transition-transform duration-300 ease-in-out">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-orbitron text-2xl text-cyan-300">CARRINHO</h2>
-            <button id="close-cart-btn" class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
+            <button id="close-cart-btn"
+                class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto pr-2">
         </div>
@@ -141,7 +151,7 @@
                     <span id="cart-total-reais" class="block text-sm text-green-400 font-bold">R$ 0,00</span>
                 </div>
             </div>
-            
+
             <div class="my-4 p-3 rounded-md bg-gray-900/60 border border-cyan-800">
                 <p class="text-xs font-orbitron text-cyan-400 mb-2 font-bold tracking-wider">FORMA DE PAGAMENTO</p>
                 <div class="flex flex-col space-y-2">
@@ -156,7 +166,9 @@
                 </div>
             </div>
 
-            <button id="checkout-btn" class="w-full btn-primary font-bold py-2 rounded-md tracking-widest font-orbitron cursor-pointer">FINALIZAR COMPRA</button>
+            <button id="checkout-btn"
+                class="w-full btn-primary font-bold py-2 rounded-md tracking-widest font-orbitron cursor-pointer">FINALIZAR
+                COMPRA</button>
         </div>
     </div>
 
@@ -165,37 +177,50 @@
         <div class="glass-pane rounded-lg p-8 w-full max-w-lg">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="font-orbitron text-2xl text-cyan-300">ADICIONAR ITEM CUSTOMIZADO</h2>
-                <button id="close-modal-btn" class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
+                <button id="close-modal-btn"
+                    class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
             </div>
             <form id="custom-item-form">
                 <div class="space-y-4">
-                    <input type="text" id="custom-item-name" placeholder="Nome do Item" class="modal-input w-full text-white"
-                        required>
-                    <textarea id="custom-item-desc" placeholder="Descrição" class="modal-input w-full text-white" rows="3"
-                        required></textarea>
-                    <input type="number" id="custom-item-price" placeholder="Preço em Créditos"
-                        class="modal-input w-full text-white" min="0" required>
-                    <div class="grid grid-cols-2 gap-4">
-                        <select id="custom-item-quality" class="modal-input w-full text-white" required>
-                            <option value="" disabled selected>Qualidade</option>
-                            <option value="Lendária">Lendária</option>
-                            <option value="Imperial">Imperial</option>
-                            <option value="Excelente">Excelente</option>
-                            <option value="Boa">Boa</option>
-                            <option value="Normal">Normal</option>
-                            <option value="Baixa">Baixa</option>
-                        </select>
-                        <select id="custom-item-category" class="modal-input w-full text-white" required>
-                            <option value="" disabled selected>Categoria</option>
-                            <option value="Naves Prontas">Nave Pronta</option>
-                            <option value="Dróides Prontos">Dróide Pronto</option>
-                            <option value="Peças de Naves">Peça de Nave</option>
-                            <option value="Peças de Dróides">Peça de Dróide</option>
-                            <option value="Equipamento">Equipamento</option>
-                            <option value="Outros">Outros</option>
-                        </select>
+                    <div>
+                        <label for="custom-item-name" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Nome do Item</label>
+                        <input type="text" id="custom-item-name" placeholder="Ex: Blaster Modificado" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
                     </div>
-                    <button type="submit" class="w-full btn-success font-bold py-2 rounded-md cursor-pointer">Salvar Item</button>
+                    <div>
+                        <label for="custom-item-desc" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Descrição</label>
+                        <textarea id="custom-item-desc" placeholder="Detalhes do item..." class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" rows="3" required></textarea>
+                    </div>
+                    <div>
+                        <label for="custom-item-price" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Preço em Créditos</label>
+                        <input type="number" id="custom-item-price" placeholder="0" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" min="0" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="custom-item-quality" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Qualidade</label>
+                            <select id="custom-item-quality" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="Lendária">Lendária</option>
+                                <option value="Imperial">Imperial</option>
+                                <option value="Excelente">Excelente</option>
+                                <option value="Boa">Boa</option>
+                                <option value="Normal">Normal</option>
+                                <option value="Baixa">Baixa</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="custom-item-category" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Categoria</label>
+                            <select id="custom-item-category" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="Naves Prontas">Nave Pronta</option>
+                                <option value="Dróides Prontos">Dróide Pronto</option>
+                                <option value="Peças de Naves">Peça de Nave</option>
+                                <option value="Peças de Dróides">Peça de Dróide</option>
+                                <option value="Equipamento">Equipamento</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full btn-success font-bold py-2 rounded-md cursor-pointer tracking-widest mt-4">SALVAR ITEM</button>
                 </div>
             </form>
         </div>
@@ -203,19 +228,6 @@
 
     <script src="../js/databaseInventario.js"></script>
     <script src="../js/inventario.js" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var personalCredits = document.getElementById('personal-credits');
-            if (personalCredits) {
-                personalCredits.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        e.target.blur();
-                    }
-                });
-            }
-        });
-    </script>
 
 </body>
 

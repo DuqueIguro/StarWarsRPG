@@ -2,7 +2,7 @@
 const STORAGE_KEY = 'starWarsRPGState';
 
 const defaultState = {
-    personalCredits: 1000,
+    personalCredits: 0, // Agora começa zerado, o Supabase vai preencher
     cart: [],
     personalInventory: [],
     activeTab: 'lojas',
@@ -12,21 +12,18 @@ const defaultState = {
 
 let state = JSON.parse(JSON.stringify(defaultState));
 
-const saveState = () => {
-    const stateToSave = {
-        personalCredits: state.personalCredits,
-        personalInventory: state.personalInventory,
-        itemDatabase: state.itemDatabase
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
-};
+// --- VARIÁVEIS DO BANCO DE DADOS (SUPABASE) ---
+let currentUser = null;
+let currentPersonagemId = null;
 
-const loadState = () => {
-    const savedStateJSON = localStorage.getItem(STORAGE_KEY);
-    if (savedStateJSON) {
-        const savedState = JSON.parse(savedStateJSON);
-        Object.assign(state, savedState);
-    }
+const registarLog = async (personagemId, tipoEvento, descricao, mudancaCreditos = 0) => {
+    if (!personagemId) return;
+    await supabaseClient.from('logs_auditoria').insert([{
+        personagem_id: personagemId,
+        tipo_evento: tipoEvento,
+        descricao: descricao,
+        mudanca_creditos: mudancaCreditos
+    }]);
 };
 
 // --- ELEMENTOS DO DOM ---
@@ -53,6 +50,57 @@ const customItemModal = document.getElementById('custom-item-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const customItemForm = document.getElementById('custom-item-form');
 
+const carregarDadosDoBanco = async () => {
+    personalCreditsEl.textContent = "CONECTANDO...";
+
+    // 1. Identifica quem está logado
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !userData.user) {
+        personalCreditsEl.textContent = "NÃO AUTENTICADO";
+        return;
+    }
+    currentUser = userData.user;
+
+    // 2. Busca o ID do personagem e o dinheiro oficial
+    const { data: personagens, error: pError } = await supabaseClient
+        .from('personagens')
+        .select('id, creditos')
+        .eq('user_id', currentUser.id)
+        .limit(1);
+
+    if (pError || !personagens || personagens.length === 0) {
+        personalCreditsEl.textContent = "PERSONAGEM NÃO ENCONTRADO";
+        return;
+    }
+
+    currentPersonagemId = personagens[0].id;
+    state.personalCredits = personagens[0].creditos || 0;
+    renderCredits();
+
+    // 3. Puxa os itens que ele já comprou da tabela inventario
+    const { data: inventarioDB, error: invError } = await supabaseClient
+        .from('inventario')
+        .select('*')
+        .eq('personagem_id', currentPersonagemId);
+
+    if (!invError && inventarioDB) {
+        state.personalInventory = [];
+        inventarioDB.forEach(dbItem => {
+            // Se o item veio da loja (tem item_id)
+            if (dbItem.item_id) {
+                const itemBase = state.itemDatabase.find(i => i.id === dbItem.item_id);
+                if (itemBase) {
+                    state.personalInventory.push({ ...itemBase, db_id: dbItem.id });
+                }
+            }
+            // Se o item foi criado manualmente (tem dados_customizados)
+            else if (dbItem.dados_customizados && Object.keys(dbItem.dados_customizados).length > 0) {
+                state.personalInventory.push({ ...dbItem.dados_customizados, db_id: dbItem.id });
+            }
+        });
+        renderInventories();
+    }
+};
 
 // --- FUNÇÕES DE RENDERIZAÇÃO ---
 const renderCredits = () => {
@@ -61,7 +109,15 @@ const renderCredits = () => {
 
 const createItemCard = (item, context = 'shop') => {
     const card = document.createElement('div');
-    const qualityClass = item.quality.replace(/\s/g, '-');
+
+    // Normalização de dados (A Ficha usa propriedades diferentes da Loja, então usamos fallback)
+    const itemName = item.name || item.nome || 'Item Desconhecido';
+    const itemQuality = item.quality || 'Normal';
+    const itemCategory = item.category || (item.tipo_inventario === 'arma' ? 'Armamento' : 'Equipamento Geral');
+    const itemDesc = item.description || (item.notasCritico ? `Notas de Combate: ${item.notasCritico}` : 'Equipamento customizado inserido via Terminal de Comando.');
+    const itemPrice = item.price !== undefined ? item.price : (parseFloat(item.custo) || 0);
+
+    const qualityClass = itemQuality.replace(/\s/g, '-');
     card.className = `glass-pane p-4 rounded-lg flex flex-col border-l-4 quality-${qualityClass} item-card-animate transform transition-all duration-300 hover:-translate-y-1`;
 
     let buttonsHtml = '';
@@ -72,17 +128,17 @@ const createItemCard = (item, context = 'shop') => {
     }
 
     // CÁLCULO DA CONVERSÃO (10000 créditos = 1 real)
-    const priceInReais = item.price / 10000;
+    const priceInReais = itemPrice / 10000;
 
     card.innerHTML = `
         <div class="flex-grow">
-            <h4 class="font-orbitron text-lg text-cyan-400">${item.name}</h4>
-            <p class="text-sm text-gray-400 mb-2">Qualidade: <span class="font-bold">${item.quality}</span></p>
-            <p class="text-xs mb-2 text-gray-400">Categoria: ${item.category}</p>
-            <p class="text-sm mb-4 text-gray-300">${item.description}</p>
+            <h4 class="font-orbitron text-lg text-cyan-400">${itemName}</h4>
+            <p class="text-sm text-gray-400 mb-2">Qualidade: <span class="font-bold">${itemQuality}</span></p>
+            <p class="text-xs mb-2 text-gray-400">Categoria: ${itemCategory}</p>
+            <p class="text-sm mb-4 text-gray-300">${itemDesc}</p>
         </div>
         <div>
-            <p class="font-bold text-yellow-400 text-lg">${item.price.toLocaleString()} ⦻ (Créditos)</p>
+            <p class="font-bold text-yellow-400 text-lg">${itemPrice.toLocaleString()} ⦻ (Créditos)</p>
             <p class="text-sm text-green-400 font-bold mb-2">R$ ${priceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             ${buttonsHtml}
         </div>
@@ -154,7 +210,12 @@ const renderInventories = () => {
     personalInventoryGridEl.innerHTML = '<p class="text-gray-400 col-span-full text-center">Nenhum item no inventário pessoal.</p>';
     if (state.personalInventory.length > 0) {
         personalInventoryGridEl.innerHTML = '';
-        state.personalInventory.sort((a, b) => b.price - a.price).forEach(item => {
+        state.personalInventory.sort((a, b) => {
+            // Garante que a ordenação suporta tanto os itens da Loja quanto os da Ficha
+            const priceA = a.price !== undefined ? a.price : (parseFloat(a.custo) || 0);
+            const priceB = b.price !== undefined ? b.price : (parseFloat(b.custo) || 0);
+            return priceB - priceA;
+        }).forEach(item => {
             personalInventoryGridEl.appendChild(createItemCard(item, 'personal'));
         });
     }
@@ -257,107 +318,230 @@ const handleAssignDestination = (index, destination) => {
     renderCart();
 };
 
-const handleCheckout = () => {
+const handleCheckout = async () => {
     if (state.cart.length === 0) {
         showNotification('O carrinho está vazio!', 'danger');
         return;
     }
 
-    const selectedPayment = document.querySelector('input[name="payment-method"]:checked').value;
+    if (!currentPersonagemId) {
+        showNotification('Erro: Nenhum personagem ativo encontrado no sistema.', 'danger');
+        return;
+    }
 
+    const selectedPayment = document.querySelector('input[name="payment-method"]:checked').value;
     let personalCost = 0;
-    state.cart.forEach(cartItem => {
-        personalCost += cartItem.item.price;
-    });
+    state.cart.forEach(cartItem => { personalCost += cartItem.item.price; });
+
+    // Desativa o botão temporariamente para evitar cliques duplos (Double Spend)
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = "PROCESSANDO TRANSAÇÃO...";
 
     if (selectedPayment === 'credits') {
-        if (state.personalCredits < personalCost) {
-            showNotification('Créditos pessoais insuficientes!', 'danger');
+        // BLINDAGEM: Busca o saldo atual e real do banco de dados antes de cobrar
+        const { data: dbData, error: dbError } = await supabaseClient
+            .from('personagens')
+            .select('creditos')
+            .eq('id', currentPersonagemId)
+            .single();
+
+        if (dbError || !dbData) {
+            showNotification('Erro de comunicação com o Banco Imperial.', 'danger');
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = "FINALIZAR COMPRA";
             return;
         }
-        state.personalCredits -= personalCost;
 
-        state.cart.forEach(cartItem => {
-            state.personalInventory.push(cartItem.item);
-        });
-        showNotification('Compra realizada com Créditos!', 'success');
+        const saldoReal = dbData.creditos;
 
+        if (saldoReal < personalCost) {
+            showNotification('Transação Negada: Fundos Insuficientes!', 'danger');
+            // Pune tentativas de manipulação restaurando o valor visual real
+            state.personalCredits = saldoReal;
+            renderCredits();
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = "FINALIZAR COMPRA";
+            return;
+        }
+
+        const novoSaldo = saldoReal - personalCost;
+
+        // Debita o valor na conta do Supabase
+        const { error: updateError } = await supabaseClient
+            .from('personagens')
+            .update({ creditos: novoSaldo })
+            .eq('id', currentPersonagemId);
+
+        if (updateError) {
+            showNotification('Erro crítico ao processar o pagamento.', 'danger');
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = "FINALIZAR COMPRA";
+            return;
+        }
+
+        state.personalCredits = novoSaldo;
+
+        // REGISTRA O LOG DE COMPRA COM RELATÓRIO FINANCEIRO
+        const nomesItens = state.cart.map(c => c.item.name).join(', ');
+        await registarLog(
+            currentPersonagemId,
+            'COMPRA_LOJA',
+            `Compra Finalizada: [${nomesItens}]. Saldo anterior: ${saldoReal} | Novo Saldo: ${novoSaldo}`,
+            -personalCost
+        );
     } else if (selectedPayment === 'reais') {
-        state.cart.forEach(cartItem => {
-            state.personalInventory.push(cartItem.item);
-        });
-
         window.open('https://livepix.gg/doisimperadores', '_blank');
-        showNotification('Redirecionando para o Livepix para concluir o pagamento!', 'success');
+        showNotification('Aguardando compensação via Livepix. Itens despachados!', 'success');
+
+        // REGISTRA O LOG DE COMPRA COM REAIS
+        const nomesItens = state.cart.map(c => c.item.name).join(', ');
+        await registarLog(
+            currentPersonagemId,
+            'COMPRA_REAIS',
+            `Aquisição Externa (R$): [${nomesItens}].`,
+            0
+        );
     }
 
-    state.cart = [];
-    renderCredits();
-    renderInventories();
-    renderCart();
-    cartEl.classList.add('translate-x-full');
-    saveState();
+    // Cria o pacote de itens para inserir no banco
+    const itensParaInserir = state.cart.map(cartItem => ({
+        user_id: currentUser.id,
+        personagem_id: currentPersonagemId,
+        item_id: cartItem.item.id,
+        quantidade: 1,
+        origem: selectedPayment === 'credits' ? 'loja_comum' : 'loja_reais'
+    }));
+
+    // Dispara a entrega dos itens no inventário
+    const { error: insertError } = await supabaseClient
+        .from('inventario')
+        .insert(itensParaInserir);
+
+    if (insertError) {
+        console.error(insertError);
+        showNotification('Erro de logística: Itens não puderam ser adicionados.', 'danger');
+    } else {
+        if (selectedPayment === 'credits') {
+            showNotification('Compra autorizada e itens armazenados!', 'success');
+        }
+
+        // Limpa o carrinho
+        state.cart = [];
+        cartEl.classList.add('translate-x-full');
+
+        // Recarrega os dados do banco de dados para garantir que a interface está atualizada
+        await carregarDadosDoBanco();
+        renderCart();
+    }
+
+    checkoutBtn.disabled = false;
+    checkoutBtn.textContent = "FINALIZAR COMPRA";
 };
 
-const handleRemoveFromInventory = (itemToRemove) => {
-    state.personalInventory = state.personalInventory.filter(item => item.uid !== itemToRemove.uid);
-    showNotification(`${itemToRemove.name} removido do inventário.`, 'danger');
+const handleRemoveFromInventory = async (itemToRemove) => {
+    // 1. Remove visualmente para feedback instantâneo no ecrã
+    state.personalInventory = state.personalInventory.filter(item => item.db_id !== itemToRemove.db_id);
     renderInventories();
-    saveState();
-};
 
-const handleReset = () => {
-    if (confirm('Tem certeza que deseja resetar todo o progresso? Créditos, inventários e itens customizados serão perdidos.')) {
-        localStorage.removeItem(STORAGE_KEY);
-        state = JSON.parse(JSON.stringify(defaultState));
-        init();
+    // 2. Remove definitivamente da base de dados usando o ID da transação
+    const { error } = await supabaseClient
+        .from('inventario')
+        .delete()
+        .eq('id', itemToRemove.db_id);
+
+    if (error) {
+        console.error(error);
+        showNotification('Erro de comunicação. O item não foi descartado.', 'danger');
+        await carregarDadosDoBanco(); // Recarrega para corrigir a interface
+    } else {
+        const nomeItemDesc = itemToRemove.name || itemToRemove.nome || 'Desconhecido';
+        await registarLog(currentPersonagemId, 'DESCARTE_ITEM', `Item descartado pelo Terminal da Loja: ${nomeItemDesc}`);
+        showNotification(`${nomeItemDesc} removido do compartimento de carga.`, 'danger');
     }
 };
 
-const handleCustomItemSubmit = (e) => {
+const handleReset = async () => {
+    if (confirm('ALERTA DE SEGURANÇA MÁXIMA: Esta ação irá purgar todo o seu inventário e repor os créditos ao valor padrão de 1000. Deseja proceder?')) {
+        if (!currentPersonagemId) return;
+
+        resetBtn.disabled = true;
+        resetBtn.textContent = "A PURGAR DADOS...";
+
+        await supabaseClient.from('inventario').delete().eq('personagem_id', currentPersonagemId);
+        await supabaseClient.from('personagens').update({ creditos: 1000 }).eq('id', currentPersonagemId);
+
+        showNotification('Sistema formatado. Registo limpo.', 'success');
+        await carregarDadosDoBanco();
+
+        resetBtn.disabled = false;
+        resetBtn.textContent = "Resetar Jogo";
+    }
+};
+
+const handleCustomItemSubmit = async (e) => {
     e.preventDefault();
-    const newItem = {
+    if (!currentPersonagemId) {
+        showNotification('Autenticação necessária para arquivar itens.', 'danger');
+        return;
+    }
+
+    const submitBtn = document.querySelector('#custom-item-form button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = "A REGISTAR...";
+
+    const customData = {
         name: document.getElementById('custom-item-name').value,
         description: document.getElementById('custom-item-desc').value,
         price: parseInt(document.getElementById('custom-item-price').value),
         quality: document.getElementById('custom-item-quality').value,
         category: document.getElementById('custom-item-category').value,
-        uid: Date.now() + Math.random()
+        is_custom: true
     };
 
-    state.itemDatabase.push(newItem);
-    state.personalInventory.push(newItem);
+    const { error: insertError } = await supabaseClient
+        .from('inventario')
+        .insert([{
+            user_id: currentUser.id,
+            personagem_id: currentPersonagemId,
+            item_id: null,
+            quantidade: 1,
+            origem: 'manual',
+            dados_customizados: customData
+        }]);
 
-    showNotification(`Item customizado "${newItem.name}" adicionado!`, 'success');
-    saveState();
-    renderItems();
-    renderInventories();
-    customItemModal.classList.add('hidden');
-    customItemForm.reset();
+    if (insertError) {
+        showNotification('Falha ao registar o diagrama do item.', 'danger');
+    } else {
+        await registarLog(currentPersonagemId, 'CRIACAO_MANUAL', `Item customizado criado na Loja: ${customData.name} (Valor estipulado: ${customData.price} Créditos)`);
+        showNotification(`Diagrama "${customData.name}" arquivado com sucesso!`, 'success');
+        customItemModal.classList.add('hidden');
+        customItemForm.reset();
+        await carregarDadosDoBanco(); // Sincroniza a nova base de dados
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Salvar Item";
 };
 
 // --- INICIALIZAÇÃO ---
-const init = () => {
-    loadState();
-    personalCreditsEl.addEventListener('blur', handleUpdateCredits);
+const init = async () => {
     tabsEl.addEventListener('click', handleTabClick);
     searchInput.addEventListener('input', handleFilterChange);
     qualityFilter.addEventListener('change', handleFilterChange);
     categoryFilter.addEventListener('change', handleFilterChange);
-    
-    // Controles de Visibilidade do Carrinho (Sem Mutar Dados)
+
     closeCartBtn.addEventListener('click', () => cartEl.classList.add('translate-x-full'));
     openCartBtn.addEventListener('click', () => cartEl.classList.remove('translate-x-full'));
-    
+
     checkoutBtn.addEventListener('click', handleCheckout);
     resetBtn.addEventListener('click', handleReset);
     addCustomItemBtn.addEventListener('click', () => customItemModal.classList.remove('hidden'));
     closeModalBtn.addEventListener('click', () => customItemModal.classList.add('hidden'));
     customItemForm.addEventListener('submit', handleCustomItemSubmit);
     sortByEl.addEventListener('change', renderItems);
-    renderCredits();
-    renderItems();
-    renderInventories();
+
+    renderItems(); // Desenha a base de dados em memória
+    await carregarDadosDoBanco(); // Procura o utilizador e sincroniza
 };
 
 init();

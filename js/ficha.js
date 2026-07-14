@@ -382,6 +382,8 @@ function initFicha() {
         }
     }
 
+
+
     // Configuração do Botão "Salvar" vinculado ao Supabase
     const btnSave = document.getElementById('btn-save');
     if (btnSave) {
@@ -667,24 +669,52 @@ function initFicha() {
             weaponListEl.appendChild(weaponRow);
         });
 
+        window.timeoutSyncArmas = window.timeoutSyncArmas || {};
+
+        // Evento de Edição Direta (UPDATE) com memória local instantânea
         weaponListEl.querySelectorAll('.dynamic-weapon-input').forEach(input => {
-            const eventType = input.tagName === 'SELECT' ? 'change' : 'input';
-            input.addEventListener(eventType, (e) => {
+            input.addEventListener('input', (e) => { // Substituído de 'change' para 'input'
                 const idx = e.target.dataset.index;
                 const field = e.target.dataset.field;
-                const currentArray = getValueFromPath(appState, 'combate.armas');
-                currentArray[idx][field] = e.target.value;
-                setStateByPath('combate.armas', currentArray);
+                const arma = appState.combate.armas[idx];
+
+                if (!arma) return;
+
+                // Salva na memória local a cada tecla digitada (Blinda a caixa contra limpeza)
+                arma[field] = e.target.type === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value;
+                setStateByPath('combate.armas', appState.combate.armas);
+
+                if (!arma.db_id) return;
+
+                // Atrasa o save na nuvem em 800ms após parar de digitar
+                clearTimeout(window.timeoutSyncArmas[arma.db_id]);
+                window.timeoutSyncArmas[arma.db_id] = setTimeout(async () => {
+                    await supabaseClient.from('inventario')
+                        .update({ dados_customizados: arma })
+                        .eq('id', arma.db_id);
+                }, 800);
             });
         });
 
+        // Evento de Descarte Silencioso (DELETE)
         weaponListEl.querySelectorAll('.remove-weapon-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 const idx = e.target.dataset.index;
-                const currentArray = getValueFromPath(appState, 'combate.armas');
-                currentArray.splice(idx, 1);
-                setStateByPath('combate.armas', currentArray);
-                renderizarArmas();
+                const arma = appState.combate.armas[idx];
+                if (!arma || !arma.db_id) return;
+
+                if (!confirm(`Tem a certeza que deseja descartar: ${arma.nome || 'Arma sem designação'}?`)) return;
+
+                // 1. Exclui da base de dados
+                const { error } = await supabaseClient.from('inventario').delete().eq('id', arma.db_id);
+                if (!error) {
+                    await registarLog(personagemIdAtual, 'DESCARTE_ITEM', `Arma removida da ficha: ${arma.nome || 'Desconhecida'}`);
+
+                    // 2. Exclui da memória e redesenha SEM recarregar o banco inteiro
+                    appState.combate.armas.splice(idx, 1);
+                    setStateByPath('combate.armas', appState.combate.armas);
+                    renderizarArmas();
+                }
             });
         });
     }
@@ -695,45 +725,101 @@ function initFicha() {
         equipmentListEl.innerHTML = '';
 
         const equipamentos = getValueFromPath(appState, 'inventario.equipamentos') || [];
+        const categorias = {};
 
+        // Agrupa todos os itens pelas categorias (herdadas do itemDatabase ou definidas manualmente)
         equipamentos.forEach((item, index) => {
-            const itemRow = document.createElement('div');
-            itemRow.className = 'flex flex-wrap sm:flex-nowrap items-center gap-2 mb-2 bg-stone-950/30 p-2 rounded border border-stone-800/50';
-            itemRow.innerHTML = `
-                <input type="text" placeholder="Designação do item" class="w-full sm:flex-1 p-2 bg-stone-900/80 border border-stone-700 rounded-md text-stone-200 focus:border-cyan-500 outline-none transition-all dynamic-item-input text-sm" data-field="nome" data-index="${index}" value="${item.nome || ''}">
-                
-                <div class="flex items-center gap-1 w-full sm:w-28 relative">
-                    <span class="absolute left-2 text-emerald-500 font-bold text-xs">C$</span>
-                    <input type="number" placeholder="0" class="w-full p-2 pl-7 bg-stone-900/80 border border-stone-700 rounded-md text-stone-200 focus:border-emerald-500 outline-none transition-all text-center dynamic-item-input text-sm" data-field="custo" data-index="${index}" value="${item.custo || ''}">
-                </div>
-                
-                <div class="flex items-center gap-1 w-full sm:w-24 relative">
-                    <input type="number" step="0.1" placeholder="0.0" class="w-full p-2 pr-6 bg-stone-900/80 border border-stone-700 rounded-md text-stone-200 focus:border-cyan-500 outline-none transition-all text-center item-weight dynamic-item-input text-sm" data-field="peso" data-index="${index}" value="${item.peso || 0}">
-                    <span class="absolute right-2 text-stone-500 text-xs font-bold">kg</span>
-                </div>
-
-                <button class="remove-item-btn text-red-500 hover:text-red-400 font-bold text-lg px-2 py-1 transition-colors w-full sm:w-auto text-center" title="Descartar Item" data-index="${index}">X</button>
-            `;
-            equipmentListEl.appendChild(itemRow);
+            const cat = item.categoria || item.category || 'Equipamento';
+            if (!categorias[cat]) categorias[cat] = [];
+            categorias[cat].push({ item, index });
         });
+
+        // Ordena e desenha cada categoria individualmente
+        Object.keys(categorias).sort().forEach(catNome => {
+            const header = document.createElement('h4');
+            header.className = 'text-cyan-500 font-bold border-b border-stone-800 pb-1 mt-6 mb-3 uppercase text-xs tracking-widest';
+            header.textContent = catNome;
+            equipmentListEl.appendChild(header);
+
+            categorias[catNome].forEach(({ item, index }) => {
+                const itemRow = document.createElement('div');
+                itemRow.className = 'flex flex-wrap sm:flex-nowrap items-center gap-2 mb-2 bg-stone-950/30 p-2 rounded border border-stone-800/50';
+                itemRow.innerHTML = `
+                    <input type="text" placeholder="Designação do item" class="w-full sm:flex-1 p-2 bg-stone-900/80 border border-stone-700 rounded-md text-stone-200 focus:border-cyan-500 outline-none transition-all dynamic-item-input text-sm" data-field="nome" data-index="${index}" value="${item.nome || item.name || ''}">
+                    
+                    <div class="flex items-center gap-1 w-full sm:w-28 relative">
+                        <span class="absolute left-2 text-emerald-500 font-bold text-xs">C$</span>
+                        <input type="number" placeholder="0" class="w-full p-2 pl-7 bg-stone-900/80 border border-stone-700 rounded-md text-stone-200 focus:border-emerald-500 outline-none transition-all text-center dynamic-item-input text-sm" data-field="custo" data-index="${index}" value="${item.custo !== undefined ? item.custo : (item.price || 0)}">
+                    </div>
+                    
+                    <div class="flex items-center gap-1 w-full sm:w-24 relative">
+                        <input type="number" step="0.1" placeholder="0.0" class="w-full p-2 pr-6 bg-stone-900/80 border border-stone-700 rounded-md text-stone-200 focus:border-cyan-500 outline-none transition-all text-center item-weight dynamic-item-input text-sm" data-field="peso" data-index="${index}" value="${item.peso || 0}">
+                        <span class="absolute right-2 text-stone-500 text-xs font-bold">kg</span>
+                    </div>
+
+                    <select class="w-full sm:w-36 p-2 bg-stone-900/80 border border-stone-700 rounded-md text-stone-200 focus:border-cyan-500 outline-none transition-all text-sm dynamic-item-input" data-field="categoria" data-index="${index}">
+                        <option value="Naves Prontas" ${catNome === 'Naves Prontas' ? 'selected' : ''}>Nave</option>
+                        <option value="Dróides Prontos" ${catNome === 'Dróides Prontos' ? 'selected' : ''}>Dróide</option>
+                        <option value="Peças de Naves" ${catNome === 'Peças de Naves' ? 'selected' : ''}>Peça (Nave)</option>
+                        <option value="Peças de Dróides" ${catNome === 'Peças de Dróides' ? 'selected' : ''}>Peça (Dróide)</option>
+                        <option value="Equipamento" ${catNome === 'Equipamento' ? 'selected' : ''}>Equipamento</option>
+                        <option value="Outros" ${catNome === 'Outros' ? 'selected' : ''}>Outros</option>
+                    </select>
+
+                    <button class="remove-item-btn text-red-500 hover:text-red-400 font-bold text-lg px-2 py-1 transition-colors w-full sm:w-auto text-center" title="Descartar Item" data-index="${index}">X</button>
+                `;
+                equipmentListEl.appendChild(itemRow);
+            });
+        });
+
+        window.timeoutSyncEquip = window.timeoutSyncEquip || {};
 
         equipmentListEl.querySelectorAll('.dynamic-item-input').forEach(input => {
             input.addEventListener('input', (e) => {
                 const idx = e.target.dataset.index;
                 const field = e.target.dataset.field;
-                const currentArray = getValueFromPath(appState, 'inventario.equipamentos');
-                currentArray[idx][field] = e.target.type === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value;
-                setStateByPath('inventario.equipamentos', currentArray);
+                const item = appState.inventario.equipamentos[idx];
+
+                if (!item) return;
+
+                item[field] = e.target.type === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value;
+                if (field === 'categoria') item.category = item.categoria; // Garante dupla compatibilidade com a Loja
+
+                setStateByPath('inventario.equipamentos', appState.inventario.equipamentos);
+
+                if (!item.db_id) return;
+
+                clearTimeout(window.timeoutSyncEquip[item.db_id]);
+                window.timeoutSyncEquip[item.db_id] = setTimeout(async () => {
+                    await supabaseClient.from('inventario')
+                        .update({ dados_customizados: item })
+                        .eq('id', item.db_id);
+                }, 800);
             });
+
+            if (input.tagName === 'SELECT') {
+                input.addEventListener('change', () => {
+                    renderizarEquipamentos(); // Reorganiza fisicamente os blocos ao trocar de categoria
+                });
+            }
         });
 
         equipmentListEl.querySelectorAll('.remove-item-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 const idx = e.target.dataset.index;
-                const currentArray = getValueFromPath(appState, 'inventario.equipamentos');
-                currentArray.splice(idx, 1);
-                setStateByPath('inventario.equipamentos', currentArray);
-                renderizarEquipamentos();
+                const item = appState.inventario.equipamentos[idx];
+                if (!item || !item.db_id) return;
+
+                if (!confirm(`Descartar definitivamente o item: ${item.nome || item.name || 'Sem designação'}?`)) return;
+
+                const { error } = await supabaseClient.from('inventario').delete().eq('id', item.db_id);
+                if (!error) {
+                    await registarLog(personagemIdAtual, 'DESCARTE_ITEM', `Equipamento descartado: ${item.nome || item.name || 'Desconhecido'}`);
+
+                    appState.inventario.equipamentos.splice(idx, 1);
+                    setStateByPath('inventario.equipamentos', appState.inventario.equipamentos);
+                    renderizarEquipamentos();
+                }
             });
         });
     }
@@ -888,21 +974,66 @@ function initFicha() {
         if (typeof window.apiRenderizarMulticlasse === 'function') window.apiRenderizarMulticlasse();
     };
 
-    /* INÍCIO DE FUNÇÃO DE [Delegação de Ações Globais]; exporta as funções chamadas pelos botões do novo HTML */
-    window.adicionarArma = function () {
-        const currentArray = appState.combate.armas || [];
-        currentArray.push({ nome: "", bonusAtaque: 0, atributoBaseAtaque: "vig", dadoDano: "", notasCritico: "" });
-        setStateByPath('combate.armas', currentArray);
-        if (typeof window.apiRenderizarArmas === 'function') window.apiRenderizarArmas();
+    window.adicionarArma = async function () {
+        if (!personagemIdAtual) return alert("Ficha não sincronizada com a nuvem.");
+
+        const { data: userData } = await supabaseClient.auth.getUser();
+        if (!userData || !userData.user) return;
+
+        const novaArma = { nome: "", bonusAtaque: 0, atributoBaseAtaque: "vig", dadoDano: "", notasCritico: "", tipo_inventario: "arma" };
+
+        // Adiciona .select() para forçar o Supabase a devolver a linha acabada de criar
+        const { data, error } = await supabaseClient.from('inventario').insert([{
+            personagem_id: personagemIdAtual,
+            user_id: userData.user.id,
+            item_id: null,
+            quantidade: 1,
+            origem: 'manual',
+            dados_customizados: novaArma
+        }]).select();
+
+        if (!error && data && data.length > 0) {
+            await registarLog(personagemIdAtual, 'CRIACAO_MANUAL', 'Nova diretriz de arma adicionada ao arsenal.');
+
+            // Injeta a nova arma e o ID gerado na memória SEM baixar a ficha toda de novo
+            novaArma.db_id = data[0].id;
+            appState.combate.armas.push(novaArma);
+            setStateByPath('combate.armas', appState.combate.armas);
+            if (typeof window.apiRenderizarArmas === 'function') window.apiRenderizarArmas();
+        } else {
+            console.error("Erro ao adicionar arma:", error);
+        }
     };
 
-    window.adicionarEquipamento = function () {
-        const currentArray = appState.inventario.equipamentos || [];
-        currentArray.push({ nome: "", custo: 0, peso: 0 });
-        setStateByPath('inventario.equipamentos', currentArray);
-        if (typeof window.apiRenderizarEquipamentos === 'function') window.apiRenderizarEquipamentos();
-    };
+    window.adicionarEquipamento = async function () {
+        if (!personagemIdAtual) return alert("Ficha não sincronizada com a nuvem.");
 
+        const { data: userData } = await supabaseClient.auth.getUser();
+        if (!userData || !userData.user) return;
+
+        // Injeta a categoria padrão para não dar quebra no novo agrupador
+        const novoEquip = { nome: "", custo: 0, peso: 0, tipo_inventario: "equipamento", categoria: "Equipamento" };
+
+        const { data, error } = await supabaseClient.from('inventario').insert([{
+            personagem_id: personagemIdAtual,
+            user_id: userData.user.id,
+            item_id: null,
+            quantidade: 1,
+            origem: 'manual',
+            dados_customizados: novoEquip
+        }]).select();
+
+        if (!error && data && data.length > 0) {
+            await registarLog(personagemIdAtual, 'CRIACAO_MANUAL', 'Novo item registado no compartimento de carga.');
+
+            novoEquip.db_id = data[0].id;
+            appState.inventario.equipamentos.push(novoEquip);
+            setStateByPath('inventario.equipamentos', appState.inventario.equipamentos);
+            if (typeof window.apiRenderizarEquipamentos === 'function') window.apiRenderizarEquipamentos();
+        } else {
+            console.error("Erro ao adicionar equipamento:", error);
+        }
+    };
     window.adicionarTalento = function () {
         const currentArray = appState.caracteristicas.talentos || [];
         currentArray.push("");
@@ -1067,13 +1198,20 @@ function initFicha() {
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     }
     /* FIM DE FUNÇÃO DE [Importar Ficha] */
-
     popularEspecies();
     popularClasses();
     popularTamanhos();
     sincronizarTelaComEstado();
     calcularMatematicaDaFicha();
     renderizarMulticlasse();
+
+    // Força a gravação e a geração de LOG na nuvem IMEDIATAMENTE após alterar os créditos
+    const creditosInput = document.querySelector('[data-json-path="recursos.creditos"]');
+    if (creditosInput) {
+        creditosInput.addEventListener('change', async () => {
+            await salvarFichaNoBanco();
+        });
+    }
 
 
     // Exportação das funções para o escopo global (usado pelo Supabase)
@@ -1104,6 +1242,16 @@ function sincronizarTelaComEstadoGlobal() {
     }
 }
 
+async function registarLog(personagemId, tipoEvento, descricao, mudancaCreditos = 0) {
+    if (!personagemId) return;
+    await supabaseClient.from('logs_auditoria').insert([{
+        personagem_id: personagemId,
+        tipo_evento: tipoEvento,
+        descricao: descricao,
+        mudanca_creditos: mudancaCreditos
+    }]);
+}
+
 async function carregarFichaDoBanco() {
     const { data: userData, error: userError } = await supabaseClient.auth.getUser();
     const btnLogout = document.getElementById('btn-logout');
@@ -1111,11 +1259,11 @@ async function carregarFichaDoBanco() {
 
     if (userError || !userData.user) {
         if (btnLogout) btnLogout.classList.add('hidden');
-        if (btnLogin) btnLogin.classList.remove('hidden'); // Mostra Login se não estiver logado
+        if (btnLogin) btnLogin.classList.remove('hidden');
         return;
     }
 
-    if (btnLogout) btnLogout.classList.remove('hidden'); // Mostra Sair se estiver logado
+    if (btnLogout) btnLogout.classList.remove('hidden');
     if (btnLogin) btnLogin.classList.add('hidden');
 
     const { data: personagens, error: selectError } = await supabaseClient
@@ -1125,9 +1273,46 @@ async function carregarFichaDoBanco() {
         const dbFicha = personagens[0];
         personagemIdAtual = dbFicha.id;
 
+        // 1. Carrega os dados JSON base (atributos, perícias, vida)
         Object.assign(appState, dbFicha.dados_ficha);
         setStateByPath('biografia.nome', dbFicha.nome);
         setStateByPath('recursos.creditos', dbFicha.creditos);
+
+        // 2. Carrega o Inventário Físico Relacional
+        const { data: invData, error: invError } = await supabaseClient
+            .from('inventario')
+            .select('*')
+            .eq('personagem_id', personagemIdAtual);
+
+        appState.combate.armas = [];
+        appState.inventario.equipamentos = [];
+
+        if (!invError && invData) {
+            invData.forEach(dbItem => {
+                let itemFinal = {};
+                // Mistura dados base da loja com personalizações do jogador
+                if (dbItem.item_id) {
+                    const base = (typeof itemDatabase !== 'undefined' ? itemDatabase : []).find(i => i.id === dbItem.item_id);
+                    itemFinal = base ? { ...base, ...dbItem.dados_customizados } : { ...dbItem.dados_customizados };
+                } else {
+                    // Se não tem item_id, foi criado puramente de forma manual
+                    itemFinal = { ...dbItem.dados_customizados };
+                }
+
+                itemFinal.db_id = dbItem.id; // Salva o ID do banco para podermos deletar/atualizar depois
+
+                // Normalização: A Loja usa 'name' e 'price', a Ficha usa 'nome' e 'custo'
+                itemFinal.nome = itemFinal.nome || itemFinal.name || "";
+                itemFinal.custo = itemFinal.custo !== undefined ? itemFinal.custo : (itemFinal.price || 0);
+
+                // Encaminha para Armas ou Equipamentos baseado na estrutura do objeto
+                if (itemFinal.dadoDano !== undefined || itemFinal.bonusAtaque !== undefined || itemFinal.tipo_inventario === 'arma') {
+                    appState.combate.armas.push(itemFinal);
+                } else {
+                    appState.inventario.equipamentos.push(itemFinal);
+                }
+            });
+        }
 
         sincronizarTelaComEstadoGlobal();
 
@@ -1137,9 +1322,7 @@ async function carregarFichaDoBanco() {
         if (typeof window.apiRenderizarEquipamentos === 'function') window.apiRenderizarEquipamentos();
         if (typeof calcularMatematicaDaFicha === 'function') calcularMatematicaDaFicha();
 
-        console.log("[Banco de Dados] Ficha carregada da nuvem com todas as listas e equipamentos.");
-    } else {
-        console.log("[Banco de Dados] Nenhum personagem encontrado na nuvem para este usuário.");
+        console.log("[Banco de Dados] Ficha e Inventário Relacional carregados da nuvem.");
     }
 }
 
@@ -1150,28 +1333,38 @@ async function salvarFichaNoBanco() {
         return;
     }
 
-    // Prepara o JSON da ficha limpo, removendo os créditos de dentro dele
+    // Prepara o JSON da ficha limpo, blindando-o contra duplicações
     const jsonLimpo = JSON.parse(JSON.stringify(_internalState));
-    if (jsonLimpo.recursos && jsonLimpo.recursos.creditos !== undefined) {
-        delete jsonLimpo.recursos.creditos;
-    }
+    if (jsonLimpo.recursos && jsonLimpo.recursos.creditos !== undefined) delete jsonLimpo.recursos.creditos; // Créditos vivem na coluna própria
+    if (jsonLimpo.combate && jsonLimpo.combate.armas !== undefined) delete jsonLimpo.combate.armas; // Armas vivem na tabela inventario
+    if (jsonLimpo.inventario && jsonLimpo.inventario.equipamentos !== undefined) delete jsonLimpo.inventario.equipamentos; // Equipamentos vivem na tabela inventario
+
+    const creditosAtuais = parseInt(appState.recursos.creditos) || 0;
 
     const payload = {
         user_id: userData.user.id,
         nome: appState.biografia.nome || 'Desconhecido',
-        creditos: parseInt(appState.recursos.creditos) || 0, // Salva APENAS na coluna matemática blindada (RLS)
-        dados_ficha: jsonLimpo,                              // Salva o JSON sem os créditos
+        creditos: creditosAtuais,
+        dados_ficha: jsonLimpo,
         updated_at: new Date().toISOString()
     };
 
     let dbError = null;
     if (personagemIdAtual) {
+        // Verifica se houve alteração manual de créditos para gerar log
+        const { data: prevData } = await supabaseClient.from('personagens').select('creditos').eq('id', personagemIdAtual).single();
+        if (prevData && prevData.creditos !== creditosAtuais) {
+            const diferenca = creditosAtuais - prevData.creditos;
+            await registarLog(personagemIdAtual, 'AJUSTE_CREDITOS', `Créditos alterados manualmente na ficha de ${prevData.creditos} para ${creditosAtuais}.`, diferenca);
+        }
+
         const { error } = await supabaseClient.from('personagens').update(payload).eq('id', personagemIdAtual);
         dbError = error;
     } else {
         const { data, error } = await supabaseClient.from('personagens').insert([payload]).select();
         if (data && data.length > 0) personagemIdAtual = data[0].id;
         dbError = error;
+        await registarLog(personagemIdAtual, 'CRIACAO', `Ficha inicializada com ${creditosAtuais} créditos.`, creditosAtuais);
     }
 
     const notif = document.getElementById('notificacao');
