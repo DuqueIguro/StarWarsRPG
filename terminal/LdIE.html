@@ -1,57 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arquivo de Aquisições Especiais</title>
-<link rel="stylesheet" href="../styles/LdIE.css">
-<link rel="icon" type="png" href="../img/light-saber.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arquivo de Aquisições Especiais</title>
+  <link rel="stylesheet" href="../styles/LdIE.css">
+  <link rel="icon" type="png" href="../img/light-saber.png">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
 </head>
+
 <body>
 
-<div class="scanlines"></div>
+  <div class="scanlines"></div>
 
-<header class="loja-header">
-  <div class="titulo-wrap">
-    <span class="loja-title-aurebesh">Arquivo de Aquisições Especiais</span>
-    <h1 class="loja-title">ARQUIVO DE AQUISIÇÕES ESPECIAIS</h1>
-  </div>
-  <p class="loja-subtitle">Leilão Clandestino <span>//</span> Acesso Nível Sombra</p>
-  <div class="header-stats">
-    <div>Lotes ativos: <span id="totalLotes">—</span></div>
-    <div>Seus créditos: <span id="creditosPessoais">—</span></div>
-    <div>Conexão: <span class="status-blink">INSTÁVEL</span></div>
-  </div>
-</header>
+  <header class="loja-header">
+    <div class="titulo-wrap">
+      <span class="loja-title-aurebesh">Arquivo de Aquisições Especiais</span>
+      <h1 class="loja-title">ARQUIVO DE AQUISIÇÕES ESPECIAIS</h1>
+    </div>
+    <p class="loja-subtitle">Leilão Clandestino <span>//</span> Acesso Nível Sombra</p>
+    <div class="header-stats">
+      <div>Lotes ativos: <span id="totalLotes">—</span></div>
+      <div>Seus créditos: <span id="creditosPessoais">—</span></div>
+      <div>Conexão: <span class="status-blink">INSTÁVEL</span></div>
+    </div>
+  </header>
 
-<nav class="categoria-nav">
-  <div class="tabs">
-    <button class="tab ativo" data-categoria="todos">Todos os lotes</button>
-    <button class="tab" data-categoria="reliquias">Relíquias</button>
-    <button class="tab" data-categoria="instrumentos">Instrumentos de Poder</button>
-  </div>
-  <div class="legenda">
-    <span class="chip"><span class="dot" style="background:#d4af37;"></span>Lendário</span>
-    <span class="chip"><span class="dot" style="background:#b565f5;"></span>Amaldiçoado</span>
-    <span class="chip"><span class="dot" style="background:#ff3b3b;"></span>Proibido</span>
-    <span class="chip"><span class="dot" style="background:#c9c9c9;"></span>Classificado</span>
-  </div>
-</nav>
+  <nav class="categoria-nav">
+    <div class="tabs">
+      <button class="tab ativo" data-categoria="todos">Todos os lotes</button>
+      <button class="tab" data-categoria="reliquias">Relíquias</button>
+      <button class="tab" data-categoria="instrumentos">Instrumentos de Poder</button>
+    </div>
+    <div class="legenda">
+      <span class="chip"><span class="dot" style="background:#d4af37;"></span>Lendário</span>
+      <span class="chip"><span class="dot" style="background:#b565f5;"></span>Amaldiçoado</span>
+      <span class="chip"><span class="dot" style="background:#ff3b3b;"></span>Proibido</span>
+      <span class="chip"><span class="dot" style="background:#c9c9c9;"></span>Classificado</span>
+    </div>
+  </nav>
 
-<section class="destaque-wrap" id="destaqueWrap"></section>
+  <section class="destaque-wrap" id="destaqueWrap"></section>
 
-<main class="lote-grid" id="loteGrid"></main>
+  <main class="lote-grid" id="loteGrid"></main>
 
-<div class="modal-overlay hidden" id="modalOverlay"></div>
+  <div class="modal-overlay hidden" id="modalOverlay"></div>
 
-<div class="notificacao" id="notificacao"></div>
+  <div class="notificacao" id="notificacao"></div>
 
-<footer class="loja-footer">
-  <p>Toda transação é final e não rastreável. Nenhuma reclamação será atendida após o fechamento do lance.</p>
-  <p class="risco">Aviso: negociar itens desta lista é considerado crime capital em território Imperial.</p>
-</footer>
+  <footer class="loja-footer">
+    <p>Toda transação é final e não rastreável. Nenhuma reclamação será atendida após o fechamento do lance.</p>
+    <p class="risco">Aviso: negociar itens desta lista é considerado crime capital em território Imperial.</p>
+  </footer>
 
-<script src="../js/databaseLojaSecreta.js"></script>
-<script src="../js/LdIE.js"></script>
+  <script src="../js/databaseLojaSecreta.js"></script>
+  <script src="../js/LdIE.js"></script>
 </body>
+
 </html>

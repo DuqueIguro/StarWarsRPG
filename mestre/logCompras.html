@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoria Imperial - Monitoramento Global</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            background-color: #050308;
+            color: #e8dcc8;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .log-row:hover {
+            background-color: rgba(56, 189, 248, 0.05);
+        }
+
+        /* Scrollbar customizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050308;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <header
+            class="mb-8 border-b border-red-900/50 pb-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <div>
+                <h1
+                    class="orbitron text-2xl md:text-3xl font-bold text-red-500 tracking-widest flex items-center gap-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    ISB // AUDITORIA IMPERIAL
+                </h1>
+                <p class="text-red-400/60 text-xs mt-1 uppercase tracking-widest">Monitoramento Global de Transações,
+                    Lojas e Exclusões</p>
+            </div>
+            <button id="btn-refresh"
+                class="bg-red-950/40 border border-red-800 text-red-400 px-4 py-2 rounded hover:bg-red-900/60 transition cursor-pointer text-sm font-bold flex items-center gap-2">
+                ATUALIZAR REGISTROS
+            </button>
+        </header>
+
+        <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                        <tr
+                            class="bg-stone-900 border-b border-stone-800 text-cyan-500 text-xs uppercase tracking-wider">
+                            <th class="p-4 w-48">Data / Hora Local</th>
+                            <th class="p-4 w-48">Jogador (Personagem)</th>
+                            <th class="p-4 w-32">Classificação</th>
+                            <th class="p-4">Descrição da Transação</th>
+                            <th class="p-4 text-right w-32">Delta Créditos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-body" class="text-sm divide-y divide-stone-800/50">
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-stone-500">Buscando registros na rede HoloNet...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts do Banco e da Lógica -->
+    <script src="../js/supabase.js"></script>
+    <script>
+        /* ARQUIVO: js/auditoria.js */
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tbody = document.getElementById('logs-body');
+            const btnRefresh = document.getElementById('btn-refresh');
+
+            async function carregarLogs() {
+                // Estado de Carregamento
+                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Descriptografando registros da rede...</td></tr>';
+
+                // Faz o JOIN automático com a tabela "personagens" para exibir o Nome do jogador invés do ID de máquina
+                const { data: logs, error } = await supabaseClient
+                    .from('logs_auditoria')
+                    .select('*, personagens(nome)')
+                    .order('created_at', { ascending: false })
+                    .limit(100); // Traz as 100 ações mais recentes da campanha
+
+                if (error) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Falha de conexão ISB: ${error.message}</td></tr>`;
+                    return;
+                }
+
+                if (!logs || logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Nenhum registro suspeito encontrado.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+
+                // Processa cada log e desenha a tabela
+                logs.forEach(log => {
+                    // Conversão de fuso horário seguro
+                    const dataObj = new Date(log.created_at);
+                    const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                    // Segurança: Se o jogador deletar a ficha, o log não quebra
+                    const nomePersonagem = log.personagens ? log.personagens.nome : 'Registro Fantasma';
+
+                    // Formatação Dinâmica de Cores para o Dinheiro
+                    let deltaColor = 'text-stone-500';
+                    let deltaText = '0';
+                    if (log.mudanca_creditos > 0) {
+                        deltaColor = 'text-green-400';
+                        deltaText = '+' + log.mudanca_creditos;
+                    } else if (log.mudanca_creditos < 0) {
+                        deltaColor = 'text-red-400';
+                        deltaText = log.mudanca_creditos;
+                    }
+
+                    // Formatação Dinâmica de Cores para a TAG do Evento
+                    let eventoColor = 'text-cyan-400';
+                    if (log.tipo_evento.includes('DESCARTE')) eventoColor = 'text-orange-400';
+                    if (log.tipo_evento.includes('MANUAL')) eventoColor = 'text-purple-400';
+                    if (log.tipo_evento.includes('AJUSTE')) eventoColor = 'text-yellow-400';
+                    if (log.tipo_evento.includes('LEILAO') || log.tipo_evento.includes('REAIS')) eventoColor = 'text-pink-400';
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'log-row transition-colors';
+                    tr.innerHTML = `
+                <td class="p-4 text-stone-400 text-xs">${dataFormatada}</td>
+                <td class="p-4 font-bold text-stone-300">${nomePersonagem}</td>
+                <td class="p-4 ${eventoColor} text-[10px] tracking-widest font-bold">${log.tipo_evento}</td>
+                <td class="p-4 text-stone-300">${log.descricao}</td>
+                <td class="p-4 text-right font-bold orbitron ${deltaColor}">${deltaText}</td>
+            `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            btnRefresh.addEventListener('click', carregarLogs);
+
+            // Dispara a busca automaticamente ao abrir a página
+            carregarLogs();
+        });
+    </script>
+</body>
+
+</html>

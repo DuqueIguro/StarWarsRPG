@@ -13,9 +13,9 @@ const TAXA_CONVERSAO = 10000; // 10.000 créditos = R$ 1,00
 const LINK_PAGAMENTO_REAIS = "https://livepix.gg/doisimperadores";
 
 const TIERS = {
-  lendario:     { rotulo: "Lendário",     cor: "#d4af37", glow: "rgba(212,175,55,0.45)" },
-  amaldicoado:  { rotulo: "Amaldiçoado",  cor: "#b565f5", glow: "rgba(181,101,245,0.45)" },
-  proibido:     { rotulo: "Proibido",     cor: "#ff3b3b", glow: "rgba(255,59,59,0.45)" },
+  lendario: { rotulo: "Lendário", cor: "#d4af37", glow: "rgba(212,175,55,0.45)" },
+  amaldicoado: { rotulo: "Amaldiçoado", cor: "#b565f5", glow: "rgba(181,101,245,0.45)" },
+  proibido: { rotulo: "Proibido", cor: "#ff3b3b", glow: "rgba(255,59,59,0.45)" },
   classificado: { rotulo: "Classificado", cor: "#c9c9c9", glow: "rgba(0,0,0,0.65)" }
 };
 
@@ -30,50 +30,62 @@ const COMPRADORES_RIVAIS = [
 
 let filtroAtual = "todos";
 let estadoLotes = {}; // id -> { lanceAtual, historico: [], arrematado: bool, arremataPor: 'creditos'|'reais'|null }
-let sharedState = { personalCredits: null, personalInventory: [] };
+
+// Variáveis Nuvem
+let currentUser = null;
+let currentPersonagemId = null;
+let userCredits = 0;
+
+const registarLog = async (personagemId, tipoEvento, descricao, mudancaCreditos = 0) => {
+  if (!personagemId) return;
+  await supabaseClient.from('logs_auditoria').insert([{
+    personagem_id: personagemId,
+    tipo_evento: tipoEvento,
+    descricao: descricao,
+    mudanca_creditos: mudancaCreditos
+  }]);
+};
 
 /* ---------------- formatação ---------------- */
 function formatarCreditos(valor) {
   if (valor == null) return "sob consulta";
-  return valor.toLocaleString("pt-BR") + " ⦻ (Créditos)";
+  return valor.toLocaleString("pt-BR") + " ⦻";
+}
+
+async function carregarDadosDoBanco() {
+  const el = document.getElementById("creditosPessoais");
+  el.textContent = "AUTENTICANDO...";
+
+  const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+  if (userError || !userData.user) {
+    el.textContent = "ACESSO NEGADO";
+    mostrarNotificacao("Autenticação requerida para transações sombrias.", "erro");
+    return;
+  }
+  currentUser = userData.user;
+
+  const { data: personagens, error: pError } = await supabaseClient
+    .from('personagens').select('id, creditos').eq('user_id', currentUser.id).limit(1);
+
+  if (pError || !personagens || personagens.length === 0) {
+    el.textContent = "S/ CONTA FANTASMA";
+    return;
+  }
+
+  currentPersonagemId = personagens[0].id;
+  userCredits = personagens[0].creditos || 0;
+  renderCreditosPessoais();
+}
+
+function renderCreditosPessoais() {
+  const el = document.getElementById("creditosPessoais");
+  if (el) el.textContent = userCredits.toLocaleString("pt-BR") + " ⦻";
 }
 
 function formatarReais(valor) {
   if (valor == null) return "sob consulta";
   const emReais = valor / TAXA_CONVERSAO;
   return "R$ " + emReais.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-/* ---------------- estado compartilhado (localStorage) ---------------- */
-function carregarEstadoCompartilhado() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const salvo = JSON.parse(raw);
-      sharedState.personalCredits = typeof salvo.personalCredits === "number" ? salvo.personalCredits : null;
-      sharedState.personalInventory = Array.isArray(salvo.personalInventory) ? salvo.personalInventory : [];
-    }
-  } catch (e) {
-    console.warn("Não foi possível ler o estado salvo do site:", e);
-  }
-}
-
-function salvarEstadoCompartilhado() {
-  let parsed = {};
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    parsed = raw ? JSON.parse(raw) : {};
-  } catch (e) {
-    parsed = {};
-  }
-  parsed.personalCredits = sharedState.personalCredits;
-  parsed.personalInventory = sharedState.personalInventory;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-}
-
-function renderCreditosPessoais() {
-  const el = document.getElementById("creditosPessoais");
-  if (el) el.textContent = sharedState.personalCredits.toLocaleString("pt-BR") + " ⦻";
 }
 
 /* ---------------- notificações ---------------- */
@@ -304,48 +316,94 @@ function atualizarTituloArremate(id) {
   }
 }
 
-/* ---------------- arremate (pagamento) ---------------- */
-function arrematarLote(id, metodo) {
+/* ---------------- arremate (pagamento e nuvem) ---------------- */
+async function arrematarLote(id, metodo) {
   const item = itemPorId(id);
   const est = estadoLotes[id];
   if (est.arrematado) return;
+  if (!currentPersonagemId) {
+    mostrarNotificacao("Você precisa de uma conta ativa para arrematar.", "erro");
+    return;
+  }
+
+  // Previne duplo clique durante o carregamento de rede
+  const btnCred = document.getElementById("btnArremCreditos");
+  const btnReais = document.getElementById("btnArremReais");
+  if (btnCred) btnCred.disabled = true;
+  if (btnReais) btnReais.disabled = true;
+  if (btnCred) btnCred.textContent = "PROCESSANDO...";
+
+  // Formata o item para o padrão da Ficha e do Inventário Pessoal
+  const tier = TIERS[item.classificacao];
+  const categoriaLegivel = item.categoria === "reliquias" ? "Relíquias e Antiguidades" : "Instrumentos de Poder";
+
+  const customData = {
+    name: item.nome,
+    description: item.descricao,
+    price: est.lanceAtual,
+    quality: tier.rotulo,
+    category: categoriaLegivel,
+    tipo_inventario: "equipamento",
+    is_custom: true // Marca como gerado e não pertencente à loja comum
+  };
 
   if (metodo === "creditos") {
-    if (sharedState.personalCredits < est.lanceAtual) {
-      mostrarNotificacao("Créditos pessoais insuficientes para arrematar este lote!", "erro");
+    // 1. Verificação de Saldo no Servidor (Anti-Fraude)
+    const { data: dbData } = await supabaseClient.from('personagens').select('creditos').eq('id', currentPersonagemId).single();
+    const saldoReal = dbData ? dbData.creditos : userCredits;
+
+    if (saldoReal < est.lanceAtual) {
+      mostrarNotificacao("Créditos insuficientes nas suas contas fantasma!", "erro");
+      if (btnCred) { btnCred.disabled = false; btnCred.textContent = "Pagar com Créditos"; }
+      if (btnReais) btnReais.disabled = false;
       return;
     }
-    sharedState.personalCredits -= est.lanceAtual;
-    adicionarAoInventarioPessoal(item, est.lanceAtual);
+
+    userCredits = saldoReal - est.lanceAtual;
+
+    // 2. Debitar Conta
+    await supabaseClient.from('personagens').update({ creditos: userCredits }).eq('id', currentPersonagemId);
+
+    // 3. Inserir Item
+    await supabaseClient.from('inventario').insert([{
+      personagem_id: currentPersonagemId,
+      user_id: currentUser.id,
+      item_id: null,
+      quantidade: 1,
+      origem: 'leilao_clandestino',
+      dados_customizados: customData
+    }]);
+
+    // 4. Auditar Log com histórico financeiro
+    const logMsg = `Relíquia [${item.nome}] arrematada. Saldo anterior: ${saldoReal} | Novo Saldo: ${userCredits}`;
+    await registarLog(currentPersonagemId, 'COMPRA_LEILAO', logMsg, -est.lanceAtual);
+
     est.arrematado = true;
     est.arremataPor = "creditos";
-    salvarEstadoCompartilhado();
     renderCreditosPessoais();
-    mostrarNotificacao(`${item.nome} arrematado com créditos!`, "sucesso");
+    mostrarNotificacao(`${item.nome} transferido para seu compartimento de carga.`, "sucesso");
+
   } else {
-    adicionarAoInventarioPessoal(item, est.lanceAtual);
+    // Transação em Reais (Livepix)
+    await supabaseClient.from('inventario').insert([{
+      personagem_id: currentPersonagemId,
+      user_id: currentUser.id,
+      item_id: null,
+      quantidade: 1,
+      origem: 'leilao_reais',
+      dados_customizados: customData
+    }]);
+
+    await registarLog(currentPersonagemId, 'COMPRA_REAIS', `Relíquia [${item.nome}] adquirida via Patrocínio (Livepix).`, 0);
+
     est.arrematado = true;
     est.arremataPor = "reais";
-    salvarEstadoCompartilhado();
     window.open(LINK_PAGAMENTO_REAIS, "_blank");
-    mostrarNotificacao("Redirecionando para o Livepix para concluir o pagamento em reais!", "sucesso");
+    mostrarNotificacao("Redirecionando para o Terminal Externo...", "sucesso");
   }
 
   renderGrid();
-  abrirModal(id); // recarrega o modal já como "arrematado"
-}
-
-function adicionarAoInventarioPessoal(item, precoFinal) {
-  const categoriaLegivel = item.categoria === "reliquias" ? "Relíquia" : "Instrumento de Poder";
-  const tier = TIERS[item.classificacao];
-  sharedState.personalInventory.push({
-    name: item.nome,
-    description: item.descricao,
-    price: precoFinal,
-    quality: tier.rotulo,
-    category: categoriaLegivel,
-    uid: Date.now() + Math.random()
-  });
+  abrirModal(id);
 }
 
 /* ---------------- filtros ---------------- */
@@ -361,11 +419,10 @@ function configurarTabs() {
 }
 
 /* ---------------- init ---------------- */
-document.addEventListener("DOMContentLoaded", () => {
-  carregarEstadoCompartilhado();
+document.addEventListener("DOMContentLoaded", async () => {
   inicializarEstado();
   renderDestaque();
   renderGrid();
-  renderCreditosPessoais();
   configurarTabs();
+  await carregarDadosDoBanco(); // Aguarda a sincronização da nuvem
 });
