@@ -11,7 +11,7 @@ const defaultState = {
     },
     modificadoresManuais: {
         status: {
-            modVidaMaxima: 0, // Adicionamos este campo
+            modVidaMaxima: 0,
             velocidadeDeslocamento: 6
         },
         defesas: { fortitude: { classe: 0, armadura: 0, outros: 0 }, reflexo: { classe: 0, armadura: 0, outros: 0 }, vontade: { classe: 0, armadura: 0, outros: 0 } },
@@ -58,6 +58,7 @@ const defaultState = {
     }
 };
 
+
 /* INÍCIO DE FUNÇÃO DE [Inicialização do Estado]; Verifica se há backup no navegador */
 if (typeof _internalState === 'undefined') {
     const savedState = localStorage.getItem('starWarsFichaAutoSave');
@@ -95,7 +96,6 @@ function setStateByPath(path, value) {
 
     const lastKey = keys[keys.length - 1];
 
-    // Evita recalcular se o valor não mudou
     if (current[lastKey] === value) return;
 
     current[lastKey] = value;
@@ -105,14 +105,18 @@ function setStateByPath(path, value) {
     }
 
     // Debounce: Aguarda o utilizador parar de digitar por 1 segundo antes de forçar o disco rígido
-    clearTimeout(timeoutAutoSave);
-    timeoutAutoSave = setTimeout(() => {
-        localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
-    }, 1000);
+    // Mestre tem o auto-save de cache desligado para evitar poluir a própria ficha com a de outro jogador
+    if (!isMestre) {
+        clearTimeout(timeoutAutoSave);
+        timeoutAutoSave = setTimeout(() => {
+            localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
+        }, 1000);
+    }
 }
 
 /* INICIO DE FUNÇÃO DE [Integração Supabase - Variáveis Globais]; armazena o ID do banco de dados */
 let personagemIdAtual = null;
+let isMestre = false; // Controle de Autoridade ISB
 /* FIM DE FUNÇÃO DE [Integração Supabase - Variáveis Globais] */
 
 /* INICIO DE FUNÇÃO DE [Integração Supabase - Logout]; encerra a sessão e limpa a memória local para segurança */
@@ -140,8 +144,6 @@ if (btnLogout) {
 }
 /* FIM DE FUNÇÃO DE [Integração Supabase - Logout] */
 
-
-/* INÍCIO DA ALTERAÇÃO */
 function calcularMatematicaDaFicha() {
     const nivel = parseInt(appState.biografia.nivel) || 1;
     const classeKey = appState.biografia.classe;
@@ -275,9 +277,6 @@ function calcularMatematicaDaFicha() {
     // 7. Dano Limite
     if (document.getElementById('limiar-dano-display')) document.getElementById('limiar-dano-display').textContent = defFort;
 }
-/* FIM DA ALTERAÇÃO */
-
-
 
 function initFicha() {
     // Referências aos elementos da página
@@ -387,14 +386,11 @@ function initFicha() {
     // Configuração do Botão "Salvar" vinculado ao Supabase
     const btnSave = document.getElementById('btn-save');
     if (btnSave) {
-        // Substituindo o antigo addEventListener
         const novoBtnSave = btnSave.cloneNode(true);
         btnSave.parentNode.replaceChild(novoBtnSave, btnSave);
 
         novoBtnSave.addEventListener('click', async () => {
-            // Mantém a gravação local por redundância
-            localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
-            // Inicia o salvamento no servidor
+            if (!isMestre) localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
             await salvarFichaNoBanco();
         });
     }
@@ -673,26 +669,27 @@ function initFicha() {
 
         // Evento de Edição Direta (UPDATE) com memória local instantânea
         weaponListEl.querySelectorAll('.dynamic-weapon-input').forEach(input => {
-            input.addEventListener('input', (e) => { // Substituído de 'change' para 'input'
+            input.addEventListener('input', (e) => {
                 const idx = e.target.dataset.index;
                 const field = e.target.dataset.field;
                 const arma = appState.combate.armas[idx];
 
                 if (!arma) return;
 
-                // Salva na memória local a cada tecla digitada (Blinda a caixa contra limpeza)
                 arma[field] = e.target.type === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value;
                 setStateByPath('combate.armas', appState.combate.armas);
 
                 if (!arma.db_id) return;
 
-                // Atrasa o save na nuvem em 800ms após parar de digitar
-                clearTimeout(window.timeoutSyncArmas[arma.db_id]);
-                window.timeoutSyncArmas[arma.db_id] = setTimeout(async () => {
-                    await supabaseClient.from('inventario')
-                        .update({ dados_customizados: arma })
-                        .eq('id', arma.db_id);
-                }, 800);
+                // O Mestre tem o auto-save de banco bloqueado para evitar conflitos (exige clique no Salvar)
+                if (!isMestre) {
+                    clearTimeout(window.timeoutSyncArmas[arma.db_id]);
+                    window.timeoutSyncArmas[arma.db_id] = setTimeout(async () => {
+                        await supabaseClient.from('inventario')
+                            .update({ dados_customizados: arma })
+                            .eq('id', arma.db_id);
+                    }, 800);
+                }
             });
         });
 
@@ -783,27 +780,29 @@ function initFicha() {
                 if (!item) return;
 
                 item[field] = e.target.type === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value;
-                if (field === 'categoria') item.category = item.categoria; // Garante dupla compatibilidade com a Loja
+                if (field === 'categoria') item.category = item.categoria;
 
                 setStateByPath('inventario.equipamentos', appState.inventario.equipamentos);
 
                 if (!item.db_id) return;
 
-                clearTimeout(window.timeoutSyncEquip[item.db_id]);
-                window.timeoutSyncEquip[item.db_id] = setTimeout(async () => {
-                    await supabaseClient.from('inventario')
-                        .update({ dados_customizados: item })
-                        .eq('id', item.db_id);
-                }, 800);
+                // O Mestre tem o auto-save de banco bloqueado para evitar conflitos (exige clique no Salvar)
+                if (!isMestre) {
+                    clearTimeout(window.timeoutSyncEquip[item.db_id]);
+                    window.timeoutSyncEquip[item.db_id] = setTimeout(async () => {
+                        await supabaseClient.from('inventario')
+                            .update({ dados_customizados: item })
+                            .eq('id', item.db_id);
+                    }, 800);
+                }
             });
 
             if (input.tagName === 'SELECT') {
                 input.addEventListener('change', () => {
-                    renderizarEquipamentos(); // Reorganiza fisicamente os blocos ao trocar de categoria
+                    renderizarEquipamentos();
                 });
             }
         });
-
         equipmentListEl.querySelectorAll('.remove-item-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const idx = e.target.dataset.index;
@@ -1209,7 +1208,8 @@ function initFicha() {
     const creditosInput = document.querySelector('[data-json-path="recursos.creditos"]');
     if (creditosInput) {
         creditosInput.addEventListener('change', async () => {
-            await salvarFichaNoBanco();
+            // Mestre não manda update de carteira na mesma hora (exige salvar)
+            if (!isMestre) await salvarFichaNoBanco();
         });
     }
 
@@ -1244,10 +1244,13 @@ function sincronizarTelaComEstadoGlobal() {
 
 async function registarLog(personagemId, tipoEvento, descricao, mudancaCreditos = 0) {
     if (!personagemId) return;
+
+    const descricaoFinal = isMestre ? `[ISB OVERRIDE] ${descricao}` : descricao;
+
     await supabaseClient.from('logs_auditoria').insert([{
         personagem_id: personagemId,
         tipo_evento: tipoEvento,
-        descricao: descricao,
+        descricao: descricaoFinal,
         mudanca_creditos: mudancaCreditos
     }]);
 }
@@ -1266,19 +1269,64 @@ async function carregarFichaDoBanco() {
     if (btnLogout) btnLogout.classList.remove('hidden');
     if (btnLogin) btnLogin.classList.add('hidden');
 
-    const { data: personagens, error: selectError } = await supabaseClient
-        .from('personagens').select('*').eq('user_id', userData.user.id).limit(1);
+    const currentUser = userData.user;
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetId = urlParams.get('id');
 
-    if (!selectError && personagens && personagens.length > 0) {
-        const dbFicha = personagens[0];
+    let dbFicha = null;
+
+    // MODO INSPEÇÃO (Com Gatekeeper Híbrido)
+    if (targetId) {
+        const { data: fichaTarget, error: targetError } = await supabaseClient
+            .from('personagens').select('*').eq('id', targetId).single();
+
+        if (targetError || !fichaTarget) {
+            alert("Dossiê não encontrado nos registros imperiais.");
+            window.location.href = '../menu.html';
+            return;
+        }
+
+        if (fichaTarget.user_id === currentUser.id) {
+            // O próprio jogador acessou via URL direta
+            dbFicha = fichaTarget;
+        } else {
+            // Verifica na tabela de permissões se o visitante tem cargo elevado
+            const { data: perm } = await supabaseClient
+                .from('permissoes').select('cargo').eq('user_id', currentUser.id).single();
+
+            if (perm && (perm.cargo === 'mestre' || perm.cargo === 'dev')) {
+                isMestre = true;
+                dbFicha = fichaTarget;
+
+                // Alerta Visual Permanente
+                const avisoMestre = document.createElement('div');
+                avisoMestre.className = 'w-full bg-red-900/90 text-white text-center py-1.5 text-xs font-bold tracking-widest uppercase border-b border-red-500 animate-pulse absolute top-0 left-0 z-50 shadow-lg';
+                avisoMestre.innerHTML = '⚠️ MODO ISB: VOCÊ ESTÁ INSPECIONANDO O DOSSIÊ DE OUTRO PILOTO ⚠️';
+                document.body.prepend(avisoMestre);
+            } else {
+                alert("ACESSO NEGADO: Você não possui autorização nível ISB para acessar este dossiê.");
+                window.location.href = '../menu.html';
+                return;
+            }
+        }
+    } else {
+        // MODO PADRÃO
+        const { data: personagens, error: selectError } = await supabaseClient
+            .from('personagens').select('*').eq('user_id', currentUser.id).limit(1);
+
+        if (!selectError && personagens && personagens.length > 0) {
+            dbFicha = personagens[0];
+        }
+    }
+
+    // Se passou pelo Gatekeeper e carregou a ficha com sucesso, injeta no HTML
+    if (dbFicha) {
         personagemIdAtual = dbFicha.id;
 
-        // 1. Carrega os dados JSON base (atributos, perícias, vida)
         Object.assign(appState, dbFicha.dados_ficha);
         setStateByPath('biografia.nome', dbFicha.nome);
         setStateByPath('recursos.creditos', dbFicha.creditos);
 
-        // 2. Carrega o Inventário Físico Relacional
         const { data: invData, error: invError } = await supabaseClient
             .from('inventario')
             .select('*')
@@ -1290,22 +1338,17 @@ async function carregarFichaDoBanco() {
         if (!invError && invData) {
             invData.forEach(dbItem => {
                 let itemFinal = {};
-                // Mistura dados base da loja com personalizações do jogador
                 if (dbItem.item_id) {
                     const base = (typeof itemDatabase !== 'undefined' ? itemDatabase : []).find(i => i.id === dbItem.item_id);
                     itemFinal = base ? { ...base, ...dbItem.dados_customizados } : { ...dbItem.dados_customizados };
                 } else {
-                    // Se não tem item_id, foi criado puramente de forma manual
                     itemFinal = { ...dbItem.dados_customizados };
                 }
 
-                itemFinal.db_id = dbItem.id; // Salva o ID do banco para podermos deletar/atualizar depois
-
-                // Normalização: A Loja usa 'name' e 'price', a Ficha usa 'nome' e 'custo'
+                itemFinal.db_id = dbItem.id;
                 itemFinal.nome = itemFinal.nome || itemFinal.name || "";
                 itemFinal.custo = itemFinal.custo !== undefined ? itemFinal.custo : (itemFinal.price || 0);
 
-                // Encaminha para Armas ou Equipamentos baseado na estrutura do objeto
                 if (itemFinal.dadoDano !== undefined || itemFinal.bonusAtaque !== undefined || itemFinal.tipo_inventario === 'arma') {
                     appState.combate.armas.push(itemFinal);
                 } else {
@@ -1333,11 +1376,10 @@ async function salvarFichaNoBanco() {
         return;
     }
 
-    // Prepara o JSON da ficha limpo, blindando-o contra duplicações
     const jsonLimpo = JSON.parse(JSON.stringify(_internalState));
-    if (jsonLimpo.recursos && jsonLimpo.recursos.creditos !== undefined) delete jsonLimpo.recursos.creditos; // Créditos vivem na coluna própria
-    if (jsonLimpo.combate && jsonLimpo.combate.armas !== undefined) delete jsonLimpo.combate.armas; // Armas vivem na tabela inventario
-    if (jsonLimpo.inventario && jsonLimpo.inventario.equipamentos !== undefined) delete jsonLimpo.inventario.equipamentos; // Equipamentos vivem na tabela inventario
+    if (jsonLimpo.recursos && jsonLimpo.recursos.creditos !== undefined) delete jsonLimpo.recursos.creditos;
+    if (jsonLimpo.combate && jsonLimpo.combate.armas !== undefined) delete jsonLimpo.combate.armas;
+    if (jsonLimpo.inventario && jsonLimpo.inventario.equipamentos !== undefined) delete jsonLimpo.inventario.equipamentos;
 
     const creditosAtuais = parseInt(appState.recursos.creditos) || 0;
 
@@ -1351,7 +1393,6 @@ async function salvarFichaNoBanco() {
 
     let dbError = null;
     if (personagemIdAtual) {
-        // Verifica se houve alteração manual de créditos para gerar log
         const { data: prevData } = await supabaseClient.from('personagens').select('creditos').eq('id', personagemIdAtual).single();
         if (prevData && prevData.creditos !== creditosAtuais) {
             const diferenca = creditosAtuais - prevData.creditos;
@@ -1360,6 +1401,17 @@ async function salvarFichaNoBanco() {
 
         const { error } = await supabaseClient.from('personagens').update(payload).eq('id', personagemIdAtual);
         dbError = error;
+
+        // MESTRE: Como os auto-saves foram desativados, o botão 'Salvar' empacota todas as alterações do inventário em lote e envia tudo de uma vez.
+        if (isMestre) {
+            for (const arma of appState.combate.armas) {
+                if (arma.db_id) await supabaseClient.from('inventario').update({ dados_customizados: arma }).eq('id', arma.db_id);
+            }
+            for (const item of appState.inventario.equipamentos) {
+                if (item.db_id) await supabaseClient.from('inventario').update({ dados_customizados: item }).eq('id', item.db_id);
+            }
+        }
+
     } else {
         const { data, error } = await supabaseClient.from('personagens').insert([payload]).select();
         if (data && data.length > 0) personagemIdAtual = data[0].id;
@@ -1388,12 +1440,12 @@ async function salvarFichaNoBanco() {
 initFicha();
 
 setTimeout(() => {
-    const btnSave = document.getElementById('btn-save');
-    if (btnSave) {
-        const newBtnSave = btnSave.cloneNode(true);
-        btnSave.parentNode.replaceChild(newBtnSave, btnSave);
+    const btnSaveGlobal = document.getElementById('btn-save');
+    if (btnSaveGlobal) {
+        const newBtnSave = btnSaveGlobal.cloneNode(true);
+        btnSaveGlobal.parentNode.replaceChild(newBtnSave, btnSaveGlobal);
         newBtnSave.addEventListener('click', async () => {
-            localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
+            if (!isMestre) localStorage.setItem('starWarsFichaAutoSave', JSON.stringify(_internalState));
             await salvarFichaNoBanco();
         });
     }

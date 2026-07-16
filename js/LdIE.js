@@ -36,12 +36,16 @@ let currentUser = null;
 let currentPersonagemId = null;
 let userCredits = 0;
 
-const registarLog = async (personagemId, tipoEvento, descricao, mudancaCreditos = 0) => {
+const registarLogFicha = async (personagemId, tipoEvento, descricao, mudancaCreditos = 0) => {
   if (!personagemId) return;
+
+  // Injeta a assinatura se o Mestre estiver manipulando a ficha
+  const descricaoFinal = isMestre ? `[ISB OVERRIDE] ${descricao}` : descricao;
+
   await supabaseClient.from('logs_auditoria').insert([{
     personagem_id: personagemId,
     tipo_evento: tipoEvento,
-    descricao: descricao,
+    descricao: descricaoFinal,
     mudanca_creditos: mudancaCreditos
   }]);
 };

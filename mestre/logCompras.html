@@ -68,108 +68,296 @@
             </button>
         </header>
 
-        <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[800px]">
-                    <thead>
-                        <tr
-                            class="bg-stone-900 border-b border-stone-800 text-cyan-500 text-xs uppercase tracking-wider">
-                            <th class="p-4 w-48">Data / Hora Local</th>
-                            <th class="p-4 w-48">Jogador (Personagem)</th>
-                            <th class="p-4 w-32">Classificação</th>
-                            <th class="p-4">Descrição da Transação</th>
-                            <th class="p-4 text-right w-32">Delta Créditos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logs-body" class="text-sm divide-y divide-stone-800/50">
-                        <tr>
-                            <td colspan="5" class="p-8 text-center text-stone-500">Buscando registros na rede HoloNet...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="mb-8">
+            <h2
+                class="orbitron text-sm font-bold text-cyan-500 tracking-widest mb-3 flex items-center gap-2 border-b border-cyan-900/50 pb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2">
+                    </path>
+                </svg>
+                ARQUIVOS DE PESSOAL (DOSSIÊS ATIVOS)
+            </h2>
+            <div id="roster-panel" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <div class="text-xs text-stone-500">Carregando frota...</div>
             </div>
         </div>
-    </div>
+        </header>
 
-    <!-- Scripts do Banco e da Lógica -->
-    <script src="../js/supabase.js"></script>
-    <script>
-        /* ARQUIVO: js/auditoria.js */
+        <button id="btn-refresh"
+            class="bg-red-950/40 border border-red-800 text-red-400 px-4 py-2 rounded hover:bg-red-900/60 transition cursor-pointer text-sm font-bold flex items-center gap-2">
+            ATUALIZAR REGISTROS
+        </button>
+        </header>
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const tbody = document.getElementById('logs-body');
-            const btnRefresh = document.getElementById('btn-refresh');
+        <!-- PAINEL DE FILTROS ISB -->
+        <div
+            class="bg-stone-900/80 border border-red-900/30 rounded-lg p-4 mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end shadow-lg">
+            <div class="lg:col-span-2">
+                <label class="block text-[10px] text-red-500 uppercase tracking-widest mb-1 font-bold">Palavra-Chave /
+                    Valor</label>
+                <input type="text" id="filter-text" placeholder="Ex: Tibanna, 4000, Blaster..."
+                    class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-red-500 outline-none transition">
+            </div>
+            <div>
+                <label
+                    class="block text-[10px] text-red-500 uppercase tracking-widest mb-1 font-bold">Investigado</label>
+                <select id="filter-char"
+                    class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-red-500 outline-none transition">
+                    <option value="">Toda a Frota</option>
+                    <!-- JS injeta os nomes aqui -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] text-red-500 uppercase tracking-widest mb-1 font-bold">Tipo de
+                    Atividade</label>
+                <select id="filter-action"
+                    class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-red-500 outline-none transition">
+                    <option value="">Qualquer Atividade</option>
+                    <option value="AJUSTE">Ajuste de Saldo</option>
+                    <option value="COMPRA">Compras (Geral)</option>
+                    <option value="LEILAO">Leilão Sombrio</option>
+                    <option value="DESCARTE">Exclusões / Descarte</option>
+                    <option value="MANUAL">Criações Manuais</option>
+                    <option value="ABASTECIMENTO">Gás / Abastecimento</option>
+                    <option value="USO">Consumo de Itens</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] text-red-500 uppercase tracking-widest mb-1 font-bold">Data
+                    Início</label>
+                <input type="date" id="filter-date-start"
+                    class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-red-500 outline-none transition"
+                    style="color-scheme: dark;">
+            </div>
+            <div>
+                <label class="block text-[10px] text-red-500 uppercase tracking-widest mb-1 font-bold">Data Fim</label>
+                <input type="date" id="filter-date-end"
+                    class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-red-500 outline-none transition"
+                    style="color-scheme: dark;">
+            </div>
+            <div class="lg:col-span-6 flex justify-end gap-3 mt-2 border-t border-red-900/20 pt-4">
+                <button id="btn-clear"
+                    class="bg-stone-950 border border-stone-700 text-stone-400 hover:text-white px-6 py-2 text-xs tracking-widest uppercase font-bold rounded transition cursor-pointer">
+                    Limpar Filtros
+                </button>
+                <button id="btn-search"
+                    class="bg-red-900/40 border border-red-800 text-red-400 hover:bg-red-800 hover:text-white px-8 py-2 text-xs tracking-widest uppercase font-bold rounded transition cursor-pointer flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Executar Varredura
+                </button>
+            </div>
+        </div>
 
-            async function carregarLogs() {
-                // Estado de Carregamento
-                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Descriptografando registros da rede...</td></tr>';
+        <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
 
-                // Faz o JOIN automático com a tabela "personagens" para exibir o Nome do jogador invés do ID de máquina
-                const { data: logs, error } = await supabaseClient
-                    .from('logs_auditoria')
-                    .select('*, personagens(nome)')
-                    .order('created_at', { ascending: false })
-                    .limit(100); // Traz as 100 ações mais recentes da campanha
+            <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr
+                                class="bg-stone-900 border-b border-stone-800 text-cyan-500 text-xs uppercase tracking-wider">
+                                <th class="p-4 w-48">Data / Hora Local</th>
+                                <th class="p-4 w-48">Jogador (Personagem)</th>
+                                <th class="p-4 w-32">Classificação</th>
+                                <th class="p-4">Descrição da Transação</th>
+                                <th class="p-4 text-right w-32">Delta Créditos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-body" class="text-sm divide-y divide-stone-800/50">
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-stone-500">Buscando registros na rede
+                                    HoloNet...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-                if (error) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Falha de conexão ISB: ${error.message}</td></tr>`;
-                    return;
+        <!-- Scripts do Banco e da Lógica -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="../js/supabase.js"></script>
+        <script src="../js/isb_gatekeeper.js"></script>
+        <script>
+            /* ARQUIVO: js/auditoria.js */
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                const tbody = document.getElementById('logs-body');
+                const btnRefresh = document.getElementById('btn-refresh');
+
+                // Controles do Filtro
+                const btnSearch = document.getElementById('btn-search');
+                const btnClear = document.getElementById('btn-clear');
+                const inputBusca = document.getElementById('filter-text');
+                const selectChar = document.getElementById('filter-char');
+                const selectAcao = document.getElementById('filter-action');
+                const dateStart = document.getElementById('filter-date-start');
+                const dateEnd = document.getElementById('filter-date-end');
+
+                // 1. Carrega dinamicamente a lista de jogadores do servidor
+                // 1. Carrega dinamicamente a lista de jogadores do servidor
+                async function carregarPersonagens() {
+                    const rosterPanel = document.getElementById('roster-panel');
+
+                    // Agora puxamos também os créditos para exibir na prévia ao Mestre
+                    const { data, error } = await supabaseClient.from('personagens').select('id, nome, creditos').order('nome');
+
+                    if (!error && data) {
+                        if (rosterPanel) rosterPanel.innerHTML = ''; // Limpa o "Carregando"
+
+                        data.forEach(p => {
+                            // A) Alimenta o Filtro Suspenso
+                            const opt = document.createElement('option');
+                            opt.value = p.id;
+                            opt.textContent = p.nome;
+                            selectChar.appendChild(opt);
+
+                            // B) Cria o Cartão Clicável de Acesso Rápido
+                            if (rosterPanel) {
+                                const card = document.createElement('a');
+                                card.href = `../pages/ficha.html?id=${p.id}`; // O link seguro do Gatekeeper
+                                card.target = '_blank';
+                                card.className = 'bg-stone-900/40 border border-cyan-900/30 hover:border-cyan-500 hover:bg-stone-900 p-3 rounded flex flex-col justify-between transition-all cursor-pointer group shadow-sm';
+                                card.innerHTML = `
+                                    <span class="text-xs font-bold text-stone-300 group-hover:text-cyan-300 transition-colors uppercase tracking-wider">${p.nome}</span>
+                                    <div class="mt-2 pt-2 border-t border-stone-800 flex justify-between items-center">
+                                        <span class="text-[9px] text-stone-500">SALDO:</span>
+                                        <span class="text-[10px] text-green-400 orbitron font-bold">${p.creditos} 💳</span>
+                                    </div>
+                                `;
+                                rosterPanel.appendChild(card);
+                            }
+                        });
+                    } else {
+                        if (rosterPanel) rosterPanel.innerHTML = '<div class="text-red-500 text-xs">Erro ao carregar dossiês.</div>';
+                    }
                 }
 
-                if (!logs || logs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Nenhum registro suspeito encontrado.</td></tr>';
-                    return;
-                }
+                // 2. Motor Central de Busca Paramétrica
+                async function carregarLogs() {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Executando varredura na rede ISB com os parâmetros fornecidos...</td></tr>';
 
-                tbody.innerHTML = '';
+                    // Base da Query
+                    let query = supabaseClient
+                        .from('logs_auditoria')
+                        .select('*, personagens(nome)')
+                        .order('created_at', { ascending: false })
+                        .limit(300); // Aumentamos o limite para 300 resultados por busca
 
-                // Processa cada log e desenha a tabela
-                logs.forEach(log => {
-                    // Conversão de fuso horário seguro
-                    const dataObj = new Date(log.created_at);
-                    const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-                    // Segurança: Se o jogador deletar a ficha, o log não quebra
-                    const nomePersonagem = log.personagens ? log.personagens.nome : 'Registro Fantasma';
-
-                    // Formatação Dinâmica de Cores para o Dinheiro
-                    let deltaColor = 'text-stone-500';
-                    let deltaText = '0';
-                    if (log.mudanca_creditos > 0) {
-                        deltaColor = 'text-green-400';
-                        deltaText = '+' + log.mudanca_creditos;
-                    } else if (log.mudanca_creditos < 0) {
-                        deltaColor = 'text-red-400';
-                        deltaText = log.mudanca_creditos;
+                    // Aplicando Filtro de Texto (ex: nome de um item ou valor)
+                    const txt = inputBusca.value.trim();
+                    if (txt) {
+                        query = query.ilike('descricao', `%${txt}%`);
                     }
 
-                    // Formatação Dinâmica de Cores para a TAG do Evento
-                    let eventoColor = 'text-cyan-400';
-                    if (log.tipo_evento.includes('DESCARTE')) eventoColor = 'text-orange-400';
-                    if (log.tipo_evento.includes('MANUAL')) eventoColor = 'text-purple-400';
-                    if (log.tipo_evento.includes('AJUSTE')) eventoColor = 'text-yellow-400';
-                    if (log.tipo_evento.includes('LEILAO') || log.tipo_evento.includes('REAIS')) eventoColor = 'text-pink-400';
+                    // Aplicando Filtro de Jogador
+                    if (selectChar.value) {
+                        query = query.eq('personagem_id', selectChar.value);
+                    }
 
-                    const tr = document.createElement('tr');
-                    tr.className = 'log-row transition-colors';
-                    tr.innerHTML = `
+                    // Aplicando Filtro de Tipo de Atividade
+                    if (selectAcao.value) {
+                        query = query.ilike('tipo_evento', `%${selectAcao.value}%`);
+                    }
+
+                    // Aplicando Filtro de Datas (com injeção automática de fuso horário brasileiro -03:00)
+                    if (dateStart.value) {
+                        query = query.gte('created_at', `${dateStart.value}T00:00:00-03:00`);
+                    }
+                    if (dateEnd.value) {
+                        query = query.lte('created_at', `${dateEnd.value}T23:59:59-03:00`);
+                    }
+
+                    // Executa a Query Final no Supabase
+                    const { data: logs, error } = await query;
+
+                    if (error) {
+                        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">Falha de decriptação: ${error.message}</td></tr>`;
+                        return;
+                    }
+
+                    if (!logs || logs.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Nenhum registro corresponde aos filtros de busca selecionados.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = '';
+
+                    // Processa cada log e desenha na tabela
+                    logs.forEach(log => {
+
+                        const dataObj = new Date(log.created_at);
+                        const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                        const nomePersonagem = log.personagens ? log.personagens.nome : 'Registro Fantasma';
+
+                        let deltaColor = 'text-stone-500';
+                        let deltaText = '0';
+                        if (log.mudanca_creditos > 0) {
+                            deltaColor = 'text-green-400';
+                            deltaText = '+' + log.mudanca_creditos;
+                        } else if (log.mudanca_creditos < 0) {
+                            deltaColor = 'text-red-400';
+                            deltaText = log.mudanca_creditos;
+                        }
+
+                        let eventoColor = 'text-cyan-400';
+                        if (log.tipo_evento.includes('DESCARTE')) eventoColor = 'text-orange-400';
+                        if (log.tipo_evento.includes('MANUAL')) eventoColor = 'text-purple-400';
+                        if (log.tipo_evento.includes('AJUSTE')) eventoColor = 'text-yellow-400';
+                        if (log.tipo_evento.includes('LEILAO') || log.tipo_evento.includes('REAIS')) eventoColor = 'text-pink-400';
+
+                        const tr = document.createElement('tr');
+                        tr.className = 'log-row transition-colors';
+
+                        // O botão Inspecionar pega o log.personagem_id e manda para a URL da ficha
+                        const btnInspecionar = `
+                            <a href="../pages/ficha.html?id=${log.personagem_id}" target="_blank" class="text-red-400 hover:text-white underline decoration-red-900/50 hover:decoration-red-400 transition ml-2 text-[10px] tracking-wider uppercase" title="Inspecionar Dossiê Completo">
+                                [INSPECIONAR]
+                            </a>
+                        `;
+
+                        tr.innerHTML = `
                 <td class="p-4 text-stone-400 text-xs">${dataFormatada}</td>
-                <td class="p-4 font-bold text-stone-300">${nomePersonagem}</td>
+                <td class="p-4 font-bold text-stone-300">
+                    ${nomePersonagem}
+                    ${btnInspecionar}
+                </td>
                 <td class="p-4 ${eventoColor} text-[10px] tracking-widest font-bold">${log.tipo_evento}</td>
                 <td class="p-4 text-stone-300">${log.descricao}</td>
                 <td class="p-4 text-right font-bold orbitron ${deltaColor}">${deltaText}</td>
             `;
-                    tbody.appendChild(tr);
+                        tbody.appendChild(tr);
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                // 3. Mapeamento de Eventos (Botões e Tecla Enter)
+                btnRefresh.addEventListener('click', carregarLogs);
+                btnSearch.addEventListener('click', carregarLogs);
+                inputBusca.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') carregarLogs();
                 });
-            }
 
-            btnRefresh.addEventListener('click', carregarLogs);
+                btnClear.addEventListener('click', () => {
+                    inputBusca.value = '';
+                    selectChar.value = '';
+                    selectAcao.value = '';
+                    dateStart.value = '';
+                    dateEnd.value = '';
+                    carregarLogs();
+                });
 
-            // Dispara a busca automaticamente ao abrir a página
-            carregarLogs();
-        });
-    </script>
+                // Inicialização da Página
+                carregarPersonagens();
+                carregarLogs();
+            });
+        </script>
 </body>
 
 </html>

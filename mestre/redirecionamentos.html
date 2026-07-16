@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SITH_CORE // Matriz de Redirecionamento</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../styles/style.css">
     <link rel="stylesheet" href="../styles/escudo.css">
     <link rel="icon" type="image/x-icon" href="../img/d20.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body class="crt-hologram-scan">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/isb_gatekeeper.js"></script>
 
     <div class="main-container min-h-screen flex flex-col justify-between p-4 md:p-6">
 
@@ -42,7 +51,8 @@
                 <h2 class="tactical-panel-title">[REDIREC_01] DIRETÓRIO_CORE_SISTEMA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Acesso aos nós de dados principais da infraestrutura galáctica, incluindo o índice raiz, mapas de hiperespaço e logs de transações.</p>
+                        <p>Acesso aos nós de dados principais da infraestrutura galáctica, incluindo o índice raiz,
+                            mapas de hiperespaço e logs de transações.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
                             <li>Index Raiz do Sistema</li>
                             <li>Gerenciador de Inventário Geral</li>
@@ -52,12 +62,18 @@
                         </ul>
                     </div>
                     <div class="flex flex-col gap-2">
-                        <button onclick="window.location.href='https://starwars.duqueiguro.xyz/'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Raiz Inicial (Index)</button>
-                        <button onclick="window.location.href='../pages/inventario'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Inventário Geral</button>
-                        <button onclick="window.location.href='../pages/p2w'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Logística P2W</button>
-                        <button onclick="window.location.href='../pages/mapa_galatico'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Mapa Galáctico</button>
-                        <button onclick="window.location.href='../pages/mapaSecreto'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Mapa Secreto</button>
-                        <button onclick="window.location.href='../pages/holonet'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Canal Holonet</button>
+                        <button onclick="window.location.href='https://starwars.duqueiguro.xyz/'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Raiz Inicial (Index)</button>
+                        <button onclick="window.location.href='../pages/inventario'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Inventário Geral</button>
+                        <button onclick="window.location.href='../pages/p2w'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Logística P2W</button>
+                        <button onclick="window.location.href='../pages/mapa_galatico'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Mapa Galáctico</button>
+                        <button onclick="window.location.href='../pages/mapaSecreto'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Mapa Secreto</button>
+                        <button onclick="window.location.href='../pages/holonet'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Canal Holonet</button>
                     </div>
                 </div>
             </section>
@@ -67,7 +83,8 @@
                 <h2 class="tactical-panel-title">[REDIREC_02] CADEIA_DE_COMANDO</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Nós de rede dedicados ao mapeamento de patentes, postos e hierarquias de ambas as forças militares ativas no setor.</p>
+                        <p>Nós de rede dedicados ao mapeamento de patentes, postos e hierarquias de ambas as forças
+                            militares ativas no setor.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
                             <li>Terminal de Seleção de Facção</li>
                             <li>Cadeia de Comando Imperial</li>
@@ -75,9 +92,12 @@
                         </ul>
                     </div>
                     <div class="flex flex-col gap-2">
-                        <button onclick="window.location.href='../pages/hierarquias'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquias (Seleção)</button>
-                        <button onclick="window.location.href='../pages/hierarquiaImperio'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquia Império</button>
-                        <button onclick="window.location.href='../pages/hierarquiaGerais'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquia Aliança</button>
+                        <button onclick="window.location.href='../pages/hierarquias'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquias (Seleção)</button>
+                        <button onclick="window.location.href='../pages/hierarquiaImperio'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquia Império</button>
+                        <button onclick="window.location.href='../pages/hierarquiaGerais'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hierarquia Aliança</button>
                     </div>
                 </div>
             </section>
@@ -87,7 +107,8 @@
                 <h2 class="tactical-panel-title">[REDIREC_03] REGISTROS_DE_ENGENHARIA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Dossiê biográfico e canais industriais do complexo automatizado de Lothal e do hangar de reparos sob o comando do General Dur'toc.</p>
+                        <p>Dossiê biográfico e canais industriais do complexo automatizado de Lothal e do hangar de
+                            reparos sob o comando do General Dur'toc.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
                             <li>Perfil Biométrico IMP-994-DT</li>
                             <li>Terminal de Manufatura da Oficina</li>
@@ -96,10 +117,14 @@
                         </ul>
                     </div>
                     <div class="flex flex-col gap-2">
-                        <button onclick="window.location.href='../pages/durtoc'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Dossiê Dur'toc</button>
-                        <button onclick="window.location.href='../pages/oficina'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Matriz da Oficina</button>
-                        <button onclick="window.location.href='../oficina/fornecedores'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Fábricas e Fornecedores</button>
-                        <button onclick="window.location.href='../hangar/hangarAutorizado'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hangar Autorizado</button>
+                        <button onclick="window.location.href='../pages/durtoc'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Dossiê Dur'toc</button>
+                        <button onclick="window.location.href='../pages/oficina'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Matriz da Oficina</button>
+                        <button onclick="window.location.href='../oficina/fornecedores'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Fábricas e Fornecedores</button>
+                        <button onclick="window.location.href='../hangar/hangarAutorizado'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Hangar Autorizado</button>
                     </div>
                 </div>
             </section>
@@ -109,7 +134,8 @@
                 <h2 class="tactical-panel-title">[REDIREC_04] REDES_DE_INSURGÊNCIA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Interceptação de dados e canais dedicados às células operacionais da Aliança Rebelde monitoradas no setor de Lothal.</p>
+                        <p>Interceptação de dados e canais dedicados às células operacionais da Aliança Rebelde
+                            monitoradas no setor de Lothal.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
                             <li>Banco Geral de Rebeldes</li>
                             <li>Seleção de Células de Insurgência</li>
@@ -120,12 +146,20 @@
                         </ul>
                     </div>
                     <div class="flex flex-col grid grid-cols-2 gap-2">
-                        <button onclick="window.location.href='../pages/rebeldes'" class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Banco de Dados Rebelde</button>
-                        <button onclick="window.location.href='../pages/selecaoRebelde'" class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Seleção de Células</button>
-                        <button onclick="window.location.href='../rebeldes/astara'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Astara</button>
-                        <button onclick="window.location.href='../rebeldes/orion'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Orion</button>
-                        <button onclick="window.location.href='../rebeldes/massassi'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Massassi</button>
-                        <button onclick="window.location.href='../rebeldes/caminho'" class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Caminho</button>
+                        <button onclick="window.location.href='../pages/rebeldes'"
+                            class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Banco de Dados
+                            Rebelde</button>
+                        <button onclick="window.location.href='../pages/selecaoRebelde'"
+                            class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Seleção de
+                            Células</button>
+                        <button onclick="window.location.href='../rebeldes/astara'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Astara</button>
+                        <button onclick="window.location.href='../rebeldes/orion'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Orion</button>
+                        <button onclick="window.location.href='../rebeldes/massassi'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Massassi</button>
+                        <button onclick="window.location.href='../rebeldes/caminho'"
+                            class="btn-prime-cyber py-1.5 text-xs font-bold uppercase">Célula Caminho</button>
                     </div>
                 </div>
             </section>
@@ -135,15 +169,19 @@
                 <h2 class="tactical-panel-title">[REDIREC_05] FROTAS_TÁTICAS</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Portais de comando para as frotas operacionais da galáxia: monitoramento da flotilha rebelde e comando mestre da Resistência em tempo real.</p>
+                        <p>Portais de comando para as frotas operacionais da galáxia: monitoramento da flotilha rebelde
+                            e comando mestre da Resistência em tempo real.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
                             <li>Painel de Frota Rebelde</li>
                             <li>Comando Central da Resistência</li>
                         </ul>
                     </div>
                     <div class="flex flex-col grid grid-cols-2 gap-2">
-                        <button onclick="window.location.href='../pages/frotaRebeldes'" class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Frota Rebelde</button>
-                        <button onclick="window.location.href='FrotaMestre'" class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Comando Frota Mestre</button>
+                        <button onclick="window.location.href='../pages/frotaRebeldes'"
+                            class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Frota Rebelde</button>
+                        <button onclick="window.location.href='FrotaMestre'"
+                            class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Comando Frota
+                            Mestre</button>
                     </div>
                 </div>
             </section>
@@ -153,15 +191,22 @@
                 <h2 class="tactical-panel-title">[REDIREC_06] PAGINAS_SECRETAS</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs text-gray-400">
-                        <p>Descriptografação de canais secretos e canais de comunicação restritos, essenciais para a segurança das operações. A proteção dessas comunicações é vital para a manutenção da integridade das estratégias e planos em andamento, evitando que informações cruciais caiam em mãos erradas e comprometendo assim a eficácia das missões.</p>
+                        <p>Descriptografação de canais secretos e canais de comunicação restritos, essenciais para a
+                            segurança das operações. A proteção dessas comunicações é vital para a manutenção da
+                            integridade das estratégias e planos em andamento, evitando que informações cruciais caiam
+                            em mãos erradas e comprometendo assim a eficácia das missões.</p>
                         <ul class="list-disc list-inside space-y-1 text-red-300">
                             <li>Loja de Itens Especiais</li>
                             <li>Mapa dos Tesouros Planetários</li>
                         </ul>
                     </div>
                     <div class="flex flex-col grid grid-cols-2 gap-2">
-                        <button onclick="window.location.href='../terminal/LdIE'" class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Arquivo de Aquisições Especiais</button>
-                        <button onclick="window.location.href='../terminal/MTP'" class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Mapa dos Tesouros Planetários</button>
+                        <button onclick="window.location.href='../terminal/LdIE'"
+                            class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Arquivo de Aquisições
+                            Especiais</button>
+                        <button onclick="window.location.href='../terminal/MTP'"
+                            class="btn-prime-cyber col-span-2 py-1.5 text-xs font-bold uppercase">Mapa dos Tesouros
+                            Planetários</button>
                     </div>
                 </div>
             </section>
@@ -194,4 +239,5 @@
         })();
     </script>
 </body>
+
 </html>

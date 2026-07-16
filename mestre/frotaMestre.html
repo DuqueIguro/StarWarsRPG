@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +9,79 @@
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../img/d20.png">
     <style>
-        body { font-family: 'Share Tech Mono', monospace; background-color: #050a10; color: #4da8da; }
-        .neon-border { border: 1px solid #4da8da; box-shadow: 0 0 8px rgba(77, 168, 218, 0.4); background: rgba(5, 10, 16, 0.85); }
-        .panel-header { background: linear-gradient(90deg, rgba(77,168,218,0.2) 0%, transparent 100%); border-bottom: 1px solid #4da8da; }
-        .combat-input { background-color: #020610; border: 1px solid #4da8da; color: white; padding: 4px; width: 100%; border-radius: 4px; }
-        
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #050a10;
+            color: #4da8da;
+        }
+
+        .neon-border {
+            border: 1px solid #4da8da;
+            box-shadow: 0 0 8px rgba(77, 168, 218, 0.4);
+            background: rgba(5, 10, 16, 0.85);
+        }
+
+        .panel-header {
+            background: linear-gradient(90deg, rgba(77, 168, 218, 0.2) 0%, transparent 100%);
+            border-bottom: 1px solid #4da8da;
+        }
+
+        .combat-input {
+            background-color: #020610;
+            border: 1px solid #4da8da;
+            color: white;
+            padding: 4px;
+            width: 100%;
+            border-radius: 4px;
+        }
+
         /* Holograma 3D */
-        .holo-container { perspective: 800px; display: flex; justify-content: center; align-items: center; height: 100px; position: relative; }
-        .holo-spin { animation: spin 8s linear infinite; transform-style: preserve-3d; }
-        .holo-img { filter: sepia(100%) hue-rotate(160deg) saturate(500%) brightness(1.2); mix-blend-mode: screen; width: 60px; transform: rotateX(20deg); }
-        @keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-        
-        .status-pill { padding: 4px 8px; font-size: 10px; font-weight: bold; text-align: center; border-radius: 4px; border: 1px solid; }
+        .holo-container {
+            perspective: 800px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            position: relative;
+        }
+
+        .holo-spin {
+            animation: spin 8s linear infinite;
+            transform-style: preserve-3d;
+        }
+
+        .holo-img {
+            filter: sepia(100%) hue-rotate(160deg) saturate(500%) brightness(1.2);
+            mix-blend-mode: screen;
+            width: 60px;
+            transform: rotateX(20deg);
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotateY(0deg);
+            }
+
+            to {
+                transform: rotateY(360deg);
+            }
+        }
+
+        .status-pill {
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 4px;
+            border: 1px solid;
+        }
     </style>
 </head>
+
 <body class="min-h-screen p-8 text-[#4da8da]">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/isb_gatekeeper.js"></script>
 
     <header class="mb-12 text-center">
         <h1 class="text-4xl font-bold uppercase tracking-widest text-[#4da8da]">Comando Central da Resistência</h1>
@@ -41,7 +100,9 @@
             <input type="number" id="sShield" class="combat-input mb-2" placeholder="Escudo">
             <input type="number" id="sHull" class="combat-input mb-2" placeholder="Vida">
             <input type="number" id="sCost" class="combat-input mb-2" placeholder="Custo">
-            <button onclick="addShip()" class="w-full bg-[#4da8da] text-black font-bold py-2 uppercase hover:bg-white transition-all rounded">Registrar no Comando</button>
+            <button onclick="addShip()"
+                class="w-full bg-[#4da8da] text-black font-bold py-2 uppercase hover:bg-white transition-all rounded">Registrar
+                no Comando</button>
             <div id="globalMsg" class="mt-4 text-xs font-bold text-center"></div>
         </aside>
 
@@ -63,7 +124,7 @@
             for (const [name, data] of Object.entries(factions)) {
                 let statusText = "OPERACIONAL";
                 let statusColor = "border-green-500 text-green-500";
-                
+
                 if (data.spent > data.budget) {
                     statusText = "CONSEQUÊNCIAS ATIVADAS!";
                     statusColor = "border-red-500 text-red-500 animate-pulse";
@@ -74,7 +135,7 @@
                     statusText = "QUASE NO LIMITE!";
                     statusColor = "border-yellow-500 text-yellow-500";
                 }
-                
+
                 const card = document.createElement('div');
                 card.className = 'neon-border p-5 rounded-lg';
                 card.innerHTML = `
@@ -122,4 +183,5 @@
         window.onload = renderAll;
     </script>
 </body>
+
 </html>
