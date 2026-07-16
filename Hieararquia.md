@@ -37,7 +37,6 @@ StarWarsRPG
 │  ├─ p2w.json
 │  ├─ planetasSecretos.json
 │  └─ planetas_database.json
-├─ ficha.json
 ├─ hangar
 │  ├─ fichas.js
 │  ├─ fuel.js
@@ -118,7 +117,9 @@ StarWarsRPG
 │  ├─ holonet.js
 │  ├─ inventario.js
 │  ├─ inventarioOficina.js
+│  ├─ isb_gatekeeper.js
 │  ├─ LdIE.js
+│  ├─ login.js
 │  ├─ manutencao.js
 │  ├─ mapa_galatico.js
 │  ├─ MCMT.js
@@ -128,10 +129,14 @@ StarWarsRPG
 │  ├─ p2w.js
 │  ├─ posto.js
 │  ├─ rebeldes.js
-│  └─ selecaoRebelde.js
+│  ├─ selecaoRebelde.js
+│  └─ supabase.js
+├─ menu.html
 ├─ mestre
+│  ├─ distanciaPlanetas.html
 │  ├─ escudo.html
 │  ├─ frotaMestre.html
+│  ├─ log.html
 │  └─ redirecionamentos.html
 ├─ oficina
 │  ├─ database
@@ -204,17 +209,18 @@ StarWarsRPG
 │  ├─ holonet.css
 │  ├─ inventario.css
 │  ├─ LdIE.css
+│  ├─ login.css
 │  ├─ manutencao.css
 │  ├─ mapa_galatico.css
 │  ├─ MCMT.css
+│  ├─ menu.css
 │  ├─ MTP.css
 │  ├─ oficina.css
 │  ├─ organizacoes.css
 │  ├─ p2w.css
 │  ├─ posto.css
 │  ├─ rebeldes.css
-│  ├─ selecaoRebelde.css
-│  └─ style.css
+│  └─ selecaoRebelde.css
 └─ terminal
    ├─ LdIE.html
    └─ MTP.html
