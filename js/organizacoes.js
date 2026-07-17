@@ -46,7 +46,7 @@ function renderizarInterface(data) {
         const btnSidebar = document.getElementById("btnToggleSidebar");
         btnSidebar.classList.add("hidden");
         const placeholder = document.createElement("div");
-        placeholder.style.cssText = btnSidebar.getBoundingClientRect().width
+        placeholder.menu.cssText = btnSidebar.getBoundingClientRect().width
             ? `width:${btnSidebar.getBoundingClientRect().width}px; visibility:hidden;`
             : `width: 160px; visibility:hidden;`;
         btnSidebar.parentNode.insertBefore(placeholder, btnSidebar);

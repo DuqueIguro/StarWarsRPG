@@ -9,13 +9,18 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/menu.css">
     <link rel="stylesheet" href="../styles/escudo.css">
     <link rel="icon" type="image/x-icon" href="../img/d20.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body class="crt-hologram-scan">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/isb_gatekeeper.js"></script>
 
     <div class="main-container min-h-screen flex flex-col justify-between p-4 md:p-6">
 
@@ -39,6 +44,7 @@
         <main class="grid grid-cols-1 xl:grid-cols-3 gap-6 flex-grow mb-4">
 
             <section class="tactical-panel flex flex-col">
+                <!-- MÓDULO 01: Rolador de Dados Matricial -->
                 <h2 class="tactical-panel-title">[01] ROLADOR_DE_DADOS_MATRICIAL</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-4 justify-between h-full">
                     <div class="grid grid-cols-2 gap-3">
@@ -91,6 +97,7 @@
                 </div>
             </section>
 
+            <!-- MÓDULO 02: Datalog de Telemetria -->
             <section class="tactical-panel flex flex-col">
                 <h2 class="tactical-panel-title">[02] DATALOG_DE_TELEMETRIA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-3 h-full overflow-hidden">
@@ -105,6 +112,7 @@
                 </div>
             </section>
 
+            <!-- MÓDULO 03: Monitor de Combate Ativo -->
             <section class="tactical-panel flex flex-col">
                 <h2 class="tactical-panel-title">[03] MONITOR_DE_COMBATE_ATIVO</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-3 h-full overflow-hidden">
@@ -127,6 +135,7 @@
                 </div>
             </section>
 
+            <!-- MÓDULO 04: Banco de Dados de Regras -->
             <section class="tactical-panel flex flex-col">
                 <h2 class="tactical-panel-title">[04] BANCO_DE_DADOS_REGRAS</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-3 h-full overflow-hidden">
@@ -144,6 +153,7 @@
                 </div>
             </section>
 
+            <!-- MÓDULO 05: Gerador de Identidade Galáctica -->
             <section class="tactical-panel flex flex-col">
                 <h2 class="tactical-panel-title">[05] GERADOR_DE_IDENTIDADE_GALÁCTICA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-3 justify-between h-full">
@@ -169,8 +179,36 @@
                 </div>
             </section>
 
+            <!-- MÓDULO 06: Acessos do Mestre -->
             <section class="tactical-panel flex flex-col">
-                <h2 class="tactical-panel-title">[06] DIRETÓRIO_DE_NOTAS_CRIPTOGRAFADAS</h2>
+                <h2 class="tactical-panel-title">[06] ACESSOS_DE_MESTRE</h2>
+                <div class="tactical-panel-body p-4 flex flex-col gap-3 justify-between h-full">
+                    <div class="flex flex-col gap-2 font-mono text-xs">
+                        <p class="text-gray-400 text-justify">
+                            Acesse rapidamente os módulos internos do mestre para consulta de registros e navegação
+                            estratégica entre sistemas.
+                        </p>
+                        <div
+                            class="bg-black/50 border border-red-900/50 p-2 text-center text-red-500 font-bold tracking-wider">
+                            <i class="fa-solid fa-satellite-dish"></i> LINKS DE ACESSO RÁPIDO
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="window.location.href='log.html'"
+                            class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">
+                            ABRIR LOG DE SISTEMA
+                        </button>
+                        <button onclick="window.location.href='distanciaPlanetas.html'"
+                            class="btn-prime-cyber py-2 text-xs font-bold uppercase tracking-wider">
+                            ABRIR DISTÂNCIA ENTRE PLANETAS
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MÓDULO 07: Diretório de Notas Criptografadas -->
+            <section class="tactical-panel flex flex-col">
+                <h2 class="tactical-panel-title">[07] DIRETÓRIO_DE_NOTAS_CRIPTOGRAFADAS</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-3 h-full overflow-hidden">
                     <textarea id="notes-text-area"
                         class="w-full bg-black border border-red-600 text-white p-3 font-mono text-xs flex-grow focus:outline-none resize-none"
@@ -187,9 +225,9 @@
                 </div>
             </section>
 
-            <!-- MÓDULO 07: Central de Redirecionamentos Táticos -->
+            <!-- MÓDULO 08: Central de Redirecionamentos Táticos -->
             <section class="tactical-panel flex flex-col">
-                <h2 class="tactical-panel-title">[07] REDIRECIONAMENTOS_DE_SISTEMA</h2>
+                <h2 class="tactical-panel-title">[08] REDIRECIONAMENTOS_DE_SISTEMA</h2>
                 <div class="tactical-panel-body p-4 flex flex-col gap-3 justify-between h-full">
                     <div class="flex flex-col gap-2 font-mono text-xs">
                         <p class="text-gray-400 text-justify">
@@ -217,7 +255,6 @@
 
     </div>
 
-    <script src="../js/escudo.js"></script>
     <script>
         // Sistema de relógio em tempo real integrado idêntico ao comunicacao.html
         (function () {
@@ -235,6 +272,7 @@
             }
         })();
     </script>
+    <script src="../js/escudo.js"></script>
 </body>
 
 </html>

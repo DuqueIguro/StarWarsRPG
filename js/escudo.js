@@ -179,7 +179,8 @@ function executeInitiativeSort() {
 // Módulo de Regras (Abas)
 function toggleDatabaseTab(tabId) {
     document.querySelectorAll(".tab-cyber-btn").forEach(b => b.classList.remove("active"));
-    if(window.event && window.event.target) window.event.target.classList.add("active");
+    // Se der merda remove o comentário da linha abaixo.
+    // if(window.event && window.event.target) window.event.target.classList.add("active");
     document.getElementById("tab-data-box").innerHTML = rulesDatabase[tabId];
 }
 
