@@ -38,5 +38,40 @@ const DADOS_CLASSES = {
         bba: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
         pvIniciais: 30, 
         dadoVida: 10     
+    },
+
+    // Classes de prestígio
+    'mestre_Jedi': {
+        nome: 'Mestre Jedi',
+        bonusDefesa: { fort: 3, ref: 3, von: 3 },
+        talentosIniciais: ['Sensitividade da Força', 'Prof.Sabres de luz', 'Prof.Arma simples'],
+        bba: [1, 2, 3, 4, 5, 5, 5, 5, 5, 5],
+        pvIniciais: 0, 
+        dadoVida: 10     
+    },
+    'improvisador': {
+        nome: 'Improvisador',
+        bonusDefesa: { fort: 0, ref: 2, von: 4 },
+        talentosIniciais: ['Nenhuma Ferramenta Necessária', 'Contrabando'],
+        bba: [0, 1, 2, 3, 3, 4, 5, 6, 6, 7],
+        pvIniciais: 0, 
+        dadoVida: 8      
+    },
+    'oficial': {
+        nome: 'Oficial',
+        bonusDefesa: { fort: 0, ref: 2, von: 4 },
+        talentosIniciais: [''],
+        bba: [1, 2, 3, 4, 5, 5, 5, 5, 5, 5],
+        pvIniciais: 0, 
+        dadoVida: 8    
+    },
+    'piloto_ás': {
+        nome: 'Piloto Ás',
+        bonusDefesa: { fort: 2, ref: 4, von: 0 },
+        talentosIniciais: ['Esquiva Veicular'],
+        bba: [0, 1, 2, 3, 3, 4, 5, 6, 6, 7],
+        pvIniciais: 0, 
+        dadoVida: 8      
     }
+
 };
