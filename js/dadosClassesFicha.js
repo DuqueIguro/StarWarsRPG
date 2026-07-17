@@ -44,7 +44,7 @@ const DADOS_CLASSES = {
     'mestre_Jedi': {
         nome: 'Mestre Jedi',
         bonusDefesa: { fort: 3, ref: 3, von: 3 },
-        talentosIniciais: ['Sensitividade da Força', 'Prof.Sabres de luz', 'Prof.Arma simples'],
+        talentosIniciais: ['Sensitividade da Força', 'Destemido', 'Serenidade', 'Segredos da Força'],
         bba: [1, 2, 3, 4, 5, 5, 5, 5, 5, 5],
         pvIniciais: 0, 
         dadoVida: 10     
@@ -68,10 +68,34 @@ const DADOS_CLASSES = {
     'piloto_ás': {
         nome: 'Piloto Ás',
         bonusDefesa: { fort: 2, ref: 4, von: 0 },
-        talentosIniciais: ['Esquiva Veicular'],
+        talentosIniciais: [],
         bba: [0, 1, 2, 3, 3, 4, 5, 6, 6, 7],
         pvIniciais: 0, 
         dadoVida: 8      
+    },
+    'pistoleiro': {
+        nome: 'Pistoleiro',
+        bonusDefesa: { fort: 0, ref: 4, von: 2 },
+        talentosIniciais: ['Tiro à Queima Roupa', 'Tiro Preciso', 'Saque Rápido', 'Prof.Pistolas'],
+        bba: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        pvIniciais: 0, 
+        dadoVida: 8      
+    },
+    'discipulo_da_força': {
+        nome: 'Discípulo da Força',
+        bonusDefesa: { fort: 1, ref: 1, von: 3 },
+        talentosIniciais: ['Sensitividade da Força', 'Segredos da Força'],
+        bba: [0, 1, 2, 3, 3, 3, 3, 3, 3, 3],
+        pvIniciais: 0, 
+        dadoVida: 8      
+    },
+    'aprendiz_sith': {
+        nome: 'Aprendiz Sith',
+        bonusDefesa: { fort: 2, ref: 2, von: 2 },
+        talentosIniciais: ['Sensitividade da Força'],
+        bba: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        pvIniciais: 0, 
+        dadoVida: 10      
     }
 
 };
