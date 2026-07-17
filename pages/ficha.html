@@ -76,7 +76,9 @@
                         <label for="classe">CLASSE PRINCIPAL E MULTICLASSES</label>
                         <div class="flex items-center gap-2">
                             <select id="classe" data-json-path="biografia.classe" class="p-2 flex-1"></select>
-                            <button onclick="adicionarClasse()" class="px-3 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 font-bold rounded-md transition-all h-full" title="Adicionar Multiclasse">➕</button>
+                            <button onclick="adicionarClasse()"
+                                class="px-3 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 font-bold rounded-md transition-all h-full"
+                                title="Adicionar Multiclasse">➕</button>
                         </div>
                         <div id="multiclasse-container" class="flex flex-col gap-2 mt-2"></div>
                     </div>
@@ -107,8 +109,8 @@
                         <input type="text" data-json-path="biografia.destino">
                     </div>
 
-                    <div class="col-span-2"><label for="especie">ESPÉCIE</label><select id="especie" data-json-path="biografia.especie"
-                            class="p-2"></select></div>
+                    <div class="col-span-2"><label for="especie">ESPÉCIE</label><select id="especie"
+                            data-json-path="biografia.especie" class="p-2"></select></div>
                     <div class="col-span-2">
                         <label class="text-stone-500 uppercase tracking-widest text-xs font-bold mb-1 block">Notas e
                             Diretrizes da Espécie</label>
@@ -390,20 +392,6 @@
             </section>
 
             <section class="section-container">
-                <h3>Diretrizes de Combate</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                    <div>
-                        <label>Bônus Base de Ataque (BBA)</label>
-                        <div id="bba-display" class="w-full text-center py-2.5 bg-stone-900 border border-stone-800 rounded-lg font-bold text-white text-lg">0</div>
-                    </div>
-                    <div>
-                        <label>Modificador de Ataque Manual Geral</label>
-                        <input type="number" data-json-path="modificadoresManuais.combate.attackGeral">
-                    </div>
-                </div>
-            </section>
-
-            <section class="section-container">
                 <div class="flex items-center justify-between mb-4 border-b border-stone-800 pb-3">
                     <h3 class="m-0 border-0 p-0">Arsenal Carregado (Armas)</h3>
                     <button onclick="adicionarArma()"
@@ -415,8 +403,15 @@
             </section>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <section class="section-container mb-0">
-                    <div class="flex items-center justify-between mb-4 border-b border-stone-800 pb-3">
+                <section class="section-container mb-0 relative">
+                    <!-- Texto sutil / Apêndice clicável no topo direito -->
+                    <span onclick="adicionarTalentosIniciais()"
+                        class="absolute top-2 right-3 text-[9px] text-stone-600 hover:text-cyan-400 font-bold uppercase tracking-widest cursor-pointer transition-colors"
+                        title="Extrair talentos iniciais das classes">
+                        [Extrair da Classe]
+                    </span>
+
+                    <div class="flex items-center justify-between mb-4 border-b border-stone-800 pb-3 mt-1">
                         <h3 class="m-0 border-0 p-0">Módulos de Talentos</h3>
                         <button onclick="adicionarTalento()"
                             class="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 font-bold rounded-md text-xs transition-all">

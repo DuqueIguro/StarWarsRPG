@@ -268,12 +268,40 @@ function calcularMatematicaDaFicha() {
         });
     }
 
-    // 6. Atualizar BBA Display
-    const bbaDisplay = document.getElementById('bba-display');
-    if (bbaDisplay) {
-        bbaDisplay.textContent = parseInt(appState.modificadoresManuais.combate.ataqueGeral) || 0;
+    // 6. Calcular e Atualizar BBA (Bônus Base de Ataque) Cumulativo
+    let bbaTotal = 0;
+
+    // A) Processa a Classe Principal
+    const nivelPrincipal = parseInt(appState.biografia.nivel) || 1;
+    if (classeKey && DADOS_CLASSES[classeKey] && DADOS_CLASSES[classeKey].bba) {
+        const arrayBbaPrincipal = DADOS_CLASSES[classeKey].bba;
+        // O array é zero-indexado, então o nível 1 é o índice 0. Subtrai 1 e limita entre 0 e 19 (nível max 20)
+        const indicePrincipal = Math.max(0, Math.min(nivelPrincipal - 1, 19));
+        bbaTotal += arrayBbaPrincipal[indicePrincipal];
     }
 
+    // B) Processa todas as Multiclasses dinamicamente
+    if (appState.biografia.multiclasse) {
+        appState.biografia.multiclasse.forEach(c => {
+            const multiNome = typeof c === 'string' ? c : (c.nome || "");
+            const multiNivel = typeof c === 'string' ? 1 : (parseInt(c.nivel) || 1);
+
+            if (multiNome && DADOS_CLASSES[multiNome] && DADOS_CLASSES[multiNome].bba) {
+                const arrayBbaMulti = DADOS_CLASSES[multiNome].bba;
+                const indiceMulti = Math.max(0, Math.min(multiNivel - 1, 9));
+                bbaTotal += arrayBbaMulti[indiceMulti];
+            }
+        });
+    }
+
+    // C) Adiciona o ajuste manual (se houver) e renderiza na tela
+    const ajusteManual = parseInt(appState.modificadoresManuais.combate.ataqueGeral) || 0;
+    const bbaFinal = bbaTotal + ajusteManual;
+
+    const bbaDisplay = document.getElementById('bba-display');
+    if (bbaDisplay) {
+        bbaDisplay.textContent = bbaFinal;
+    }
     // 7. Dano Limite
     if (document.getElementById('limiar-dano-display')) document.getElementById('limiar-dano-display').textContent = defFort;
 }
@@ -908,30 +936,54 @@ function initFicha() {
     /* FIM DE FUNÇÃO DE [Listas Dinâmicas] */
 
     /* INICIO DE FUNÇÃO DE [Adicionar Talentos de Classe]; esta função insere os talentos iniciais no array de estado */
-    const addClassTalentsBtn = document.getElementById('add-class-talents-btn');
-    if (addClassTalentsBtn) {
-        addClassTalentsBtn.addEventListener('click', () => {
-            const classeKey = appState.biografia.classe;
+    window.adicionarTalentosIniciais = function () {
+        const classesParaVerificar = [];
 
-            if (!classeKey || !DADOS_CLASSES[classeKey]) return;
+        // 1. Verifica e guarda a classe principal
+        if (appState.biografia.classe) {
+            classesParaVerificar.push(appState.biografia.classe);
+        }
 
-            const talentosClasse = DADOS_CLASSES[classeKey].talentosIniciais || [];
-            let talentosAtuais = getValueFromPath(appState, 'caracteristicas.talentos') || [];
-            let adicionouAlgo = false;
-
-            talentosClasse.forEach(talento => {
-                if (!talentosAtuais.includes(talento)) {
-                    talentosAtuais.push(talento);
-                    adicionouAlgo = true;
-                }
+        // 2. Verifica e guarda todas as multiclasses dinamicamente
+        if (appState.biografia.multiclasse && appState.biografia.multiclasse.length > 0) {
+            appState.biografia.multiclasse.forEach(c => {
+                // Aceita tanto dados antigos (string solta) quanto o novo objeto { nome, nivel }
+                const multiNome = typeof c === 'string' ? c : (c.nome || "");
+                if (multiNome) classesParaVerificar.push(multiNome);
             });
+        }
 
-            if (adicionouAlgo) {
-                setStateByPath('caracteristicas.talentos', talentosAtuais);
-                renderizarListasDinamicas();
+        // 3. Trava de segurança caso nenhuma classe tenha sido selecionada ainda
+        if (classesParaVerificar.length === 0) {
+            alert("Selecione pelo menos uma classe na Biografia antes de extrair os talentos.");
+            return;
+        }
+
+        let talentosAtuais = getValueFromPath(appState, 'caracteristicas.talentos') || [];
+        let adicionouAlgo = false;
+
+        // 4. Varre todas as classes encontradas e injeta os talentos se o jogador ainda não os tiver
+        classesParaVerificar.forEach(classeKey => {
+            if (DADOS_CLASSES[classeKey] && DADOS_CLASSES[classeKey].talentosIniciais) {
+                const talentosClasse = DADOS_CLASSES[classeKey].talentosIniciais;
+
+                talentosClasse.forEach(talento => {
+                    if (!talentosAtuais.includes(talento)) {
+                        talentosAtuais.push(talento);
+                        adicionouAlgo = true;
+                    }
+                });
             }
         });
-    }
+
+        // 5. Atualiza a tela e notifica o jogador
+        if (adicionouAlgo) {
+            setStateByPath('caracteristicas.talentos', talentosAtuais);
+            renderizarListasDinamicas();
+        } else {
+            alert("Todos os talentos iniciais das suas classes atuais já constam na lista.");
+        }
+    };
     /* FIM DE FUNÇÃO DE [Adicionar Talentos de Classe] */
 
 
