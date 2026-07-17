@@ -328,6 +328,26 @@ function updateEmptyUI() {
     document.getElementById('droidQuote').textContent = "Cadastre sua nave no painel acima para abrir os bloqueios de fluxo de gás e calibrar as conexões de reabastecimento.";
 }
 
+/* INÍCIO DA FUNÇÃO DE PREPARAÇÃO DO FORMULÁRIO */
+window.openNewShipForm = function () {
+    // 1. Desmarca a nave atual para garantir que o sistema faça um INSERT limpo e não um UPDATE
+    currentShipKey = '';
+    document.getElementById('shipSelect').value = '';
+
+    // 2. Limpa os campos e permite edição do nome
+    document.getElementById('customName').readOnly = false;
+    document.getElementById('customName').value = '';
+    document.getElementById('customQuote').value = '';
+    document.getElementById('customSubCap').value = '';
+    document.getElementById('customSubLevel').value = '';
+    document.getElementById('customHypCap').value = '';
+    document.getElementById('customHypLevel').value = '';
+
+    // 3. Mostra o formulário, oculta os status e foca no input de nome
+    document.getElementById('customShipForm').classList.remove('hidden');
+    document.getElementById('shipStatusPanel').classList.add('opacity-40', 'pointer-events-none');
+    document.getElementById('customName').focus();
+};
 async function registerCustomShip() {
     if (!currentPersonagemId) return showToast("ERRO", "Nenhum piloto autenticado.", "❌");
 
@@ -393,11 +413,25 @@ async function registerCustomShip() {
         if (!error && data && data.length > 0) {
             await registarLog(currentPersonagemId, 'CRIACAO_MANUAL', `Nave registrada via Aurora-9: ${name}`);
             showToast("CONECTADA", `Transponder de ${name} sincronizado.`, "🛸");
+            
+            // Define a nave recém criada como a nave selecionada no seletor
+            saveToStorage('posto_selected_ship', data[0].id);
         }
     }
 
     btnForm.disabled = false;
     btnForm.textContent = originalText;
+
+    // Oculta o formulário após salvar
+    document.getElementById('customShipForm').classList.add('hidden');
+    
+    // Zera os campos por garantia
+    document.getElementById('customName').value = '';
+    document.getElementById('customQuote').value = '';
+    document.getElementById('customSubCap').value = '';
+    document.getElementById('customSubLevel').value = '';
+    document.getElementById('customHypCap').value = '';
+    document.getElementById('customHypLevel').value = '';
 
     // Recarrega o banco inteiro para aplicar a matriz correta ao ecrã
     await carregarDadosDoBanco();
@@ -605,8 +639,8 @@ async function buyCanister(type, price) {
         description: desc,
         price: price,
         quality: "Normal",
-        category: "Equipamento", // Cairá certinho no novo separador de categorias que fizemos
-        tipo_inventario: "equipamento",
+        category: "Outros", // Cairá certinho no novo separador de categorias que fizemos
+        tipo_inventario: "outros",
         is_custom: true
     };
 

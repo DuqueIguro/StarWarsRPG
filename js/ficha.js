@@ -638,7 +638,7 @@ function initFicha() {
                 if (skillLabel) {
                     const skillName = skillLabel.textContent.toLowerCase();
                     if (skillName.includes(searchTerm)) {
-                        skillElement.style.display = 'block'; // Mostra a perícia inteira
+                        skillElement.style.display = ''; // Limpa o estilo inline, restaurando o 'grid' original do Tailwind
                     } else {
                         skillElement.style.display = 'none'; // Esconde se não bater com a busca
                     }
@@ -1435,8 +1435,8 @@ async function salvarFichaNoBanco() {
 
     const creditosAtuais = parseInt(appState.recursos.creditos) || 0;
 
+    // REMOVIDO o user_id do payload base. Ele não deve ser sobrescrito em atualizações.
     const payload = {
-        user_id: userData.user.id,
         nome: appState.biografia.nome || 'Desconhecido',
         creditos: creditosAtuais,
         dados_ficha: jsonLimpo,
@@ -1444,6 +1444,8 @@ async function salvarFichaNoBanco() {
     };
 
     let dbError = null;
+
+    // MODO ATUALIZAÇÃO (Ficha já existe)
     if (personagemIdAtual) {
         const { data: prevData } = await supabaseClient.from('personagens').select('creditos').eq('id', personagemIdAtual).single();
         if (prevData && prevData.creditos !== creditosAtuais) {
@@ -1451,10 +1453,11 @@ async function salvarFichaNoBanco() {
             await registarLog(personagemIdAtual, 'AJUSTE_CREDITOS', `Créditos alterados manualmente na ficha de ${prevData.creditos} para ${creditosAtuais}.`, diferenca);
         }
 
+        // Atualiza apenas os dados permitidos, mantendo o dono original intacto
         const { error } = await supabaseClient.from('personagens').update(payload).eq('id', personagemIdAtual);
         dbError = error;
 
-        // MESTRE: Como os auto-saves foram desativados, o botão 'Salvar' empacota todas as alterações do inventário em lote e envia tudo de uma vez.
+        // MESTRE: Salva os itens do inventário no banco
         if (isMestre) {
             for (const arma of appState.combate.armas) {
                 if (arma.db_id) await supabaseClient.from('inventario').update({ dados_customizados: arma }).eq('id', arma.db_id);
@@ -1464,7 +1467,11 @@ async function salvarFichaNoBanco() {
             }
         }
 
+        // MODO CRIAÇÃO (Ficha nova)
     } else {
+        // Apenas na criação de uma ficha nova nós injetamos quem é o dono (criador)
+        payload.user_id = userData.user.id;
+
         const { data, error } = await supabaseClient.from('personagens').insert([payload]).select();
         if (data && data.length > 0) personagemIdAtual = data[0].id;
         dbError = error;

@@ -37,7 +37,7 @@
             </div>
 
             <!-- Botão de Voltar -->
-            <a href="https://starwars.duqueiguro.xyz"
+            <a href=".."
                 class="orbitron text-xs font-bold bg-slate-900 hover:bg-red-950/40 text-red-400 hover:text-red-200 px-4 py-2.5 rounded border border-red-500/40 hover:border-red-400 transition-all duration-300 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -103,9 +103,8 @@
                         </svg>
                         1. SUAS NAVES NO HANGAR
                     </h3>
-                    <button onclick="registerCustomShip()" id="btnToggleForm"
-                        class="text-xs text-cyan-400 hover:text-cyan-200 underline font-bold cursor-pointer">+ Cadastrar
-                        Nave</button>
+                    <button onclick="openNewShipForm()" id="btnToggleForm"
+                        class="text-xs text-cyan-400 hover:text-cyan-200 underline font-bold cursor-pointer">+ Cadastrar Nave</button>
                 </div>
 
                 <!-- Formulário de Cadastro de Nave -->
@@ -419,4 +418,5 @@
     <script src="../js/databaseInventario.js"></script>
     <script src="../js/posto.js"></script>
 </body>
+
 </html>
