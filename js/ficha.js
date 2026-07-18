@@ -145,11 +145,23 @@ if (btnLogout) {
 /* FIM DE FUNÇÃO DE [Integração Supabase - Logout] */
 
 function calcularMatematicaDaFicha() {
-    const nivel = parseInt(appState.biografia.nivel) || 1;
+    const nivelPrincipal = parseInt(appState.biografia.nivel) || 1;
+
+    // 0. CALCULAR O NÍVEL TOTAL (Classe Principal + Multiclasses)
+    let nivelTotal = nivelPrincipal;
+    if (appState.biografia.multiclasse) {
+        appState.biografia.multiclasse.forEach(c => {
+            const multiNivel = typeof c === 'string' ? 1 : (parseInt(c.nivel) || 1);
+            nivelTotal += multiNivel;
+        });
+    }
+
     const classeKey = appState.biografia.classe;
     const racaKey = appState.biografia.especie;
     const tamanhoKey = appState.biografia.tamanho;
-    const halfLevel = Math.floor(nivel / 2);
+
+    // As perícias também usam metade do NÍVEL TOTAL, não só da principal
+    const halfLevel = Math.floor(nivelTotal / 2);
 
     // 1. Calcular Modificadores de Atributo (Base + Raciais)
     const raciais = (racaKey && DADOS_RACAS[racaKey]) ? DADOS_RACAS[racaKey].modificadores : {};
@@ -175,12 +187,10 @@ function calcularMatematicaDaFicha() {
     }
 
     // 2. Calcular Defesas (Classe + Tamanho + Outros + Armadura + Manual)
-    // Avalia a classe principal e todas as multiclasses para extrair o bônus máximo
     const classesAtuais = [];
     if (classeKey) classesAtuais.push(classeKey);
     if (appState.biografia.multiclasse) {
         appState.biografia.multiclasse.forEach(c => {
-            // Aceita tanto dados antigos (strings) quanto os novos (objetos com nome e nível)
             if (typeof c === 'string' && c !== '') classesAtuais.push(c);
             else if (c && c.nome && c.nome !== '') classesAtuais.push(c.nome);
         });
@@ -201,7 +211,8 @@ function calcularMatematicaDaFicha() {
         const manualKey = tipo === 'von' ? 'vontade' : (tipo === 'ref' ? 'reflexo' : 'fortitude');
         const manual = appState.modificadoresManuais.defesas[manualKey];
 
-        return 10 + nivel + modAttr +
+        // USANDO O NÍVEL TOTAL NA FÓRMULA FINAL
+        return 10 + nivelTotal + modAttr +
             (maxBonusClasse[tipo] || 0) +
             (tipo === 'ref' ? bonusTamanho : 0) +
             (parseInt(manual.armadura) || 0) +
@@ -217,26 +228,34 @@ function calcularMatematicaDaFicha() {
     if (document.getElementById('def-total-reflexo')) document.getElementById('def-total-reflexo').textContent = defRef;
     if (document.getElementById('def-total-vontade')) document.getElementById('def-total-vontade').textContent = defVon;
 
-    // Injeta Subtotais (Nível + Atributo)
-    if (document.getElementById('def-sub-fortitude')) document.getElementById('def-sub-fortitude').textContent = nivel + mods.con;
-    if (document.getElementById('def-sub-reflexo')) document.getElementById('def-sub-reflexo').textContent = nivel + mods.des;
-    if (document.getElementById('def-sub-vontade')) document.getElementById('def-sub-vontade').textContent = nivel + mods.sab;
-
-    // Injeta Valores de Tamanho
-    if (document.getElementById('def-tamanho-fortitude')) document.getElementById('def-tamanho-fortitude').textContent = 0;
-    if (document.getElementById('def-tamanho-reflexo')) document.getElementById('def-tamanho-reflexo').textContent = bonusTamanho;
-    if (document.getElementById('def-tamanho-vontade')) document.getElementById('def-tamanho-vontade').textContent = 0;
+    // USANDO O NÍVEL TOTAL NOS SUBTOTAL DA TELA
+    if (document.getElementById('def-sub-fortitude')) document.getElementById('def-sub-fortitude').textContent = nivelTotal + mods.con;
+    if (document.getElementById('def-sub-reflexo')) document.getElementById('def-sub-reflexo').textContent = nivelTotal + mods.des;
+    if (document.getElementById('def-sub-vontade')) document.getElementById('def-sub-vontade').textContent = nivelTotal + mods.sab;
 
     // Injeta Valores de Classe (Extraindo do Max calculado)
     if (document.getElementById('def-classe-fortitude')) document.getElementById('def-classe-fortitude').textContent = maxBonusClasse['fort'] || 0;
     if (document.getElementById('def-classe-reflexo')) document.getElementById('def-classe-reflexo').textContent = maxBonusClasse['ref'] || 0;
     if (document.getElementById('def-classe-vontade')) document.getElementById('def-classe-vontade').textContent = maxBonusClasse['von'] || 0;
 
-    // 3. Calcular PV (Base Classe + Nível + Mod. Con)
+    // 3. Calcular PV (Base Classe + Nível Total + Mod. Con)
     let pvBase = 0;
     if (classeKey && DADOS_CLASSES[classeKey]) {
         const classeData = DADOS_CLASSES[classeKey];
-        pvBase = classeData.pvIniciais + ((nivel - 1) * classeData.dadoVida) + (mods.con * nivel);
+        pvBase = classeData.pvIniciais + ((nivelPrincipal - 1) * classeData.dadoVida) + (mods.con * nivelPrincipal);
+    }
+
+    // Adiciona os PVs extras vindos das multiclasses
+    if (appState.biografia.multiclasse) {
+        appState.biografia.multiclasse.forEach(c => {
+            const multiNome = typeof c === 'string' ? c : (c.nome || "");
+            const multiNivel = typeof c === 'string' ? 1 : (parseInt(c.nivel) || 1);
+
+            if (multiNome && DADOS_CLASSES[multiNome]) {
+                const classDataMulti = DADOS_CLASSES[multiNome];
+                pvBase += (multiNivel * classDataMulti.dadoVida) + (mods.con * multiNivel);
+            }
+        });
     }
     const pvMaximoFinal = pvBase + (parseInt(appState.modificadoresManuais.status.modVidaMaxima) || 0);
 
@@ -272,7 +291,7 @@ function calcularMatematicaDaFicha() {
     let bbaTotal = 0;
 
     // A) Processa a Classe Principal
-    const nivelPrincipal = parseInt(appState.biografia.nivel) || 1;
+    // const nivelPrincipal = parseInt(appState.biografia.nivel) || 1;
     if (classeKey && DADOS_CLASSES[classeKey] && DADOS_CLASSES[classeKey].bba) {
         const arrayBbaPrincipal = DADOS_CLASSES[classeKey].bba;
         // O array é zero-indexado, então o nível 1 é o índice 0. Subtrai 1 e limita entre 0 e 19 (nível max 20)
@@ -373,9 +392,9 @@ function initFicha() {
                     <div class="col-span-2 flex justify-center items-center">
                         <input type="number" data-json-path="pericias.${skillId}.bonusManual" value="0" class="other-bonus w-16 p-1 text-center bg-stone-900/80 border border-stone-700 rounded text-stone-200 focus:border-cyan-500 outline-none text-sm" title="Ajuste Manual">
                     </div>
-                    <div class="col-span-2 flex justify-center items-center">
-                        <svg class="dice-icon w-6 h-6 rollable cursor-pointer text-amber-400 hover:text-amber-300 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)] transition-all" data-roll-label="${name}" data-attr-base="${attr}" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2.02c.86 0 1.68.17 2.45.5l5.55 2.22c1.54.62 2.45 2.2 2.45 3.85v6.82c0 1.65-.91 3.23-2.45 3.85l-5.55 2.22a4.95 4.95 0 0 1-4.9 0l-5.55-2.22A4.95 4.95 0 0 1 1.55 15.4V8.59c0-1.65.91-3.23 2.45-3.85l5.55-2.22c.77-.33 1.59-.5 2.45-.5m0 1.98c-.58 0-1.15.1-1.68.3l-5.55 2.22c-.93.37-1.52 1.29-1.52 2.3v6.82c0 1.01.59 1.93 1.52 2.3l5.55 2.22c.53.2 1.1.3 1.68.3s1.15-.1 1.68-.3l5.55-2.22c.93-.37 1.52-1.29 1.52-2.3V8.59c0-1.01-.59-1.93-1.52-2.3l-5.55-2.22A3.01 3.01 0 0 0 12 4zM11 7h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2z"/>
+                    <div class="col-span-2 flex justify-center items-center">    
+                    <svg class="dice-icon w-6 h-6 rollable cursor-pointer text-amber-400 hover:text-amber-300 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)] transition-all" onclick="rolarDadoAtributo('${skillId}', '${name}')"viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M7,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,9,7,9z M7,19c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,19,7,19z M12,14c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S13.1,14,12,14z M17,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,9,17,9z M17,19c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,19,17,19z"/>
                         </svg>
                     </div>
                 </div>
@@ -1118,18 +1137,53 @@ function initFicha() {
         if (diceModal) diceModal.classList.remove('show');
     };
 
-    window.rolarDadoAtributo = function (atributoId, label) {
-        const modId = 'mod-' + atributoId;
-        const modElement = document.getElementById(modId);
-        const modValue = modElement ? modElement.textContent : '+0';
+    window.rolarDadoAtributo = async function (atributoId, label) {
+        const nivel = parseInt(appState.biografia.nivel) || 1;
+        const halfLevel = Math.floor(nivel / 2);
 
+        // 1. Identificar o modificador correto (atributo ou perícia)
+        let bonusTotal = 0;
+        let detalhamento = "";
+
+        // Se for uma perícia (que passa o skillId em atributoId)
+        if (appState.pericias[atributoId]) {
+            const p = appState.pericias[atributoId];
+            const attrMod = (atributoId === 'escalar' || atributoId === 'nadar' || atributoId === 'saltar') ?
+                Math.floor(((parseInt(appState.atributosBase.vigor) || 10) - 10) / 2) : 0;
+            // ... (você pode simplificar pegando o mod direto do objeto 'mods' que calculamos na função matemática)
+
+            bonusTotal = halfLevel + p.bonusManual + (p.treinada ? 5 : 0) + (p.foco ? 5 : 0);
+            detalhamento = `1d20 + Nível(${halfLevel}) + Manual(${p.bonusManual}) ${p.treinada ? '+ Treino(5)' : ''} ${p.foco ? '+ Foco(5)' : ''}`;
+        } else {
+            // Se for um atributo básico
+            const val = parseInt(appState.atributosBase[atributoId]) || 10;
+            bonusTotal = Math.floor((val - 10) / 2);
+            detalhamento = `1d20 + Atributo(${bonusTotal})`;
+        }
+
+        // 2. Executar a Rolagem
+        const dadoPuro = Math.floor(Math.random() * 20) + 1;
+        const resultadoFinal = dadoPuro + bonusTotal;
+
+        // 3. Persistência na Nuvem
+        await supabaseClient.from('logs_dados').insert([{
+            personagem_id: personagemIdAtual,
+            user_id: (await supabaseClient.auth.getUser()).data.user.id,
+            nome_rolagem: label,
+            dado_puro: dadoPuro,
+            bonus_total: bonusTotal,
+            resultado_final: resultadoFinal,
+            detalhamento: detalhamento
+        }]);
+
+        // 4. Feedback Visual para o Jogador
         const titleEl = document.getElementById('modal-title');
         const resultEl = document.getElementById('roll-result');
         const detailsEl = document.getElementById('modal-details');
 
-        if (titleEl) titleEl.textContent = `Rolar: ${label}`;
-        if (resultEl) resultEl.innerHTML = `<span class="text-cyan-400 font-mono text-5xl">1d20 ${modValue}</span>`;
-        if (detailsEl) detailsEl.textContent = "Role o dado físico na mesa e aplique o modificador.";
+        if (titleEl) titleEl.textContent = `Resultado: ${label}`;
+        if (resultEl) resultEl.innerHTML = `<span class="text-cyan-400 font-mono text-5xl">${resultadoFinal}</span>`;
+        if (detailsEl) detailsEl.textContent = `Dado: ${dadoPuro} | Bônus: ${bonusTotal}`;
 
         const diceModal = document.getElementById('dice-modal');
         if (diceModal) diceModal.classList.add('show');

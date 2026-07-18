@@ -85,8 +85,6 @@
         </div>
         </header>
 
-        </header>
-
         <!-- PAINEL DE FILTROS ISB -->
         <div
             class="bg-stone-900/80 border border-red-900/30 rounded-lg p-4 mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end shadow-lg">
@@ -149,30 +147,68 @@
             </div>
         </div>
 
-        <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+        <div class="flex gap-4 mb-4 border-b border-stone-800 pb-2">
+            <button id="btn-tab-financas" onclick="alternarAbas('financas')"
+                class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-cyan-900/40 text-cyan-400 border border-cyan-500 rounded transition-colors">
+                Transações Financeiras
+            </button>
+            <button id="btn-tab-dados" onclick="alternarAbas('dados')"
+                class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
+                Rolagens de Dados
+            </button>
+        </div>
 
+
+        <div id="conteudo-financas" class="block">
             <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[800px]">
-                        <thead>
-                            <tr
-                                class="bg-stone-900 border-b border-stone-800 text-cyan-500 text-xs uppercase tracking-wider">
-                                <th class="p-4 w-48">Data / Hora Local</th>
-                                <th class="p-4 w-48">Jogador (Personagem)</th>
-                                <th class="p-4 w-32">Classificação</th>
-                                <th class="p-4">Descrição da Transação</th>
-                                <th class="p-4 text-right w-32">Delta Créditos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logs-body" class="text-sm divide-y divide-stone-800/50">
-                            <tr>
-                                <td colspan="5" class="p-8 text-center text-stone-500">Buscando registros na rede
-                                    HoloNet...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr
+                                    class="bg-stone-900 border-b border-stone-800 text-cyan-500 text-xs uppercase tracking-wider">
+                                    <th class="p-4 w-48">Data / Hora Local</th>
+                                    <th class="p-4 w-48">Jogador (Personagem)</th>
+                                    <th class="p-4 w-32">Classificação</th>
+                                    <th class="p-4">Descrição da Transação</th>
+                                    <th class="p-4 text-right w-32">Delta Créditos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-body" class="text-sm divide-y divide-stone-800/50">
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-stone-500">Buscando registros na rede
+                                        HoloNet...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="conteudo-dados" class="hidden">
+            <div class="overflow-x-auto bg-stone-950/60 rounded border border-stone-800/80">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr
+                            class="border-b border-stone-800 bg-stone-900/40 text-stone-400 font-bold text-[10px] sm:text-xs tracking-widest uppercase">
+                            <th class="p-3">Data/Hora</th>
+                            <th class="p-3">Agente</th>
+                            <th class="p-3">Diretriz (Teste)</th>
+                            <th class="p-3 text-center">D20</th>
+                            <th class="p-3 text-center">Ajustes</th>
+                            <th class="p-3 text-center text-amber-400">Total</th>
+                            <th class="p-3">Cálculo Efetuado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-logs-dados" class="divide-y divide-stone-800/50 font-medium text-sm">
+                        <tr>
+                            <td colspan="7" class="p-4 text-center text-stone-500">Aguardando dados da Holonet...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -196,7 +232,6 @@
                 const dateStart = document.getElementById('filter-date-start');
                 const dateEnd = document.getElementById('filter-date-end');
 
-                // 1. Carrega dinamicamente a lista de jogadores do servidor
                 // 1. Carrega dinamicamente a lista de jogadores do servidor
                 async function carregarPersonagens() {
                     const rosterPanel = document.getElementById('roster-panel');
@@ -319,16 +354,25 @@
                             </a>
                         `;
 
+                        const btnDeletarFinanceiro = `
+            <button onclick="deletarLog(${log.id}, 'logs_auditoria')" class="text-red-900 hover:text-red-400 transition-colors ml-4" title="Apagar Registro">
+                <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        `;
+
                         tr.innerHTML = `
-                <td class="p-4 text-stone-400 text-xs">${dataFormatada}</td>
-                <td class="p-4 font-bold text-stone-300">
-                    ${nomePersonagem}
-                    ${btnInspecionar}
-                </td>
-                <td class="p-4 ${eventoColor} text-[10px] tracking-widest font-bold">${log.tipo_evento}</td>
-                <td class="p-4 text-stone-300">${log.descricao}</td>
-                <td class="p-4 text-right font-bold orbitron ${deltaColor}">${deltaText}</td>
-            `;
+            <td class="p-4 text-stone-400 text-xs">${dataFormatada}</td>
+            <td class="p-4 font-bold text-stone-300">
+                ${nomePersonagem}
+                ${btnInspecionar}
+            </td>
+            <td class="p-4 ${eventoColor} text-[10px] tracking-widest font-bold">${log.tipo_evento}</td>
+            <td class="p-4 text-stone-300">${log.descricao}</td>
+            <td class="p-4 text-right font-bold orbitron ${deltaColor} flex justify-end items-center">
+                <span>${deltaText}</span>
+                ${btnDeletarFinanceiro}
+            </td>
+        `;
                         tbody.appendChild(tr);
                         tbody.appendChild(tr);
                     });
@@ -354,6 +398,206 @@
                 carregarPersonagens();
                 carregarLogs();
             });
+
+            /* INÍCIO DE FUNÇÃO DE [Exclusão de Logs ISB] */
+            window.deletarLog = async function (id, tabela) {
+                if (!confirm("ATENÇÃO: Deseja obliterar este registro dos arquivos da ISB? Esta ação é irreversível.")) return;
+
+                const { error } = await supabaseClient.from(tabela).delete().eq('id', id);
+
+                if (error) {
+                    alert("Erro ao excluir registro: " + error.message);
+                } else {
+                    // Atualiza automaticamente a aba que estiver aberta no momento
+                    const contDados = document.getElementById('conteudo-dados');
+                    if (contDados && !contDados.classList.contains('hidden')) {
+                        carregarLogsDeDados();
+                    } else {
+                        // Se tiver uma função carregarLogs (para finanças), chama ela
+                        if (typeof carregarLogs === 'function') carregarLogs();
+                    }
+                }
+            };
+            /* FIM DE FUNÇÃO DE [Exclusão de Logs ISB] */
+
+            /* INÍCIO DO SISTEMA DE ROLAGENS PARA O MESTRE */
+
+            // 1. Função de Controle das Abas
+            window.alternarAbas = function (aba) {
+                const btnFinancas = document.getElementById('btn-tab-financas');
+                const btnDados = document.getElementById('btn-tab-dados');
+                const contFinancas = document.getElementById('conteudo-financas');
+                const contDados = document.getElementById('conteudo-dados');
+
+                // Referências aos filtros para bloqueio condicional (IDs CORRIGIDOS)
+                const filtroTipo = document.getElementById('filter-action');
+                const filtroBusca = document.getElementById('filter-text');
+
+                if (aba === 'financas') {
+                    btnFinancas.className = "px-4 py-2 font-bold text-sm tracking-wider uppercase bg-cyan-900/40 text-cyan-400 border border-cyan-500 rounded transition-colors";
+                    btnDados.className = "px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors";
+
+                    contFinancas.classList.remove('hidden');
+                    contFinancas.classList.add('block');
+                    contDados.classList.remove('block');
+                    contDados.classList.add('hidden');
+
+                    // Desbloqueia os campos para Finanças
+                    if (filtroTipo) {
+                        filtroTipo.disabled = false;
+                        filtroTipo.classList.remove('opacity-30', 'cursor-not-allowed');
+                    }
+                    if (filtroBusca) {
+                        filtroBusca.disabled = false;
+                        filtroBusca.classList.remove('opacity-30', 'cursor-not-allowed');
+                        filtroBusca.placeholder = "Ex: Tibanna, 4000, Blaster...";
+                    }
+                } else {
+                    btnDados.className = "px-4 py-2 font-bold text-sm tracking-wider uppercase bg-amber-900/40 text-amber-400 border border-amber-500 rounded transition-colors";
+                    btnFinancas.className = "px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors";
+
+                    contDados.classList.remove('hidden');
+                    contDados.classList.add('block');
+                    contFinancas.classList.remove('block');
+                    contFinancas.classList.add('hidden');
+
+                    // Bloqueia e escurece os campos que não servem para Dados
+                    if (filtroTipo) {
+                        filtroTipo.disabled = true;
+                        filtroTipo.classList.add('opacity-30', 'cursor-not-allowed');
+                        filtroTipo.value = "";
+                    }
+                    if (filtroBusca) {
+                        filtroBusca.disabled = true;
+                        filtroBusca.classList.add('opacity-30', 'cursor-not-allowed');
+                        filtroBusca.value = "";
+                        filtroBusca.placeholder = "Indisponível para dados";
+                    }
+
+                    carregarLogsDeDados();
+                }
+            };
+
+            // 2. Descriptografia dos Dados (Fetch + Render)
+            async function carregarLogsDeDados() {
+                const listaDados = document.getElementById('lista-logs-dados');
+
+                // Captura dos filtros (IDs CORRIGIDOS)
+                const selectChar = document.getElementById('filter-char');
+                const inputDataInicio = document.getElementById('filter-date-start');
+                const inputDataFim = document.getElementById('filter-date-end');
+
+                const charId = selectChar ? selectChar.value : '';
+                const dataInicio = inputDataInicio ? inputDataInicio.value : null;
+                const dataFim = inputDataFim ? inputDataFim.value : null;
+
+                listaDados.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-cyan-500 animate-pulse">Descriptografando rolagens orbitais...</td></tr>';
+
+                let query = supabaseClient
+                    .from('logs_dados')
+                    .select(`*, personagens ( nome )`)
+                    .order('created_at', { ascending: false });
+
+                // Aplicação dos filtros do painel
+                if (charId && charId !== '') {
+                    query = query.eq('personagem_id', charId);
+                }
+
+                // Datas (com fuso horário -03:00 para bater com o resto do seu sistema)
+                if (dataInicio) {
+                    query = query.gte('created_at', `${dataInicio}T00:00:00-03:00`);
+                }
+                if (dataFim) {
+                    query = query.lte('created_at', `${dataFim}T23:59:59-03:00`);
+                }
+
+                const { data, error } = await query;
+
+                if (error) {
+                    console.error("[ISB LOGS] Erro na rede:", error);
+                    listaDados.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500 font-bold">⚠️ FALHA NA MATRIZ DE DADOS.</td></tr>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    listaDados.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-stone-500">Nenhuma rolagem detectada com estes parâmetros.</td></tr>`;
+                    return;
+                }
+
+                listaDados.innerHTML = '';
+
+                data.forEach(log => {
+                    const dataObj = new Date(log.created_at);
+                    const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                    const nomeJogador = log.personagens ? log.personagens.nome : 'Desconhecido';
+
+                    let corDado = 'text-cyan-100 font-bold';
+                    let iconeDado = '';
+
+                    if (log.dado_puro === 20) {
+                        corDado = 'text-emerald-400 font-black drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]';
+                        iconeDado = '🌟';
+                    } else if (log.dado_puro === 1) {
+                        corDado = 'text-red-500 font-black drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]';
+                        iconeDado = '💀';
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-stone-900/50 transition-colors border-b border-stone-800/30";
+
+                    // CÓDIGO DA LIXEIRA:
+                    const btnDeletar = `
+            <button onclick="deletarLog(${log.id}, 'logs_dados')" class="text-red-900 hover:text-red-400 transition-colors ml-3" title="Apagar Registro">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        `;
+
+                    tr.innerHTML = `
+            <td class="p-3 text-[10px] text-stone-500 whitespace-nowrap">${dataFormatada}</td>
+            <td class="p-3 text-cyan-300 font-bold uppercase text-xs tracking-wider">${nomeJogador}</td>
+            <td class="p-3 text-stone-300 text-xs">${log.nome_rolagem}</td>
+            <td class="p-3 text-center text-xl ${corDado}">${log.dado_puro} ${iconeDado}</td>
+            <td class="p-3 text-center text-xs text-stone-400">${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}</td>
+            <td class="p-3 text-center text-amber-400 font-black text-xl drop-shadow-[0_0_5px_rgba(251,191,36,0.3)]">${log.resultado_final}</td>
+            <td class="p-3 text-[10px] text-stone-500 font-mono tracking-tighter opacity-80 flex justify-between items-center">
+                <span>${log.detalhamento}</span>
+                ${btnDeletar}
+            </td>
+        `;
+                    listaDados.appendChild(tr);
+                });
+            }
+
+            // 3. Atualizar rolagens se o Mestre mudar os filtros (IDs CORRIGIDOS)
+            const selectsDeFiltro = [
+                document.getElementById('filter-char'),
+                document.getElementById('filter-date-start'),
+                document.getElementById('filter-date-end')
+            ];
+
+            selectsDeFiltro.forEach(el => {
+                if (el) {
+                    el.addEventListener('change', () => {
+                        const contDados = document.getElementById('conteudo-dados');
+                        if (contDados && !contDados.classList.contains('hidden')) {
+                            carregarLogsDeDados();
+                        }
+                    });
+                }
+            });
+
+            // O Atualizar Registros manual já estava correto, mantido intacto.
+            const btnAtt = document.getElementById('btn-refresh');
+            if (btnAtt) {
+                btnAtt.addEventListener('click', () => {
+                    const contDados = document.getElementById('conteudo-dados');
+                    if (contDados && !contDados.classList.contains('hidden')) {
+                        carregarLogsDeDados();
+                    }
+                });
+            }
+            /* FIM DO SISTEMA DE ROLAGENS PARA O MESTRE */
         </script>
 </body>
 
