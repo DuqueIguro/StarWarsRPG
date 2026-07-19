@@ -30,7 +30,7 @@ async function verificarCredenciaisISB() {
 
     if (permError || !perm || (perm.cargo !== 'mestre' && perm.cargo !== 'dev')) {
         alert("ACESSO NEGADO: Suas credenciais não possuem autorização nível ISB. O incidente foi registrado.");
-        window.location.href = '../menu.html';
+        window.location.href = '../menu';
         return;
     }
 

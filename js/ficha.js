@@ -1388,7 +1388,7 @@ async function carregarFichaDoBanco() {
 
         if (targetError || !fichaTarget) {
             alert("Dossiê não encontrado nos registros imperiais.");
-            window.location.href = '../menu.html';
+            window.location.href = '../menu';
             return;
         }
 
@@ -1411,7 +1411,7 @@ async function carregarFichaDoBanco() {
                 document.body.prepend(avisoMestre);
             } else {
                 alert("ACESSO NEGADO: Você não possui autorização nível ISB para acessar este dossiê.");
-                window.location.href = '../menu.html';
+                window.location.href = '../menu';
                 return;
             }
         }
@@ -1572,7 +1572,7 @@ setTimeout(() => {
             const { error } = await supabaseClient.auth.signOut();
             if (!error) {
                 localStorage.removeItem('starWarsFichaAutoSave');
-                window.location.href = '../menu.html';
+                window.location.href = '../menu';
             }
         });
     }
