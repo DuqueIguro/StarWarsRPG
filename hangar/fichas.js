@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const allCollapsibleHeaders = document.querySelectorAll('.terminal-header-collapsible');
 
     allCollapsibleHeaders.forEach(header => {
-        // Alguns cabeçalhos têm handlers específicos (ex: fuel.js trata #fuel-toggle e #management-toggle).
+        // Alguns cabeçalhos têm handlers específicos (ex: fuelDurtoc.js trata #fuel-toggle e #management-toggle).
         // Evitamos adicionar outro listener genérico para esses IDs para não executar dois toggles
         // que se anulam mutuamente.
         if (header.id === 'fuel-toggle' || header.id === 'management-toggle') return;

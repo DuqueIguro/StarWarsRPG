@@ -39,7 +39,7 @@ StarWarsRPG
 │  └─ planetas_database.json
 ├─ hangar
 │  ├─ fichas.js
-│  ├─ fuel.js
+│  ├─ fuelDurtoc.js
 │  ├─ hangarAutorizado.html
 │  └─ status.js
 ├─ Hieararquia.md
@@ -106,6 +106,7 @@ StarWarsRPG
 │  ├─ dadosTamanhosFicha.js
 │  ├─ databaseInventario.js
 │  ├─ databaseLojaSecreta.js
+│  ├─ distanciaPlanetas.js
 │  ├─ durtoc.js
 │  ├─ escudo.js
 │  ├─ ficha.js
@@ -197,6 +198,7 @@ StarWarsRPG
 ├─ styles
 │  ├─ 404.css
 │  ├─ comunicacao.css
+│  ├─ distanciaPlanetas.css
 │  ├─ durtoc.css
 │  ├─ escudo.css
 │  ├─ ficha.css
