@@ -96,6 +96,14 @@ const DADOS_CLASSES = {
         bba: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         pvIniciais: 0, 
         dadoVida: 10      
+    },
+    'soldado_de_elite': {
+        nome: 'Soldado de Elite',
+        bonusDefesa: { fort: 4, ref: 2, von: 0 },
+        talentosIniciais: ['Adiar Dano'],
+        bba: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        pvIniciais: 0, 
+        dadoVida: 12
     }
 
 };
