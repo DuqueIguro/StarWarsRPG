@@ -623,27 +623,6 @@ function initFicha() {
         });
     }
 
-    // Evento global para capturar cliques nos ícones de dado (.rollable) de elementos que ainda usam essa classe (ex: Armas antigas)
-    document.body.addEventListener('click', (event) => {
-        const rollableElement = event.target.closest('.rollable');
-
-        if (rollableElement) {
-            const isWeapon = rollableElement.closest('.weapon-block');
-
-            if (isWeapon) {
-                const weaponName = isWeapon.querySelector('.weapon-name').value || 'Arma Desconhecida';
-                const damageString = isWeapon.querySelector('.dano-input').value || 'Base da Arma';
-
-                showDiceFormula(
-                    `Ataque: ${weaponName}`,
-                    `${damageString}`,
-                    `Ataque: 1d20 + Bônus de Ataque`
-                );
-            }
-        }
-    });
-    /* FIM DE FUNÇÃO DE [Exibição de Fórmulas de Dados] */
-
     // Função de Pesquisa de Perícias (Simplificada para o novo design contínuo)
     const searchInput = document.getElementById('search-pericia');
 
@@ -700,7 +679,9 @@ function initFicha() {
                         <label class="text-[0.65rem] text-stone-500 uppercase tracking-widest mb-1 block">Dano</label>
                         <div class="flex items-center gap-2">
                             <input type="text" class="dano-input dynamic-weapon-input w-full p-2 bg-stone-900/80 border border-stone-700 rounded-md text-stone-200 focus:border-cyan-500 outline-none transition-all text-sm" data-field="dadoDano" data-index="${index}" placeholder="Ex: 3d8+2" value="${arma.dadoDano || ''}">
-                            <svg class="dice-icon w-8 h-8 rollable cursor-pointer text-cyan-400 hover:text-cyan-300 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)] transition-all" viewBox="0 0 24 24" fill="currentColor"><path d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M7,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,9,7,9z M7,19c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,19,7,19z M12,14c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S13.1,14,12,14z M17,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,9,17,9z M17,19c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,19,17,19z"/></svg>
+                            <svg class="dice-icon w-8 h-8 cursor-pointer text-cyan-400 hover:text-cyan-300 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)] transition-all" onclick="rolarAtaque(${index})" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M7,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,9,7,9z M7,19c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,19,7,19z M12,14c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S13.1,14,12,14z M17,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,9,17,9z M17,19c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,19,17,19z"/>
+                            </svg>
                         </div>
                     </div>
                     <div>
@@ -1135,6 +1116,129 @@ function initFicha() {
     window.fecharModal = function () {
         const diceModal = document.getElementById('dice-modal');
         if (diceModal) diceModal.classList.remove('show');
+    };
+
+
+    // DADOS
+
+    window.rolarAtaque = async function (index) {
+        const arma = appState.combate.armas[index];
+        if (!arma) return;
+
+        // 1. Pegar o BBA Total da tela (já soma os níveis das multiclasses e os modificadores manuais)
+        const bbaElement = document.getElementById('bba-display');
+        const bba = bbaElement ? parseInt(bbaElement.textContent) || 0 : 0;
+
+        // 2. Pegar o Modificador do Atributo selecionado na arma (Vigor ou Destreza)
+        const attrKey = arma.atributoBaseAtaque === 'des' ? 'destreza' : 'vigor';
+        const modElement = document.getElementById('mod-' + attrKey);
+        const attrMod = modElement ? parseInt(modElement.textContent) || 0 : 0;
+
+        // 3. Pegar o Bônus específico da arma
+        const bonusArma = parseInt(arma.bonusAtaque) || 0;
+
+        // 4. Calcular Matemática do Ataque
+        const bonusTotal = bba + attrMod + bonusArma;
+        const detalhamento = `1d20 + BBA(${bba}) + ${attrKey.toUpperCase()}(${attrMod}) + Arma(${bonusArma})`;
+        const nomeRolagem = `Ataque: ${arma.nome || 'Arma Desconhecida'}`;
+
+        // 5. Rolar 1d20
+        const dadoPuro = Math.floor(Math.random() * 20) + 1;
+        const resultadoFinal = dadoPuro + bonusTotal;
+
+        // 6. Disparar para a ISB (Supabase)
+        await supabaseClient.from('logs_dados').insert([{
+            personagem_id: personagemIdAtual,
+            user_id: (await supabaseClient.auth.getUser()).data.user.id,
+            nome_rolagem: nomeRolagem,
+            dado_puro: dadoPuro,
+            bonus_total: bonusTotal,
+            resultado_final: resultadoFinal,
+            detalhamento: detalhamento
+        }]);
+
+        // 7. Imprimir no Ecrã (Modal) com a string de Dano no rodapé
+        const titleEl = document.getElementById('modal-title');
+        const resultEl = document.getElementById('roll-result');
+        const detailsEl = document.getElementById('modal-details');
+
+        if (titleEl) titleEl.textContent = nomeRolagem;
+        if (resultEl) resultEl.innerHTML = `<span class="text-cyan-400 font-mono text-5xl">${resultadoFinal}</span>`;
+        if (detailsEl) detailsEl.innerHTML = `
+            Dado: ${dadoPuro} | Bônus: ${bonusTotal} 
+            <div class="mt-4 pt-4 border-t border-stone-800">
+                <button onclick="rolarDanoArma(${index})" class="w-full py-2.5 bg-orange-950/40 hover:bg-orange-900/60 border border-orange-700/50 text-orange-400 font-bold rounded-lg transition-all shadow-[0_0_10px_rgba(249,115,22,0.1)] flex items-center justify-center gap-2 uppercase tracking-widest text-xs cursor-pointer">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M7,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,9,7,9z M7,19c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,19,7,19z M12,14c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S13.1,14,12,14z M17,9c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,9,17,9z M17,19c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S18.1,19,17,19z"/></svg>
+                    Rolar Dano (${arma.dadoDano || '0'})
+                </button>
+            </div>
+        `;
+        const diceModal = document.getElementById('dice-modal');
+        if (diceModal) diceModal.classList.add('show');
+    };
+
+    window.rolarDanoArma = async function (index) {
+        const arma = appState.combate.armas[index];
+        if (!arma || !arma.dadoDano) return;
+
+        const formulaOriginal = arma.dadoDano;
+        let formulaProcessada = formulaOriginal.replace(/\s+/g, '').toLowerCase(); // Remove espaços
+        let rolagensDetalhadas = [];
+
+        // 1. Processa todos os dados na fórmula (ex: 2d8) e converte em números inteiros
+        formulaProcessada = formulaProcessada.replace(/(\d+)d(\d+)/g, (match, qtd, faces) => {
+            let soma = 0;
+            let resultados = [];
+            for (let i = 0; i < qtd; i++) {
+                let r = Math.floor(Math.random() * faces) + 1;
+                soma += r;
+                resultados.push(r);
+            }
+            rolagensDetalhadas.push(`${match}[${resultados.join(',')}]`);
+            return soma;
+        });
+
+        // 2. Resolve a matemática restante de forma segura (+, -, *, /)
+        let totalDano = 0;
+        let expressaoSegura = formulaProcessada.replace(/[^0-9+\-*/().]/g, ''); // Remove letras/lixo
+        try {
+            // Avalia a equação resultante (ex: "11+6+2")
+            totalDano = Function('"use strict";return (' + expressaoSegura + ')')() || 0;
+        } catch (e) {
+            console.error("Erro ao calcular dano:", e);
+            totalDano = parseInt(expressaoSegura) || 0;
+        }
+
+        // 3. Monta o pacote de dados para o Mestre (ISB)
+        const detalhamento = `Rolagens: ${rolagensDetalhadas.join(' + ')} | Fórmula: ${formulaOriginal}`;
+        const nomeRolagem = `Dano: ${arma.nome || 'Arma'}`;
+
+        // 4. Envia o Dano para o Supabase
+        await supabaseClient.from('logs_dados').insert([{
+            personagem_id: personagemIdAtual,
+            user_id: (await supabaseClient.auth.getUser()).data.user.id,
+            nome_rolagem: nomeRolagem,
+            dado_puro: totalDano,
+            bonus_total: 0,
+            resultado_final: totalDano,
+            detalhamento: detalhamento
+        }]);
+
+        // 5. Atualiza o Popup atual com o resultado letal
+        const titleEl = document.getElementById('modal-title');
+        const resultEl = document.getElementById('roll-result');
+        const detailsEl = document.getElementById('modal-details');
+
+        if (titleEl) titleEl.textContent = nomeRolagem;
+        // Pinta o número de laranja/vermelho para diferenciar de um teste normal
+        if (resultEl) resultEl.innerHTML = `<span class="text-orange-500 font-mono text-5xl drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]">${Math.floor(totalDano)}</span>`;
+        if (detailsEl) detailsEl.innerHTML = `
+            <div class="text-stone-300 mb-2">Fórmula: <span class="text-cyan-300">${formulaOriginal}</span></div>
+            <div class="text-stone-400 text-xs">Dados Rolados: <span class="text-white">${rolagensDetalhadas.length > 0 ? rolagensDetalhadas.join(' e ') : 'Dano Fixo'}</span></div>
+            <div class="text-red-400 font-bold text-[10px] mt-3 block uppercase tracking-widest border-t border-stone-800 pt-2">
+                ${arma.notasCritico ? 'CRÍTICO/NOTAS: ' + arma.notasCritico : 'Ataque finalizado.'}
+            </div>
+        `;
     };
 
     window.rolarDadoAtributo = async function (atributoId, label) {

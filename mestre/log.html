@@ -532,39 +532,55 @@
 
                     const nomeJogador = log.personagens ? log.personagens.nome : 'Desconhecido';
 
-                    let corDado = 'text-cyan-100 font-bold';
-                    let iconeDado = '';
+                    // 1. Verifica se é uma rolagem de dano
+                    const isDano = log.nome_rolagem && log.nome_rolagem.toUpperCase().startsWith('DANO');
 
-                    if (log.dado_puro === 20) {
-                        corDado = 'text-emerald-400 font-black drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]';
-                        iconeDado = '🌟';
-                    } else if (log.dado_puro === 1) {
-                        corDado = 'text-red-500 font-black drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]';
-                        iconeDado = '💀';
+                    // 2. Variáveis para exibir nas colunas
+                    let displayD20 = '';
+                    let displayAjustes = '';
+
+                    if (isDano) {
+                        // Se for dano, escurece e coloca o 'X'
+                        displayD20 = '<span class="text-stone-700 font-black text-sm">❌</span>';
+                        displayAjustes = '<span class="text-stone-700 font-black text-xs">❌</span>';
+                    } else {
+                        // Se for d20 normal, faz a checagem de crítico e falha crítica
+                        let corDado = 'text-cyan-100 font-bold';
+                        let iconeDado = '';
+
+                        if (log.dado_puro === 20) {
+                            corDado = 'text-emerald-400 font-black drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]';
+                            iconeDado = '🌟';
+                        } else if (log.dado_puro === 1) {
+                            corDado = 'text-red-500 font-black drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]';
+                            iconeDado = '💀';
+                        }
+
+                        displayD20 = `<span class="${corDado}">${log.dado_puro} ${iconeDado}</span>`;
+                        displayAjustes = `${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}`;
                     }
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-stone-900/50 transition-colors border-b border-stone-800/30";
 
-                    // CÓDIGO DA LIXEIRA:
                     const btnDeletar = `
-            <button onclick="deletarLog(${log.id}, 'logs_dados')" class="text-red-900 hover:text-red-400 transition-colors ml-3" title="Apagar Registro">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-            </button>
-        `;
+                        <button onclick="deletarLog(${log.id}, 'logs_dados')" class="text-red-900 hover:text-red-400 transition-colors ml-3" title="Apagar Registro">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    `;
 
                     tr.innerHTML = `
-            <td class="p-3 text-[10px] text-stone-500 whitespace-nowrap">${dataFormatada}</td>
-            <td class="p-3 text-cyan-300 font-bold uppercase text-xs tracking-wider">${nomeJogador}</td>
-            <td class="p-3 text-stone-300 text-xs">${log.nome_rolagem}</td>
-            <td class="p-3 text-center text-xl ${corDado}">${log.dado_puro} ${iconeDado}</td>
-            <td class="p-3 text-center text-xs text-stone-400">${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}</td>
-            <td class="p-3 text-center text-amber-400 font-black text-xl drop-shadow-[0_0_5px_rgba(251,191,36,0.3)]">${log.resultado_final}</td>
-            <td class="p-3 text-[10px] text-stone-500 font-mono tracking-tighter opacity-80 flex justify-between items-center">
-                <span>${log.detalhamento}</span>
-                ${btnDeletar}
-            </td>
-        `;
+                        <td class="p-3 text-[10px] text-stone-500 whitespace-nowrap">${dataFormatada}</td>
+                        <td class="p-3 text-cyan-300 font-bold uppercase text-xs tracking-wider">${nomeJogador}</td>
+                        <td class="p-3 text-stone-300 text-xs">${log.nome_rolagem}</td>
+                        <td class="p-3 text-center text-xl">${displayD20}</td>
+                        <td class="p-3 text-center text-xs text-stone-400">${displayAjustes}</td>
+                        <td class="p-3 text-center text-amber-400 font-black text-xl drop-shadow-[0_0_5px_rgba(251,191,36,0.3)]">${log.resultado_final}</td>
+                        <td class="p-3 text-[10px] text-stone-500 font-mono tracking-tighter opacity-80 flex justify-between items-center">
+                            <span>${log.detalhamento}</span>
+                            ${btnDeletar}
+                        </td>
+                    `;
                     listaDados.appendChild(tr);
                 });
             }
