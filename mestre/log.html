@@ -47,6 +47,12 @@
 
 <body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
+        <div class="mb-4">
+            <button onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='escudo.html'; }"
+                class="bg-stone-900/80 border border-red-800 text-red-400 px-3 py-2 rounded hover:bg-red-900/60 transition cursor-pointer text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+                ◀ Voltar ao Escudo do Mestre
+            </button>
+        </div>
         <header
             class="mb-8 border-b border-red-900/50 pb-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>

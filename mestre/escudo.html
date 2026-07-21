@@ -36,8 +36,8 @@
         </div>
 
         <div class="mb-4">
-            <button class="btn-voltar-imp" onclick="window.location.href='../'">
-                ◀ Criptografar Terminal
+            <button class="btn-voltar-imp" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='../'; }">
+                ◀ VOLTAR
             </button>
         </div>
 
