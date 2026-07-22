@@ -1,0 +1,3073 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal de Campanha — Era da Rebelião</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Staatliches&family=Rajdhani:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0b0e;
+    --bg-grid:#0d0f13;
+    --panel:#131519;
+    --panel2:#181b21;
+    --panel3:#1d2028;
+    --line:#24272e;
+    --line-soft:#1b1e24;
+    --text:#eceef0;
+    --text-dim:#9195a0;
+    --text-dimmer:#565a63;
+
+    --rebel:#d9843f;
+    --rebel-ink:#3a2c18;
+    --imperio:#bb4b4b;
+    --imperio-ink:#391f1f;
+    --naves:#4f96b5;
+    --naves-ink:#1c2c34;
+    --planetas:#6ea45c;
+    --planetas-ink:#23301e;
+
+    --gold:#c9a227;
+    --gold-ink:#332a12;
+    --crit:#d8b53a;
+    --fail:#c14343;
+
+    --custom:#9d7fc9;
+    --custom-ink:#2b2438;
+
+    --font-stencil:'Staatliches',sans-serif;
+    --font-display:'Rajdhani',sans-serif;
+    --font-body:'IBM Plex Sans',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0/100% 34px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0/34px 100%,
+      var(--ink);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:var(--font-body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--gold); color:#181410; }
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:var(--line); border-radius:5px; }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--text-dimmer); }
+
+  .scanlines{ display:none; }
+
+  /* ---------- HEADER ---------- */
+  header{
+    padding:18px 32px 0;
+    border-bottom:3px solid var(--line);
+    background:#0c0d11;
+    position:sticky; top:0; z-index:100;
+  }
+  .header-row{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding-bottom:14px; }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand-mark{
+    width:40px; height:40px; border:2px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-stencil); color:var(--gold); font-weight:400; font-size:16px;
+    background:var(--panel);
+    flex-shrink:0; letter-spacing:0.5px;
+  }
+  h1{
+    font-family:var(--font-stencil); font-weight:400; font-size:26px; letter-spacing:1px;
+    margin:0; color:var(--text); line-height:1;
+  }
+  h1 span{ color:var(--text-dimmer); font-family:var(--font-mono); font-size:12px; letter-spacing:1px; vertical-align:middle; margin-left:4px; }
+  .subtitle{ font-size:11px; color:var(--text-dimmer); letter-spacing:0.6px; margin-top:4px; font-family:var(--font-mono); text-transform:uppercase; }
+  .status-pill{
+    font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim);
+    border:1px solid var(--line); background:var(--panel);
+    padding:6px 12px; display:flex; align-items:center; gap:7px;
+    letter-spacing:0.3px;
+  }
+  .status-dot{ width:6px; height:6px; border-radius:50%; background:var(--planetas); animation:pulse 2.4s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  .tabs{ display:flex; gap:2px; margin-top:2px; flex-wrap:wrap; }
+  .tab{
+    font-family:var(--font-display); font-weight:600; font-size:13px; letter-spacing:0.3px;
+    padding:9px 18px; border:none; border-bottom:3px solid transparent;
+    background:transparent; color:var(--text-dimmer); cursor:pointer; user-select:none;
+    transition:color .15s ease, border-color .15s ease; display:flex; align-items:center; gap:7px;
+  }
+  .tab:hover{ color:var(--text); }
+  .tab .dot{ width:6px; height:6px; border-radius:50%; }
+  .tab[data-cat="rebeldes"] .dot{ background:var(--rebel); }
+  .tab[data-cat="imperio"] .dot{ background:var(--imperio); }
+  .tab[data-cat="naves"] .dot{ background:var(--naves); }
+  .tab[data-cat="planetas"] .dot{ background:var(--planetas); }
+  .tab[data-cat="custom"] .dot{ background:var(--custom); }
+  .tab.active[data-cat="rebeldes"]{ color:var(--rebel); border-color:var(--rebel); }
+  .tab.active[data-cat="imperio"]{ color:var(--imperio); border-color:var(--imperio); }
+  .tab.active[data-cat="naves"]{ color:var(--naves); border-color:var(--naves); }
+  .tab.active[data-cat="planetas"]{ color:var(--planetas); border-color:var(--planetas); }
+  .tab.active[data-cat="custom"]{ color:var(--custom); border-color:var(--custom); }
+
+  /* ---------- LAYOUT ---------- */
+  .layout{
+    display:grid; grid-template-columns:300px 1fr; gap:0;
+    min-height:calc(100vh - 128px);
+  }
+  @media (max-width: 900px){ .layout{ grid-template-columns:1fr; } }
+
+  .sidebar{
+    border-right:1px solid var(--line);
+    background:var(--bg-grid);
+    padding:18px 0 18px 0;
+    max-height:calc(100vh - 128px);
+    overflow-y:auto;
+    position:sticky; top:128px;
+  }
+  @media (max-width:900px){ .sidebar{ position:static; max-height:none; border-right:none; border-bottom:1px solid var(--line); } }
+
+  .search{
+    display:block; width:calc(100% - 36px); margin:0 18px 14px; background:var(--panel); border:1px solid var(--line); border-radius:0;
+    color:var(--text); padding:10px 13px; font-family:var(--font-mono); font-size:12.5px;
+    outline:none; transition:border-color .15s ease;
+  }
+  .search:focus{ border-color:var(--gold); }
+  .search::placeholder{ color:var(--text-dimmer); }
+
+  .list-group-header{
+    display:flex; align-items:center; gap:8px; padding:14px 18px 7px;
+    font-family:var(--font-display); font-weight:600; font-size:11.5px; letter-spacing:1.6px; text-transform:uppercase;
+    color:var(--text-dimmer);
+  }
+  .list-group-header:first-child{ padding-top:2px; }
+  .lgh-dot{ width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .lgh-count{ margin-left:auto; font-family:var(--font-mono); color:var(--text-dimmer); font-size:10.5px; }
+
+  .list-empty{ color:var(--text-dimmer); font-size:12px; padding:20px 18px; font-family:var(--font-mono); }
+
+  .list-item{
+    padding:10px 18px 10px 14px; cursor:pointer; margin-bottom:1px;
+    border-left:3px solid transparent; transition:background .12s ease, border-color .12s ease;
+    display:flex; align-items:center; gap:10px;
+  }
+  .list-item:hover{ background:var(--panel); }
+  .list-item.active{ background:var(--panel2); }
+  .list-item.cat-edge-rebeldes.active, .list-item.cat-edge-rebeldes:hover{ border-left-color:var(--rebel); }
+  .list-item.cat-edge-imperio.active, .list-item.cat-edge-imperio:hover{ border-left-color:var(--imperio); }
+  .list-item.cat-edge-naves.active, .list-item.cat-edge-naves:hover{ border-left-color:var(--naves); }
+  .list-item.cat-edge-planetas.active, .list-item.cat-edge-planetas:hover{ border-left-color:var(--planetas); }
+  .list-item.cat-edge-custom.active, .list-item.cat-edge-custom:hover{ border-left-color:var(--custom); }
+  .li-file{ font-family:var(--font-mono); font-size:9.5px; color:var(--text-dimmer); flex-shrink:0; width:38px; }
+  .li-body{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .li-name{ font-size:13px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .li-sub{ font-size:10.5px; color:var(--text-dimmer); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .li-nd{
+    font-family:var(--font-mono); font-size:11px; font-weight:600;
+    width:24px; height:24px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  }
+  .nd-rebeldes{ color:var(--rebel); background:var(--rebel-ink); }
+  .nd-imperio{ color:var(--imperio); background:var(--imperio-ink); }
+  .nd-naves{ color:var(--naves); background:var(--naves-ink); }
+  .nd-planetas{ color:var(--planetas); background:var(--planetas-ink); }
+  .nd-custom{ color:var(--custom); background:var(--custom-ink); }
+
+  /* ---------- MAIN ---------- */
+  main{ padding:32px 36px 100px; overflow-x:hidden; }
+  .empty-state{ color:var(--text-dimmer); font-size:13px; padding:80px 20px; text-align:center; font-family:var(--font-mono); }
+
+  .sheet{ max-width:800px; animation:fadeIn .2s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .sheet-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:6px; }
+  .sheet-head-main{ flex:1; min-width:0; }
+  .sheet-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:1px; text-transform:uppercase; margin-bottom:9px; font-weight:500; display:flex; align-items:center; gap:8px; }
+  .file-tag{ background:var(--panel2); border:1px solid var(--line); padding:2px 7px; color:var(--text-dim); }
+  .eyebrow-sep{ color:var(--text-dimmer); }
+  .sheet-title{ font-family:var(--font-stencil); font-weight:400; font-size:38px; margin:0 0 6px; letter-spacing:0.4px; line-height:1; }
+  .sheet-sub{ color:var(--text-dim); font-size:13.5px; margin-bottom:2px; }
+  .sheet-type{ color:var(--text-dimmer); font-size:12px; margin-bottom:4px; font-family:var(--font-mono); }
+  .sheet-flavor{ color:var(--text-dim); font-size:13.5px; line-height:1.7; margin:18px 0 22px; padding:12px 16px; background:var(--panel); border-left:3px solid var(--line); }
+
+  .nd-stamp{
+    flex-shrink:0; width:76px; height:76px; border-radius:50%;
+    border:2px solid var(--stamp-color, var(--gold)); color:var(--stamp-color, var(--gold));
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transform:rotate(-4deg); position:relative;
+  }
+  .nd-stamp::before{
+    content:""; position:absolute; inset:4px; border:1px solid var(--stamp-color, var(--gold)); border-radius:50%; opacity:0.5;
+  }
+  .nd-stamp-num{ font-family:var(--font-stencil); font-size:26px; line-height:1; }
+  .nd-stamp-lbl{ font-family:var(--font-mono); font-size:6.5px; letter-spacing:0.5px; text-transform:uppercase; text-align:center; line-height:1.2; margin-top:2px; max-width:56px; }
+
+  .nd-badge{ display:none; }
+
+  .stat-row{ display:flex; gap:1px; flex-wrap:wrap; margin-bottom:22px; background:var(--line); border:1px solid var(--line); }
+  .stat-card{
+    background:var(--panel); border:none; border-radius:0;
+    padding:12px 18px; min-width:92px; text-align:center; flex:1;
+  }
+  .stat-card .val{ font-family:var(--font-mono); font-size:19px; font-weight:600; color:var(--text); }
+  .stat-card .val small{ font-size:10.5px; color:var(--text-dimmer); font-weight:400; }
+  .stat-card .lbl{ font-size:8.5px; text-transform:uppercase; letter-spacing:1px; color:var(--text-dimmer); margin-top:4px; }
+
+  .section-title{
+    font-family:var(--font-display); font-weight:600; font-size:13px; letter-spacing:1.6px; text-transform:uppercase;
+    color:var(--text-dim); margin:30px 0 12px; display:flex; align-items:center; gap:10px;
+  }
+  .section-title::before{ content:""; width:14px; height:2px; background:var(--text-dimmer); flex-shrink:0; }
+  .section-title::after{ content:""; flex:1; height:1px; background:var(--line); }
+
+  .atk-card{
+    background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--line);
+    padding:13px 16px; margin-bottom:8px;
+  }
+  .atk-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .atk-name{ font-weight:600; font-size:13.5px; color:var(--text); }
+  .atk-kind{ font-size:10.5px; color:var(--text-dimmer); text-transform:uppercase; letter-spacing:0.4px; font-family:var(--font-mono); }
+  .atk-note{ font-size:11.5px; color:var(--text-dimmer); margin-top:4px; }
+  .atk-buttons{ display:flex; gap:8px; margin-top:11px; flex-wrap:wrap; }
+
+  .btn{
+    font-family:var(--font-body); font-size:12.5px; font-weight:500;
+    border-radius:0; padding:8px 14px; cursor:pointer; border:1px solid var(--line);
+    background:var(--panel2); color:var(--text); transition:background .12s ease, border-color .12s ease;
+    display:flex; align-items:center; gap:6px; user-select:none;
+  }
+  .btn:hover{ background:var(--panel3); }
+  .btn:active{ transform:scale(0.98); }
+  .btn-atk{ border-color:var(--rebel); color:var(--rebel); }
+  .btn-atk:hover{ background:var(--rebel-ink); }
+  [data-cat="imperio"] .btn-atk{ border-color:var(--imperio); color:var(--imperio); }
+  [data-cat="imperio"] .btn-atk:hover{ background:var(--imperio-ink); }
+  [data-cat="naves"] .btn-atk{ border-color:var(--naves); color:var(--naves); }
+  [data-cat="naves"] .btn-atk:hover{ background:var(--naves-ink); }
+  [data-cat="custom"] .btn-atk{ border-color:var(--custom); color:var(--custom); }
+  [data-cat="custom"] .btn-atk:hover{ background:var(--custom-ink); }
+  .btn-dmg{ border-color:var(--gold); color:var(--gold); }
+  .btn-dmg:hover{ background:var(--gold-ink); }
+  .btn-skill{ font-size:11.5px; padding:6px 11px; }
+  .btn-mini{ font-size:11px; padding:6px 10px; }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  .skills-wrap{ display:flex; flex-wrap:wrap; gap:7px; }
+
+  .kv-block{ font-size:12.5px; color:var(--text-dim); line-height:1.75; margin-bottom:12px; }
+  .kv-block b{ color:var(--text); font-weight:600; }
+
+  .info-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .info-table tr{ border-bottom:1px solid var(--line-soft); }
+  .info-table td{ padding:10px 4px; }
+  .info-table td:first-child{ color:var(--text-dimmer); width:180px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.6px; font-weight:600; font-family:var(--font-mono); }
+  .info-table td:last-child{ color:var(--text); }
+
+  .note-box{
+    margin-top:22px; padding:14px 17px; border-radius:0;
+    background:var(--gold-ink); border:1px solid #4a3f22; border-left:3px solid var(--gold); font-size:12.5px; color:#cbb583; line-height:1.65;
+  }
+  .note-box b{ color:var(--gold); font-family:var(--font-mono); text-transform:uppercase; font-size:11px; letter-spacing:0.5px; }
+
+  /* defense tester */
+  .defense-test{
+    margin-top:10px; display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+    padding:12px 15px; background:var(--panel2); border:1px solid var(--line);
+  }
+  .defense-test input{
+    width:64px; background:var(--panel); border:1px solid var(--line); border-radius:0;
+    color:var(--text); padding:7px 8px; font-family:var(--font-mono); font-size:12.5px; outline:none;
+  }
+  .defense-test input:focus{ border-color:var(--gold); }
+  .defense-test label{ font-size:11px; color:var(--text-dimmer); font-family:var(--font-mono); }
+  .vs-result{ font-family:var(--font-mono); font-size:11.5px; font-weight:600; padding:4px 10px; }
+  .vs-hit{ background:var(--planetas-ink); color:var(--planetas); }
+  .vs-miss{ background:var(--imperio-ink); color:var(--fail); }
+
+  /* ---------- ROLL LOG ---------- */
+  .log-toggle{
+    position:fixed; bottom:20px; right:20px; z-index:200;
+    font-family:var(--font-display); font-weight:600; font-size:12.5px; letter-spacing:0.3px;
+    background:var(--panel2); border:1px solid var(--line); color:var(--gold);
+    padding:11px 18px; border-radius:0; cursor:pointer; display:flex; align-items:center; gap:9px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.4);
+  }
+  .log-toggle:hover{ border-color:var(--gold); }
+  .log-toggle .count{
+    background:var(--gold); color:#181410; padding:1px 7px; font-size:10.5px; min-width:16px; text-align:center; font-weight:600; font-family:var(--font-mono);
+  }
+
+  .log-panel{
+    position:fixed; bottom:78px; right:20px; width:360px; max-width:calc(100vw - 40px); max-height:65vh;
+    background:var(--panel); border:1px solid var(--line); border-radius:0;
+    z-index:300; transform:translateY(10px) scale(0.98); opacity:0; pointer-events:none;
+    transition:transform .16s ease, opacity .16s ease;
+    display:flex; flex-direction:column;
+    box-shadow:0 16px 48px rgba(0,0,0,0.5);
+  }
+  .log-panel.open{ transform:translateY(0) scale(1); opacity:1; pointer-events:auto; }
+  .log-panel .log-head{ border-radius:0; }
+  .log-head{
+    padding:15px 18px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;
+    background:var(--panel2);
+  }
+  .log-head h3{ font-family:var(--font-stencil); font-weight:400; font-size:16px; letter-spacing:1px; margin:0; color:var(--text); }
+  .log-close, .log-clear{
+    background:none; border:1px solid var(--line); color:var(--text-dim); border-radius:0;
+    padding:5px 10px; cursor:pointer; font-family:var(--font-mono); font-size:11px;
+  }
+  .log-close:hover, .log-clear:hover{ color:var(--text); border-color:var(--text-dimmer); }
+  .log-body{ flex:1; overflow-y:auto; padding:14px 16px; display:flex; flex-direction:column-reverse; gap:8px; }
+  .log-entry{
+    border:1px solid var(--line); border-left:3px solid var(--line); background:var(--panel3); border-radius:0; padding:10px 12px;
+    font-size:12.5px; animation:slideIn .18s ease;
+  }
+  @keyframes slideIn{ from{opacity:0; transform:translateX(8px);} to{opacity:1; transform:translateX(0);} }
+  .log-entry .who{ color:var(--text-dim); font-size:10.5px; margin-bottom:4px; }
+  .log-entry .expr{ color:var(--text-dimmer); font-size:10.5px; font-family:var(--font-mono); }
+  .log-entry .total{ font-family:var(--font-mono); font-size:17px; font-weight:600; }
+  .log-entry.crit{ border-left-color:var(--crit); }
+  .log-entry.crit .total{ color:var(--crit); }
+  .log-entry.fail{ border-left-color:var(--fail); }
+  .log-entry.fail .total{ color:var(--fail); }
+  .log-entry .tag{ font-size:9px; padding:1px 6px; margin-left:6px; font-family:var(--font-mono); }
+  .tag-atk{ background:var(--rebel-ink); color:var(--rebel); }
+  .tag-dmg{ background:var(--gold-ink); color:var(--gold); }
+  .tag-skill{ background:var(--naves-ink); color:var(--naves); }
+  .log-empty{ color:var(--text-dimmer); font-size:12px; text-align:center; padding:40px 10px; font-family:var(--font-mono); }
+
+  .log-toggle.flash{ animation:flashPulse .5s ease; }
+  @keyframes flashPulse{ 0%{ box-shadow:0 0 0 0 rgba(201,162,39,0.5);} 100%{ box-shadow:0 0 0 12px rgba(201,162,39,0);} }
+
+  .roll-toast{
+    position:fixed; bottom:78px; right:20px; width:270px;
+    background:var(--panel2); border:1px solid var(--line); border-left:3px solid var(--gold); border-radius:0; padding:13px 15px;
+    z-index:280; pointer-events:none;
+    opacity:0; transform:translateY(8px); transition:opacity .18s ease, transform .18s ease;
+    box-shadow:0 10px 32px rgba(0,0,0,0.45);
+  }
+  .roll-toast.show{ opacity:1; transform:translateY(0); }
+  .roll-toast.crit{ border-left-color:var(--crit); }
+  .roll-toast.fail{ border-left-color:var(--fail); }
+  .roll-toast .rt-who{ font-size:10.5px; color:var(--text-dim); margin-bottom:4px; }
+  .roll-toast .rt-tag{ font-size:9px; color:var(--gold); border:1px solid var(--line); padding:1px 6px; margin-left:4px; font-family:var(--font-mono); }
+  .roll-toast .rt-total{ font-family:var(--font-mono); font-size:23px; font-weight:600; color:var(--text); }
+  .roll-toast.crit .rt-total{ color:var(--crit); }
+  .roll-toast.fail .rt-total{ color:var(--fail); }
+  .roll-toast .rt-detail{ font-size:10px; color:var(--text-dimmer); margin-top:2px; font-family:var(--font-mono); }
+
+  @media (max-width:900px){
+    .log-panel{ width:100%; }
+    main{ padding:22px 16px 100px; }
+    header{ padding:16px 16px 0; }
+  }
+
+  /* ================= MODE SWITCH ================= */
+  .mode-switch{ display:flex; gap:0; margin-top:14px; border:1px solid var(--line); width:fit-content; }
+  .mode-btn{
+    font-family:var(--font-display); font-weight:600; font-size:13px; letter-spacing:0.4px;
+    padding:9px 22px; border:none; border-right:1px solid var(--line);
+    background:var(--panel); color:var(--text-dim); cursor:pointer; user-select:none;
+    transition:all .15s ease;
+  }
+  .mode-btn:last-child{ border-right:none; }
+  .mode-btn:hover{ color:var(--text); }
+  .mode-btn.active{
+    background:var(--gold-ink); color:var(--gold);
+  }
+
+  /* ================= COMBAT VIEW ================= */
+  .combat-view{ padding:24px 36px 100px; }
+  @media (max-width:900px){ .combat-view{ padding:18px 14px 100px; } }
+
+  .encounter-tabs{ display:flex; gap:0; align-items:center; flex-wrap:wrap; margin-bottom:20px; border-bottom:1px solid var(--line); }
+  .enc-tab{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--font-display); font-weight:600; font-size:13px;
+    padding:10px 16px; border:none; border-bottom:3px solid transparent;
+    background:transparent; color:var(--text-dimmer); cursor:pointer; position:relative; top:1px;
+  }
+  .enc-tab.active{ color:var(--gold); border-color:var(--gold); }
+  .enc-tab input{
+    background:transparent; border:none; color:inherit; font-family:inherit; font-size:inherit;
+    width:auto; min-width:40px; max-width:160px; outline:none;
+  }
+  .enc-tab .enc-close{ color:var(--text-dimmer); cursor:pointer; padding:0 2px; }
+  .enc-tab .enc-close:hover{ color:var(--fail); }
+  .enc-tab-add{
+    font-family:var(--font-body); font-size:12.5px; color:var(--text-dimmer);
+    padding:9px 15px; cursor:pointer;
+  }
+  .enc-tab-add:hover{ color:var(--gold); }
+
+  .combat-body{ display:grid; grid-template-columns:320px 1fr; gap:20px; align-items:start; }
+  @media (max-width:1000px){ .combat-body{ grid-template-columns:1fr; } }
+
+  .add-panel{
+    background:var(--panel); border:1px solid var(--line); padding:18px;
+    position:sticky; top:20px;
+  }
+  @media (max-width:1000px){ .add-panel{ position:static; } }
+  .add-panel-title{ font-family:var(--font-display); font-weight:600; font-size:12px; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:13px; }
+  .combat-cat-filter{ display:flex; gap:5px; margin:10px 0; flex-wrap:wrap; }
+  .mini-tab{
+    font-size:10.5px; padding:5px 11px; border:1px solid var(--line); color:var(--text-dim); cursor:pointer;
+  }
+  .mini-tab.active{ border-color:var(--gold); color:var(--gold); background:var(--gold-ink); }
+  .pick-list{ max-height:280px; overflow-y:auto; margin-top:6px; }
+  .pick-item{
+    padding:9px 10px; cursor:pointer; font-size:12.5px; color:var(--text);
+    display:flex; justify-content:space-between; align-items:center; gap:6px;
+    border-left:2px solid transparent;
+  }
+  .pick-item:hover{ background:var(--panel2); }
+  .pick-item.selected{ background:var(--panel3); border-left-color:var(--gold); }
+  .pick-item .pi-nd{ font-family:var(--font-mono); font-size:10px; color:var(--text-dimmer); flex-shrink:0; }
+
+  .add-controls{ margin-top:15px; padding-top:15px; border-top:1px solid var(--line); }
+  .picked-name{ font-weight:600; font-size:13.5px; color:var(--gold); margin-bottom:13px; }
+  .qty-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:13px; }
+  .qty-lbl{ font-size:11.5px; color:var(--text-dim); }
+  .qty-stepper{ display:flex; align-items:center; gap:0; border:1px solid var(--line); overflow:hidden; }
+  .qty-stepper button{
+    background:var(--panel2); border:none; color:var(--text); width:28px; height:31px; cursor:pointer; font-size:15px;
+  }
+  .qty-stepper button:hover{ background:var(--panel3); color:var(--gold); }
+  .qty-stepper input{
+    width:42px; text-align:center; background:var(--ink); border:none; border-left:1px solid var(--line); border-right:1px solid var(--line);
+    color:var(--text); height:31px; font-family:var(--font-mono); font-size:13px; outline:none;
+  }
+  .mode-toggle{ display:flex; gap:6px; margin-bottom:15px; flex-wrap:wrap; }
+  #createTypeToggle .gt-btn{ min-width:130px; }
+  .gt-btn{
+    flex:1; text-align:center; font-size:10.5px; line-height:1.5; padding:9px 6px;
+    border:1px solid var(--line); color:var(--text-dim); cursor:pointer;
+  }
+  .gt-btn small{ color:var(--text-dimmer); font-size:9px; }
+  .gt-btn.active{ border-color:var(--naves); color:var(--naves); background:var(--naves-ink); }
+  .gt-btn.active small{ color:var(--naves); opacity:0.8; }
+  .btn-add-combat{
+    width:100%; justify-content:center; background:var(--gold-ink);
+    border-color:var(--gold); color:var(--gold); font-size:12.5px; padding:12px;
+  }
+  .btn-add-combat:hover{ background:#3d3216; }
+
+  .tracker-panel{ background:var(--panel); border:1px solid var(--line); padding:18px; min-height:300px; }
+  .tracker-head{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:17px; padding-bottom:15px; border-bottom:1px solid var(--line); }
+  .round-info{ display:flex; align-items:center; gap:12px; }
+  .round-badge{
+    font-family:var(--font-stencil); font-size:15px; letter-spacing:0.5px; color:#181410;
+    background:var(--gold); padding:5px 14px; font-weight:400;
+  }
+  .turn-info{ font-size:12.5px; color:var(--text-dim); font-family:var(--font-mono); }
+  .tracker-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+  .tracker-empty{ text-align:center; color:var(--text-dimmer); font-size:12.5px; padding:70px 20px; font-family:var(--font-mono); }
+
+  .combatant-row{
+    background:var(--panel2); border:1px solid var(--line); border-left:3px solid var(--line); padding:13px 15px; margin-bottom:8px;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .combatant-row.current-turn{ border-left-color:var(--gold); background:var(--panel3); }
+  .combatant-row.defeated{ opacity:0.4; }
+  .cr-top{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .cr-init{
+    font-family:var(--font-stencil); font-weight:400; font-size:19px; color:var(--text);
+    background:var(--ink); border:1px solid var(--line);
+    width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .current-turn .cr-init{ border-color:var(--gold); color:var(--gold); }
+  .cr-name-wrap{ flex:1; min-width:140px; }
+  .cr-name{ font-weight:600; font-size:13.5px; display:flex; align-items:center; flex-wrap:wrap; gap:7px; }
+  .cr-cat-dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .cr-sub{ font-size:10.5px; color:var(--text-dimmer); margin-top:3px; font-family:var(--font-mono); }
+  .cr-hp-wrap{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .cr-hp-input{
+    width:52px; background:var(--ink); border:1px solid var(--line); color:var(--text);
+    text-align:center; font-family:var(--font-mono); font-size:12.5px; padding:5px 2px; outline:none;
+  }
+  .cr-hp-input:focus{ border-color:var(--gold); }
+  .cr-hp-max{ font-size:11px; color:var(--text-dimmer); font-family:var(--font-mono); }
+  .cr-hp-bar{ width:60px; height:5px; background:var(--ink); overflow:hidden; border:1px solid var(--line); }
+  .cr-hp-fill{ height:100%; transition:width .2s ease; }
+  .cr-remove{ background:none; border:1px solid var(--line); color:var(--text-dimmer); width:26px; height:26px; cursor:pointer; flex-shrink:0; }
+  .cr-remove:hover{ color:var(--fail); border-color:var(--fail); }
+  .cr-expand-btn{ background:none; border:1px solid var(--line); color:var(--text-dimmer); padding:5px 8px; cursor:pointer; font-size:11px; flex-shrink:0; }
+  .cr-expand-btn:hover{ color:var(--text); }
+
+  .cr-actions{ display:flex; gap:6px; flex-wrap:wrap; margin-top:11px; padding-top:11px; border-top:1px solid var(--line-soft); }
+
+  .cr-group-members{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line-soft); }
+  .member-pip{
+    display:flex; align-items:center; gap:4px; background:var(--ink); border:1px solid var(--line);
+    padding:4px 6px; font-family:var(--font-mono); font-size:10.5px;
+  }
+  .member-pip.dead{ opacity:0.35; text-decoration:line-through; }
+  .member-pip input{ width:34px; background:transparent; border:none; color:var(--text); text-align:center; font-family:inherit; font-size:inherit; outline:none; }
+  .member-pip .mp-label{ color:var(--text-dimmer); }
+  .member-pip .mp-toggle{ cursor:pointer; color:var(--text-dimmer); }
+  .member-pip .mp-toggle:hover{ color:var(--fail); }
+
+  .cr-badge{
+    font-family:var(--font-mono); font-size:9.5px; padding:2px 7px; text-transform:uppercase; letter-spacing:0.5px;
+  }
+
+  .squad-bar{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:15px; }
+  .squad-chip{
+    display:flex; align-items:center; gap:7px;
+    background:var(--panel2); border:1px solid var(--line);
+    padding:7px 11px; font-size:11px; color:var(--text-dim); font-family:var(--font-mono);
+  }
+  .squad-dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .sq-mini{
+    background:none; border:none; color:var(--text-dimmer); cursor:pointer; font-size:12px; padding:0 2px; line-height:1;
+  }
+  .sq-mini:hover{ color:var(--gold); }
+  .cr-squad-tag{
+    font-family:var(--font-mono); font-size:9.5px; border:1px solid; padding:1px 7px; font-weight:500;
+  }
+
+  .cr-vitals{ display:flex; flex-direction:column; gap:4px; flex-shrink:0; }
+  .cr-shield-wrap{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .cr-shield-lbl{ font-size:11px; width:14px; text-align:center; flex-shrink:0; }
+  .cr-hp-bar.shield{ border-color:var(--naves-ink); }
+  .cr-shield-restore{
+    background:none; border:1px solid var(--line); color:var(--naves); width:22px; height:22px; cursor:pointer; font-size:11px; flex-shrink:0;
+  }
+  .cr-shield-restore:hover{ background:var(--naves-ink); }
+
+  .cr-apply-row{
+    display:flex; align-items:center; gap:8px; margin-top:9px; padding-top:9px; border-top:1px dashed var(--line-soft);
+  }
+  .cr-apply-lbl{ font-size:10.5px; color:var(--text-dimmer); font-family:var(--font-mono); }
+  .cr-apply-input{
+    width:56px; background:var(--ink); border:1px solid var(--line); color:var(--text);
+    text-align:center; font-family:var(--font-mono); font-size:12px; padding:4px 2px; outline:none;
+  }
+  .cr-apply-input:focus{ border-color:var(--fail); }
+  .btn-apply{ border-color:var(--imperio); color:var(--fail); font-size:11px; padding:6px 10px; }
+  .btn-apply:hover{ background:var(--imperio-ink); }
+
+  /* ================= CREATE VIEW ================= */
+  .create-view{ padding:24px 36px 100px; }
+  @media (max-width:900px){ .create-view{ padding:18px 14px 100px; } }
+
+  .create-grid{ display:grid; grid-template-columns:1fr 320px; gap:20px; align-items:start; max-width:1200px; }
+  @media (max-width:1000px){ .create-grid{ grid-template-columns:1fr; } }
+
+  .create-form-panel{ background:var(--panel); border:1px solid var(--line); padding:22px; }
+  .create-side-panel{ position:sticky; top:20px; }
+  @media (max-width:1000px){ .create-side-panel{ position:static; } }
+
+  .form-row{ margin-bottom:14px; display:flex; flex-direction:column; gap:6px; }
+  .form-row label{ font-size:11px; color:var(--text-dimmer); text-transform:uppercase; letter-spacing:0.6px; font-family:var(--font-mono); }
+  .form-input{
+    background:var(--ink); border:1px solid var(--line); color:var(--text);
+    padding:9px 11px; font-family:var(--font-body); font-size:13px; outline:none; width:100%; resize:vertical;
+  }
+  .form-input:focus{ border-color:var(--custom); }
+  .form-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:4px; }
+  @media (max-width:700px){ .form-grid{ grid-template-columns:repeat(2, 1fr); } }
+
+  .c-row{
+    display:grid; grid-template-columns:1.6fr 1fr 0.8fr 1.4fr auto; gap:8px; align-items:center; margin-bottom:8px;
+  }
+  @media (max-width:700px){ .c-row{ grid-template-columns:1fr 1fr; } }
+  .c-row input, .c-row select{
+    background:var(--ink); border:1px solid var(--line); color:var(--text);
+    padding:7px 9px; font-family:var(--font-mono); font-size:12px; outline:none; width:100%;
+  }
+  .c-row input:focus, .c-row select:focus{ border-color:var(--custom); }
+  .c-row-remove{
+    background:none; border:1px solid var(--line); color:var(--text-dimmer); width:28px; height:28px; cursor:pointer; flex-shrink:0;
+  }
+  .c-row-remove:hover{ color:var(--fail); border-color:var(--fail); }
+
+  .c-attack-card{ background:var(--panel2); border:1px solid var(--line-soft); padding:10px; margin-bottom:8px; }
+  .c-attack-card .c-row{ margin-bottom:0; }
+  .c-area-row{ margin-top:8px; padding-top:8px; border-top:1px dashed var(--line-soft); }
+  .c-checkbox{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--text-dim); cursor:pointer; }
+  .c-checkbox small{ color:var(--text-dimmer); }
+  .c-checkbox input{ width:auto; accent-color:var(--custom); }
+  .c-area-detail{ margin-top:7px; display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--text-dim); }
+  .c-area-detail input{
+    width:60px; background:var(--ink); border:1px solid var(--line); color:var(--text);
+    padding:6px 8px; font-family:var(--font-mono); font-size:12px; outline:none;
+  }
+  .c-area-detail input:focus{ border-color:var(--custom); }
+  .c-skill-row{ display:grid; grid-template-columns:2fr 1fr auto; gap:8px; align-items:center; margin-bottom:8px; }
+  .c-skill-row input{
+    background:var(--ink); border:1px solid var(--line); color:var(--text);
+    padding:7px 9px; font-family:var(--font-mono); font-size:12px; outline:none; width:100%;
+  }
+  .c-skill-row input:focus{ border-color:var(--custom); }
+
+  .difficulty-card{
+    background:var(--panel); border:1px solid var(--custom); padding:18px;
+  }
+  .diff-eyebrow{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dimmer); margin-bottom:8px; }
+  .diff-label{ font-family:var(--font-stencil); font-size:32px; color:var(--custom); line-height:1; margin-bottom:12px; transition:color .2s ease; }
+  .diff-bar-track{ height:8px; background:var(--ink); border:1px solid var(--line); margin-bottom:12px; overflow:hidden; }
+  .diff-bar-fill{ height:100%; width:50%; background:var(--custom); transition:width .2s ease, background .2s ease; }
+  .diff-hint{ font-size:12px; color:var(--text-dim); line-height:1.6; }
+
+  .diff-verdict-row{
+    display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line-soft);
+  }
+  .diff-verdict-row:last-child{ border-bottom:none; }
+  .diff-verdict-n{
+    font-family:var(--font-stencil); font-size:20px; color:var(--text-dimmer); width:38px; flex-shrink:0; text-align:center;
+    line-height:1;
+  }
+  .diff-verdict-n small{ display:block; font-family:var(--font-mono); font-size:8px; letter-spacing:0.5px; color:var(--text-dimmer); margin-top:2px; }
+  .diff-verdict-body{ flex:1; min-width:0; }
+  .diff-verdict-label{ font-family:var(--font-display); font-weight:700; font-size:14px; }
+  .diff-verdict-detail{ font-size:11px; color:var(--text-dimmer); margin-top:2px; line-height:1.5; }
+
+  .custom-item-row{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:9px 10px; border-left:2px solid var(--custom); background:var(--panel2); margin-bottom:6px; font-size:12.5px;
+  }
+  .custom-item-row .cir-name{ color:var(--text); font-weight:500; }
+  .custom-item-row .cir-del{ background:none; border:1px solid var(--line); color:var(--text-dimmer); cursor:pointer; padding:3px 8px; font-size:11px; flex-shrink:0; }
+  .custom-item-row .cir-del:hover{ color:var(--fail); border-color:var(--fail); }
+  .custom-empty{ color:var(--text-dimmer); font-size:12px; font-family:var(--font-mono); }
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+
+<header>
+  <div class="header-row">
+    <div class="brand">
+      <div class="brand-mark">SW</div>
+      <div>
+        <h1>TERMINAL DE CAMPANHA <span>// ERA DA REBELIÃO</span></h1>
+        <div class="subtitle">SAGA EDITION · FICHAS DE NPCS, NAVES E PLANETAS · GRUPO NÍVEL 12/14</div>
+      </div>
+    </div>
+    <div class="status-pill"><span class="status-dot"></span> LINK ATIVO — 31 REGISTROS</div>
+  </div>
+
+  <div class="mode-switch" id="modeSwitch">
+    <div class="mode-btn active" data-mode="fichas">📋 Fichas</div>
+    <div class="mode-btn" data-mode="combate">⚔️ Combate</div>
+    <div class="mode-btn" data-mode="criar">➕ Criar Ficha</div>
+    <div class="mode-btn" data-mode="evoluir">📈 Evolução</div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-cat="all"><span class="dot" style="background:var(--gold)"></span>Todos</div>
+    <div class="tab" data-cat="rebeldes"><span class="dot"></span>Aliança Rebelde</div>
+    <div class="tab" data-cat="imperio"><span class="dot"></span>Império Galáctico</div>
+    <div class="tab" data-cat="naves"><span class="dot"></span>Naves</div>
+    <div class="tab" data-cat="planetas"><span class="dot"></span>Planetas</div>
+    <div class="tab" data-cat="custom"><span class="dot"></span>Personalizado</div>
+  </div>
+</header>
+
+<div class="layout" id="viewFichas">
+  <aside class="sidebar">
+    <input type="text" class="search" id="search" placeholder="Buscar ficha...">
+    <div id="list"></div>
+  </aside>
+  <main id="main">
+    <div class="empty-state">◈ Selecione uma ficha na lista ao lado para abrir o registro.</div>
+  </main>
+</div>
+
+<div class="combat-view" id="viewCombate" style="display:none;">
+  <div class="encounter-tabs" id="encounterTabs"></div>
+
+  <div class="combat-body">
+    <div class="add-panel">
+      <div class="add-panel-title">◈ ADICIONAR COMBATENTE</div>
+      <input type="text" class="search" id="combatSearch" placeholder="Buscar NPC ou nave...">
+      <div class="combat-cat-filter" id="combatCatFilter">
+        <div class="mini-tab active" data-cat="all">Todos</div>
+        <div class="mini-tab" data-cat="rebeldes">Rebeldes</div>
+        <div class="mini-tab" data-cat="imperio">Império</div>
+        <div class="mini-tab" data-cat="naves">Naves</div>
+        <div class="mini-tab" data-cat="custom">Personalizado</div>
+      </div>
+      <div id="combatPickList" class="pick-list"></div>
+
+      <div id="addControls" class="add-controls" style="display:none;">
+        <div class="picked-name" id="pickedName"></div>
+        <div class="qty-row">
+          <span class="qty-lbl">Quantidade</span>
+          <div class="qty-stepper">
+            <button id="qtyMinus">−</button>
+            <input type="number" id="qtyInput" value="1" min="1" max="10">
+            <button id="qtyPlus">+</button>
+          </div>
+        </div>
+        <div class="mode-toggle" id="groupToggle">
+          <div class="gt-btn active" data-mode="individual">Avulso<br><small>sem marca de esquadrão</small></div>
+          <div class="gt-btn" data-mode="grupo">Esquadrão<br><small>cada um rola a própria iniciativa</small></div>
+        </div>
+        <button class="btn btn-add-combat" id="addCombatantBtn">⚔️ Adicionar ao Combate</button>
+      </div>
+    </div>
+
+    <div class="tracker-panel">
+      <div class="tracker-head">
+        <div class="round-info">
+          <span class="round-badge" id="roundBadge">RODADA 1</span>
+          <span class="turn-info" id="turnInfo">Nenhum combatente</span>
+        </div>
+        <div class="tracker-actions">
+          <button class="btn btn-mini" id="rerollInitBtn">🎲 Rolar Iniciativas</button>
+          <button class="btn btn-mini" id="nextTurnBtn">⏭ Próximo Turno</button>
+          <button class="btn btn-mini" id="clearCombatBtn">🗑 Limpar</button>
+        </div>
+      </div>
+      <div id="squadBar" class="squad-bar"></div>
+      <div id="trackerList" class="tracker-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="create-view" id="viewCreate" style="display:none;">
+  <div class="create-grid">
+    <div class="create-form-panel">
+      <div class="add-panel-title" id="add-panel-title-create">◈ NOVA FICHA PERSONALIZADA</div>
+
+      <div class="mode-toggle" id="createTypeToggle">
+        <div class="gt-btn active" data-type="soldado">Soldado<br><small>NPC heróico — classe (Soldado, Batedor...)</small></div>
+        <div class="gt-btn" data-type="npc">NPC<br><small>não-heróico — capangas, civis, mooks</small></div>
+        <div class="gt-btn" data-type="droide">Dróide<br><small>traços de dróide, locomoção, categoria</small></div>
+        <div class="gt-btn" data-type="nave">Nave<br><small>veículo — casco, escudo, tripulação</small></div>
+      </div>
+
+      <div class="form-row">
+        <label>Nome</label>
+        <input type="text" class="form-input" id="cNome" placeholder="Ex: Tenente Vex Aurelan">
+      </div>
+      <div class="form-row">
+        <label>Subtítulo / Papel</label>
+        <input type="text" class="form-input" id="cSubtitulo" placeholder="Ex: Oficial de contrainteligência — Setor Kallo">
+      </div>
+      <div class="form-row">
+        <label id="cTipoLabel">Tipo / Espécie / Classe</label>
+        <input type="text" class="form-input" id="cTipo" placeholder="Ex: Humano Médio soldado 6">
+      </div>
+      <div class="form-row">
+        <label>Descrição (flavor)</label>
+        <textarea class="form-input" id="cFlavor" rows="2" placeholder="Uma ou duas frases de contexto..."></textarea>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-row"><label>Reflexo</label><input type="number" class="form-input" id="cRef" value="20"></div>
+        <div class="form-row"><label>Desprevenido</label><input type="number" class="form-input" id="cFF" value="17"></div>
+        <div class="form-row"><label>Fortitude</label><input type="number" class="form-input" id="cFort" value="20"></div>
+        <div class="form-row" id="cVonRow"><label>Vontade</label><input type="number" class="form-input" id="cVon" value="18"></div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-row"><label>Pontos de Vida</label><input type="number" class="form-input" id="cHp" value="85"></div>
+        <div class="form-row"><label>Limiar de Dano</label><input type="number" class="form-input" id="cThreshold" value="20"></div>
+        <div class="form-row"><label>Iniciativa (bônus)</label><input type="number" class="form-input" id="cInit" value="10"></div>
+        <div class="form-row" id="cRdRow" style="display:none;"><label>Redução de Dano</label><input type="number" class="form-input" id="cRd" value="10"></div>
+      </div>
+
+      <div id="cDroidFields" style="display:none;">
+        <div class="section-title" style="margin-top:22px;">Especificações de Dróide</div>
+
+        <div class="form-row">
+          <label>Modelo (Livro Básico) — opcional, preenche tudo automaticamente</label>
+          <select class="form-input" id="cDroidModel">
+            <option value="">— Personalizado (montar do zero) —</option>
+          </select>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Categoria</label>
+            <select class="form-input" id="cDroidCategoria">
+              <option value="1ª categoria — médico, científico">1ª — Médico / Científico</option>
+              <option value="2ª categoria — astromecânico, técnico">2ª — Astromecânico / Técnico</option>
+              <option value="3ª categoria — protocolo, serviço">3ª — Protocolo / Serviço</option>
+              <option value="4ª categoria — combate, segurança" selected>4ª — Combate / Segurança</option>
+              <option value="5ª categoria — operários, utilidade">5ª — Operários / Utilidade</option>
+            </select>
+          </div>
+          <div class="form-row"><label>Escudo (VE) — 0 = sem escudo</label><input type="number" class="form-input" id="cDroidShield" value="0"></div>
+        </div>
+
+        <label style="font-size:11px; color:var(--text-dimmer); text-transform:uppercase; letter-spacing:0.6px; font-family:var(--font-mono); display:block; margin:10px 0 6px;">Sistemas de locomoção (um dróide pode ter mais de um)</label>
+        <div id="cDroidLocoList"></div>
+        <button class="btn btn-mini" id="cAddLoco" type="button">+ Adicionar sistema de locomoção</button>
+
+        <label class="c-checkbox" style="margin:14px 0 4px;">
+          <input type="checkbox" id="cDroidTraits" checked> Aplicar traços padrão de dróide
+          <small>(imune a veneno, doença, efeitos mentais e atordoamento; vulnerável a dano por íon; não morre — fica desativado)</small>
+        </label>
+      </div>
+
+      <div id="cNaveFields" style="display:none;">
+        <div class="section-title" style="margin-top:22px;">Movimento &amp; Casco</div>
+        <div class="form-grid">
+          <div class="form-row"><label>Vôo atmosférico (quadrados)</label><input type="number" class="form-input" id="cSpeedAtmo" value="12"></div>
+          <div class="form-row"><label>Vôo atmosférico (km/h) — opcional</label><input type="text" class="form-input" id="cSpeedKmh" placeholder="Ex: 850"></div>
+          <div class="form-row"><label>Vôo escala estelar (quadrados)</label><input type="number" class="form-input" id="cSpeedSpace" value="4"></div>
+          <div class="form-row"><label>Armadura (texto)</label><input type="text" class="form-input" id="cArmor" placeholder="Ex: +7"></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Escudo (VE) — 0 = sem escudo</label><input type="number" class="form-input" id="cShield" value="0"></div>
+          <div class="form-row"><label>Tripulação (quantidade)</label><input type="number" class="form-input" id="cCrewQty" value="1"></div>
+          <div class="form-row">
+            <label>Qualidade da tripulação</label>
+            <select class="form-input" id="cCrewQuality">
+              <option value="desqualificado">Desqualificado</option>
+              <option value="normal" selected>Normal</option>
+              <option value="habilidoso">Habilidoso</option>
+              <option value="ás">Ás</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Passageiros (mínimo)</label><input type="number" class="form-input" id="cPassMin" value="0"></div>
+          <div class="form-row"><label>Passageiros (máximo)</label><input type="number" class="form-input" id="cPassMax" value="0"></div>
+        </div>
+      </div>
+
+      <div class="form-row" id="cSpecialRow">
+        <label>Ações Especiais / Traços</label>
+        <textarea class="form-input" id="cSpecial" rows="2" placeholder="Ex: Coordenar, Confiança..."></textarea>
+      </div>
+
+      <div class="section-title" style="margin-top:22px;">Ataques</div>
+      <div id="cAttacksList"></div>
+      <button class="btn btn-mini" id="cAddAttack">+ Adicionar Ataque</button>
+
+      <div class="section-title" style="margin-top:22px;">Perícias</div>
+      <div id="cSkillsList"></div>
+      <button class="btn btn-mini" id="cAddSkill">+ Adicionar Perícia</button>
+
+      <div class="form-row" style="margin-top:22px;">
+        <label>Posses / Notas adicionais</label>
+        <textarea class="form-input" id="cPosses" rows="2" placeholder="Ex: comlink criptografado, kit de sobrevivência, custo estimado..."></textarea>
+      </div>
+
+      <button class="btn btn-add-combat" id="cSaveBtn" style="margin-top:24px;">💾 Salvar Ficha Personalizada</button>
+      <button class="btn btn-mini" id="cCancelEditBtn" style="display:none; margin-top:8px; width:100%; justify-content:center;">✕ Cancelar edição</button>
+    </div>
+
+    <div class="create-side-panel">
+      <div class="difficulty-card" id="difficultyCard">
+        <div class="diff-eyebrow">Avaliação em tempo real — simulação de combate</div>
+        <div id="diffVerdicts"></div>
+        <div class="diff-hint" id="diffHint" style="margin-top:10px;">Preencha os campos pra ver a avaliação.</div>
+      </div>
+
+      <div class="add-panel-title" style="margin-top:26px;">◈ FICHAS PERSONALIZADAS SALVAS</div>
+      <div id="customList" class="pick-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="create-view" id="viewEvolve" style="display:none;">
+  <div class="create-grid">
+    <div class="create-form-panel">
+      <div class="add-panel-title">◈ EVOLUIR FICHA</div>
+      <div class="form-row">
+        <label>Buscar ficha (Heróis, NPCs, Dróides e Naves)</label>
+        <input type="text" class="search" id="evoSearch" placeholder="Buscar por nome...">
+      </div>
+      <div id="evoPickList" class="pick-list" style="max-height:220px;"></div>
+
+      <div id="evoControls" style="display:none;">
+        <div class="picked-name" id="evoPickedName" style="margin-top:16px;"></div>
+
+        <div class="mode-toggle" id="evoProgToggle">
+          <div class="gt-btn active" data-prog="heroico">Heróico<br><small>nível soma nas defesas</small></div>
+          <div class="gt-btn" data-prog="naoheroico">Não-Heróico<br><small>defesas não sobem com nível</small></div>
+          <div class="gt-btn" data-prog="nave">Nave<br><small>escala por Nível de Desafio</small></div>
+        </div>
+
+        <div class="form-grid" id="evoPersonalLevelFields">
+          <div class="form-row"><label>Nível atual</label><input type="number" class="form-input" id="evoNivelAtual" value="6" min="1" max="20"></div>
+          <div class="form-row"><label>Nível alvo</label><input type="number" class="form-input" id="evoNivelAlvo" value="9" min="1" max="20"></div>
+          <div class="form-row"><label>Mod. de Vigor (p/ PV)</label><input type="number" class="form-input" id="evoConMod" value="2"></div>
+          <div class="form-row" id="evoBabRow"><label>Progressão de Ataque</label>
+            <select class="form-input" id="evoBabTrack">
+              <option value="boa">Boa (nível cheio)</option>
+              <option value="media">Média (¾ do nível)</option>
+              <option value="ruim">Ruim (½ do nível)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid" id="evoHeroicFields">
+          <div class="form-row"><label>Dado de vida da classe</label>
+            <select class="form-input" id="evoHitDie">
+              <option value="6">d6 (Nobre, Vigarista)</option>
+              <option value="8">d8 (Batedor)</option>
+              <option value="10" selected>d10 (Jedi, Soldado)</option>
+              <option value="12">d12</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid" id="evoNaveFields" style="display:none;">
+          <div class="form-row"><label>Nível de Desafio atual</label><input type="number" class="form-input" id="evoNDAtual" value="10" min="1" max="30"></div>
+          <div class="form-row"><label>Nível de Desafio alvo</label><input type="number" class="form-input" id="evoNDAlvo" value="14" min="1" max="30"></div>
+        </div>
+
+        <button class="btn btn-mini" id="evoCalcBtn">🧮 Calcular Evolução</button>
+
+        <div id="evoResult" style="display:none;">
+          <div class="section-title" style="margin-top:22px;">Resultado do cálculo</div>
+          <table class="info-table" id="evoSummaryTable"></table>
+
+          <div id="evoMilestones"></div>
+
+          <button class="btn btn-add-combat" id="evoApplyBtn" style="margin-top:20px;">✅ Aplicar Evolução à Ficha</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="create-side-panel">
+      <div class="difficulty-card" id="evoInfoCard" style="border-color:var(--custom);">
+        <div class="diff-eyebrow">Como funciona</div>
+        <div style="font-size:12.5px; color:var(--text-dim); line-height:1.7;">
+          Baseado nas regras do Livro Básico (Cap. 3 e Cap. 8):<br><br>
+          <b style="color:var(--custom);">Heróico</b> — defesas sobem 1 ponto por nível ganho; PV usa o dado de vida da classe + Vigor; aumento de habilidade nos marcos já aplica direto na defesa correspondente.<br><br>
+          <b style="color:var(--custom);">Não-Heróico</b> — defesas <u>não mudam</u> com o nível (regra oficial); PV usa 1d4 + Vigor por nível; ataque segue a tabela própria de BAB não-heróico.<br><br>
+          Em ambos: perícias e iniciativa sobem meio nível (arredondado pra baixo); talentos (façanhas) a cada marco da Tabela 3-1 (1º, 3º, 6º, 9º, 12º, 15º, 18º) — tudo já é aplicado automaticamente na ficha ao confirmar.<br><br>
+          <b style="color:var(--custom);">Nave</b> — escala por Nível de Desafio (não tem "nível" pessoal): casco, escudo e RD sobem proporcionalmente; defesas, ataque e perícias sobem junto com o ND.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="log-toggle" id="logToggle">🎲 REGISTRO DE ROLAGENS <span class="count" id="logCount">0</span></div>
+<div class="log-panel" id="logPanel">
+  <div class="log-head">
+    <h3>REGISTRO DE ROLAGENS</h3>
+    <div style="display:flex; gap:8px;">
+      <button class="log-clear" id="logClear">limpar</button>
+      <button class="log-close" id="logClose">fechar ✕</button>
+    </div>
+  </div>
+  <div class="log-body" id="logBody">
+    <div class="log-empty">Nenhuma rolagem ainda.<br>Clique em "Atacar" ou "Dano" em qualquer ficha.</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DADOS — Fichas de NPCs, Naves e Planetas (Saga Edition)
+// Ajustadas para desafiar grupo nivel 12; ataques/testes reforcados +5
+// ============================================================
+
+const DATA = [
+{id:"dodonna", cat:"rebeldes", name:"General Jan Dodonna", nd:14, init:5, type:"Humano Médio não-heróico 6/nobre 3", subtitle:"Líder do Grupo Massassi — Yavin 4", flavor:"Veterano das Guerras Clônicas, cérebro estratégico por trás das operações da Aliança. Idoso, calmo sob pressão. Não é um combatente — é quem planeja a batalha que os heróis vão vencer.", defenses:{ref:22, ff:20, fort:21, von:25}, hp:82, threshold:21, speed:"6 quadrados", abilities:"For 8, Des 10, Con 11, Int 16, Sab 15, Car 14", special:"Coordenar, Confiança, Líder Nato, Inspirar Lealdade", talents:"Foco em Perícia (Conhecimento [tática]), Liderança, Formação de Esquadrão, Treinamento em Perícia (Conhecimento [tática], Persuasão), Confiança de Ferro, Vitalidade", skillsRaw:"Conhecimento (tática) +29, Conhecimento (burocracia) +24, Percepção +24, Persuasão +23, Usar Computador +24", possessions:"Uniforme de general da Aliança, datapad com planos táticos, pistola blaster leve, acesso a canais criptografados do Alto Comando", note:"Uma vez por cena, pode gastar sua ação para usar Coordenar, concedendo a um herói em linha de visão +2 em um teste de ataque ou perícia.", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:15, dmg:"1d4+4"},
+    {name:"Pistola blaster leve", kind:"À Distância", bonus:16, dmg:"3d4+4"}
+  ]},
+
+{id:"korr", cat:"rebeldes", name:"Comandante Arven Korr", nd:13, init:12, type:"Humano Médio canalha 8", subtitle:"Líder da Diretiva Órion — Raxus Prime", flavor:"Ex-engenheiro de logística imperial que desertou. Frio, metódico, obcecado por explosivos e falhas de segurança. Não confia fácil.", defenses:{ref:27, ff:24, fort:23, von:24}, hp:93, threshold:23, speed:"6 quadrados", abilities:"For 12, Des 17, Con 13, Int 15, Sab 12, Car 10", special:"Sabotagem, Escapar", talents:"Ataque Furtivo +3d6, Especialista em Explosivos, Foco em Perícia (Mecânica), Esquiva Aprimorada, Reflexos Aprimorados, Proficiência em Arma (pistolas, armas simples)", skillsRaw:"Mecânica +26, Furtividade +24, Enganar +20, Usar Computador +25, Percepção +21", possessions:"Pistola blaster pesada, faca vibro, 4 cargas de demolição militar, kit de sabotagem, disfarce de técnico imperial, comlink criptografado", note:"Não luta se puder evitar — já saiu da sala antes da carga explosiva detonar.", attacks:[
+    {name:"Faca vibro", kind:"Corpo a Corpo", bonus:19, dmg:"2d6+8"},
+    {name:"Pistola blaster pesada", kind:"À Distância", bonus:20, dmg:"3d8+7", note:"Ataque Furtivo +3d6 se o alvo estiver desprevenido/flanqueado"}
+  ]},
+
+{id:"lumon", cat:"rebeldes", name:"Astara Lumon", nd:12, init:9, type:"Humano Médio nobre 7", subtitle:"Líder do Movimento Astara — Chandrila", flavor:"Ex-funcionária do governo civil de Chandrila. Carismática, bem relacionada, opera como socialite e em segredo como recrutadora e protetora de dissidentes.", defenses:{ref:24, ff:22, fort:20, von:26}, hp:75, threshold:20, speed:"6 quadrados", abilities:"For 8, Des 12, Con 10, Int 14, Sab 14, Car 17", special:"Persuadir, Recrutar, Presença de Comando", talents:"Bem-Relacionado, Foco em Perícia (Persuasão), Traços Convincentes, Treinamento em Perícia (Enganar, Conhecimento [burocracia])", skillsRaw:"Persuasão +27, Enganar +23, Conhecimento (burocracia) +22, Conhecimento (política galáctica) +22, Percepção +22", possessions:"Roupas civis de alto padrão, cilindro de códigos falsificado, rede de contatos clandestina, pistola blaster oculta", note:"Raramente entra em combate — seu poder é abrir portas, dar álibis, esconder fugitivos e mobilizar populações civis.", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:14, dmg:"1d4+3"},
+    {name:"Pistola blaster oculta", kind:"À Distância", bonus:16, dmg:"3d4+3"}
+  ]},
+
+{id:"guia-caminho", cat:"rebeldes", name:"Guia do Caminho", nd:11, init:11, type:"Humano Médio batedor 4/especialista em fuga 2", subtitle:"O Caminho — sem base fixa (pontos: Jabiim, Mapuzo)", flavor:"Não tem comandante único. Guias escondem, transportam e apagam rastros de Jedi sobreviventes e sensitivos à Força. Só aparece quando é procurado.", defenses:{ref:25, ff:22, fort:21, von:22}, hp:79, threshold:21, speed:"6 quadrados", abilities:"For 11, Des 16, Con 12, Int 13, Sab 15, Car 10", special:"Evasão, Sentir Perseguição", talents:"Sentidos Aguçados, Escapista Nato, Foco em Perícia (Furtividade), Esquiva Aprimorada", skillsRaw:"Furtividade +25, Sobrevivência +23, Percepção +23, Enganar +19, Usar Computador +19", possessions:"Identidades falsas múltiplas, nave leve não registrada, kit de sobrevivência, pistola blaster", attacks:[
+    {name:"Bastão vibro", kind:"Corpo a Corpo", bonus:17, dmg:"2d6+6"},
+    {name:"Pistola blaster", kind:"À Distância", bonus:17, dmg:"3d6+5"}
+  ]},
+
+{id:"capitao-rebelde", cat:"rebeldes", name:"Capitão Rebelde", nd:12, init:11, type:"Humano Médio soldado 6 (template genérico)", subtitle:"\"Braço-direito\" de qualquer célula — reutilizável", flavor:"Use para o soldado de elite de qualquer célula rebelde. Reutilizável — só troque nome e cor de farda.", defenses:{ref:26, ff:23, fort:25, von:21}, hp:97, threshold:25, speed:"6 quadrados", abilities:"For 14, Des 15, Con 13, Int 10, Sab 12, Car 8", special:"Tiro à Queima-Roupa", talents:"Ataque Coordenado, Proficiência em Armadura (leve, média), Tiro Cuidadoso, Foco em Arma (rifles), Encarar a Morte", skillsRaw:"Iniciativa +19, Percepção +20, Sobrevivência +20", possessions:"Armadura de combate rebelde (+7 armadura, +1 equip.), rifle blaster, vibrolâmina, 2 granadas de fragmentação, comlink criptografado", attacks:[
+    {name:"Vibrolâmina", kind:"Corpo a Corpo", bonus:20, dmg:"2d6+9"},
+    {name:"Rifle blaster", kind:"À Distância", bonus:20, dmg:"3d8+7", altLabel:"rajada de tiros", altBonus:18},
+    {name:"Granada de fragmentação", kind:"À Distância", bonus:18, dmg:"4d6+4", note:"2 quadrados de explosão"}
+  ]},
+
+{id:"soldado-rebelde", cat:"rebeldes", name:"Soldado Rebelde", nd:8, init:11, type:"Humano Médio não-heróico 3 (template genérico)", subtitle:"Capanga padrão de qualquer célula — Livro Básico p.280", flavor:"A maioria dos rebeldes de linha de frente. Fraco individualmente, perigoso em grupo.", defenses:{ref:20, ff:19, fort:18, von:17}, hp:59, threshold:18, speed:"6 quadrados", abilities:"Vig 11, Des 13, Con 12, Int 9, Sab 10, Car 8", special:"Tiro à Queima-Roupa", talents:"Proficiência em Armadura (leve), Tiro à Queima-Roupa, Foco em Arma (pistolas), Proficiência em Arma (pistolas, rifles, armas simples)", skillsRaw:"Iniciativa +19, Percepção +18", possessions:"Capacete e traje blast (+2 armadura), pistola blaster, comlink criptografado", note:"Variante \"Elite\" (ND 2): não-heróico 6, pv 21, Limiar 16, com granadas extras.", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:14, dmg:"1d4+8"},
+    {name:"Pistola blaster", kind:"À Distância", bonus:16, dmg:"4d6+8"},
+    {name:"Granada de fragmentação", kind:"À Distância", bonus:15, dmg:"5d6+8", note:"2 quadrados de explosão"}
+  ]},
+
+{id:"moff", cat:"imperio", name:"Moff", nd:17, init:6, type:"Humano Médio não-heróico 4/nobre 6/oficial 3", subtitle:"Setor Político-Administrativo — governador de setor", flavor:"Poder político e militar quase absoluto na região. Não é um guerreiro; é quem manda os guerreiros. Recursos praticamente ilimitados.", defenses:{ref:25, ff:23, fort:24, von:30}, hp:96, threshold:24, speed:"6 quadrados", darkSide:9, abilities:"For 10, Des 12, Con 12, Int 16, Sab 14, Car 17", special:"Coordenar, Confiança, Chamar Reforços (convoca esquadrão de stormtroopers ou TIEs em 1d4 rodadas), Intimidar em Massa", talents:"Foco em Perícia (Persuasão), Confiança de Ferro, Liderança, Presença Ameaçadora, Treinamento em Perícia (Enganar, Conhecimento [tática]), Reação Calculada", skillsRaw:"Persuasão +28, Conhecimento (tática) +26, Conhecimento (burocracia) +26, Enganar +25, Percepção +25", possessions:"Uniforme de Moff, acesso irrestrito a frotas e tropas do setor, blaster pesado cerimonial, cilindro de comando de alta prioridade", note:"Raramente entra em combate pessoalmente — se ele sacar a arma, a situação já está desesperadora pra ele.", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:18, dmg:"1d4+5"},
+    {name:"Pistola blaster pesada", kind:"À Distância", bonus:20, dmg:"3d8+5"}
+  ]},
+
+{id:"grao-almirante", cat:"imperio", name:"Grão-Almirante", nd:18, init:9, type:"Humano Médio nobre 3/oficial 8", subtitle:"Marinha Imperial — comandante supremo de frota", flavor:"Uniforme branco, reservado a estrategistas de elite. Pensa em movimentos de longo prazo, estuda os inimigos antes de agir.", defenses:{ref:27, ff:24, fort:24, von:28}, hp:94, threshold:24, speed:"6 quadrados", darkSide:6, abilities:"For 10, Des 14, Con 12, Int 18, Sab 16, Car 14", special:"Coordenar, Tática de Frota (+2 esquiva a aliados sob comando por 1 rodada), Prever Movimento, Confiança", talents:"Foco em Perícia (Conhecimento [tática]), Linguista, Reação Calculada, Comandar Anseio, Treinamento em Perícia (Usar Computador, Percepção)", skillsRaw:"Conhecimento (tática) +30, Conhecimento (cultura alienígena) +26, Percepção +27, Usar Computador +26, Persuasão +24", possessions:"Uniforme branco de Grão-Almirante, holoprojetor tático, acesso irrestrito a frotas do setor", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:17, dmg:"1d4+4"},
+    {name:"Pistola blaster", kind:"À Distância", bonus:19, dmg:"3d6+4"}
+  ]},
+
+{id:"almirante", cat:"imperio", name:"Almirante", nd:14, init:7, type:"Humano Médio não-heróico 3/nobre 3/oficial 4", subtitle:"Marinha Imperial — comandante de frota regular", flavor:"Competente, mas sem a genialidade tática de um Grão-Almirante.", defenses:{ref:23, ff:21, fort:21, von:25}, hp:82, threshold:21, speed:"6 quadrados", darkSide:4, abilities:"For 9, Des 12, Con 11, Int 15, Sab 14, Car 15", special:"Coordenar, Confiança", talents:"Foco em Perícia (Conhecimento [tática]), Liderança, Treinamento em Perícia (Enganar, Persuasão)", skillsRaw:"Conhecimento (tática) +25, Persuasão +23, Percepção +23, Enganar +21", possessions:"Uniforme de Almirante, acesso a frota regular, comlink de comando naval", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:16, dmg:"1d4+3"},
+    {name:"Pistola blaster", kind:"À Distância", bonus:18, dmg:"3d6+3"}
+  ]},
+
+{id:"capitao-nave", cat:"imperio", name:"Capitão de Nave", nd:12, init:7, type:"Humano Médio não-heróico 3/oficial 4", subtitle:"Marinha Imperial — autoridade de um Destróier", flavor:"Autoridade absoluta a bordo — resolve motins, ordena bombardeios, negocia rendições.", defenses:{ref:22, ff:20, fort:20, von:23}, hp:78, threshold:20, speed:"6 quadrados", darkSide:3, abilities:"For 9, Des 10, Con 10, Int 14, Sab 13, Car 13", special:"Coordenar, Confiança", talents:"Foco em Perícia (Conhecimento [tática]), Treinamento em Perícia (Intimidar, Usar Computador)", skillsRaw:"Conhecimento (tática) +23, Intimidar +21, Percepção +21, Usar Computador +21", possessions:"Uniforme de capitão, blaster, acesso total aos sistemas da nave", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:15, dmg:"1d4+3"},
+    {name:"Pistola blaster", kind:"À Distância", bonus:16, dmg:"3d6+3"}
+  ]},
+
+{id:"general", cat:"imperio", name:"General", nd:15, init:8, type:"Humano Médio não-heróico 4/soldado 4/oficial 3", subtitle:"Exército Imperial — mais alto posto de combate", flavor:"Comanda divisões terrestres inteiras. Pensa grande, mas ainda entra em campo quando necessário.", defenses:{ref:25, ff:22, fort:26, von:23}, hp:106, threshold:26, speed:"6 quadrados", darkSide:5, abilities:"For 15, Des 13, Con 15, Int 14, Sab 13, Car 12", special:"Coordenar, Ataque Coordenado, Confiança, Chamar Artilharia (bombardeio orbital em 1d4 rodadas)", talents:"Ataque Coordenado, Foco em Arma (armas pesadas), Proficiência em Armadura (leve, média), Liderança, Confiança de Ferro, Encarar a Morte", skillsRaw:"Conhecimento (tática) +24, Percepção +23, Intimidar +22, Tolerância +23", possessions:"Armadura de oficial (+5 armadura), sabre de comando, pistola blaster pesada, comlink de comando de campo", attacks:[
+    {name:"Sabre de comando", kind:"Corpo a Corpo", bonus:19, dmg:"2d6+8"},
+    {name:"Pistola blaster pesada", kind:"À Distância", bonus:20, dmg:"3d8+6"}
+  ]},
+
+{id:"coronel", cat:"imperio", name:"Coronel", nd:13, init:10, type:"Humano Médio não-heróico 3/soldado 5", subtitle:"Exército Imperial — líder de brigada em campo", flavor:"Um degrau abaixo do General, mais na linha de frente.", defenses:{ref:25, ff:22, fort:24, von:20}, hp:93, threshold:24, speed:"6 quadrados", darkSide:3, abilities:"For 14, Des 14, Con 14, Int 12, Sab 12, Car 11", special:"Ataque Coordenado, Confiança", talents:"Ataque Coordenado, Proficiência em Armadura (leve, média), Foco em Arma (rifles), Liderança", skillsRaw:"Conhecimento (tática) +22, Percepção +21, Intimidar +20", possessions:"Armadura de combate imperial (+6 armadura), rifle blaster, granadas de fragmentação (2), comlink de comando", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:19, dmg:"1d4+7"},
+    {name:"Rifle blaster", kind:"À Distância", bonus:20, dmg:"3d8+6"},
+    {name:"Granada de fragmentação", kind:"À Distância", bonus:18, dmg:"4d6+3", note:"2 quadrados de explosão"}
+  ]},
+
+{id:"comandante-stormtrooper", cat:"imperio", name:"Comandante Stormtrooper", nd:13, init:12, type:"Humano Médio não-heróico 2/soldado 6", subtitle:"Corpo Stormtrooper — ombreira laranja", flavor:"Oficial tático máximo no calor da batalha — cérebro de um pelotão ou companhia em combate direto.", defenses:{ref:27, ff:24, fort:25, von:21}, hp:96, threshold:25, speed:"6 quadrados", darkSide:2, abilities:"Vig 16, Des 15, Con 14, Int 11, Sab 12, Car 10", special:"Comandar Esquadrão (+1 de ataque a stormtroopers em linha de visão)", talents:"Ataque Coordenado, Rajada de Tiros, Foco em Arma (rifles), Proficiência em Armadura (leve, média), Encarar a Morte", skillsRaw:"Percepção +22, Iniciativa +19, Tolerância +22", possessions:"Armadura de stormtrooper de comando (+7 armadura, +2 equip.), rifle blaster E-11, 2 granadas de fragmentação, comlink de comando", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:19, dmg:"1d4+7"},
+    {name:"Rifle blaster E-11", kind:"À Distância", bonus:21, dmg:"3d8+7", altLabel:"rajada de tiros", altBonus:19}
+  ]},
+
+{id:"oficial-stormtrooper", cat:"imperio", name:"Oficial do Corpo Stormtrooper", nd:11, init:6, type:"Humano Médio não-heróico 3/oficial 3", subtitle:"Corpo Stormtrooper — comando administrativo", flavor:"Cuida do comando tático e burocrático — logística, punições, movimentação de tropas.", defenses:{ref:21, ff:20, fort:19, von:21}, hp:69, threshold:19, speed:"6 quadrados", darkSide:2, abilities:"For 9, Des 11, Con 11, Int 13, Sab 12, Car 12", special:"Coordenar", talents:"Foco em Perícia (Conhecimento [burocracia]), Treinamento em Perícia (Persuasão, Intimidar)", skillsRaw:"Conhecimento (burocracia) +23, Percepção +20, Persuasão +19, Intimidar +19", possessions:"Uniforme de oficial, datapad administrativo, pistola blaster, acesso a registros de tropas", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:14, dmg:"1d4+3"},
+    {name:"Pistola blaster", kind:"À Distância", bonus:16, dmg:"3d6+4"}
+  ]},
+
+{id:"capitao-esquadrao", cat:"imperio", name:"Capitão / Líder de Esquadrão", nd:11, init:10, type:"Humano Médio não-heróico 2/soldado 3", subtitle:"Corpo Stormtrooper — ombreira vermelha", flavor:"Comanda pelotões, lidera o avanço frontal — o rosto mais comum entre os oficiais de linha.", defenses:{ref:25, ff:22, fort:22, von:19}, hp:81, threshold:22, speed:"6 quadrados", darkSide:1, abilities:"Vig 13, Des 14, Con 12, Int 10, Sab 11, Car 9", special:"Ataque Coordenado", talents:"Ataque Coordenado, Proficiência em Armadura (leve, média), Foco em Arma (rifles), Tiro à Queima-Roupa", skillsRaw:"Percepção +20, Iniciativa +18", possessions:"Armadura de stormtrooper (+6 armadura, +2 equip.), rifle blaster, granada de fragmentação, comlink", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:17, dmg:"1d4+6"},
+    {name:"Rifle blaster", kind:"À Distância", bonus:19, dmg:"3d8+6"},
+    {name:"Granada de fragmentação", kind:"À Distância", bonus:19, dmg:"4d6+4", note:"2 quadrados de explosão"}
+  ]},
+
+{id:"sargento-stormtrooper", cat:"imperio", name:"Sargento Stormtrooper", nd:10, init:9, type:"Humano Médio não-heróico 6", subtitle:"Corpo Stormtrooper — ombreira branca", flavor:"Lidera patrulhas de rua e grupos menores de ação contínua — comum em cidades ocupadas.", defenses:{ref:24, ff:22, fort:20, von:18}, hp:73, threshold:20, speed:"6 quadrados", darkSide:1, abilities:"Vig 12, Des 13, Con 11, Int 10, Sab 10, Car 9", special:"Ataque Coordenado", talents:"Proficiência em Armadura (leve), Ataque Coordenado, Foco em Arma (rifles)", skillsRaw:"Percepção +20, Iniciativa +17", possessions:"Armadura de stormtrooper (+6 armadura, +2 equip.), rifle blaster, comlink", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:17, dmg:"1d4+5"},
+    {name:"Rifle blaster", kind:"À Distância", bonus:18, dmg:"3d8+4"}
+  ]},
+
+{id:"cabo-stormtrooper", cat:"imperio", name:"Cabo Stormtrooper", nd:9, init:7, type:"Humano Médio não-heróico 5", subtitle:"Corpo Stormtrooper — ombreira preta", flavor:"Comando de base para pequenos agrupamentos ou guaritas de segurança.", defenses:{ref:22, ff:21, fort:19, von:17}, hp:64, threshold:19, speed:"6 quadrados", darkSide:1, abilities:"Vig 11, Des 12, Con 11, Int 9, Sab 10, Car 8", special:"—", talents:"Proficiência em Armadura (leve), Foco em Arma (rifles)", skillsRaw:"Percepção +19", possessions:"Armadura de stormtrooper (+6 armadura, +2 equip.), rifle blaster, comlink", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:15, dmg:"1d4+4"},
+    {name:"Rifle blaster", kind:"À Distância", bonus:16, dmg:"3d8+4"}
+  ]},
+
+{id:"stormtrooper", cat:"imperio", name:"Stormtrooper / Cadete", nd:8, init:6, type:"Humano Médio não-heróico 4", subtitle:"Corpo Stormtrooper — soldado raso (Livro Básico p.279)", flavor:"O \"capanga\" imperial mais comum. Cadetes usam a mesma ficha com pv pela metade e sem granada.", defenses:{ref:23, ff:23, fort:19, von:17}, hp:59, threshold:19, speed:"6 quadrados", darkSide:1, abilities:"Vig 12, Des 11, Con 11, Int 10, Sab 10, Car 10", special:"Ataque Coordenado", talents:"Proficiência em Armadura (leve), Ataque Coordenado, Foco em Arma (rifles blaster), Proficiência em Arma (pistolas, rifles, armas simples)", skillsRaw:"Tolerância +19, Percepção +21", possessions:"Armadura de stormtrooper (+6 armadura, +2 equip.), rifle blaster, granada de fragmentação, cinto de utilidade com medpac", attacks:[
+    {name:"Desarmado", kind:"Corpo a Corpo", bonus:16, dmg:"1d4+9"},
+    {name:"Rifle blaster", kind:"À Distância", bonus:16, dmg:"4d8+8", note:"modo automático disponível"},
+    {name:"Granada de fragmentação", kind:"À Distância", bonus:15, dmg:"5d6+8", note:"2 quadrados de explosão"}
+  ]},
+
+{id:"tie", cat:"naves", name:"Caça TIE", nd:11, init:10, type:"Caça estelar Imenso", subtitle:"Produção em massa — Sistemas de Esquadra Sienar", flavor:"Barato, produzido em massa, sem escudos nem hiperdrive — o Império prefere números a sobrevivência dos pilotos.", defenses:{ref:19, ff:15, fort:26, armor:"+3"}, hp:95, rd:16, threshold:36, speed:"vôo 16 quadrados (máx. 1.200 km/h)", abilities:"Vig 34, Des 18, Con —, Int 14", talents:"—", skillsRaw:"Iniciativa +17, Mecânica +15, Percepção +15, Pilotar +17", possessions:"Tripulação 1 (habilidoso); Carga 65 kg; Consumíveis 2 dias; Disponibilidade Militar; Custo 60.000 (25.000 usado)", attacks:[
+    {name:"Canhões laser", kind:"À Distância", bonus:13, dmg:"4d10+2×2", altLabel:"modo automático", altBonus:8}
+  ]},
+
+{id:"tie-interceptor", cat:"naves", name:"Interceptador TIE", nd:12, init:13, type:"Caça estelar Enorme", subtitle:"Variante anti-X-wing — quatro canhões de fogo conjunto", flavor:"Mais rápido e mortal, criado especificamente pra caçar X-wings.", defenses:{ref:22, ff:15, fort:28, armor:"+3"}, hp:135, rd:15, threshold:38, speed:"vôo 16 quadrados (máx. 1.250 km/h)", abilities:"Vig 38, Des 24, Con —, Int 16", talents:"—", skillsRaw:"Iniciativa +20, Mecânica +15, Percepção +15, Pilotar +20", possessions:"Tripulação 1 (habilidoso); Carga 75 kg; Consumíveis 2 dias; Disponibilidade Militar; Custo 120.000 (50.000 usado)", attacks:[
+    {name:"Canhões laser", kind:"À Distância", bonus:14, dmg:"6d10+2×2", altLabel:"modo automático", altBonus:9}
+  ]},
+
+{id:"xwing", cat:"naves", name:"X-wing T-65B Incom", nd:13, init:9, type:"Caça estelar Imenso", subtitle:"Caça símbolo da Aliança Rebelde", flavor:"Ágil como um TIE, mas com escudos, hiperdrive e dróide astromecânico pra manutenção em voo.", defenses:{ref:21, ff:15, fort:29, armor:"+7"}, hp:155, rd:13, ve:20, threshold:49, speed:"vôo 16 quadrados (máx. 1.050 km/h)", abilities:"Vig 42, Des 22, Con —, Int 16", talents:"—", skillsRaw:"Iniciativa +15, Mecânica +14, Percepção +14, Pilotar +15, Usar Computador +14", possessions:"Tripulação 1 + dróide astromecânico; Carga 110 kg; Armamento 8 torpedos de próton; Hiperdrive ×1; Disponibilidade Militar; Custo 135.000 (60.000 usado)", attacks:[
+    {name:"Canhões laser", kind:"À Distância", bonus:13, dmg:"4d10+2×2", altLabel:"modo automático", altBonus:8},
+    {name:"Torpedos de próton", kind:"À Distância", bonus:13, dmg:"9d10+2×2", note:"4 quadrados de dispersão"}
+  ]},
+
+{id:"ywing", cat:"naves", name:"Y-wing Koensayr", nd:13, init:7, type:"Caça estelar Imenso", subtitle:"Bombardeiro/caça de escolta rebelde", flavor:"Mais lento e menos elegante que o X-wing, mas robusto e versátil.", defenses:{ref:19, ff:15, fort:29, armor:"+7"}, hp:155, rd:13, ve:35, threshold:49, speed:"vôo 16 quadrados (máx. 1.000 km/h)", abilities:"Vig 42, Des 18, Con —, Int 16", talents:"—", skillsRaw:"Iniciativa +13, Mecânica +14, Percepção +14, Pilotar +13, Usar Computador +14", possessions:"Tripulação 2 + dróide astromecânico; Carga 110 kg; Armamento 8 torpedos de próton; Hiperdrive ×1; Disponibilidade Militar; Custo 135.000 (60.000 usado)", attacks:[
+    {name:"Canhões laser", kind:"À Distância", bonus:13, dmg:"4d10+2×2", altLabel:"modo automático", altBonus:8},
+    {name:"Canhões de íon", kind:"À Distância", bonus:13, dmg:"4d10+2×2", note:"dano íon", altLabel:"modo automático", altBonus:8},
+    {name:"Torpedos de próton", kind:"À Distância", bonus:13, dmg:"9d10+2×2", note:"4 quadrados de dispersão"}
+  ]},
+
+{id:"yt1300", cat:"naves", name:"YT-1300 Corelliano", nd:10, init:-3, type:"Transportador espacial Colossal", subtitle:"A base de qualquer nave \"tipo Millennium Falcon\"", flavor:"Carga versátil, fácil de modificar, adorada por contrabandistas.", defenses:{ref:16, ff:16, fort:30, armor:"+12"}, hp:200, rd:25, threshold:80, speed:"vôo 12 quadrados (máx. 800 km/h)", abilities:"Vig 42, Des 10, Con —, Int 14", talents:"—", skillsRaw:"Iniciativa +4, Mecânica +14, Percepção +14, Pilotar +4, Usar Computador +14", possessions:"Tripulação 2; Passageiros 6; Carga 100 tons; Armamento 6 torpedos de próton; Hiperdrive ×2; Disponibilidade Licenciada; Custo 100.000 (25.000 usado)", note:"Nave-base facilmente modificável — trocar hiperdrive, blindagem ou armamento é comum entre contrabandistas.", attacks:[
+    {name:"Canhão laser", kind:"À Distância", bonus:11, dmg:"4d10+2×2"}
+  ]},
+
+{id:"yt2400", cat:"naves", name:"YT-2400 Corelliano", nd:12, init:0, type:"Transportador espacial Colossal (adaptação não-oficial)", subtitle:"Estilo \"Outrider\" — não está nos livros enviados", flavor:"Ficha equilibrada baseada na YT-1300: casco mais compacto, mais rápida, mais blindada e mais armada, porém com menos carga.", defenses:{ref:18, ff:18, fort:32, armor:"+14"}, hp:210, rd:23, threshold:86, speed:"vôo 14 quadrados (máx. 1.000 km/h)", abilities:"Vig 44, Des 13, Con —, Int 15", talents:"—", skillsRaw:"Iniciativa +7, Mecânica +16, Percepção +15, Pilotar +7, Usar Computador +16", possessions:"Tripulação 2; Passageiros 4; Carga 60 toneladas; Armamento 4 torpedos de próton, raio trator; Hiperdrive ×1; Disponibilidade Restrita; Custo 130.000 (55.000 usado)", note:"NÃO-OFICIAL: adaptação minha, já que a YT-2400 não consta nos PDFs enviados.", attacks:[
+    {name:"Canhões laser duplos", kind:"À Distância", bonus:13, dmg:"5d10+2×2"},
+    {name:"Canhão de íon", kind:"À Distância", bonus:13, dmg:"3d10+2×2", note:"dano íon"}
+  ]},
+
+{id:"corveta", cat:"naves", name:"Corveta Corelliana", nd:19, init:2, type:"Nave capital Colossal (fragata)", subtitle:"Blockade Runner — nave-mãe de apoio", flavor:"O \"próximo nível\" acima da YT-1300 — usada pela Aliança e por contrabandistas endinheirados.", defenses:{ref:19, ff:15, fort:41, armor:"+12"}, hp:1425, rd:18, ve:120, threshold:141, speed:"vôo 3 quadrados (escala interestelar)", abilities:"—", talents:"—", skillsRaw:"Percepção +14", possessions:"Tripulação 165; Passageiros 600 (tropas); Consumíveis 1 ano; Veículos Carregados 1 lançadeira, 2 speeders; Disponibilidade Militar; Custo não disponível", note:"Aplique -20 em ataques contra alvos menores que Colossal.", attacks:[
+    {name:"Bateria de turbolaser (3 artilheiros)", kind:"À Distância", bonus:20, dmg:"5d10+2×5", note:"-8 contra alvos menores que Colossal"}
+  ]},
+
+{id:"destroyer", cat:"naves", name:"Destróier Estelar Classe Imperial I", nd:23, init:0, type:"Nave capital Colossal (cruzador)", subtitle:"O símbolo máximo do poderio militar do Império", flavor:"Só aparecer no céu já é uma ameaça — praticamente um \"chefe de fase\" ambiental mais do que um inimigo pra combater diretamente.", defenses:{ref:21, ff:19, fort:59, armor:"+16"}, hp:2415, rd:23, ve:175, threshold:259, speed:"vôo 3 quadrados (escala interestelar)", abilities:"Vig 102, Des 14, Con —, Int 20", talents:"—", skillsRaw:"Iniciativa +6, Mecânica +14, Percepção +14, Pilotar +6, Usar Computador +14", possessions:"Tripulação 37.085; Passageiros 9.700 (tropas); Veículos Carregados 72 caças TIE, 8 naves classe-Lambda, 20 AT-ATs, 30 AT-STs; Hiperdrive ×2; Disponibilidade Militar; Custo não disponível", note:"Um Destróier não é pra \"lutar contra\" — é pra fugir, sabotar por dentro, ou negociar com quem o comanda. Aplique -20 em ataques contra alvos menores que Colossal.", attacks:[
+    {name:"Bateria de turbolaser (6 artilheiros)", kind:"À Distância", bonus:25, dmg:"5d10+2×5", note:"-3 contra alvos menores que Colossal"},
+    {name:"Bateria de canhão de íon (6 artilheiros)", kind:"À Distância", bonus:25, dmg:"3d10+2×5", note:"dano íon, -3 contra alvos menores que Colossal"}
+  ]},
+
+{id:"yavin4", cat:"planetas", name:"Yavin 4", nd:null, subtitle:"Base do Grupo Massassi", flavor:"A base é bem escondida, mas não é segredo absoluto — o Império já demonstrou interesse na região por causa das antigas construções Massassi.", info:[
+    [
+      "Região",
+      "Borda Exterior"
+    ],
+    [
+      "Sistema",
+      "Yavin"
+    ],
+    [
+      "Órbita/Sóis",
+      "Luar de Yavin (gigante gasoso), 1 sol"
+    ],
+    [
+      "Diâmetro",
+      "10.200 km"
+    ],
+    [
+      "Atmosfera",
+      "Respirável"
+    ],
+    [
+      "Clima",
+      "Tropical úmido"
+    ],
+    [
+      "Gravidade",
+      "Padrão"
+    ],
+    [
+      "Terreno",
+      "Selvas densas, ruínas Massassi, rios"
+    ],
+    [
+      "População",
+      "Baixa — pessoal rebelde e tribos remanescentes"
+    ],
+    [
+      "Espécies",
+      "Humanos (Aliança), poucos nativos primitivos"
+    ],
+    [
+      "Governo",
+      "Comando militar da Aliança Rebelde (não-oficial)"
+    ],
+    [
+      "Pontos de Interesse",
+      "Grande Templo Massassi (QG), templos em ruínas, pistas camufladas"
+    ]
+  ]},
+
+{id:"raxusprime", cat:"planetas", name:"Raxus Prime", nd:null, subtitle:"Base da Diretiva Órion", flavor:"O ambiente tóxico e labiríntico é perfeito para emboscadas e perseguições. A base de Korr fica disfarçada como mais um monte de sucata.", info:[
+    [
+      "Região",
+      "Borda Exterior"
+    ],
+    [
+      "Sistema",
+      "Raxus"
+    ],
+    [
+      "Diâmetro",
+      "10.696 km"
+    ],
+    [
+      "Atmosfera",
+      "Respirável, mas poluída"
+    ],
+    [
+      "Clima",
+      "Industrial/tóxico, variável"
+    ],
+    [
+      "Terreno",
+      "Depósitos de lixo, complexos industriais abandonados"
+    ],
+    [
+      "População",
+      "Muito baixa — sucateiros, fugitivos, contrabandistas"
+    ],
+    [
+      "Espécies",
+      "Mista"
+    ],
+    [
+      "Governo",
+      "Nenhum — território sem lei"
+    ],
+    [
+      "Pontos de Interesse",
+      "Complexo industrial abandonado (base), campos de naves sucateadas"
+    ]
+  ]},
+
+{id:"chandrila", cat:"planetas", name:"Chandrila", nd:null, subtitle:"Base do Movimento Astara", flavor:"Mundo do Núcleo com forte presença imperial e vigilância. O Movimento Astara sobrevive camuflado na própria estrutura política legítima.", info:[
+    [
+      "Região",
+      "Núcleo"
+    ],
+    [
+      "Sistema",
+      "Chandrila"
+    ],
+    [
+      "Diâmetro",
+      "13.500 km"
+    ],
+    [
+      "Atmosfera",
+      "Respirável"
+    ],
+    [
+      "Clima",
+      "Temperado, pradarias e planícies"
+    ],
+    [
+      "Terreno",
+      "Cidades planejadas, campos abertos, colinas"
+    ],
+    [
+      "População",
+      "Alta — bilhões, sob controle imperial"
+    ],
+    [
+      "Espécies",
+      "Majoritariamente humana"
+    ],
+    [
+      "Governo",
+      "Governo civil sob supervisão imperial direta"
+    ],
+    [
+      "Pontos de Interesse",
+      "Capital Hanna City, subníveis urbanos"
+    ]
+  ]},
+
+{id:"jabiim", cat:"planetas", name:"Jabiim", nd:null, subtitle:"Ponto de contato — O Caminho", flavor:"Palco de tragédia bélica nas Guerras Clônicas; população com profundo trauma e desconfiança de forças militares organizadas.", info:[
+    [
+      "Região",
+      "Borda Exterior"
+    ],
+    [
+      "Sistema",
+      "Jabiim"
+    ],
+    [
+      "Diâmetro",
+      "9.240 km"
+    ],
+    [
+      "Atmosfera",
+      "Respirável"
+    ],
+    [
+      "Clima",
+      "Chuvoso, tempestuoso quase constante"
+    ],
+    [
+      "Terreno",
+      "Pântanos, ilhas flutuantes, ruínas de guerra"
+    ],
+    [
+      "População",
+      "Baixa a moderada — isolacionista"
+    ],
+    [
+      "Espécies",
+      "Jabiimi (humanos geneticamente distintos)"
+    ],
+    [
+      "Governo",
+      "Clânico/local"
+    ],
+    [
+      "Pontos de Interesse",
+      "Ruínas de batalhas, vilas palafitas, esconderijos remotos"
+    ]
+  ]},
+
+{id:"mapuzo", cat:"planetas", name:"Mapuzo", nd:null, subtitle:"Ponto de contato — O Caminho", flavor:"Mundo de passagem, não de permanência — ideal para uma cena de extração tensa.", info:[
+    [
+      "Região",
+      "Borda Exterior"
+    ],
+    [
+      "Sistema",
+      "Mapuzo"
+    ],
+    [
+      "Diâmetro",
+      "~10.000 km (estimado)"
+    ],
+    [
+      "Atmosfera",
+      "Respirável, poeirenta"
+    ],
+    [
+      "Clima",
+      "Árido, ventos de poeira frequentes"
+    ],
+    [
+      "Terreno",
+      "Planícies áridas, formações rochosas, povoados de mineração"
+    ],
+    [
+      "População",
+      "Baixa — mineradores, colonos de fronteira"
+    ],
+    [
+      "Espécies",
+      "Mista"
+    ],
+    [
+      "Governo",
+      "Nenhum central — comunidades independentes"
+    ],
+    [
+      "Pontos de Interesse",
+      "Rotas de fuga, postos de reabastecimento, minas abandonadas"
+    ]
+  ]}
+];
+
+</script>
+<script>
+// ================= DICE ENGINE =================
+function rollDie(sides){ return 1 + Math.floor(Math.random()*sides); }
+
+function rollD20(bonus){
+  const d20 = rollDie(20);
+  return { d20, bonus, total: d20 + bonus, crit: d20===20, fumble: d20===1 };
+}
+
+function rollAttack(bonus){
+  const a = rollDie(20);
+  const b = rollDie(20);
+  const c = rollDie(20);
+  const kept = Math.max(a, b, c);
+  return { d20: kept, rolls:[a,b,c], bonus, total: kept + bonus, crit: kept===20, fumble: kept===1 };
+}
+
+function rollDamageExpr(expr){
+  // supports "2d6+5", "1d4", "4d10×2", "9d10×2"
+  let mult = 1;
+  let core = expr;
+  const multIdx = expr.indexOf("×");
+  if(multIdx !== -1){ mult = parseInt(expr.slice(multIdx+1)); core = expr.slice(0, multIdx); }
+  const m = core.match(/(\d+)d(\d+)([+-]\d+)?/);
+  if(!m) return null;
+  const n = parseInt(m[1]), sides = parseInt(m[2]), mod = m[3] ? parseInt(m[3]) : 0;
+  const rolls = [];
+  for(let i=0;i<n;i++) rolls.push(rollDie(sides));
+  const sum = rolls.reduce((a,b)=>a+b,0) + mod;
+  const total = sum * mult;
+  return { rolls, mod, mult, sum, total, expr };
+}
+
+// ================= SKILL PARSER =================
+function parseSkills(raw){
+  if(!raw || raw === "—") return [];
+  return raw.split(",").map(s => s.trim()).map(s => {
+    const m = s.match(/^(.*?)\s([+-]\d+)$/);
+    if(!m) return null;
+    return { name: m[1].trim(), bonus: parseInt(m[2]) };
+  }).filter(Boolean);
+}
+
+// ================= STATE =================
+let currentCat = "all";
+let currentId = null;
+let logs = [];
+
+const listEl = document.getElementById("list");
+const mainEl = document.getElementById("main");
+const searchEl = document.getElementById("search");
+const logBody = document.getElementById("logBody");
+const logCount = document.getElementById("logCount");
+
+const CAT_PREFIX = {rebeldes:"AL", imperio:"IMP", naves:"NAV", planetas:"PLN", custom:"CST"};
+const CAT_ORDER = ["rebeldes","imperio","naves","planetas","custom"];
+function fileNumber(d){
+  const catItems = DATA.filter(x=>x.cat===d.cat);
+  const idx = catItems.indexOf(d) + 1;
+  return `${CAT_PREFIX[d.cat]}-${String(idx).padStart(2,"0")}`;
+}
+
+// ================= RENDER LIST =================
+function renderList(){
+  const q = searchEl.value.trim().toLowerCase();
+  listEl.innerHTML = "";
+  const items = DATA.filter(d => (currentCat==="all" || d.cat===currentCat) &&
+    (q==="" || d.name.toLowerCase().includes(q) || (d.subtitle||"").toLowerCase().includes(q)));
+  if(items.length === 0){
+    listEl.innerHTML = '<div class="list-empty">Nenhum resultado.</div>';
+    return;
+  }
+  if(currentCat === "all"){
+    CAT_ORDER.forEach(cat => {
+      const groupItems = items.filter(d=>d.cat===cat);
+      if(groupItems.length===0) return;
+      listEl.appendChild(renderGroupHeader(cat, groupItems.length));
+      groupItems.forEach(d => listEl.appendChild(renderListItem(d)));
+    });
+  } else {
+    items.forEach(d => listEl.appendChild(renderListItem(d)));
+  }
+}
+
+function renderGroupHeader(cat, count){
+  const div = document.createElement("div");
+  div.className = "list-group-header";
+  const dotColorMap = {rebeldes:"rebel", imperio:"imperio", naves:"naves", planetas:"planetas", custom:"custom"};
+  div.innerHTML = `<span class="lgh-dot" style="background:var(--${dotColorMap[cat]||'text-dim'})"></span><span>${groupLabel(cat)}</span><span class="lgh-count">${count}</span>`;
+  return div;
+}
+
+function renderListItem(d){
+  const div = document.createElement("div");
+  div.className = "list-item cat-edge-" + d.cat + (d.id===currentId ? " active" : "");
+  div.innerHTML = `
+    <span class="li-file">${fileNumber(d)}</span>
+    <span class="li-body">
+      <span class="li-name">${d.name}</span>
+      <span class="li-sub">${d.subtitle||""}</span>
+    </span>
+    ${d.nd!==null && d.nd!==undefined ? `<span class="li-nd nd-${d.cat}">${d.nd}</span>` : `<span class="li-nd nd-${d.cat}">·</span>`}
+  `;
+  div.addEventListener("click", () => { currentId = d.id; renderList(); renderSheet(d); });
+  return div;
+}
+
+// ================= RENDER SHEET =================
+function catLabel(cat){
+  return {rebeldes:"ALIANÇA REBELDE", imperio:"IMPÉRIO GALÁCTICO", naves:"NAVE ESTELAR", planetas:"PERFIL PLANETÁRIO", custom:"FICHA PERSONALIZADA"}[cat] || cat;
+}
+function groupLabel(cat){
+  return {rebeldes:"Aliança Rebelde", imperio:"Império Galáctico", naves:"Naves Estelares", planetas:"Planetas", custom:"Personalizado"}[cat] || cat;
+}
+
+function renderSheet(d){
+  mainEl.setAttribute("data-cat", d.cat);
+
+  if(d.cat === "planetas"){
+    mainEl.innerHTML = `
+      <div class="sheet" data-cat="planetas">
+        <div class="sheet-head">
+          <div class="sheet-head-main">
+            <div class="sheet-eyebrow" style="color:var(--planetas)"><span class="file-tag">${fileNumber(d)}</span><span class="eyebrow-sep">//</span>${catLabel(d.cat)}</div>
+            <h2 class="sheet-title">${d.name}</h2>
+            <div class="sheet-sub">${d.subtitle||""}</div>
+          </div>
+        </div>
+        <div class="sheet-flavor">${d.flavor||""}</div>
+        <div class="diff-hint" style="margin-bottom:14px;">✏️ Edição de planetas ainda não disponível — só NPCs, dróides e naves por enquanto.</div>
+        <div class="section-title">Perfil planetário</div>
+        <table class="info-table">
+          ${d.info.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")}
+        </table>
+      </div>
+    `;
+    return;
+  }
+
+  const ndColor = {rebeldes:"var(--rebel)", imperio:"var(--imperio)", naves:"var(--naves)", custom:"var(--custom)"}[d.cat];
+
+  let defenseCards = `
+    <div class="stat-card"><div class="val">${d.defenses.ref}<small> (${d.defenses.ff})</small></div><div class="lbl">Reflexo (desprev.)</div></div>
+    <div class="stat-card"><div class="val">${d.defenses.fort}</div><div class="lbl">Fortitude</div></div>
+    ${d.defenses.von!==undefined ? `<div class="stat-card"><div class="val">${d.defenses.von}</div><div class="lbl">Vontade</div></div>` : ""}
+    <div class="stat-card"><div class="val">${d.hp}</div><div class="lbl">Pontos de Vida</div></div>
+    <div class="stat-card"><div class="val">${d.threshold}</div><div class="lbl">Limiar de Dano</div></div>
+    ${d.rd ? `<div class="stat-card"><div class="val">${d.rd}</div><div class="lbl">Red. de Dano</div></div>` : ""}
+    ${d.ve ? `<div class="stat-card"><div class="val">${d.ve}</div><div class="lbl">Vel. Escudo</div></div>` : ""}
+    ${d.defenses.armor ? `<div class="stat-card"><div class="val">${d.defenses.armor}</div><div class="lbl">Armadura</div></div>` : ""}
+    ${d.darkSide ? `<div class="stat-card"><div class="val">${d.darkSide}</div><div class="lbl">Lado Sombrio</div></div>` : ""}
+  `;
+  const speedLine = d.speed ? `<div class="kv-block"><b>Velocidade</b> ${d.speed}</div>` : "";
+
+  const attacksHtml = (d.attacks||[]).map((a,i) => `
+    <div class="atk-card">
+      <div class="atk-top">
+        <div>
+          <span class="atk-name">${a.name}</span>
+          <span class="atk-kind">— ${a.kind} · +${a.bonus}</span>
+        </div>
+      </div>
+      ${a.note ? `<div class="atk-note">${a.note}</div>` : ""}
+      <div class="atk-buttons">
+        <button class="btn btn-atk" data-action="atk" data-idx="${i}">🎯 Atacar (+${a.bonus})</button>
+        ${a.altLabel ? `<button class="btn btn-atk btn-mini" data-action="atk-alt" data-idx="${i}">🎯 ${a.altLabel} (${a.altBonus>=0?"+":""}${a.altBonus})</button>` : ""}
+        <button class="btn btn-dmg" data-action="dmg" data-idx="${i}">💥 Dano (${a.dmg})</button>
+      </div>
+    </div>
+  `).join("");
+
+  const skills = parseSkills(d.skillsRaw);
+  const skillsHtml = skills.map((s,i) => `<button class="btn btn-skill" data-action="skill" data-idx="${i}">🎲 ${s.name} (${s.bonus>=0?"+":""}${s.bonus})</button>`).join("");
+
+  mainEl.innerHTML = `
+    <div class="sheet" data-cat="${d.cat}">
+      <div class="sheet-head">
+        <div class="sheet-head-main">
+          <div class="sheet-eyebrow" style="color:${ndColor}"><span class="file-tag">${fileNumber(d)}</span><span class="eyebrow-sep">//</span>${catLabel(d.cat)}</div>
+          <h2 class="sheet-title">${d.name}</h2>
+          <div class="sheet-sub">${d.subtitle||""}</div>
+          <div class="sheet-type">${d.type||""}</div>
+        </div>
+        <div class="nd-stamp" style="--stamp-color:${ndColor}">
+          <div class="nd-stamp-num">${d.nd}</div>
+          <div class="nd-stamp-lbl">Nível de Desafio</div>
+        </div>
+      </div>
+      <button class="btn btn-mini" id="sheetEditBtn" style="margin-top:10px; border-color:var(--custom); color:var(--custom);">✏️ Editar esta ficha</button>
+      ${d.flavor ? `<div class="sheet-flavor">${d.flavor}</div>` : ""}
+
+      <div class="section-title">Defesas &amp; Vitalidade</div>
+      <div class="stat-row">${defenseCards}</div>
+      ${speedLine}
+      <div class="defense-test">
+        <label>Testar contra um ataque de resultado</label>
+        <input type="number" id="atkInput" placeholder="ex: 18">
+        <button class="btn btn-mini" data-action="testdef" data-def="ref">vs Reflexo</button>
+        <button class="btn btn-mini" data-action="testdef" data-def="fort">vs Fortitude</button>
+        ${d.defenses.von!==undefined ? `<button class="btn btn-mini" data-action="testdef" data-def="von">vs Vontade</button>` : ""}
+        <span id="defResult"></span>
+      </div>
+
+      ${d.attacks && d.attacks.length ? `<div class="section-title">Ataques</div>${attacksHtml}` : ""}
+
+      ${skills.length ? `<div class="section-title">Perícias</div><div class="skills-wrap">${skillsHtml}</div>` : ""}
+
+      ${d.special ? `<div class="section-title">Ações Especiais</div><div class="kv-block">${d.special}</div>` : ""}
+      ${d.talents && d.talents!=="—" ? `<div class="section-title">Talentos</div><div class="kv-block">${d.talents}</div>` : ""}
+      ${d.abilities && d.abilities!=="—" ? `<div class="section-title">Habilidades</div><div class="kv-block">${d.abilities}</div>` : ""}
+      ${d.possessions ? `<div class="section-title">Posses</div><div class="kv-block">${d.possessions}</div>` : ""}
+
+      ${d.note ? `<div class="note-box"><b>Uso em jogo:</b> ${d.note}</div>` : ""}
+    </div>
+  `;
+
+  // wire buttons
+  document.getElementById("sheetEditBtn").addEventListener("click", () => {
+    document.querySelector('.mode-btn[data-mode="criar"]').click();
+    loadEntryIntoForm(d);
+  });
+  mainEl.querySelectorAll('[data-action="atk"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      const a = d.attacks[+btn.dataset.idx];
+      const r = rollAttack(a.bonus);
+      pushLog({ who:`${d.name} — ${a.name}`, kind:"atk", detail:`3d20(${r.rolls.join(",")}→${r.d20}) + ${a.bonus}`, total:r.total, crit:r.crit, fail:r.fumble });
+    });
+  });
+  mainEl.querySelectorAll('[data-action="atk-alt"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      const a = d.attacks[+btn.dataset.idx];
+      const r = rollAttack(a.altBonus);
+      pushLog({ who:`${d.name} — ${a.name} (${a.altLabel})`, kind:"atk", detail:`3d20(${r.rolls.join(",")}→${r.d20}) + ${a.altBonus}`, total:r.total, crit:r.crit, fail:r.fumble });
+    });
+  });
+  mainEl.querySelectorAll('[data-action="dmg"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      const a = d.attacks[+btn.dataset.idx];
+      const r = rollDamageExpr(a.dmg);
+      if(!r) return;
+      const breakdown = r.mult > 1
+        ? `[${r.rolls.join("+")}]${r.mod?(r.mod>0?"+"+r.mod:r.mod):""} = ${r.sum} ×${r.mult}`
+        : `[${r.rolls.join("+")}]${r.mod?(r.mod>0?"+"+r.mod:r.mod):""}`;
+      pushLog({ who:`${d.name} — ${a.name} (dano)`, kind:"dmg", detail:breakdown, total:r.total });
+    });
+  });
+  mainEl.querySelectorAll('[data-action="skill"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      const s = skills[+btn.dataset.idx];
+      const r = rollD20(s.bonus);
+      pushLog({ who:`${d.name} — ${s.name}`, kind:"skill", detail:`d20(${r.d20}) + ${s.bonus}`, total:r.total, crit:r.crit, fail:r.fumble });
+    });
+  });
+  mainEl.querySelectorAll('[data-action="testdef"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById("atkInput");
+      const val = parseInt(input.value);
+      const resultEl = document.getElementById("defResult");
+      if(isNaN(val)){ resultEl.textContent = ""; return; }
+      const def = btn.dataset.def;
+      const target = def==="ref" ? d.defenses.ref : def==="fort" ? d.defenses.fort : d.defenses.von;
+      const hit = val >= target;
+      resultEl.innerHTML = `<span class="vs-result ${hit?'vs-hit':'vs-miss'}">${hit ? "ACERTOU" : "ERROU"} (alvo ${target})</span>`;
+    });
+  });
+}
+
+// ================= LOG =================
+function pushLog(entry){
+  logs.push(entry);
+  logCount.textContent = logs.length;
+  renderLog();
+  flashLogToggle();
+  showToast(entry);
+}
+
+function flashLogToggle(){
+  const t = document.getElementById("logToggle");
+  t.classList.remove("flash");
+  void t.offsetWidth;
+  t.classList.add("flash");
+}
+
+let toastTimer = null;
+function showToast(e){
+  let toast = document.getElementById("rollToast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "rollToast";
+    toast.className = "roll-toast";
+    document.body.appendChild(toast);
+  }
+  const cls = e.crit ? "crit" : e.fail ? "fail" : "";
+  const tagLabel = e.kind==="atk" ? "ATAQUE" : e.kind==="dmg" ? "DANO" : "PERÍCIA";
+  toast.className = "roll-toast show " + cls;
+  toast.innerHTML = `
+    <div class="rt-who">${e.who} <span class="rt-tag">${tagLabel}</span></div>
+    <div class="rt-total">${e.total}${e.crit?" ⚡":""}${e.fail?" ⚠":""}</div>
+    <div class="rt-detail">${e.detail}</div>
+  `;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.classList.remove("show"); }, 2600);
+}
+
+function renderLog(){
+  if(logs.length === 0){
+    logBody.innerHTML = '<div class="log-empty">Nenhuma rolagem ainda.<br>Clique em "Atacar" ou "Dano" em qualquer ficha.</div>';
+    return;
+  }
+  logBody.innerHTML = logs.slice().reverse().map(e => {
+    const cls = e.crit ? "crit" : e.fail ? "fail" : "";
+    const tagClass = e.kind==="atk" ? "tag-atk" : e.kind==="dmg" ? "tag-dmg" : "tag-skill";
+    const tagLabel = e.kind==="atk" ? "ATAQUE" : e.kind==="dmg" ? "DANO" : "PERÍCIA";
+    return `
+      <div class="log-entry ${cls}">
+        <div class="who">${e.who} <span class="tag ${tagClass}">${tagLabel}</span></div>
+        <div class="total">${e.total}${e.crit?" ⚡ AMEAÇA CRÍTICA":""}${e.fail?" ⚠ FALHA CRÍTICA":""}</div>
+        <div class="expr">${e.detail}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+// ================= EVENTS =================
+document.getElementById("tabs").addEventListener("click", (e) => {
+  const tab = e.target.closest(".tab");
+  if(!tab) return;
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  tab.classList.add("active");
+  currentCat = tab.dataset.cat;
+  renderList();
+});
+
+searchEl.addEventListener("input", renderList);
+
+document.getElementById("logToggle").addEventListener("click", () => {
+  document.getElementById("logPanel").classList.toggle("open");
+});
+document.getElementById("logClose").addEventListener("click", closeLog);
+function closeLog(){
+  document.getElementById("logPanel").classList.remove("open");
+}
+document.getElementById("logClear").addEventListener("click", () => {
+  logs = [];
+  logCount.textContent = "0";
+  renderLog();
+});
+
+// ================= COMBAT TRACKER =================
+function uid(){ return 'c' + Math.random().toString(36).slice(2,10); }
+function makeEncounter(name){ return { id: uid(), name, round: 1, turn: 0, combatants: [] }; }
+
+let encounters = [ makeEncounter("Combate 1") ];
+let activeEncId = encounters[0].id;
+let combatCat = "all";
+let pickedBaseId = null;
+let groupMode = "individual";
+
+function activeEnc(){ return encounters.find(e => e.id === activeEncId); }
+function catColor(cat){ return {rebeldes:"var(--rebel)", imperio:"var(--imperio)", naves:"var(--naves)", custom:"var(--custom)"}[cat] || "var(--text-dim)"; }
+
+// ---- mode switch ----
+document.getElementById("modeSwitch").addEventListener("click", (e) => {
+  const btn = e.target.closest(".mode-btn");
+  if(!btn) return;
+  document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  const mode = btn.dataset.mode;
+  document.getElementById("viewFichas").style.display = mode==="fichas" ? "" : "none";
+  document.getElementById("viewCombate").style.display = mode==="combate" ? "" : "none";
+  document.getElementById("viewCreate").style.display = mode==="criar" ? "" : "none";
+  document.getElementById("viewEvolve").style.display = mode==="evoluir" ? "" : "none";
+  document.getElementById("tabs").style.display = mode==="fichas" ? "" : "none";
+  if(mode==="combate"){ renderEncounterTabs(); renderPickList(); renderTracker(); }
+  if(mode==="criar"){ renderCustomList(); updateDifficulty(); }
+  if(mode==="evoluir"){ renderEvoPickList(); }
+});
+
+// ---- encounter tabs ----
+function renderEncounterTabs(){
+  const wrap = document.getElementById("encounterTabs");
+  wrap.innerHTML = "";
+  encounters.forEach(enc => {
+    const div = document.createElement("div");
+    div.className = "enc-tab" + (enc.id===activeEncId ? " active" : "");
+    div.innerHTML = `
+      <span class="enc-tab-label">${enc.name}</span>
+      ${encounters.length>1 ? `<span class="enc-close" data-id="${enc.id}">✕</span>` : ""}
+    `;
+    div.addEventListener("click", (e) => {
+      if(e.target.classList.contains("enc-close")) return;
+      activeEncId = enc.id;
+      renderEncounterTabs(); renderTracker();
+    });
+    const label = div.querySelector(".enc-tab-label");
+    label.addEventListener("dblclick", (e) => {
+      e.stopPropagation();
+      const input = document.createElement("input");
+      input.value = enc.name;
+      label.replaceWith(input);
+      input.focus(); input.select();
+      const commit = () => { enc.name = input.value.trim() || enc.name; renderEncounterTabs(); };
+      input.addEventListener("blur", commit);
+      input.addEventListener("keydown", (ev) => { if(ev.key==="Enter") input.blur(); });
+    });
+    const close = div.querySelector(".enc-close");
+    if(close){
+      close.addEventListener("click", (e) => {
+        e.stopPropagation();
+        encounters = encounters.filter(x => x.id !== enc.id);
+        if(activeEncId === enc.id) activeEncId = encounters[0].id;
+        renderEncounterTabs(); renderTracker();
+      });
+    }
+    wrap.appendChild(div);
+  });
+  const addBtn = document.createElement("div");
+  addBtn.className = "enc-tab-add";
+  addBtn.textContent = "+ Novo Combate";
+  addBtn.addEventListener("click", () => {
+    const enc = makeEncounter("Combate " + (encounters.length+1));
+    encounters.push(enc);
+    activeEncId = enc.id;
+    renderEncounterTabs(); renderTracker();
+  });
+  wrap.appendChild(addBtn);
+}
+
+// ---- pick list (add panel) ----
+document.getElementById("combatCatFilter").addEventListener("click", (e) => {
+  const t = e.target.closest(".mini-tab");
+  if(!t) return;
+  document.querySelectorAll("#combatCatFilter .mini-tab").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");
+  combatCat = t.dataset.cat;
+  renderPickList();
+});
+document.getElementById("combatSearch").addEventListener("input", renderPickList);
+
+function renderPickList(){
+  const q = document.getElementById("combatSearch").value.trim().toLowerCase();
+  const wrap = document.getElementById("combatPickList");
+  const items = DATA.filter(d => d.cat!=="planetas" && (combatCat==="all" || d.cat===combatCat) &&
+    (q==="" || d.name.toLowerCase().includes(q)));
+  wrap.innerHTML = "";
+  items.forEach(d => {
+    const div = document.createElement("div");
+    div.className = "pick-item" + (d.id===pickedBaseId ? " selected" : "");
+    div.innerHTML = `<span>${d.name}</span><span class="pi-nd">ND ${d.nd}</span>`;
+    div.addEventListener("click", () => {
+      pickedBaseId = d.id;
+      renderPickList();
+      document.getElementById("addControls").style.display = "";
+      document.getElementById("pickedName").textContent = d.name;
+    });
+    wrap.appendChild(div);
+  });
+}
+
+document.getElementById("qtyMinus").addEventListener("click", () => {
+  const inp = document.getElementById("qtyInput");
+  inp.value = Math.max(1, (+inp.value||1) - 1);
+});
+document.getElementById("qtyPlus").addEventListener("click", () => {
+  const inp = document.getElementById("qtyInput");
+  inp.value = Math.min(10, (+inp.value||1) + 1);
+});
+document.getElementById("qtyInput").addEventListener("change", () => {
+  const inp = document.getElementById("qtyInput");
+  let v = Math.round(+inp.value || 1);
+  inp.value = Math.max(1, Math.min(10, v));
+});
+
+document.getElementById("groupToggle").addEventListener("click", (e) => {
+  const btn = e.target.closest(".gt-btn");
+  if(!btn) return;
+  document.querySelectorAll("#groupToggle .gt-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  groupMode = btn.dataset.mode;
+});
+
+const SQUAD_COLORS = ["#ff8a3d","#4fd1e8","#8fd66b","#e14b4b","#c58fe8","#e8d24f","#4f8fe8","#e87fb0"];
+let squadColorCounter = 0;
+
+document.getElementById("addCombatantBtn").addEventListener("click", () => {
+  if(!pickedBaseId) return;
+  const base = DATA.find(d => d.id === pickedBaseId);
+  const qty = Math.max(1, Math.min(10, +document.getElementById("qtyInput").value || 1));
+  const enc = activeEnc();
+  if(!enc) return;
+
+  const isSquad = qty > 1 && groupMode === "grupo";
+  const squadId = isSquad ? uid() : null;
+  const squadColor = isSquad ? SQUAD_COLORS[squadColorCounter++ % SQUAD_COLORS.length] : null;
+  const squadName = isSquad ? `Esquadrão ${base.name}` : null;
+
+  for(let i=0;i<qty;i++){
+    const r = rollD20(base.init);
+    const hasShield = !!base.ve;
+    enc.combatants.push({
+      uid: uid(), baseId: base.id, name: qty>1 ? `${base.name} #${i+1}` : base.name,
+      cat: base.cat,
+      init: r.total, initBonus: base.init,
+      maxHp: base.hp, hp: base.hp,
+      maxShield: hasShield ? base.ve : null, shield: hasShield ? base.ve : null,
+      threshold: base.threshold, defenses: base.defenses,
+      attacks: base.attacks, skillsRaw: base.skillsRaw,
+      squadId, squadName, squadColor
+    });
+  }
+  sortCombatants(enc);
+  renderTracker();
+});
+
+function sortCombatants(enc){
+  enc.combatants.sort((a,b) => b.init - a.init || b.initBonus - a.initBonus);
+}
+
+function getSquads(enc){
+  const map = new Map();
+  enc.combatants.forEach(c => {
+    if(!c.squadId) return;
+    if(!map.has(c.squadId)) map.set(c.squadId, { id:c.squadId, name:c.squadName, color:c.squadColor, members:[] });
+    map.get(c.squadId).members.push(c);
+  });
+  return [...map.values()];
+}
+
+// ---- tracker render ----
+function renderTracker(){
+  const enc = activeEnc();
+  const roundBadge = document.getElementById("roundBadge");
+  const turnInfo = document.getElementById("turnInfo");
+  const list = document.getElementById("trackerList");
+  const squadBar = document.getElementById("squadBar");
+
+  if(!enc || enc.combatants.length===0){
+    roundBadge.textContent = "RODADA " + (enc ? enc.round : 1);
+    turnInfo.textContent = "Nenhum combatente";
+    list.innerHTML = '<div class="tracker-empty">◈ Adicione combatentes pelo painel à esquerda para começar o combate.</div>';
+    squadBar.innerHTML = "";
+    return;
+  }
+  roundBadge.textContent = "RODADA " + enc.round;
+  const current = enc.combatants[enc.turn];
+  turnInfo.textContent = current ? `Turno de: ${current.name}` : "";
+
+  // squad summary bar
+  const squads = getSquads(enc);
+  squadBar.innerHTML = squads.map(sq => {
+    const alive = sq.members.filter(m=>m.hp>0).length;
+    return `
+      <div class="squad-chip" style="border-color:${sq.color}66;">
+        <span class="squad-dot" style="background:${sq.color}"></span>
+        <span>${sq.name} — ${alive}/${sq.members.length} vivos</span>
+        <button class="sq-mini" data-action="squad-reroll" data-sid="${sq.id}" title="Rerolar iniciativa do esquadrão">🎲</button>
+        <button class="sq-mini" data-action="squad-remove" data-sid="${sq.id}" title="Remover esquadrão">✕</button>
+      </div>`;
+  }).join("");
+
+  list.innerHTML = "";
+  enc.combatants.forEach((c, idx) => {
+    const row = document.createElement("div");
+    const isDefeated = c.hp <= 0;
+    row.className = "combatant-row" + (idx===enc.turn ? " current-turn" : "") + (isDefeated ? " defeated" : "");
+    if(c.squadColor) row.style.borderLeft = `3px solid ${c.squadColor}`;
+
+    const pct = Math.max(0, Math.min(100, (c.hp/c.maxHp)*100));
+    const barColor = pct>60 ? "var(--planetas)" : pct>25 ? "var(--gold)" : "var(--fail)";
+    let shieldBlock = "";
+    if(c.maxShield !== null && c.maxShield !== undefined){
+      const spct = Math.max(0, Math.min(100, (c.shield/c.maxShield)*100));
+      shieldBlock = `
+        <div class="cr-shield-wrap">
+          <span class="cr-shield-lbl">🛡</span>
+          <div class="cr-hp-bar shield"><div class="cr-hp-fill" style="width:${spct}%; background:var(--naves);"></div></div>
+          <input type="number" class="cr-hp-input" data-uid="${c.uid}" data-action="shield" value="${c.shield}">
+          <span class="cr-hp-max">/ ${c.maxShield}</span>
+          <button class="cr-shield-restore" data-action="restoreshield" data-uid="${c.uid}" title="Restaurar escudo ao máximo">↺</button>
+        </div>`;
+    }
+    const hpBlock = `
+      <div class="cr-vitals">
+      ${shieldBlock}
+      <div class="cr-hp-wrap">
+        <span class="cr-shield-lbl">${c.maxShield ? "❤" : ""}</span>
+        <div class="cr-hp-bar"><div class="cr-hp-fill" style="width:${pct}%; background:${barColor};"></div></div>
+        <input type="number" class="cr-hp-input" data-uid="${c.uid}" data-action="hp" value="${c.hp}">
+        <span class="cr-hp-max">/ ${c.maxHp}</span>
+      </div>
+      </div>`;
+
+    row.innerHTML = `
+      <div class="cr-top">
+        <div class="cr-init">${c.init}</div>
+        <div class="cr-name-wrap">
+          <div class="cr-name">
+            <span class="cr-cat-dot" style="background:${catColor(c.cat)}"></span>${c.name}
+            ${c.squadName ? `<span class="cr-squad-tag" style="color:${c.squadColor}; border-color:${c.squadColor}66;">🔗 ${c.squadName}</span>` : ""}
+          </div>
+          <div class="cr-sub">Reflexo ${c.defenses.ref} · Fort ${c.defenses.fort}${c.defenses.von!==undefined ? ' · Von '+c.defenses.von : ''} · Limiar ${c.threshold}</div>
+        </div>
+        ${hpBlock}
+        <button class="cr-remove" data-action="remove" data-uid="${c.uid}">✕</button>
+      </div>
+      <div class="cr-actions">
+        ${(c.attacks||[]).map((a,i) => `
+          <button class="btn btn-mini btn-atk" data-action="atk" data-uid="${c.uid}" data-idx="${i}">🎯 ${a.name} (+${a.bonus})</button>
+          <button class="btn btn-mini btn-dmg" data-action="dmg" data-uid="${c.uid}" data-idx="${i}">💥 ${a.dmg}</button>
+        `).join("")}
+      </div>
+      <div class="cr-apply-row">
+        <span class="cr-apply-lbl">Aplicar dano recebido:</span>
+        <input type="number" class="cr-apply-input" id="apply-${c.uid}" placeholder="0" min="0">
+        <button class="btn btn-mini btn-apply" data-action="apply" data-uid="${c.uid}">✅ Aplicar${c.maxShield ? " (escudo primeiro)" : ""}</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+document.getElementById("trackerList").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action]");
+  if(!btn) return;
+  const enc = activeEnc();
+  const action = btn.dataset.action;
+  const c = enc.combatants.find(x => x.uid === btn.dataset.uid);
+  if(!c) return;
+
+  if(action === "remove"){
+    enc.combatants = enc.combatants.filter(x => x.uid !== c.uid);
+    renderTracker();
+  } else if(action === "restoreshield"){
+    c.shield = c.maxShield;
+    renderTracker();
+  } else if(action === "apply"){
+    const input = document.getElementById(`apply-${c.uid}`);
+    const dmg = Math.max(0, Math.round(+input.value || 0));
+    if(dmg <= 0) return;
+    let toHull = dmg;
+    let shieldNote = "";
+    if(c.maxShield !== null && c.maxShield !== undefined && c.shield > 0){
+      const absorbed = Math.min(c.shield, dmg);
+      c.shield -= absorbed;
+      toHull = dmg - absorbed;
+      shieldNote = ` · 🛡 escudo absorveu ${absorbed}`;
+    }
+    c.hp = Math.max(0, c.hp - toHull);
+    pushLog({ who:`${c.name} — dano aplicado`, kind:"dmg", detail:`${dmg} recebido${shieldNote}${toHull>0?` · ${toHull} no casco/HP`:''}`, total: toHull>0 ? -toHull : 0 });
+    renderTracker();
+  } else if(action === "atk"){
+    const a = c.attacks[+btn.dataset.idx];
+    const r = rollAttack(a.bonus);
+    pushLog({ who:`${c.name} — ${a.name}`, kind:"atk", detail:`3d20(${r.rolls.join(",")}→${r.d20}) + ${a.bonus}`, total:r.total, crit:r.crit, fail:r.fumble });
+  } else if(action === "dmg"){
+    const a = c.attacks[+btn.dataset.idx];
+    const r = rollDamageExpr(a.dmg);
+    if(!r) return;
+    const breakdown = r.mult > 1
+      ? `[${r.rolls.join("+")}]${r.mod?(r.mod>0?"+"+r.mod:r.mod):""} = ${r.sum} ×${r.mult}`
+      : `[${r.rolls.join("+")}]${r.mod?(r.mod>0?"+"+r.mod:r.mod):""}`;
+    pushLog({ who:`${c.name} — ${a.name} (dano)`, kind:"dmg", detail:breakdown, total:r.total });
+  }
+});
+
+document.getElementById("squadBar").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action]");
+  if(!btn) return;
+  const enc = activeEnc();
+  const sid = btn.dataset.sid;
+  if(btn.dataset.action === "squad-remove"){
+    enc.combatants = enc.combatants.filter(c => c.squadId !== sid);
+  } else if(btn.dataset.action === "squad-reroll"){
+    enc.combatants.filter(c => c.squadId === sid).forEach(c => {
+      const r = rollD20(c.initBonus);
+      c.init = r.total;
+    });
+    sortCombatants(enc);
+  }
+  renderTracker();
+});
+
+document.getElementById("trackerList").addEventListener("change", (e) => {
+  const el = e.target;
+  const action = el.dataset.action;
+  if(!action) return;
+  const enc = activeEnc();
+  const c = enc.combatants.find(x => x.uid === el.dataset.uid);
+  if(!c) return;
+  if(action === "hp"){
+    c.hp = Math.max(0, Math.min(c.maxHp, Math.round(+el.value || 0)));
+    renderTracker();
+  } else if(action === "shield"){
+    c.shield = Math.max(0, Math.min(c.maxShield, Math.round(+el.value || 0)));
+    renderTracker();
+  }
+});
+
+document.getElementById("rerollInitBtn").addEventListener("click", () => {
+  const enc = activeEnc();
+  if(!enc) return;
+  enc.combatants.forEach(c => {
+    const r = rollD20(c.initBonus);
+    c.init = r.total;
+  });
+  sortCombatants(enc);
+  enc.turn = 0;
+  renderTracker();
+});
+
+document.getElementById("nextTurnBtn").addEventListener("click", () => {
+  const enc = activeEnc();
+  if(!enc || enc.combatants.length===0) return;
+  enc.turn++;
+  if(enc.turn >= enc.combatants.length){
+    enc.turn = 0;
+    enc.round++;
+  }
+  renderTracker();
+});
+
+document.getElementById("clearCombatBtn").addEventListener("click", () => {
+  const enc = activeEnc();
+  if(!enc) return;
+  enc.combatants = [];
+  enc.round = 1;
+  enc.turn = 0;
+  renderTracker();
+});
+
+// ================= CRIADOR DE FICHAS PERSONALIZADAS =================
+const USER_DATA_KEY = "swTerminalUserData_v2";
+const LEGACY_CUSTOM_KEY = "swTerminalCustomSheets_v1";
+let createType = "soldado";
+let attackRowCount = 0;
+let skillRowCount = 0;
+let editingEntryId = null;
+
+function slugify(name){
+  return "custom-" + name.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-" + Math.random().toString(36).slice(2,7);
+}
+
+function loadCustomSheets(){
+  try{
+    const raw = localStorage.getItem(USER_DATA_KEY);
+    if(raw){
+      const saved = JSON.parse(raw);
+      saved.forEach(entry => {
+        const idx = DATA.findIndex(d => d.id === entry.id);
+        if(idx !== -1) DATA[idx] = entry; else DATA.push(entry);
+      });
+      return;
+    }
+    // migração de versão antiga (só fichas novas, sem edição de prontas)
+    const legacy = localStorage.getItem(LEGACY_CUSTOM_KEY);
+    if(legacy){
+      const saved = JSON.parse(legacy);
+      saved.forEach(s => DATA.push(s));
+      localStorage.setItem(USER_DATA_KEY, legacy);
+    }
+  }catch(e){ console.warn("Não foi possível carregar fichas salvas:", e); }
+}
+
+function persistCustomSheets(){
+  try{
+    const toSave = DATA.filter(d => d.cat === "custom" || d._edited);
+    localStorage.setItem(USER_DATA_KEY, JSON.stringify(toSave));
+  }catch(e){ console.warn("Não foi possível salvar fichas:", e); }
+}
+
+// ---- dynamic attack rows ----
+function addAttackRow(prefill){
+  const id = attackRowCount++;
+  const wrap = document.getElementById("cAttacksList");
+  const row = document.createElement("div");
+  row.className = "c-attack-card";
+  row.dataset.rowId = id;
+  const hasArea = prefill && prefill.areaSquares;
+  row.innerHTML = `
+    <div class="c-row">
+      <input type="text" placeholder="Nome (ex: Rifle blaster)" class="ca-name" value="${prefill&&prefill.name||''}">
+      <select class="ca-kind">
+        <option value="À Distância" ${prefill&&prefill.kind==='À Distância'?'selected':''}>À Distância</option>
+        <option value="Corpo a Corpo" ${prefill&&prefill.kind==='Corpo a Corpo'?'selected':''}>Corpo a Corpo</option>
+      </select>
+      <input type="number" placeholder="Bônus" class="ca-bonus" value="${prefill?prefill.bonus:16}">
+      <input type="text" placeholder="Dano (ex: 3d8+8)" class="ca-dmg" value="${prefill&&prefill.dmg||'3d8+8'}">
+      <button class="c-row-remove" data-remove-attack="${id}">✕</button>
+    </div>
+    <div class="c-area-row">
+      <label class="c-checkbox"><input type="checkbox" class="ca-area-toggle" ${hasArea?'checked':''}> Irradia / tem área de efeito? <small>(ex: granada, torpedo de próton)</small></label>
+      <div class="c-area-detail" style="${hasArea?'':'display:none;'}">
+        <input type="number" class="ca-area-squares" placeholder="Quadrados" value="${hasArea?prefill.areaSquares:2}" min="1"> quadrados de dispersão
+      </div>
+    </div>
+  `;
+  wrap.appendChild(row);
+  row.querySelectorAll("input, select").forEach(el => el.addEventListener("input", updateDifficulty));
+  row.querySelector("[data-remove-attack]").addEventListener("click", () => { row.remove(); updateDifficulty(); });
+  const areaToggle = row.querySelector(".ca-area-toggle");
+  const areaDetail = row.querySelector(".c-area-detail");
+  areaToggle.addEventListener("change", () => { areaDetail.style.display = areaToggle.checked ? "" : "none"; });
+}
+
+function addSkillRow(prefill){
+  const id = skillRowCount++;
+  const wrap = document.getElementById("cSkillsList");
+  const row = document.createElement("div");
+  row.className = "c-skill-row";
+  row.dataset.rowId = id;
+  row.innerHTML = `
+    <input type="text" placeholder="Perícia (ex: Percepção)" class="cs-name" value="${prefill&&prefill.name||''}">
+    <input type="number" placeholder="Bônus" class="cs-bonus" value="${prefill?prefill.bonus:15}">
+    <button class="c-row-remove" data-remove-skill="${id}">✕</button>
+  `;
+  wrap.appendChild(row);
+  row.querySelector("[data-remove-skill]").addEventListener("click", () => row.remove());
+}
+
+document.getElementById("cAddAttack").addEventListener("click", () => addAttackRow());
+document.getElementById("cAddSkill").addEventListener("click", () => addSkillRow());
+
+// ---- type toggle (soldado / nave) ----
+document.getElementById("createTypeToggle").addEventListener("click", (e) => {
+  const btn = e.target.closest(".gt-btn");
+  if(!btn) return;
+  document.querySelectorAll("#createTypeToggle .gt-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  createType = btn.dataset.type;
+  const isNave = createType === "nave";
+  const isDroide = createType === "droide";
+  document.getElementById("cVonRow").style.display = isNave ? "none" : "";
+  document.getElementById("cRdRow").style.display = isNave ? "" : "none";
+  document.getElementById("cNaveFields").style.display = isNave ? "" : "none";
+  document.getElementById("cDroidFields").style.display = isDroide ? "" : "none";
+  const tipoInput = document.getElementById("cTipo");
+  const tipoLabel = document.getElementById("cTipoLabel");
+  if(createType === "soldado"){
+    tipoLabel.textContent = "Tipo / Espécie / Classe heróica";
+    tipoInput.placeholder = "Ex: Humano Médio soldado 6";
+  } else if(createType === "npc"){
+    tipoLabel.textContent = "Tipo / Espécie (não-heróico)";
+    tipoInput.placeholder = "Ex: Humano Médio não-heróico 6";
+  } else if(createType === "droide"){
+    tipoLabel.textContent = "Modelo do dróide (deixe em branco p/ gerar automático)";
+    tipoInput.placeholder = "Ex: Série R2 Astromecânico";
+  } else {
+    tipoLabel.textContent = "Classe / Modelo da nave";
+    tipoInput.placeholder = "Ex: Caça estelar Imenso";
+  }
+  updateDifficulty();
+});
+
+const DROID_LOCOMOTION_LABEL = { andarilho:"andarilho", rodas:"com rodas", esteiras:"esteiras", flutuante:"flutuando", voador:"vôo", "estacionário":"estacionário" };
+const DROID_LOCOMOTION_SPEED = { andarilho:6, rodas:8, esteiras:6, flutuante:6, voador:12, "estacionário":0 };
+let locoRowCount = 0;
+
+function addLocoRow(prefill){
+  const id = locoRowCount++;
+  const wrap = document.getElementById("cDroidLocoList");
+  const row = document.createElement("div");
+  row.className = "c-row";
+  row.style.gridTemplateColumns = "1.6fr 1fr auto";
+  row.dataset.rowId = id;
+  row.innerHTML = `
+    <select class="cl-type">
+      <option value="andarilho">Andarilho (pernas)</option>
+      <option value="rodas">Rodas</option>
+      <option value="esteiras">Esteiras</option>
+      <option value="flutuante">Flutuante (hover)</option>
+      <option value="voador">Voador</option>
+      <option value="estacionário">Estacionário (fixo)</option>
+    </select>
+    <input type="number" class="cl-speed" value="${prefill?prefill.speed:6}" placeholder="Quadrados">
+    <button class="c-row-remove" data-remove-loco="${id}">✕</button>
+  `;
+  wrap.appendChild(row);
+  const select = row.querySelector(".cl-type");
+  const speedInput = row.querySelector(".cl-speed");
+  if(prefill && prefill.type) select.value = prefill.type;
+  select.addEventListener("change", () => { speedInput.value = DROID_LOCOMOTION_SPEED[select.value] ?? 6; });
+  row.querySelector("[data-remove-loco]").addEventListener("click", () => row.remove());
+}
+document.getElementById("cAddLoco").addEventListener("click", () => addLocoRow());
+
+// ---- biblioteca de modelos de dróide (Livro Básico, Cap. 11 — Exemplos de Dróides) ----
+const DROID_MODELS = [
+  { id:"2-1b", name:"Dróide Médico 2-1B", categoria:"1ª categoria — médico, científico",
+    subtitle:"Dróide médico de emergência", tipo:"Dróide Médio (1ª categoria) não-heróico 2",
+    locomotions:[{type:"andarilho",speed:6}], ref:10, ff:10, fort:9, von:12, hp:5, threshold:9, init:1, shield:0,
+    attacks:[{name:"Desarmado", kind:"Corpo a Corpo", bonus:0, dmg:"1d3-1"}],
+    skillsRaw:"Conhecimento (ciências biológicas) +13, Percepção +5, Tratar Ferimento +13, Usar Computador +8" },
+
+  { id:"r2", name:"Dróide Astromecânico Série R2", categoria:"2ª categoria — astromecânico, técnico",
+    subtitle:"Dróide astromecânico e técnico de naves", tipo:"Dróide Pequeno (2ª categoria) não-heróico 2",
+    locomotions:[{type:"rodas",speed:6},{type:"andarilho",speed:4},{type:"voador",speed:9}], ref:13, ff:11, fort:8, von:10, hp:7, threshold:8, init:3, shield:0,
+    attacks:[{name:"Sonda de eletro-choque", kind:"Corpo a Corpo", bonus:0, dmg:"1d8", note:"dano íon"}],
+    skillsRaw:"Mecânica +13, Percepção +3, Pilotar +8, Furtividade +6, Usar Computador +13" },
+
+  { id:"3po", name:"Dróide de Protocolo Série 3PO", categoria:"3ª categoria — protocolo, serviço",
+    subtitle:"Dróide de protocolo e tradução", tipo:"Dróide Médio (3ª categoria) não-heróico 1",
+    locomotions:[{type:"andarilho",speed:6}], ref:9, ff:9, fort:9, von:11, hp:2, threshold:9, init:-1, shield:0,
+    attacks:[{name:"Desarmado", kind:"Corpo a Corpo", bonus:-1, dmg:"1d3-1"}],
+    skillsRaw:"Conhecimento (burocracia) +6, Conhecimento (ciências humanas) +6, Conhecimento (tradições galácticas) +6, Persuasão +12" },
+
+  { id:"b1", name:"Dróide de Batalha Série B1", categoria:"4ª categoria — combate, segurança",
+    subtitle:"Dróide de batalha padrão da Federação do Comércio", tipo:"Dróide Médio (4ª categoria) não-heróico 3",
+    locomotions:[{type:"andarilho",speed:6}], ref:9, ff:9, fort:11, von:11, hp:10, threshold:11, init:0, shield:0,
+    attacks:[{name:"Desarmado", kind:"Corpo a Corpo", bonus:3, dmg:"1d3+1"}, {name:"Carabina blaster", kind:"À Distância", bonus:1, dmg:"3d8"}],
+    skillsRaw:"—" },
+
+  { id:"b2", name:"Super Dróide de Batalha Série B2", categoria:"4ª categoria — combate, segurança",
+    subtitle:"Versão blindada e reforçada do B1", tipo:"Dróide Médio (4ª categoria) não-heróico 6",
+    locomotions:[{type:"andarilho",speed:6}], ref:12, ff:12, fort:12, von:10, hp:21, threshold:12, init:3, shield:0,
+    attacks:[{name:"Desarmado", kind:"Corpo a Corpo", bonus:6, dmg:"1d3+1"}, {name:"Blasters de pulso", kind:"À Distância", bonus:4, dmg:"3d8", altLabel:"modo automático c/ Tiro Rápido", altBonus:2}],
+    skillsRaw:"Percepção +8" },
+
+  { id:"droideka", name:"Dróide Destróier Série Droideka", categoria:"4ª categoria — combate, segurança",
+    subtitle:"Dróide destróier geonosiano, dispara em rolamento", tipo:"Dróide Grande (4ª categoria) não-heróico 12",
+    locomotions:[{type:"andarilho",speed:2},{type:"rodas",speed:10}], ref:16, ff:14, fort:13, von:12, hp:40, threshold:18, init:8, shield:20,
+    attacks:[{name:"Desarmado", kind:"Corpo a Corpo", bonus:7, dmg:"1d4+3"}, {name:"2 canhões laser", kind:"À Distância", bonus:10, dmg:"3d8", altLabel:"modo automático", altBonus:8}],
+    skillsRaw:"Percepção +13, Furtividade +3" },
+
+  { id:"aranha", name:"Dróide Aranha Anã", categoria:"4ª categoria — combate, segurança",
+    subtitle:"Dróide de apoio pesado usado em Geonosis", tipo:"Dróide Grande (4ª categoria) não-heróico 9",
+    locomotions:[{type:"andarilho",speed:8}], ref:13, ff:13, fort:16, von:11, hp:32, threshold:26, init:3, shield:0,
+    attacks:[{name:"Desarmado", kind:"Corpo a Corpo", bonus:8, dmg:"1d6+10", note:"inclui Ataque Poderoso"}, {name:"Canhão blaster", kind:"À Distância", bonus:5, dmg:"6d8"}],
+    skillsRaw:"Escalar +6, Furtividade -6, Percepção +12" },
+
+  { id:"caranguejo", name:"Dróide Caranguejo Batedor", categoria:"4ª categoria — combate, segurança",
+    subtitle:"Batedor avançado usado em terrenos difíceis", tipo:"Dróide Grande (4ª categoria) não-heróico 12",
+    locomotions:[{type:"andarilho",speed:6}], ref:18, ff:18, fort:17, von:12, hp:80, threshold:42, init:5, shield:0,
+    attacks:[{name:"Garra", kind:"Corpo a Corpo", bonus:16, dmg:"1d6+15", note:"inclui Ataque Poderoso"}, {name:"Blaster gêmea", kind:"À Distância", bonus:8, dmg:"3d10"}],
+    skillsRaw:"Escalar +8, Percepção +13, Furtividade -6" },
+
+  { id:"magnaguard", name:"Dróide MagnaGuard Série IG-100", categoria:"4ª categoria — combate, segurança",
+    subtitle:"Guarda-costas de elite, protege oficiais até a destruição", tipo:"Dróide Médio (4ª categoria) soldado 6",
+    locomotions:[{type:"andarilho",speed:6}], ref:18, ff:17, fort:19, von:18, hp:53, threshold:17, init:9, shield:0,
+    attacks:[{name:"Eletrocajado", kind:"Corpo a Corpo", bonus:8, dmg:"2d8+6"}],
+    skillsRaw:"Escalar +9, Tolerância +8, Iniciativa +9, Saltar +9, Percepção +12" },
+
+  { id:"vibora", name:"Dróide Sonda Série Víbora", categoria:"4ª categoria — combate, segurança",
+    subtitle:"Probot imperial de reconhecimento e vigilância", tipo:"Dróide Grande (4ª categoria) batedor 1",
+    locomotions:[{type:"flutuante",speed:6}], ref:14, ff:13, fort:14, von:13, hp:34, threshold:19, init:6, shield:0,
+    attacks:[{name:"Desarmado", kind:"Corpo a Corpo", bonus:4, dmg:"1d6+4"}, {name:"Blaster", kind:"À Distância", bonus:1, dmg:"3d6"}, {name:"Auto-destruição", kind:"À Distância", bonus:5, dmg:"4d6", note:"2 quadrados de explosão"}],
+    skillsRaw:"Tolerância +5, Iniciativa +6, Percepção +9, Furtividade +1, Sobrevivência +7, Usar Computador +6" },
+
+  { id:"asp", name:"Dróide Operário Série ASP", categoria:"5ª categoria — operários, utilidade",
+    subtitle:"Dróide operário de trabalho pesado", tipo:"Dróide Médio (5ª categoria) não-heróico 2",
+    locomotions:[{type:"andarilho",speed:6}], ref:15, ff:14, fort:13, von:10, hp:5, threshold:13, init:2, shield:0,
+    attacks:[{name:"Desarmado", kind:"Corpo a Corpo", bonus:1, dmg:"1d4"}],
+    skillsRaw:"—" },
+];
+
+function populateDroidModelSelect(){
+  const sel = document.getElementById("cDroidModel");
+  DROID_MODELS.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m.id;
+    opt.textContent = `${m.name} (ND${{"2-1b":0,"r2":0,"3po":0,"b1":1,"b2":2,"droideka":4,"aranha":3,"caranguejo":4,"magnaguard":6,"vibora":1,"asp":0}[m.id]})`;
+    sel.appendChild(opt);
+  });
+}
+
+document.getElementById("cDroidModel").addEventListener("change", (e) => {
+  const model = DROID_MODELS.find(m => m.id === e.target.value);
+  if(!model) return;
+
+  document.getElementById("cNome").value = model.name;
+  document.getElementById("cSubtitulo").value = model.subtitle;
+  document.getElementById("cTipo").value = model.tipo;
+  document.getElementById("cDroidCategoria").value = model.categoria;
+  document.getElementById("cRef").value = model.ref;
+  document.getElementById("cFF").value = model.ff;
+  document.getElementById("cFort").value = model.fort;
+  document.getElementById("cVon").value = model.von;
+  document.getElementById("cHp").value = model.hp;
+  document.getElementById("cThreshold").value = model.threshold;
+  document.getElementById("cInit").value = model.init;
+  document.getElementById("cDroidShield").value = model.shield;
+
+  document.getElementById("cDroidLocoList").innerHTML = "";
+  model.locomotions.forEach(loc => addLocoRow(loc));
+
+  document.getElementById("cAttacksList").innerHTML = "";
+  model.attacks.forEach(a => addAttackRow(a));
+
+  document.getElementById("cSkillsList").innerHTML = "";
+  if(model.skillsRaw && model.skillsRaw !== "—"){
+    model.skillsRaw.split(",").forEach(s => {
+      const m2 = s.trim().match(/^(.*?)\s([+-]\d+)$/);
+      if(m2) addSkillRow({ name:m2[1], bonus:parseInt(m2[2]) });
+    });
+  }
+
+  updateDifficulty();
+});
+
+// ---- carregar ficha existente no formulário (edição) ----
+const REVERSE_LOCOMOTION_LABEL = {};
+Object.entries(DROID_LOCOMOTION_LABEL).forEach(([k,v]) => { REVERSE_LOCOMOTION_LABEL[v] = k; });
+
+function guessEntryType(d){
+  if(d.customType) return d.customType;
+  if(isShipEntry(d)) return "nave";
+  const t = (d.type||"").toLowerCase();
+  const sp = (d.special||"").toLowerCase();
+  if(t.includes("dróide") || sp.includes("traços de dróide")) return "droide";
+  if(t.includes("não-heróico") && !/soldado|nobre|vigarista|batedor|oficial|jedi/.test(t)) return "npc";
+  return "soldado";
+}
+
+function loadEntryIntoForm(d){
+  editingEntryId = d.id;
+  const guessedType = guessEntryType(d);
+  const toggleBtn = document.querySelector(`#createTypeToggle .gt-btn[data-type="${guessedType}"]`);
+  if(toggleBtn) toggleBtn.click();
+
+  document.getElementById("cNome").value = d.name || "";
+  document.getElementById("cSubtitulo").value = d.subtitle || "";
+  document.getElementById("cTipo").value = d.type || "";
+  document.getElementById("cFlavor").value = d.flavor || "";
+  document.getElementById("cRef").value = d.defenses.ref ?? 20;
+  document.getElementById("cFF").value = d.defenses.ff ?? 17;
+  document.getElementById("cFort").value = d.defenses.fort ?? 20;
+  if(d.defenses.von !== undefined) document.getElementById("cVon").value = d.defenses.von;
+  document.getElementById("cHp").value = d.hp ?? 10;
+  document.getElementById("cThreshold").value = d.threshold ?? 10;
+  document.getElementById("cInit").value = d.init ?? 0;
+  document.getElementById("cSpecial").value = (d.special && !/imune traços de dróide/i.test(d.special)) ? d.special : "";
+  document.getElementById("cPosses").value = d.possessions && d.possessions !== "—" ? d.possessions : "";
+
+  if(guessedType === "nave"){
+    const m1 = (d.speed||"").match(/(\d+)\s*quadrados(?:\s*\((?:velocidade\s*)?máx\.\s*([\d.,]+)\s*km\/h\))?/);
+    const m2 = (d.speed||"").match(/(\d+)\s*quadrados\s*\(escala de nave interestelar\)/);
+    document.getElementById("cSpeedAtmo").value = m1 ? m1[1] : 12;
+    document.getElementById("cSpeedKmh").value = m1 && m1[2] ? m1[2] : "";
+    document.getElementById("cSpeedSpace").value = m2 ? m2[1] : 4;
+    document.getElementById("cArmor").value = d.defenses.armor || "";
+    document.getElementById("cShield").value = d.ve || 0;
+    document.getElementById("cRd").value = d.rd || 0;
+    const cm = (d.possessions||"").match(/Tripulação\s+(\d+)\s*\(([^)]+)\)/i);
+    const pm = (d.possessions||"").match(/Passageiros\s+([\d–\-]+)/i);
+    document.getElementById("cCrewQty").value = cm ? cm[1] : 1;
+    if(cm) document.getElementById("cCrewQuality").value = cm[2].toLowerCase();
+    if(pm){
+      const parts = pm[1].split(/[–\-]/);
+      document.getElementById("cPassMin").value = parts.length>1 ? parts[0] : 0;
+      document.getElementById("cPassMax").value = parts.length>1 ? parts[1] : parts[0];
+    } else {
+      document.getElementById("cPassMin").value = 0;
+      document.getElementById("cPassMax").value = 0;
+    }
+  } else if(guessedType === "droide"){
+    document.getElementById("cDroidModel").value = "";
+    const catMatch = (d.type||"").match(/([1-5]ª categoria[^)]*)\)?/);
+    if(catMatch){
+      const opt = [...document.getElementById("cDroidCategoria").options].find(o => catMatch[0].startsWith(o.value.split(" —")[0]));
+      if(opt) document.getElementById("cDroidCategoria").value = opt.value;
+    }
+    document.getElementById("cDroidShield").value = d.ve || 0;
+    document.getElementById("cDroidTraits").checked = /imune traços de dróide/i.test(d.special||"");
+    document.getElementById("cDroidLocoList").innerHTML = "";
+    const segs = (d.speed||"").split(",").map(s=>s.trim()).filter(Boolean);
+    if(segs.length){
+      segs.forEach(seg => {
+        const sm = seg.match(/(\d+)\s*quadrados\s*\(([^)]+)\)/);
+        if(sm){
+          const type = REVERSE_LOCOMOTION_LABEL[sm[2]] || "andarilho";
+          addLocoRow({ type, speed: +sm[1] });
+        }
+      });
+    } else {
+      addLocoRow({ type:"andarilho", speed:6 });
+    }
+  }
+
+  document.getElementById("cAttacksList").innerHTML = "";
+  (d.attacks||[]).forEach(a => addAttackRow(a));
+  if((d.attacks||[]).length === 0) addAttackRow();
+
+  document.getElementById("cSkillsList").innerHTML = "";
+  parseSkills(d.skillsRaw).forEach(s => addSkillRow(s));
+
+  document.getElementById("cSaveBtn").textContent = "💾 Salvar Alterações";
+  document.getElementById("cCancelEditBtn").style.display = "";
+  document.getElementById("add-panel-title-create").textContent = `◈ EDITANDO: ${d.name.toUpperCase()}`;
+  updateDifficulty();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function exitEditMode(){
+  editingEntryId = null;
+  document.getElementById("cSaveBtn").textContent = "💾 Salvar Ficha Personalizada";
+  document.getElementById("cCancelEditBtn").style.display = "none";
+  document.getElementById("add-panel-title-create").textContent = "◈ NOVA FICHA PERSONALIZADA";
+}
+
+// ---- average damage parser (for difficulty estimate; does not roll) ----
+function avgDamageExpr(expr){
+  if(!expr) return 0;
+  let mult = 1, core = expr;
+  const mi = expr.indexOf("×");
+  if(mi !== -1){ mult = parseInt(expr.slice(mi+1)) || 1; core = expr.slice(0, mi); }
+  const m = core.match(/(\d+)d(\d+)([+-]\d+)?/);
+  if(!m) return 0;
+  const n = parseInt(m[1]), sides = parseInt(m[2]), mod = m[3] ? parseInt(m[3]) : 0;
+  return (n * (sides+1)/2 + mod) * mult;
+}
+
+// ---- referência de "jogador nível 12" e "nave aliada nível 12" pra simulação ----
+const REFERENCE_PC = { atk:18, def:23, hp:95, dmg:18 };
+const REFERENCE_SHIP = { atk:14, def:23, hp:150, dmg:50 };
+
+// chance de acerto com a mecânica de ataque da mesa (3d20, fica com o maior)
+function hitChance3d20(atkBonus, targetDef){
+  const threshold = targetDef - atkBonus; // precisa tirar >= threshold no d20
+  const pSingle = Math.max(0.05, Math.min(0.95, (21 - threshold) / 20));
+  return 1 - Math.pow(1 - pSingle, 3);
+}
+
+function computeDifficulty(){
+  const type = createType;
+  const isNave = type === "nave";
+  const ref = document.getElementById("cRef") && +document.getElementById("cRef").value || 0;
+  const fort = +document.getElementById("cFort").value || 0;
+  const von = !isNave ? (+document.getElementById("cVon").value || 0) : null;
+  const hp = +document.getElementById("cHp").value || 1;
+
+  const avgDef = von!==null ? (ref+fort+von)/3 : (ref+fort)/2;
+
+  const attackRows = [...document.querySelectorAll("#cAttacksList .c-row")];
+  let atkAvg = 0, dmgAvg = 0;
+  if(attackRows.length){
+    let atkSum = 0, dmgSum = 0;
+    attackRows.forEach(row => {
+      atkSum += +row.querySelector(".ca-bonus").value || 0;
+      dmgSum += avgDamageExpr(row.querySelector(".ca-dmg").value);
+    });
+    atkAvg = atkSum / attackRows.length;
+    dmgAvg = dmgSum / attackRows.length;
+  }
+
+  const REF = isNave ? REFERENCE_SHIP : REFERENCE_PC;
+
+  // dano por rodada em cada direção
+  const pHit_monsterVsRef = hitChance3d20(atkAvg, REF.def);
+  const pHit_refVsMonster = hitChance3d20(REF.atk, avgDef);
+  const monsterDPR = pHit_monsterVsRef * dmgAvg;
+  const refMemberDPR = pHit_refVsMonster * REF.dmg;
+
+  const roundsToDropOneRef = monsterDPR > 0 ? REF.hp / monsterDPR : Infinity;
+
+  const groupSizes = [1, 5, 10];
+  const verdicts = groupSizes.map(n => {
+    const groupDPR = refMemberDPR * n;
+    const roundsToDown = groupDPR > 0 ? hp / groupDPR : Infinity;
+    const ratio = roundsToDown > 0 ? roundsToDropOneRef / roundsToDown : Infinity;
+
+    let label, color, detail;
+    if(roundsToDown <= 1.2){
+      label = "TRIVIAL"; color = "var(--planetas)";
+      detail = `Morre em ~1 rodada contra ${n}. Bucha de canhão.`;
+    } else if(ratio >= 4){
+      label = "MUITO FÁCIL"; color = "var(--planetas)";
+      detail = `Cai em ~${roundsToDown.toFixed(1)} rodadas, sem chegar perto de derrubar ninguém.`;
+    } else if(ratio >= 2){
+      label = "FÁCIL"; color = "var(--naves)";
+      detail = `Cai em ~${roundsToDown.toFixed(1)} rodadas; risco baixo pro grupo.`;
+    } else if(ratio >= 1){
+      label = "EQUILIBRADO"; color = "var(--gold)";
+      detail = `~${roundsToDown.toFixed(1)} rodadas pra cair; luta justa, tensão real mas controlável.`;
+    } else if(ratio >= 0.5){
+      label = "PERIGOSO"; color = "var(--rebel)";
+      detail = `Pode derrubar alguém (~${roundsToDropOneRef.toFixed(1)} rodadas) antes de cair (~${roundsToDown.toFixed(1)}).`;
+    } else if(ratio >= 0.2){
+      label = "MUITO PERIGOSO"; color = "var(--imperio)";
+      detail = `Forte chance de baixa antes de morrer. Reserve pra clímax.`;
+    } else {
+      label = "QUASE IMPASSÁVEL"; color = "#8a2be2";
+      detail = `Derruba gente muito mais rápido do que cai. Só funciona como muralha proposital.`;
+    }
+    if(roundsToDown > 20){
+      detail += " Combate arrastado — considere dar mais dano ao grupo ou menos PV a ele.";
+    }
+    return { n, label, color, detail, roundsToDown, roundsToDropOneRef };
+  });
+
+  const wrap = document.getElementById("diffVerdicts");
+  const nLabel = { 1:"contra 1", 5:"contra 5", 10:"contra 10" };
+  const nSub = { 1:"1 JOGADOR", 5:"GRUPO (5)", 10:"FROTA (10)" };
+  wrap.innerHTML = verdicts.map(v => `
+    <div class="diff-verdict-row">
+      <div class="diff-verdict-n">${v.n}×<small>${nSub[v.n]}</small></div>
+      <div class="diff-verdict-body">
+        <div class="diff-verdict-label" style="color:${v.color};">${v.label}</div>
+        <div class="diff-verdict-detail">${v.detail}</div>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("difficultyCard").style.borderColor = verdicts[1].color;
+  document.getElementById("diffHint").textContent = `Referência: ${isNave ? "nave" : "personagem"} nível 12 com ataque +${REF.atk}, defesa ${REF.def}, ${REF.hp} PV, ~${REF.dmg} de dano médio por acerto.`;
+
+  return { verdicts, avgDef, atkAvg, dmgAvg, hp };
+}
+
+
+function updateDifficulty(){ computeDifficulty(); }
+
+["cRef","cFF","cFort","cVon","cHp","cThreshold","cInit","cRd","cShield"].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener("input", updateDifficulty);
+});
+
+// ---- save custom sheet ----
+document.getElementById("cSaveBtn").addEventListener("click", () => {
+  const name = document.getElementById("cNome").value.trim();
+  if(!name){ alert("Dá um nome pra ficha antes de salvar."); return; }
+
+  const type = createType;
+  const ref = +document.getElementById("cRef").value || 10;
+  const ff = +document.getElementById("cFF").value || 10;
+  const fort = +document.getElementById("cFort").value || 10;
+  const hp = +document.getElementById("cHp").value || 10;
+  const threshold = +document.getElementById("cThreshold").value || fort;
+  const init = +document.getElementById("cInit").value || 0;
+
+  const defenses = { ref, ff, fort };
+  if(type !== "nave"){
+    defenses.von = +document.getElementById("cVon").value || 10;
+  } else {
+    const armor = document.getElementById("cArmor").value.trim();
+    if(armor) defenses.armor = armor;
+  }
+
+  const attacks = [...document.querySelectorAll("#cAttacksList .c-attack-card")].map(card => {
+    const nm = card.querySelector(".ca-name").value.trim() || "Ataque";
+    const kind = card.querySelector(".ca-kind").value;
+    const bonus = +card.querySelector(".ca-bonus").value || 0;
+    const dmg = card.querySelector(".ca-dmg").value.trim() || "1d6";
+    const hasArea = card.querySelector(".ca-area-toggle").checked;
+    const squares = +card.querySelector(".ca-area-squares").value || 2;
+    const atk = { name: nm, kind, bonus, dmg };
+    if(hasArea) atk.note = `${squares} quadrados de dispersão`;
+    return atk;
+  });
+
+  const skillsArr = [...document.querySelectorAll("#cSkillsList .c-skill-row")].map(row => {
+    const nm = row.querySelector(".cs-name").value.trim();
+    const bonus = +row.querySelector(".cs-bonus").value || 0;
+    return nm ? `${nm} ${bonus>=0?"+":""}${bonus}` : null;
+  }).filter(Boolean);
+
+  const diff = computeDifficulty();
+  const powerScore = (diff.atkAvg-18) + (diff.avgDef-23) + (diff.hp-95)/10 + (diff.dmgAvg-18)/2;
+  const roughND = Math.max(1, Math.round(12 + powerScore/4));
+
+  let speed, possessions;
+
+  if(type === "nave"){
+    const atmoSq = +document.getElementById("cSpeedAtmo").value || 0;
+    const atmoKmh = document.getElementById("cSpeedKmh").value.trim();
+    const spaceSq = +document.getElementById("cSpeedSpace").value || 0;
+    speed = `vôo ${atmoSq} quadrados${atmoKmh ? ` (velocidade máx. ${atmoKmh} km/h)` : ""}; vôo ${spaceSq} quadrados (escala de nave interestelar)`;
+
+    const crewQty = +document.getElementById("cCrewQty").value || 1;
+    const crewQuality = document.getElementById("cCrewQuality").value;
+    const passMin = +document.getElementById("cPassMin").value || 0;
+    const passMax = +document.getElementById("cPassMax").value || 0;
+    let passText = "nenhum";
+    if(passMax > 0) passText = passMin > 0 && passMin !== passMax ? `${passMin}–${passMax}` : `${passMax}`;
+    const notes = document.getElementById("cPosses").value.trim();
+    possessions = `Tripulação ${crewQty} (${crewQuality}); Passageiros ${passText}${notes ? "; " + notes : ""}`;
+  } else if(type === "droide"){
+    const locoRows = [...document.querySelectorAll("#cDroidLocoList .c-row")];
+    speed = locoRows.map(row => {
+      const t = row.querySelector(".cl-type").value;
+      const sq = +row.querySelector(".cl-speed").value || 0;
+      return `${sq} quadrados (${DROID_LOCOMOTION_LABEL[t]||t})`;
+    }).join(", ") || "6 quadrados (andarilho)";
+    possessions = document.getElementById("cPosses").value.trim() || "—";
+  } else {
+    speed = "6 quadrados";
+    possessions = document.getElementById("cPosses").value.trim() || "—";
+  }
+
+  let special = document.getElementById("cSpecial").value.trim();
+  if(type === "droide" && document.getElementById("cDroidTraits").checked){
+    const traitsNote = "Imune traços de dróide (veneno, doença, radiação, efeitos de ação mental, atordoamento e outros efeitos que só funcionam em seres vivos); vulnerável a dano por íon; não come, dorme ou respira; ao chegar a 0 PV fica desativado (não morto) — só é destruído se o golpe também exceder o Limiar de Dano.";
+    special = special ? `${traitsNote} ${special}` : traitsNote;
+  }
+
+  const categoria = type === "droide" ? document.getElementById("cDroidCategoria").value : null;
+
+  const isEditing = !!editingEntryId;
+  const original = isEditing ? DATA.find(d => d.id === editingEntryId) : null;
+
+  const entry = {
+    id: isEditing ? editingEntryId : slugify(name),
+    cat: isEditing ? original.cat : "custom",
+    name,
+    nd: roughND,
+    type: document.getElementById("cTipo").value.trim() || (
+      type==="nave" ? "Veículo personalizado" :
+      type==="npc" ? "Humano Médio não-heróico (personalizado)" :
+      type==="droide" ? `Dróide Médio (${categoria}) não-heróico` :
+      "Humano Médio (personalizado)"
+    ),
+    subtitle: document.getElementById("cSubtitulo").value.trim() || (
+      type==="nave" ? "Nave personalizada" :
+      type==="npc" ? "NPC não-heróico personalizado" :
+      type==="droide" ? "Dróide personalizado" :
+      "Ficha personalizada"
+    ),
+    flavor: document.getElementById("cFlavor").value.trim(),
+    defenses,
+    hp,
+    threshold,
+    speed,
+    init,
+    abilities: (isEditing && original.abilities) || "—",
+    special: special || undefined,
+    talents: (isEditing && original.talents) || "—",
+    skillsRaw: skillsArr.length ? skillsArr.join(", ") : "—",
+    possessions,
+    attacks,
+    customType: type,
+    isCustomUserSheet: true
+  };
+  if(isEditing) entry._edited = true;
+
+  if(type === "nave"){
+    const rd = +document.getElementById("cRd").value || 0;
+    const shield = +document.getElementById("cShield").value || 0;
+    if(rd > 0) entry.rd = rd;
+    if(shield > 0){ entry.ve = shield; }
+  }
+  if(type === "droide"){
+    const shield = +document.getElementById("cDroidShield").value || 0;
+    if(shield > 0){ entry.ve = shield; }
+  }
+
+  if(isEditing){
+    const idx = DATA.findIndex(d => d.id === editingEntryId);
+    if(idx !== -1) DATA[idx] = entry;
+  } else {
+    DATA.push(entry);
+  }
+  persistCustomSheets();
+  renderList();
+  renderPickList();
+  renderCustomList();
+
+  if(isEditing){
+    exitEditMode();
+    flashSaveConfirmation(entry.name);
+    document.querySelector('.mode-btn[data-mode="fichas"]').click();
+    currentId = entry.id;
+    renderList();
+    renderSheet(entry);
+    return;
+  }
+
+  // reset form for the next one
+  document.getElementById("cNome").value = "";
+  document.getElementById("cSubtitulo").value = "";
+  document.getElementById("cTipo").value = "";
+  document.getElementById("cFlavor").value = "";
+  document.getElementById("cPosses").value = "";
+  document.getElementById("cSpecial").value = "";
+
+  flashSaveConfirmation(entry.name);
+});
+
+document.getElementById("cCancelEditBtn").addEventListener("click", () => {
+  exitEditMode();
+  document.getElementById("cNome").value = "";
+  document.getElementById("cSubtitulo").value = "";
+  document.getElementById("cTipo").value = "";
+  document.getElementById("cFlavor").value = "";
+  document.getElementById("cPosses").value = "";
+  document.getElementById("cSpecial").value = "";
+  document.getElementById("cAttacksList").innerHTML = "";
+  document.getElementById("cSkillsList").innerHTML = "";
+  addAttackRow({ name:"Rifle blaster", kind:"À Distância", bonus:16, dmg:"3d8+8" });
+  addSkillRow({ name:"Percepção", bonus:15 });
+  updateDifficulty();
+});
+
+function flashSaveConfirmation(name){
+  const btn = document.getElementById("cSaveBtn");
+  const original = btn.textContent;
+  btn.textContent = `✅ "${name}" salva!`;
+  setTimeout(() => { btn.textContent = original; }, 1800);
+}
+
+function renderCustomList(){
+  const wrap = document.getElementById("customList");
+  const customs = DATA.filter(d => d.cat === "custom");
+  if(customs.length === 0){
+    wrap.innerHTML = '<div class="custom-empty">Nenhuma ficha personalizada ainda.</div>';
+    return;
+  }
+  wrap.innerHTML = "";
+  customs.forEach(d => {
+    const row = document.createElement("div");
+    row.className = "custom-item-row";
+    row.innerHTML = `<span class="cir-name">${d.name} <span style="color:var(--text-dimmer)">ND ${d.nd}</span></span><button class="cir-del" data-id="${d.id}">excluir</button>`;
+    row.querySelector(".cir-del").addEventListener("click", () => {
+      const idx = DATA.findIndex(x => x.id === d.id);
+      if(idx !== -1) DATA.splice(idx, 1);
+      persistCustomSheets();
+      renderList();
+      renderPickList();
+      renderCustomList();
+      if(currentId === d.id){ currentId = null; mainEl.innerHTML = '<div class="empty-state">◈ Selecione uma ficha na lista ao lado para abrir o registro.</div>'; }
+    });
+    wrap.appendChild(row);
+  });
+}
+
+// ================= EVOLUÇÃO (SUBIR DE NÍVEL / ESCALAR NAVE) =================
+// Tabelas do Livro Básico (Cap. 3: Classes / Personagens Não-Heróicos)
+const NONHEROIC_BAB = {1:0,2:1,3:2,4:3,5:3,6:4,7:5,8:6,9:6,10:7,11:8,12:9,13:9,14:10,15:11,16:12,17:12,18:13,19:14,20:15};
+const FEAT_LEVELS = [1,3,6,9,12,15,18];
+const APTIDAO_LEVELS = [1,3,5,7,9,11,13,15,17,19];
+const ABILITY_LEVELS = [4,8,12,16,20];
+const ABILITY_TO_DEFENSE = {
+  "Destreza (Reflexo)": "ref",
+  "Vigor (Fortitude)": "fort",
+  "Sabedoria (Vontade)": "von",
+  "Inteligência (perícias de conhecimento)": null,
+  "Carisma (perícias sociais)": null,
+  "Força (sem efeito direto na ficha)": null
+};
+
+function heroicBAB(level, track){
+  if(track==="boa") return level;
+  if(track==="media") return Math.floor(level*3/4);
+  return Math.floor(level/2); // ruim
+}
+
+let evoSelectedId = null;
+let evoProg = "heroico";
+let evoLastCalc = null;
+
+function isShipEntry(d){
+  return d.cat === "naves" || d.customType === "nave" || d.defenses.von === undefined;
+}
+
+function renderEvoPickList(){
+  const q = document.getElementById("evoSearch").value.trim().toLowerCase();
+  const wrap = document.getElementById("evoPickList");
+  const items = DATA.filter(d => d.cat!=="planetas" &&
+    (q==="" || d.name.toLowerCase().includes(q)));
+  wrap.innerHTML = "";
+  items.forEach(d => {
+    const div = document.createElement("div");
+    div.className = "pick-item" + (d.id===evoSelectedId ? " selected" : "");
+    div.innerHTML = `<span>${d.name}</span><span class="pi-nd">ND ${d.nd}</span>`;
+    div.addEventListener("click", () => {
+      evoSelectedId = d.id;
+      renderEvoPickList();
+      document.getElementById("evoControls").style.display = "";
+      document.getElementById("evoPickedName").textContent = `${d.name} — ${d.type||""}`;
+      document.getElementById("evoResult").style.display = "none";
+      if(isShipEntry(d)){
+        setEvoProg("nave");
+        document.getElementById("evoNDAtual").value = d.nd;
+        document.getElementById("evoNDAlvo").value = d.nd + 4;
+      } else {
+        const t = (d.type||"").toLowerCase();
+        const guessNonheroic = t.includes("não-heróico") && !/soldado|nobre|vigarista|batedor|oficial|jedi/.test(t);
+        setEvoProg(guessNonheroic ? "naoheroico" : "heroico");
+      }
+    });
+    wrap.appendChild(div);
+  });
+}
+document.getElementById("evoSearch").addEventListener("input", renderEvoPickList);
+
+function setEvoProg(prog){
+  evoProg = prog;
+  document.querySelectorAll("#evoProgToggle .gt-btn").forEach(b => b.classList.toggle("active", b.dataset.prog===prog));
+  const isHeroic = prog === "heroico";
+  const isNave = prog === "nave";
+  document.getElementById("evoBabRow").style.display = isHeroic ? "" : "none";
+  document.getElementById("evoHeroicFields").style.display = isHeroic ? "" : "none";
+  document.getElementById("evoPersonalLevelFields").style.display = isNave ? "none" : "";
+  document.getElementById("evoNaveFields").style.display = isNave ? "" : "none";
+}
+document.getElementById("evoProgToggle").addEventListener("click", (e) => {
+  const btn = e.target.closest(".gt-btn");
+  if(!btn) return;
+  setEvoProg(btn.dataset.prog);
+});
+
+function bumpDamageExprBy(expr, addMod){
+  let mult = "", core = expr;
+  const mi = expr.indexOf("×");
+  if(mi !== -1){ mult = expr.slice(mi); core = expr.slice(0, mi); }
+  const m = core.match(/^(\d+)d(\d+)([+-]\d+)?$/);
+  if(!m) return expr;
+  let mod = m[3] ? parseInt(m[3]) : 0;
+  mod += addMod;
+  const modStr = mod === 0 ? "" : (mod > 0 ? `+${mod}` : `${mod}`);
+  return `${m[1]}d${m[2]}${modStr}${mult}`;
+}
+
+function computeEvolution(){
+  const base = DATA.find(d => d.id === evoSelectedId);
+  if(!base) return null;
+
+  if(evoProg === "nave"){
+    const ndA = Math.max(1, +document.getElementById("evoNDAtual").value || 1);
+    const ndB = Math.max(ndA, +document.getElementById("evoNDAlvo").value || ndA);
+    const delta = ndB - ndA;
+    const ratio = ndB / ndA;
+    return { base, isShip:true, ndA, ndB, delta, ratio };
+  }
+
+  const lvlA = Math.max(1, +document.getElementById("evoNivelAtual").value || 1);
+  const lvlB = Math.max(lvlA, +document.getElementById("evoNivelAlvo").value || lvlA);
+  const conMod = +document.getElementById("evoConMod").value || 0;
+  const isHeroic = evoProg === "heroico";
+
+  let atkA, atkB;
+  if(isHeroic){
+    const track = document.getElementById("evoBabTrack").value;
+    atkA = heroicBAB(lvlA, track);
+    atkB = heroicBAB(lvlB, track);
+  } else {
+    atkA = NONHEROIC_BAB[Math.min(20,lvlA)] ?? 15;
+    atkB = NONHEROIC_BAB[Math.min(20,lvlB)] ?? 15;
+  }
+  const atkDelta = atkB - atkA;
+  const defDelta = isHeroic ? (lvlB - lvlA) : 0;
+  const skillDelta = Math.floor(lvlB/2) - Math.floor(lvlA/2);
+
+  let hpGain = 0;
+  const levelsGained = lvlB - lvlA;
+  if(isHeroic){
+    const die = +document.getElementById("evoHitDie").value;
+    const avgRoll = Math.ceil((die+1)/2);
+    hpGain = levelsGained * Math.max(1, avgRoll + conMod);
+  } else {
+    hpGain = levelsGained * Math.max(1, 3 + conMod);
+  }
+
+  const milestones = [];
+  FEAT_LEVELS.forEach(lv => { if(lv > lvlA && lv <= lvlB) milestones.push({level:lv, kind:"talento", label:`Nível ${lv} — Talento (façanha)`}); });
+  if(isHeroic){
+    APTIDAO_LEVELS.forEach(lv => { if(lv > lvlA && lv <= lvlB) milestones.push({level:lv, kind:"aptidao", label:`Nível ${lv} — Aptidão (talento de árvore)`}); });
+  }
+  ABILITY_LEVELS.forEach(lv => {
+    if(lv > lvlA && lv <= lvlB){
+      milestones.push({ level:lv, kind:"habilidade", ability:true,
+        count: isHeroic ? 2 : 1,
+        label:`Nível ${lv} — Aumento de Habilidade (${isHeroic ? "+1 em duas habilidades" : "+1 em uma habilidade"})` });
+    }
+  });
+  milestones.sort((a,b) => a.level-b.level);
+
+  return { base, isShip:false, lvlA, lvlB, atkDelta, defDelta, skillDelta, hpGain, milestones, isHeroic };
+}
+
+document.getElementById("evoCalcBtn").addEventListener("click", () => {
+  const calc = computeEvolution();
+  if(!calc) return;
+  evoLastCalc = calc;
+  const msWrap = document.getElementById("evoMilestones");
+
+  if(calc.isShip){
+    const newThreshold = calc.base.threshold + calc.delta;
+    const rows = [
+      ["Nível de Desafio", `${calc.ndA} → ${calc.ndB} (+${calc.delta})`],
+      ["Reflexo / Fortitude", `+${calc.delta} em cada`],
+      ["Pontos de Vida (casco)", `× ${calc.ratio.toFixed(2)} (proporcional)`],
+      ["Limiar de Dano", `passa a ${newThreshold} (mantém a folga por tamanho da nave)`],
+      ["Redução de Dano", calc.base.rd ? `× ${calc.ratio.toFixed(2)} (proporcional)` : "sem RD nesta nave"],
+      ["Escudo (VE)", calc.base.ve ? `× ${calc.ratio.toFixed(2)} (proporcional)` : "sem escudo nesta nave"],
+      ["Bônus de ataque (todos)", `+${calc.delta}`],
+      ["Dano (modificador de cada arma)", `+${Math.max(1, Math.round(calc.delta*0.6))}`],
+      ["Perícias e Iniciativa", `+${calc.delta}`],
+    ];
+    document.getElementById("evoSummaryTable").innerHTML = rows.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
+    msWrap.innerHTML = "";
+    document.getElementById("evoResult").style.display = "";
+    return;
+  }
+
+  const newFort = calc.base.defenses.fort + calc.defDelta;
+  const rows = [
+    ["Níveis", `${calc.lvlA} → ${calc.lvlB} (+${calc.lvlB-calc.lvlA})`],
+    ["Reflexo / Fortitude / Vontade", calc.defDelta>0 ? `+${calc.defDelta} em cada` : "sem alteração (não-heróico)"],
+    ["Pontos de Vida", `+${calc.hpGain}`],
+    ["Limiar de Dano", `passa a ${newFort} (= nova Fortitude)`],
+    ["Bônus de ataque (todos os ataques)", calc.atkDelta>=0 ? `+${calc.atkDelta}` : `${calc.atkDelta}`],
+    ["Perícias e Iniciativa", `+${calc.skillDelta}`],
+  ];
+  document.getElementById("evoSummaryTable").innerHTML = rows.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
+
+  if(calc.milestones.length === 0){
+    msWrap.innerHTML = '<div class="custom-empty" style="margin-top:12px;">Nenhum marco de talento/aptidão/habilidade nesse intervalo.</div>';
+  } else {
+    msWrap.innerHTML = `<div class="section-title" style="margin-top:18px;">Marcos alcançados</div>` + calc.milestones.map((m,i) => {
+      if(m.ability){
+        const opts = Object.keys(ABILITY_TO_DEFENSE).map(k=>`<option value="${k}">${k}</option>`).join("");
+        let selects = "";
+        for(let c=0;c<m.count;c++){
+          selects += `<select class="form-input evo-ability-select" data-idx="${i}" style="margin-bottom:6px;"><option value="">— não escolher —</option>${opts}</select>`;
+        }
+        return `<div class="form-row"><label>${m.label}</label>${selects}<div class="diff-hint">Se a habilidade afetar Reflexo/Fortitude/Vontade, o bônus é aplicado direto na ficha.</div></div>`;
+      }
+      return `
+      <div class="form-row">
+        <label>${m.label}</label>
+        <input type="text" class="form-input evo-milestone-input" data-idx="${i}" placeholder="Nome do talento/aptidão escolhido (opcional)">
+      </div>`;
+    }).join("");
+  }
+  document.getElementById("evoResult").style.display = "";
+});
+
+document.getElementById("evoApplyBtn").addEventListener("click", () => {
+  if(!evoLastCalc) return;
+  const calc = evoLastCalc;
+  const base = calc.base;
+
+  if(calc.isShip){
+    base.defenses.ref += calc.delta;
+    base.defenses.ff += calc.delta;
+    base.defenses.fort += calc.delta;
+    base.threshold += calc.delta; // preserva a folga de Limiar por tamanho da nave
+    base.hp = Math.round(base.hp * calc.ratio / 5) * 5;
+    if(base.rd) base.rd = Math.max(1, Math.round(base.rd * calc.ratio));
+    if(base.ve) base.ve = Math.round(base.ve * calc.ratio / 5) * 5;
+    const dmgAdd = Math.max(1, Math.round(calc.delta * 0.6));
+    (base.attacks||[]).forEach(a => {
+      a.bonus += calc.delta;
+      if(a.altBonus !== undefined) a.altBonus += calc.delta;
+      a.dmg = bumpDamageExprBy(a.dmg, dmgAdd);
+    });
+    if(base.skillsRaw && base.skillsRaw !== "—"){
+      base.skillsRaw = base.skillsRaw.split(",").map(s => {
+        const m = s.trim().match(/^(.*?)\s([+-]\d+)$/);
+        if(!m) return s.trim();
+        const nb = parseInt(m[2]) + calc.delta;
+        return `${m[1]} ${nb>=0?"+":""}${nb}`;
+      }).join(", ");
+    }
+    base.init += Math.round(calc.delta * 0.5);
+    base.nd = calc.ndB;
+
+    if(base.cat === "custom") persistCustomSheets();
+    renderList();
+    renderPickList();
+    if(base.cat === "custom") renderCustomList();
+    if(currentId === base.id) renderSheet(base);
+    flashEvoConfirmation(base.name, calc.ndB, true);
+    return;
+  }
+
+  const { lvlA, lvlB, atkDelta, defDelta, skillDelta, hpGain } = calc;
+
+  base.defenses.ref += defDelta;
+  base.defenses.ff += defDelta;
+  base.defenses.fort += defDelta;
+  if(base.defenses.von !== undefined) base.defenses.von += defDelta;
+
+  // aplica automaticamente os aumentos de habilidade escolhidos que afetam defesa
+  document.querySelectorAll(".evo-ability-select").forEach(sel => {
+    const key = sel.value;
+    if(!key) return;
+    const defKey = ABILITY_TO_DEFENSE[key];
+    if(defKey && base.defenses[defKey] !== undefined){
+      base.defenses[defKey] += 1;
+      if(defKey === "ref") base.defenses.ff += 1;
+    }
+  });
+
+  base.threshold = base.defenses.fort;
+  base.hp += hpGain;
+  base.init += skillDelta;
+  (base.attacks||[]).forEach(a => {
+    a.bonus += atkDelta;
+    if(a.altBonus !== undefined) a.altBonus += atkDelta;
+  });
+  if(base.skillsRaw && base.skillsRaw !== "—"){
+    base.skillsRaw = base.skillsRaw.split(",").map(s => {
+      const m = s.trim().match(/^(.*?)\s([+-]\d+)$/);
+      if(!m) return s.trim();
+      const nb = parseInt(m[2]) + skillDelta;
+      return `${m[1]} ${nb>=0?"+":""}${nb}`;
+    }).join(", ");
+  }
+
+  // append chosen talents/aptitudes + ability increases to talents text
+  const chosenTalents = [...document.querySelectorAll(".evo-milestone-input")].map(inp => inp.value.trim()).filter(Boolean);
+  const chosenAbilities = [...document.querySelectorAll(".evo-ability-select")].map(s => s.value).filter(Boolean);
+  const additions = [...chosenTalents, ...chosenAbilities.map(a => `+1 ${a}`)];
+  if(additions.length){
+    const addition = additions.join(", ");
+    base.talents = (base.talents && base.talents !== "—") ? `${base.talents}, ${addition}` : addition;
+  }
+
+  // tenta atualizar o número de nível no texto de Tipo (melhor esforço)
+  if(base.type){
+    base.type = base.type.replace(/(\d+)(?!.*\d)/, (m) => {
+      const n = parseInt(m);
+      return isNaN(n) ? m : String(n + (lvlB-lvlA));
+    });
+  }
+  base.nd = Math.max(1, base.nd + Math.round((lvlB-lvlA) * 0.7));
+
+  if(base.cat === "custom") persistCustomSheets();
+
+  renderList();
+  renderPickList();
+  if(base.cat === "custom") renderCustomList();
+  if(currentId === base.id) renderSheet(base);
+
+  flashEvoConfirmation(base.name, lvlB, false);
+});
+
+function flashEvoConfirmation(name, lvl, isShip){
+  const btn = document.getElementById("evoApplyBtn");
+  const original = btn.textContent;
+  btn.textContent = isShip ? `✅ ${name} agora está no ND ${lvl}!` : `✅ ${name} agora está no nível ${lvl}!`;
+  setTimeout(() => { btn.textContent = original; }, 2200);
+}
+
+// ================= INIT =================
+loadCustomSheets();
+addAttackRow({ name:"Rifle blaster", kind:"À Distância", bonus:16, dmg:"3d8+8" });
+addSkillRow({ name:"Percepção", bonus:15 });
+addLocoRow({ type:"andarilho", speed:6 });
+populateDroidModelSelect();
+renderList();
+renderEncounterTabs();
+renderPickList();
+renderTracker();
+updateDifficulty();
+</script>
+</body>
+</html>
