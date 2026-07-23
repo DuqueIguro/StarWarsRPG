@@ -37,11 +37,42 @@ StarWarsRPG
 │  ├─ p2w.json
 │  ├─ planetasSecretos.json
 │  └─ planetas_database.json
-├─ hangar
-│  ├─ fichas.js
-│  ├─ fuelDurtoc.js
-│  ├─ hangarAutorizado.html
-│  └─ status.js
+├─ durtoc
+│  ├─ database
+│  │  ├─ manifesto.json
+│  │  ├─ manifestoSigiloso.json
+│  │  ├─ modeloOS.json
+│  │  ├─ OS-04-COR-001.json
+│  │  ├─ OS-04-UND-001.json
+│  │  └─ siglasLocalidade.json
+│  ├─ droids.html
+│  ├─ droids.js
+│  ├─ durtoc.html
+│  ├─ durtoc.js
+│  ├─ fornecedores
+│  │  ├─ fornecedores.js
+│  │  └─ fornecedores.json
+│  ├─ fornecedores.html
+│  ├─ hangar
+│  │  ├─ fichas.js
+│  │  ├─ fuelDurtoc.js
+│  │  ├─ hangarAutorizado.html
+│  │  └─ status.js
+│  ├─ inventarioOficina.js
+│  ├─ invetarioOficina.html
+│  ├─ oficina.html
+│  ├─ oficina.js
+│  ├─ ordens_de_servico
+│  │  ├─ OS-04-COR-001.json
+│  │  ├─ OS-14-EGM-001.json
+│  │  ├─ OS-14-JAK-001.json
+│  │  ├─ OS-14-OFI-001.json
+│  │  └─ OS-14-OFI-002.json
+│  ├─ ordens_sigilosas
+│  │  ├─ OS-04-UND-001.json
+│  │  ├─ OS-14-SIG-001.json
+│  │  └─ OS-14-SIG-002.json
+│  └─ tripulantes.html
 ├─ Hieararquia.md
 ├─ img
 │  ├─ astara.png
@@ -107,7 +138,6 @@ StarWarsRPG
 │  ├─ databaseInventario.js
 │  ├─ databaseLojaSecreta.js
 │  ├─ distanciaPlanetas.js
-│  ├─ durtoc.js
 │  ├─ escudo.js
 │  ├─ ficha.js
 │  ├─ frotaRebeldes.js
@@ -117,7 +147,6 @@ StarWarsRPG
 │  ├─ holonet-rotator.js
 │  ├─ holonet.js
 │  ├─ inventario.js
-│  ├─ inventarioOficina.js
 │  ├─ isb_gatekeeper.js
 │  ├─ LdIE.js
 │  ├─ login.js
@@ -136,38 +165,12 @@ StarWarsRPG
 ├─ mestre
 │  ├─ distanciaPlanetas.html
 │  ├─ escudo.html
+│  ├─ fichasBalanceamento.html
 │  ├─ frotaMestre.html
 │  ├─ log.html
 │  └─ redirecionamentos.html
-├─ oficina
-│  ├─ database
-│  │  ├─ modeloOS.json
-│  │  ├─ OS-04-COR-001.json
-│  │  ├─ OS-04-UND-001.json
-│  │  └─ siglasLocalidade.json
-│  ├─ droids.html
-│  ├─ droids.js
-│  ├─ fornecedores
-│  │  ├─ fornecedores.js
-│  │  └─ fornecedores.json
-│  ├─ fornecedores.html
-│  ├─ manifesto.json
-│  ├─ manifestoSigiloso.json
-│  ├─ oficina.js
-│  ├─ ordens_de_servico
-│  │  ├─ OS-04-COR-001.json
-│  │  ├─ OS-14-EGM-001.json
-│  │  ├─ OS-14-JAK-001.json
-│  │  ├─ OS-14-OFI-001.json
-│  │  └─ OS-14-OFI-002.json
-│  ├─ ordens_sigilosas
-│  │  ├─ OS-04-UND-001.json
-│  │  ├─ OS-14-SIG-001.json
-│  │  └─ OS-14-SIG-002.json
-│  └─ tripulantes.html
 ├─ pages
 │  ├─ comunicacao.html
-│  ├─ durtoc.html
 │  ├─ ficha.html
 │  ├─ frotaRebeldes.html
 │  ├─ hierarquiaGerais.html
@@ -175,10 +178,8 @@ StarWarsRPG
 │  ├─ hierarquias.html
 │  ├─ holonet.html
 │  ├─ inventario.html
-│  ├─ invetarioOficina.html
 │  ├─ manutencao.html
 │  ├─ mapa_galatico.html
-│  ├─ oficina.html
 │  ├─ p2w.html
 │  ├─ posto.html
 │  ├─ rebeldes.html
