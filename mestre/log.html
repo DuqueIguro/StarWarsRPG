@@ -48,7 +48,7 @@
 <body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
         <div class="mb-4">
-            <button onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='escudo.html'; }"
+            <button onclick="window.location.href='escudo.html';"
                 class="bg-stone-900/80 border border-red-800 text-red-400 px-3 py-2 rounded hover:bg-red-900/60 transition cursor-pointer text-xs font-bold tracking-widest uppercase flex items-center gap-2">
                 ◀ Voltar ao Escudo do Mestre
             </button>
@@ -361,7 +361,7 @@
                         `;
 
                         const btnDeletarFinanceiro = `
-            <button onclick="deletarLog(${log.id}, 'logs_auditoria')" class="text-red-900 hover:text-red-400 transition-colors ml-4" title="Apagar Registro">
+            <button onclick="deletarLog('${log.id}', 'logs_auditoria')" class="text-red-900 hover:text-red-400 transition-colors ml-4" title="Apagar Registro">
                 <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
         `;
@@ -403,6 +403,7 @@
                 // Inicialização da Página
                 carregarPersonagens();
                 carregarLogs();
+                window.carregarLogs = carregarLogs;
             });
 
             /* INÍCIO DE FUNÇÃO DE [Exclusão de Logs ISB] */
