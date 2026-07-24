@@ -28,6 +28,9 @@
 </head>
 
 <body class="min-h-screen p-4 md:p-8">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="durtocGateKeeper.js"></script>
 
     <button id="open-cart-btn"
         class="fixed bottom-6 right-6 z-30 btn-cart-toggle text-white font-orbitron font-bold py-3 px-5 rounded-full flex items-center gap-2 cursor-pointer transition-transform hover:scale-110 active:scale-95">
@@ -72,6 +75,10 @@
                 <button data-tab="personagem"
                     class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO
                     PESSOAL</button>
+                <button data-tab="oficina1"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">MCMT 1</button>
+                <button data-tab="oficina2"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">MCMT 2</button>
             </nav>
         </div>
 
@@ -131,25 +138,43 @@
                 <div id="personal-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 </div>
             </div>
+            <div id="oficina1-pane" class="tab-pane hidden">
+                <div id="oficina1-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </div>
+            </div>
+
+            <div id="oficina2-pane" class="tab-pane hidden">
+                <div id="oficina2-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </div>
+            </div>
         </div>
     </main>
 
     <div id="cart"
-        class="fixed top-0 right-0 h-[96dhv] w-full md:w-1/3 lg:w-1/4 glass-pane p-4 transform translate-x-full z-40 flex flex-col transition-transform duration-300 ease-in-out">
+        class="fixed top-0 right-0 h-[96dvh] w-full md:w-1/3 lg:w-1/4 glass-pane p-4 pb-6 transform translate-x-full z-40 flex flex-col transition-transform duration-300 ease-in-out">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-orbitron text-2xl text-cyan-300">CARRINHO</h2>
             <button id="close-cart-btn"
                 class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
         </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto pr-2">
+        <div id="cart-items" class="flex-grow min-h-0 overflow-y-auto pr-2">
         </div>
-        <div class="mt-4 pt-4 border-t border-cyan-700">
+        <div class="mt-4 pt-4 border-t border-cyan-700 flex-shrink-0">
             <div class="mb-2 flex justify-between items-center">
                 <span class="font-bold">Total Pessoal:</span>
                 <div class="text-right">
                     <span id="cart-total-personal" class="block text-yellow-400 font-bold">0 Créditos</span>
                     <span id="cart-total-reais" class="block text-sm text-green-400 font-bold">R$ 0,00</span>
                 </div>
+            </div>
+            <div class="my-4 p-3 rounded-md bg-gray-900/60 border border-cyan-800">
+                <p class="text-xs font-orbitron text-cyan-400 mb-2 font-bold tracking-wider">LOCAL DE ENTREGA</p>
+                <select id="cart-destination"
+                    class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white focus:ring-1 focus:ring-cyan-500 outline-none font-bold text-sm cursor-pointer">
+                    <option value="personagem">Inventário Pessoal (Padrão)</option>
+                    <option value="oficina1">MCMT 1</option>
+                    <option value="oficina2">MCMT 2</option>
+                </select>
             </div>
 
             <div class="my-4 p-3 rounded-md bg-gray-900/60 border border-cyan-800">
@@ -183,21 +208,35 @@
             <form id="custom-item-form">
                 <div class="space-y-4">
                     <div>
-                        <label for="custom-item-name" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Nome do Item</label>
-                        <input type="text" id="custom-item-name" placeholder="Ex: Blaster Modificado" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
+                        <label for="custom-item-name"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Nome do
+                            Item</label>
+                        <input type="text" id="custom-item-name" placeholder="Ex: Blaster Modificado"
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            required>
                     </div>
                     <div>
-                        <label for="custom-item-desc" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Descrição</label>
-                        <textarea id="custom-item-desc" placeholder="Detalhes do item..." class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" rows="3" required></textarea>
+                        <label for="custom-item-desc"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Descrição</label>
+                        <textarea id="custom-item-desc" placeholder="Detalhes do item..."
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            rows="3" required></textarea>
                     </div>
                     <div>
-                        <label for="custom-item-price" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Preço em Créditos</label>
-                        <input type="number" id="custom-item-price" placeholder="0" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" min="0" required>
+                        <label for="custom-item-price"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Preço em
+                            Créditos</label>
+                        <input type="number" id="custom-item-price" placeholder="0"
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            min="0" required>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="custom-item-quality" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Qualidade</label>
-                            <select id="custom-item-quality" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
+                            <label for="custom-item-quality"
+                                class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Qualidade</label>
+                            <select id="custom-item-quality"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                                required>
                                 <option value="" disabled selected>Selecione...</option>
                                 <option value="Lendária">Lendária</option>
                                 <option value="Imperial">Imperial</option>
@@ -208,8 +247,11 @@
                             </select>
                         </div>
                         <div>
-                            <label for="custom-item-category" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Categoria</label>
-                            <select id="custom-item-category" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
+                            <label for="custom-item-category"
+                                class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Categoria</label>
+                            <select id="custom-item-category"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                                required>
                                 <option value="" disabled selected>Selecione...</option>
                                 <option value="Naves Prontas">Nave Pronta</option>
                                 <option value="Dróides Prontos">Dróide Pronto</option>
@@ -220,7 +262,9 @@
                             </select>
                         </div>
                     </div>
-                    <button type="submit" class="w-full btn-success font-bold py-2 rounded-md cursor-pointer tracking-widest mt-4">SALVAR ITEM</button>
+                    <button type="submit"
+                        class="w-full btn-success font-bold py-2 rounded-md cursor-pointer tracking-widest mt-4">SALVAR
+                        ITEM</button>
                 </div>
             </form>
         </div>
