@@ -15,9 +15,6 @@
         }
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase.js"></script>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -167,11 +164,14 @@
                     <span id="cart-total-reais" class="block text-sm text-green-400 font-bold">R$ 0,00</span>
                 </div>
             </div>
-            <div class="my-4 p-3 rounded-md bg-gray-900/60 border border-cyan-800">
-                <p class="text-xs font-orbitron text-cyan-400 mb-2 font-bold tracking-wider">LOCAL DE ENTREGA</p>
-                <select id="cart-destination"
-                    class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white focus:ring-1 focus:ring-cyan-500 outline-none font-bold text-sm cursor-pointer">
-                    <option value="personagem">Inventário Pessoal (Padrão)</option>
+            <div class="mt-2">
+                <label for="custom-item-destination"
+                    class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Local de
+                    Entrega</label>
+                <select id="custom-item-destination"
+                    class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer"
+                    required>
+                    <option value="personagem">Inventário Pessoal</option>
                     <option value="oficina1">MCMT 1</option>
                     <option value="oficina2">MCMT 2</option>
                 </select>

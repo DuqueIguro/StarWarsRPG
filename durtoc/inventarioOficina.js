@@ -6,7 +6,7 @@ const OFICINA1_ID = '2924a75f-6638-49c8-bb65-10e8ab55f134';
 const OFICINA2_ID = '6eef10e3-b1c0-475a-b2f6-811bc065706c';
 
 const defaultState = {
-    personalCredits: 0, 
+    personalCredits: 0,
     cart: [],
     personalInventory: [],
     oficina1Inventory: [], // Nova array para MCMT 1
@@ -87,25 +87,36 @@ const carregarDadosDoBanco = async () => {
     state.personalCredits = personagens[0].creditos || 0;
     renderCredits();
 
-    // 3. Puxa os itens que ele já comprou da tabela inventario
+    // 3. Puxa os itens de todos os inventários vinculados
     const { data: inventarioDB, error: invError } = await supabaseClient
         .from('inventario')
         .select('*')
-        .eq('personagem_id', currentPersonagemId);
+        .in('personagem_id', [currentPersonagemId, OFICINA1_ID, OFICINA2_ID]);
 
     if (!invError && inventarioDB) {
         state.personalInventory = [];
+        state.oficina1Inventory = [];
+        state.oficina2Inventory = [];
+
         inventarioDB.forEach(dbItem => {
-            // Se o item veio da loja (tem item_id)
+            let itemFinal = null;
+
             if (dbItem.item_id) {
                 const itemBase = state.itemDatabase.find(i => i.id === dbItem.item_id);
-                if (itemBase) {
-                    state.personalInventory.push({ ...itemBase, db_id: dbItem.id });
-                }
+                if (itemBase) itemFinal = { ...itemBase, db_id: dbItem.id, owner_id: dbItem.personagem_id };
+            } else if (dbItem.dados_customizados && Object.keys(dbItem.dados_customizados).length > 0) {
+                itemFinal = { ...dbItem.dados_customizados, db_id: dbItem.id, owner_id: dbItem.personagem_id };
             }
-            // Se o item foi criado manualmente (tem dados_customizados)
-            else if (dbItem.dados_customizados && Object.keys(dbItem.dados_customizados).length > 0) {
-                state.personalInventory.push({ ...dbItem.dados_customizados, db_id: dbItem.id });
+
+            if (itemFinal) {
+                // Distribui o item para a aba correta baseada no ID do dono
+                if (itemFinal.owner_id === OFICINA1_ID) {
+                    state.oficina1Inventory.push(itemFinal);
+                } else if (itemFinal.owner_id === OFICINA2_ID) {
+                    state.oficina2Inventory.push(itemFinal);
+                } else {
+                    state.personalInventory.push(itemFinal);
+                }
             }
         });
         renderInventories();
@@ -216,19 +227,24 @@ const renderItems = () => {
     });
 };
 
-const renderInventories = () => {
-    personalInventoryGridEl.innerHTML = '<p class="text-gray-400 col-span-full text-center">Nenhum item no inventário pessoal.</p>';
-    if (state.personalInventory.length > 0) {
-        personalInventoryGridEl.innerHTML = '';
-        state.personalInventory.sort((a, b) => {
-            // Garante que a ordenação suporta tanto os itens da Loja quanto os da Ficha
+const renderInventoryGrid = (inventoryArray, gridElement) => {
+    gridElement.innerHTML = '<p class="text-gray-500 col-span-full text-center tracking-widest uppercase text-xs mt-8">Nenhum item armazenado neste compartimento.</p>';
+    if (inventoryArray.length > 0) {
+        gridElement.innerHTML = '';
+        inventoryArray.sort((a, b) => {
             const priceA = a.price !== undefined ? a.price : (parseFloat(a.custo) || 0);
             const priceB = b.price !== undefined ? b.price : (parseFloat(b.custo) || 0);
             return priceB - priceA;
         }).forEach(item => {
-            personalInventoryGridEl.appendChild(createItemCard(item, 'personal'));
+            gridElement.appendChild(createItemCard(item, 'personal'));
         });
     }
+};
+
+const renderInventories = () => {
+    renderInventoryGrid(state.personalInventory, personalInventoryGridEl);
+    renderInventoryGrid(state.oficina1Inventory, oficina1InventoryGridEl);
+    renderInventoryGrid(state.oficina2Inventory, oficina2InventoryGridEl);
 };
 
 const renderCart = () => {
@@ -252,7 +268,14 @@ const renderCart = () => {
                         <p class="text-xs text-green-400">R$ ${itemPriceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                 </div>
-                <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1 rounded-md w-full mt-1 cursor-pointer">Remover</button>
+                
+                <select data-index="${index}" class="item-dest-select w-full bg-stone-900 border border-stone-700 rounded p-1.5 mb-2 text-stone-300 text-xs focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer font-bold tracking-wider">
+                    <option value="personagem" ${cartItem.destination === 'personagem' || !cartItem.destination ? 'selected' : ''}>📍 Destino: Inventário Pessoal</option>
+                    <option value="oficina1" ${cartItem.destination === 'oficina1' ? 'selected' : ''}>📍 Destino: MCMT 1</option>
+                    <option value="oficina2" ${cartItem.destination === 'oficina2' ? 'selected' : ''}>📍 Destino: MCMT 2</option>
+                </select>
+
+                <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1.5 rounded-md w-full cursor-pointer uppercase tracking-widest font-bold">Remover</button>
             `;
             totalPersonal += cartItem.item.price;
             cartItemsEl.appendChild(div);
@@ -263,7 +286,15 @@ const renderCart = () => {
     cartTotalPersonalEl.textContent = `${totalPersonal.toLocaleString()} Créditos`;
     cartTotalReaisEl.textContent = `R$ ${totalInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+    // Listeners de remoção e de mudança de destino
     document.querySelectorAll('.remove-from-cart-btn').forEach(btn => btn.addEventListener('click', (e) => handleRemoveFromCart(parseInt(e.target.dataset.index))));
+
+    document.querySelectorAll('.item-dest-select').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const idx = parseInt(e.target.dataset.index);
+            state.cart[idx].destination = e.target.value;
+        });
+    });
 };
 
 // --- FUNÇÕES DE MANIPULAÇÃO (HANDLERS) ---
@@ -413,14 +444,33 @@ const handleCheckout = async () => {
         );
     }
 
-    // Cria o pacote de itens para inserir no banco
-    const itensParaInserir = state.cart.map(cartItem => ({
-        user_id: currentUser.id,
-        personagem_id: currentPersonagemId,
-        item_id: cartItem.item.id,
-        quantidade: 1,
-        origem: selectedPayment === 'credits' ? 'loja_comum' : 'loja_reais'
-    }));
+    // Captura o destino selecionado no carrinho
+    const destinationSelect = document.getElementById('cart-destination').value;
+    let targetPersonagemId = currentPersonagemId; // Padrão é o jogador
+
+    if (destinationSelect === 'oficina1') {
+        targetPersonagemId = OFICINA1_ID;
+    } else if (destinationSelect === 'oficina2') {
+        targetPersonagemId = OFICINA2_ID;
+    }
+
+    const itensParaInserir = state.cart.map(cartItem => {
+        let targetPersonagemId = currentPersonagemId; // Padrão
+
+        if (cartItem.destination === 'oficina1') {
+            targetPersonagemId = OFICINA1_ID;
+        } else if (cartItem.destination === 'oficina2') {
+            targetPersonagemId = OFICINA2_ID;
+        }
+
+        return {
+            user_id: currentUser.id,
+            personagem_id: targetPersonagemId, // Aqui o roteamento individual acontece
+            item_id: cartItem.item.id,
+            quantidade: 1,
+            origem: selectedPayment === 'credits' ? 'loja_comum' : 'loja_reais'
+        };
+    });
 
     // Dispara a entrega dos itens no inventário
     const { error: insertError } = await supabaseClient
@@ -449,24 +499,23 @@ const handleCheckout = async () => {
 };
 
 const handleRemoveFromInventory = async (itemToRemove) => {
-    // 1. Remove visualmente para feedback instantâneo no ecrã
+    // 1. Remove visualmente de todos os arrays para feedback instantâneo
     state.personalInventory = state.personalInventory.filter(item => item.db_id !== itemToRemove.db_id);
+    state.oficina1Inventory = state.oficina1Inventory.filter(item => item.db_id !== itemToRemove.db_id);
+    state.oficina2Inventory = state.oficina2Inventory.filter(item => item.db_id !== itemToRemove.db_id);
     renderInventories();
 
-    // 2. Remove definitivamente da base de dados usando o ID da transação
-    const { error } = await supabaseClient
-        .from('inventario')
-        .delete()
-        .eq('id', itemToRemove.db_id);
+    // 2. Remove da base de dados
+    const { error } = await supabaseClient.from('inventario').delete().eq('id', itemToRemove.db_id);
 
     if (error) {
         console.error(error);
         showNotification('Erro de comunicação. O item não foi descartado.', 'danger');
-        await carregarDadosDoBanco(); // Recarrega para corrigir a interface
+        await carregarDadosDoBanco();
     } else {
         const nomeItemDesc = itemToRemove.name || itemToRemove.nome || 'Desconhecido';
-        await registarLog(currentPersonagemId, 'DESCARTE_ITEM', `Item descartado pelo Terminal da Loja: ${nomeItemDesc}`);
-        showNotification(`${nomeItemDesc} removido do compartimento de carga.`, 'danger');
+        await registarLog(currentPersonagemId, 'DESCARTE_ITEM', `Item descartado de um dos compartimentos: ${nomeItemDesc}`);
+        showNotification(`${nomeItemDesc} removido com sucesso.`, 'danger');
     }
 };
 
@@ -508,11 +557,17 @@ const handleCustomItemSubmit = async (e) => {
         is_custom: true
     };
 
+    // Captura para onde o item customizado vai
+    const destCustom = document.getElementById('custom-item-destination').value;
+    let targetId = currentPersonagemId;
+    if (destCustom === 'oficina1') targetId = OFICINA1_ID;
+    else if (destCustom === 'oficina2') targetId = OFICINA2_ID;
+
     const { error: insertError } = await supabaseClient
         .from('inventario')
         .insert([{
             user_id: currentUser.id,
-            personagem_id: currentPersonagemId,
+            personagem_id: targetId, // Rotas atualizadas
             item_id: null,
             quantidade: 1,
             origem: 'manual',
