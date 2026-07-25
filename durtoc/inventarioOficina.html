@@ -195,21 +195,18 @@
                     <span id="cart-total-reais" class="block text-sm text-green-400 font-bold">R$ 0,00</span>
                 </div>
             </div>
-            <!-- <div class="mt-2">
-                <label for="custom-item-destination"
-                    class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Local de
-                    Entrega</label>
-                <select id="custom-item-destination"
-                    class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer"
-                    required>
-                    <option value="personagem">Inventário Pessoal</option>
-                    <option value="oficina1">MCMT 1</option>
-                    <option value="oficina2">MCMT 2</option>
-                </select>
-            </div> -->
-
             <div class="my-4 p-3 rounded-md bg-gray-900/60 border border-cyan-800">
-                <p class="text-xs font-orbitron text-cyan-400 mb-2 font-bold tracking-wider">FORMA DE PAGAMENTO</p>
+                <p class="text-xs font-orbitron text-cyan-400 mb-2 font-bold tracking-wider">FONTE PAGADORA</p>
+                <select id="cart-payment-source"
+                    class="w-full bg-stone-900 border border-stone-700 rounded p-1.5 text-stone-300 text-xs focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer font-bold tracking-wider">
+                    <option value="personagem">Inventário Pessoal (Padrão)</option>
+                    <option value="oficina1">Cofre da MCMT 1</option>
+                    <option value="oficina2">Cofre da MCMT 2</option>
+                </select>
+
+                <p
+                    class="text-xs font-orbitron text-cyan-400 mb-2 mt-3 font-bold tracking-wider border-t border-cyan-900/50 pt-3">
+                    MÉTODO DE PAGAMENTO</p>
                 <div class="flex flex-col space-y-2">
                     <label class="flex items-center space-x-2 text-sm cursor-pointer select-none">
                         <input type="radio" name="payment-method" value="credits" checked class="accent-cyan-500">
