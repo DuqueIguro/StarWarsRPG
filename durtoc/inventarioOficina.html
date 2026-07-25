@@ -54,15 +54,46 @@
     </header>
 
     <main class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-8">
-            <div class="glass-pane p-4 rounded-lg text-center">
-                <h2 class="font-orbitron text-xl text-yellow-300">CRÉDITOS PESSOAIS</h2>
-                <p class="font-aurebesh text-md text-yellow-500">Creditos Pessoais</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <!-- Pessoal -->
+            <div class="glass-pane p-4 rounded-lg text-center border-t-2 border-yellow-500">
+                <h2 class="font-orbitron text-xs text-yellow-300 tracking-widest">CRÉDITOS PESSOAIS</h2>
                 <div id="personal-credits"
-                    class="credit-value text-3xl font-bold mt-2 p-2 rounded-md transition-all text-stone-300 cursor-not-allowed select-none"
-                    title="Os créditos são lidos diretamente da base de dados e não podem ser alterados manualmente nesta interface.">
-                    VERIFICANDO...</div>
+                    class="text-2xl font-bold mt-1 text-stone-300 cursor-not-allowed select-none">...</div>
             </div>
+
+            <!-- MCMT 1 -->
+            <div class="glass-pane p-4 rounded-lg text-center border-t-2 border-cyan-500 relative group">
+                <h2 class="font-orbitron text-xs text-cyan-300 tracking-widest">MCMT 1</h2>
+                <div class="flex justify-center items-center gap-2 mt-1">
+                    <div id="mcmt1-credits" class="text-2xl font-bold text-stone-300 select-none">...</div>
+                    <button onclick="editarCreditos('oficina1')"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-cyan-900/50 hover:bg-cyan-700 text-cyan-100 px-2 py-1 rounded cursor-pointer"
+                        title="Editar Diretamente">✏️</button>
+                </div>
+            </div>
+
+            <!-- MCMT 2 -->
+            <div class="glass-pane p-4 rounded-lg text-center border-t-2 border-purple-500 relative group">
+                <h2 class="font-orbitron text-xs text-purple-300 tracking-widest">MCMT 2</h2>
+                <div class="flex justify-center items-center gap-2 mt-1">
+                    <div id="mcmt2-credits" class="text-2xl font-bold text-stone-300 select-none">...</div>
+                    <button onclick="editarCreditos('oficina2')"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-purple-900/50 hover:bg-purple-700 text-purple-100 px-2 py-1 rounded cursor-pointer"
+                        title="Editar Diretamente">✏️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-4 mb-8">
+            <button id="btn-open-transfer-modal"
+                class="bg-stone-900/80 border border-stone-600 hover:border-yellow-500 text-stone-300 hover:text-yellow-400 transition-colors font-orbitron font-bold py-2 px-6 rounded-md uppercase tracking-widest text-xs flex items-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                </svg>
+                Transferir Fundos
+            </button>
         </div>
 
         <div class="mb-4 border-b border-cyan-700">
@@ -164,7 +195,7 @@
                     <span id="cart-total-reais" class="block text-sm text-green-400 font-bold">R$ 0,00</span>
                 </div>
             </div>
-            <div class="mt-2">
+            <!-- <div class="mt-2">
                 <label for="custom-item-destination"
                     class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Local de
                     Entrega</label>
@@ -175,7 +206,7 @@
                     <option value="oficina1">MCMT 1</option>
                     <option value="oficina2">MCMT 2</option>
                 </select>
-            </div>
+            </div> -->
 
             <div class="my-4 p-3 rounded-md bg-gray-900/60 border border-cyan-800">
                 <p class="text-xs font-orbitron text-cyan-400 mb-2 font-bold tracking-wider">FORMA DE PAGAMENTO</p>
@@ -262,6 +293,19 @@
                             </select>
                         </div>
                     </div>
+                    <div class="mt-2">
+                        <label for="custom-item-destination"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Local de
+                            Entrega</label>
+                        <select id="custom-item-destination"
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer"
+                            required>
+                            <option value="personagem">Inventário Pessoal</option>
+                            <option value="oficina1">MCMT 1</option>
+                            <option value="oficina2">MCMT 2</option>
+                        </select>
+                    </div>
+
                     <button type="submit"
                         class="w-full btn-success font-bold py-2 rounded-md cursor-pointer tracking-widest mt-4">SALVAR
                         ITEM</button>
@@ -270,8 +314,61 @@
         </div>
     </div>
 
+    <div id="transfer-credits-modal"
+        class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="glass-pane rounded-lg p-8 w-full max-w-md border border-yellow-800/50">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-orbitron text-lg text-yellow-500 tracking-wider">TRANSFERÊNCIA BANCÁRIA</h2>
+                <button id="close-transfer-modal-btn"
+                    class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
+            </div>
+            <form id="transfer-credits-form">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-stone-400 font-orbitron text-[10px] tracking-widest mb-1 uppercase">Origem
+                                (De)</label>
+                            <select id="transfer-from"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-yellow-500 outline-none cursor-pointer text-xs"
+                                required>
+                                <option value="personagem">Inventário Pessoal</option>
+                                <option value="oficina1">MCMT 1</option>
+                                <option value="oficina2">MCMT 2</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-stone-400 font-orbitron text-[10px] tracking-widest mb-1 uppercase">Destino
+                                (Para)</label>
+                            <select id="transfer-to"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-yellow-500 outline-none cursor-pointer text-xs"
+                                required>
+                                <option value="oficina1">MCMT 1</option>
+                                <option value="oficina2">MCMT 2</option>
+                                <option value="personagem">Inventário Pessoal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-stone-400 font-orbitron text-[10px] tracking-widest mb-1 uppercase">Valor
+                            da Remessa (Créditos)</label>
+                        <input type="number" id="transfer-amount" placeholder="0"
+                            class="modal-input w-full text-yellow-400 bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-yellow-500 outline-none font-bold text-lg text-center"
+                            min="1" required>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-yellow-600/80 hover:bg-yellow-500 text-stone-900 font-bold py-3 rounded-md cursor-pointer tracking-widest mt-6 text-xs uppercase shadow-[0_0_10px_rgba(234,179,8,0.2)] transition-colors">
+                        Confirmar Transação
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="../js/databaseInventario.js"></script>
-    <script src="../js/inventario.js" defer></script>
+    <script src="./inventarioOficina.js" defer></script>
 
 </body>
 

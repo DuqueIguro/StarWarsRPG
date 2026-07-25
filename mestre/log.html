@@ -46,9 +46,14 @@
 </head>
 
 <body class="p-4 md:p-8">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/isb_gatekeeper.js"></script>
+
     <div class="max-w-7xl mx-auto">
         <div class="mb-4">
-            <button onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='escudo.html'; }"
+            <button
+                onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='escudo.html'; }"
                 class="bg-stone-900/80 border border-red-800 text-red-400 px-3 py-2 rounded hover:bg-red-900/60 transition cursor-pointer text-xs font-bold tracking-widest uppercase flex items-center gap-2">
                 ◀ Voltar ao Escudo do Mestre
             </button>
@@ -219,9 +224,6 @@
         </div>
 
         <!-- Scripts do Banco e da Lógica -->
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="../js/supabase.js"></script>
-        <script src="../js/isb_gatekeeper.js"></script>
         <script>
             /* ARQUIVO: js/auditoria.js */
 
