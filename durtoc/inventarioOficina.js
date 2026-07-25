@@ -2,6 +2,7 @@
 const STORAGE_KEY = 'starWarsRPGState';
 
 // Constantes Hardcoded das Oficinas (Geradas no BD)
+const DURTOC_ID = '1b4d3a27-94fb-4115-8504-ce66cc15c720';
 const OFICINA1_ID = '2924a75f-6638-49c8-bb65-10e8ab55f134';
 const OFICINA2_ID = '6eef10e3-b1c0-475a-b2f6-811bc065706c';
 
@@ -20,7 +21,8 @@ let state = JSON.parse(JSON.stringify(defaultState));
 
 // --- VARIÁVEIS DO BANCO DE DADOS (SUPABASE) ---
 let currentUser = null;
-let currentPersonagemId = null;
+let currentPersonagemId = DURTOC_ID;
+let donoDaContaUserId = null;
 
 const registarLog = async (personagemId, tipoEvento, descricao, mudancaCreditos = 0) => {
     if (!personagemId) return;
@@ -65,44 +67,56 @@ defaultState.mcmt1Credits = 0;
 defaultState.mcmt2Credits = 0;
 
 const carregarDadosDoBanco = async () => {
-    personalCreditsEl.textContent = "CONECTANDO...";
+    if (personalCreditsEl) personalCreditsEl.textContent = "CONECTANDO...";
 
+    // 1. Verifica se tem alguém (qualquer um) logado
     const { data: userData, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !userData.user) return;
+    if (userError || !userData.user) {
+        if (personalCreditsEl) personalCreditsEl.textContent = "NÃO AUTENTICADO";
+        return;
+    }
     currentUser = userData.user;
 
-    // Busca TODOS os personagens vinculados a este e-mail
+    // 2. Busca OS PERSONAGENS ESPECÍFICOS por ID, ignorando de quem é a sessão
     const { data: personagens, error: pError } = await supabaseClient
         .from('personagens')
-        .select('id, creditos, nome')
-        .eq('user_id', currentUser.id);
+        .select('id, creditos, nome, user_id')
+        .in('id', [DURTOC_ID, OFICINA1_ID, OFICINA2_ID]);
 
-    if (pError || !personagens || personagens.length === 0) return;
+    if (pError || !personagens || personagens.length === 0) {
+        if (personalCreditsEl) personalCreditsEl.textContent = "DADOS NÃO ENCONTRADOS";
+        return;
+    }
 
-    // Isola o jogador verdadeiro e extrai os dinheiros das oficinas
-    const pMain = personagens.find(p => p.id !== OFICINA1_ID && p.id !== OFICINA2_ID);
+    // 3. Isola cada identidade na memória
+    const pMain = personagens.find(p => p.id === DURTOC_ID);
     const pMcmt1 = personagens.find(p => p.id === OFICINA1_ID);
     const pMcmt2 = personagens.find(p => p.id === OFICINA2_ID);
 
-    currentPersonagemId = pMain ? pMain.id : null;
+    // 4. Grava os estados financeiros e descobre o dono verdadeiro da conta (para registrar compras no banco)
+    donoDaContaUserId = pMain ? pMain.user_id : currentUser.id;
+    currentPersonagemId = DURTOC_ID;
+
     state.personalCredits = pMain ? pMain.creditos : 0;
     state.mcmt1Credits = pMcmt1 ? pMcmt1.creditos : 0;
     state.mcmt2Credits = pMcmt2 ? pMcmt2.creditos : 0;
     renderCredits();
 
-    // Puxa itens de todos os inventários (Mesma lógica anterior, inalterada)
+    // 5. Puxa TODOS OS ITENS de todos os inventários alvo da Holonet
     const { data: inventarioDB, error: invError } = await supabaseClient
         .from('inventario')
         .select('*')
-        .in('personagem_id', [currentPersonagemId, OFICINA1_ID, OFICINA2_ID]);
+        .in('personagem_id', [DURTOC_ID, OFICINA1_ID, OFICINA2_ID]);
 
     if (!invError && inventarioDB) {
+        // Limpa os grids antes de preencher
         state.personalInventory = [];
         state.oficina1Inventory = [];
         state.oficina2Inventory = [];
 
         inventarioDB.forEach(dbItem => {
             let itemFinal = null;
+
             if (dbItem.item_id) {
                 const itemBase = state.itemDatabase.find(i => i.id === dbItem.item_id);
                 if (itemBase) itemFinal = { ...itemBase, db_id: dbItem.id, owner_id: dbItem.personagem_id };
@@ -111,17 +125,26 @@ const carregarDadosDoBanco = async () => {
             }
 
             if (itemFinal) {
-                if (itemFinal.owner_id === OFICINA1_ID) state.oficina1Inventory.push(itemFinal);
-                else if (itemFinal.owner_id === OFICINA2_ID) state.oficina2Inventory.push(itemFinal);
-                else state.personalInventory.push(itemFinal);
+                // Distribui o item lido para a aba correta baseada no ID chumbado
+                if (itemFinal.owner_id === OFICINA1_ID) {
+                    state.oficina1Inventory.push(itemFinal);
+                } else if (itemFinal.owner_id === OFICINA2_ID) {
+                    state.oficina2Inventory.push(itemFinal);
+                } else if (itemFinal.owner_id === DURTOC_ID) {
+                    state.personalInventory.push(itemFinal);
+                }
             }
         });
+
+        // Renderiza visualmente as 3 garagens
         renderInventories();
+    } else {
+        console.error("Erro ao puxar inventário:", invError);
     }
 };
 
 const renderCredits = () => {
-    if(personalCreditsEl) personalCreditsEl.textContent = state.personalCredits.toLocaleString();
+    if (personalCreditsEl) personalCreditsEl.textContent = state.personalCredits.toLocaleString();
     const mcmt1El = document.getElementById('mcmt1-credits');
     const mcmt2El = document.getElementById('mcmt2-credits');
     if (mcmt1El) mcmt1El.textContent = state.mcmt1Credits.toLocaleString();
@@ -397,10 +420,25 @@ const handleCheckout = async () => {
     checkoutBtn.textContent = "PROCESSANDO TRANSAÇÃO...";
 
     if (selectedPayment === 'credits') {
+
+        // 1. Identifica QUEM vai pagar a conta
+        const paymentAlias = document.getElementById('cart-payment-source').value;
+        let payerId = currentPersonagemId;
+        let payerName = "Inventário Pessoal";
+
+        if (paymentAlias === 'oficina1') {
+            payerId = OFICINA1_ID;
+            payerName = "MCMT 1";
+        } else if (paymentAlias === 'oficina2') {
+            payerId = OFICINA2_ID;
+            payerName = "MCMT 2";
+        }
+
+        // 2. Busca o saldo exato e atualizado DO PAGADOR no banco
         const { data: dbData, error: dbError } = await supabaseClient
             .from('personagens')
             .select('creditos')
-            .eq('id', currentPersonagemId)
+            .eq('id', payerId)
             .single();
 
         if (dbError || !dbData) {
@@ -413,8 +451,13 @@ const handleCheckout = async () => {
         const saldoReal = dbData.creditos;
 
         if (saldoReal < personalCost) {
-            showNotification('Transação Negada: Fundos Insuficientes!', 'danger');
-            state.personalCredits = saldoReal;
+            showNotification(`Transação Negada: Fundos Insuficientes no cofre [${payerName}]!`, 'danger');
+
+            // Pune tentativas de manipulação restaurando o valor visual real
+            if (paymentAlias === 'oficina1') state.mcmt1Credits = saldoReal;
+            else if (paymentAlias === 'oficina2') state.mcmt2Credits = saldoReal;
+            else state.personalCredits = saldoReal;
+
             renderCredits();
             checkoutBtn.disabled = false;
             checkoutBtn.textContent = "FINALIZAR COMPRA";
@@ -423,10 +466,11 @@ const handleCheckout = async () => {
 
         const novoSaldo = saldoReal - personalCost;
 
+        // 3. Debita o valor no cofre específico
         const { error: updateError } = await supabaseClient
             .from('personagens')
             .update({ creditos: novoSaldo })
-            .eq('id', currentPersonagemId);
+            .eq('id', payerId);
 
         if (updateError) {
             showNotification('Erro crítico ao processar o pagamento.', 'danger');
@@ -435,13 +479,18 @@ const handleCheckout = async () => {
             return;
         }
 
-        state.personalCredits = novoSaldo;
+        // Atualiza a memória local da interface
+        if (paymentAlias === 'oficina1') state.mcmt1Credits = novoSaldo;
+        else if (paymentAlias === 'oficina2') state.mcmt2Credits = novoSaldo;
+        else state.personalCredits = novoSaldo;
+        renderCredits();
 
+        // 4. REGISTRA O LOG (Vinculado ao jogador principal para auditoria central)
         const nomesItens = state.cart.map(c => c.item.name).join(', ');
         await registarLog(
             currentPersonagemId,
             'COMPRA_LOJA',
-            `Compra Finalizada: [${nomesItens}]. Saldo anterior: ${saldoReal} | Novo Saldo: ${novoSaldo}`,
+            `Compra Finalizada (Pago por: ${payerName}) - Itens: [${nomesItens}]. Saldo do cofre caiu de ${saldoReal} para ${novoSaldo}`,
             -personalCost
         );
     } else if (selectedPayment === 'reais') {
@@ -468,7 +517,7 @@ const handleCheckout = async () => {
         }
 
         return {
-            user_id: currentUser.id,
+            user_id: donoDaContaUserId, // <-- ALTERADO AQUI
             personagem_id: targetPersonagemId,
             item_id: cartItem.item.id,
             quantidade: 1,
@@ -601,8 +650,8 @@ const handleCustomItemSubmit = async (e) => {
     const { error: insertError } = await supabaseClient
         .from('inventario')
         .insert([{
-            user_id: currentUser.id,
-            personagem_id: targetId, // Rotas atualizadas
+            user_id: donoDaContaUserId, // <-- ALTERADO AQUI
+            personagem_id: targetId,
             item_id: null,
             quantidade: 1,
             origem: 'manual',
