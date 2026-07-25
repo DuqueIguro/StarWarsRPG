@@ -60,34 +60,37 @@ const oficina1InventoryGridEl = document.getElementById('oficina1-inventory-grid
 const oficina2InventoryGridEl = document.getElementById('oficina2-inventory-grid');
 const cartDestinationEl = document.getElementById('cart-destination');
 
+// Adicione as memórias de dinheiro no defaultState:
+defaultState.mcmt1Credits = 0;
+defaultState.mcmt2Credits = 0;
+
 const carregarDadosDoBanco = async () => {
     personalCreditsEl.textContent = "CONECTANDO...";
 
-    // 1. Identifica quem está logado
     const { data: userData, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !userData.user) {
-        personalCreditsEl.textContent = "NÃO AUTENTICADO";
-        return;
-    }
+    if (userError || !userData.user) return;
     currentUser = userData.user;
 
-    // 2. Busca o ID do personagem e o dinheiro oficial
+    // Busca TODOS os personagens vinculados a este e-mail
     const { data: personagens, error: pError } = await supabaseClient
         .from('personagens')
-        .select('id, creditos')
-        .eq('user_id', currentUser.id)
-        .limit(1);
+        .select('id, creditos, nome')
+        .eq('user_id', currentUser.id);
 
-    if (pError || !personagens || personagens.length === 0) {
-        personalCreditsEl.textContent = "PERSONAGEM NÃO ENCONTRADO";
-        return;
-    }
+    if (pError || !personagens || personagens.length === 0) return;
 
-    currentPersonagemId = personagens[0].id;
-    state.personalCredits = personagens[0].creditos || 0;
+    // Isola o jogador verdadeiro e extrai os dinheiros das oficinas
+    const pMain = personagens.find(p => p.id !== OFICINA1_ID && p.id !== OFICINA2_ID);
+    const pMcmt1 = personagens.find(p => p.id === OFICINA1_ID);
+    const pMcmt2 = personagens.find(p => p.id === OFICINA2_ID);
+
+    currentPersonagemId = pMain ? pMain.id : null;
+    state.personalCredits = pMain ? pMain.creditos : 0;
+    state.mcmt1Credits = pMcmt1 ? pMcmt1.creditos : 0;
+    state.mcmt2Credits = pMcmt2 ? pMcmt2.creditos : 0;
     renderCredits();
 
-    // 3. Puxa os itens de todos os inventários vinculados
+    // Puxa itens de todos os inventários (Mesma lógica anterior, inalterada)
     const { data: inventarioDB, error: invError } = await supabaseClient
         .from('inventario')
         .select('*')
@@ -100,7 +103,6 @@ const carregarDadosDoBanco = async () => {
 
         inventarioDB.forEach(dbItem => {
             let itemFinal = null;
-
             if (dbItem.item_id) {
                 const itemBase = state.itemDatabase.find(i => i.id === dbItem.item_id);
                 if (itemBase) itemFinal = { ...itemBase, db_id: dbItem.id, owner_id: dbItem.personagem_id };
@@ -109,29 +111,26 @@ const carregarDadosDoBanco = async () => {
             }
 
             if (itemFinal) {
-                // Distribui o item para a aba correta baseada no ID do dono
-                if (itemFinal.owner_id === OFICINA1_ID) {
-                    state.oficina1Inventory.push(itemFinal);
-                } else if (itemFinal.owner_id === OFICINA2_ID) {
-                    state.oficina2Inventory.push(itemFinal);
-                } else {
-                    state.personalInventory.push(itemFinal);
-                }
+                if (itemFinal.owner_id === OFICINA1_ID) state.oficina1Inventory.push(itemFinal);
+                else if (itemFinal.owner_id === OFICINA2_ID) state.oficina2Inventory.push(itemFinal);
+                else state.personalInventory.push(itemFinal);
             }
         });
         renderInventories();
     }
 };
 
-// --- FUNÇÕES DE RENDERIZAÇÃO ---
 const renderCredits = () => {
-    personalCreditsEl.textContent = state.personalCredits.toLocaleString();
+    if(personalCreditsEl) personalCreditsEl.textContent = state.personalCredits.toLocaleString();
+    const mcmt1El = document.getElementById('mcmt1-credits');
+    const mcmt2El = document.getElementById('mcmt2-credits');
+    if (mcmt1El) mcmt1El.textContent = state.mcmt1Credits.toLocaleString();
+    if (mcmt2El) mcmt2El.textContent = state.mcmt2Credits.toLocaleString();
 };
 
 const createItemCard = (item, context = 'shop') => {
     const card = document.createElement('div');
 
-    // Normalização de dados (A Ficha usa propriedades diferentes da Loja, então usamos fallback)
     const itemName = item.name || item.nome || 'Item Desconhecido';
     const itemQuality = item.quality || 'Normal';
     const itemCategory = item.category || (item.tipo_inventario === 'arma' ? 'Armamento' : 'Equipamento Geral');
@@ -142,13 +141,27 @@ const createItemCard = (item, context = 'shop') => {
     card.className = `glass-pane p-4 rounded-lg flex flex-col border-l-4 quality-${qualityClass} item-card-animate transform transition-all duration-300 hover:-translate-y-1`;
 
     let buttonsHtml = '';
+
     if (context === 'shop') {
-        buttonsHtml = `<button class="add-to-cart-btn mt-4 btn-primary font-bold py-2 px-4 rounded-md w-full cursor-pointer">Adicionar ao Carrinho</button>`;
+        buttonsHtml = `<button class="add-to-cart-btn mt-4 btn-primary font-bold py-2 px-4 rounded-md w-full cursor-pointer uppercase tracking-widest text-xs">Adicionar ao Carrinho</button>`;
     } else {
-        buttonsHtml = `<button class="remove-from-inventory-btn mt-4 btn-danger font-bold py-2 px-4 rounded-md w-full cursor-pointer">Remover do Inventário</button>`;
+        // Interface exclusiva de Inventário (Transferência + Remoção)
+        buttonsHtml = `
+            <div class="mt-4 pt-3 border-t border-cyan-900/50">
+                <label class="block text-[10px] text-cyan-500 uppercase tracking-widest mb-1 font-bold">Transferir para:</label>
+                <div class="flex gap-2 mb-2">
+                    <select class="transfer-dest-select flex-grow bg-stone-900 border border-stone-700 rounded p-1.5 text-[11px] text-stone-300 outline-none focus:border-cyan-400 font-bold uppercase tracking-wider cursor-pointer">
+                        <option value="personagem" ${item.owner_id === currentPersonagemId ? 'disabled' : ''}>Inventário Pessoal</option>
+                        <option value="oficina1" ${item.owner_id === OFICINA1_ID ? 'disabled' : ''}>MCMT 1</option>
+                        <option value="oficina2" ${item.owner_id === OFICINA2_ID ? 'disabled' : ''}>MCMT 2</option>
+                    </select>
+                    <button class="transfer-btn btn-success px-3 py-1.5 text-xs rounded font-bold cursor-pointer uppercase tracking-widest">Mover</button>
+                </div>
+                <button class="remove-from-inventory-btn btn-danger font-bold py-1.5 px-4 rounded-md w-full cursor-pointer text-[10px] uppercase tracking-widest">Descartar Item</button>
+            </div>
+        `;
     }
 
-    // CÁLCULO DA CONVERSÃO (10000 créditos = 1 real)
     const priceInReais = itemPrice / 10000;
 
     card.innerHTML = `
@@ -165,14 +178,17 @@ const createItemCard = (item, context = 'shop') => {
         </div>
     `;
 
-    const itemData = JSON.stringify(item);
+    // Acoplamento de Eventos usando Closure (Mais seguro e rápido)
     if (context === 'shop') {
         card.querySelector('.add-to-cart-btn').addEventListener('click', () => handleAddToCart(item));
     } else {
-        card.querySelector('.remove-from-inventory-btn').dataset.item = itemData;
-        card.querySelector('.remove-from-inventory-btn').addEventListener('click', (e) => {
-            const itemToRemove = JSON.parse(e.target.dataset.item);
-            handleRemoveFromInventory(itemToRemove);
+        // Evento de Descarte
+        card.querySelector('.remove-from-inventory-btn').addEventListener('click', () => handleRemoveFromInventory(item));
+
+        // Evento de Transferência
+        card.querySelector('.transfer-btn').addEventListener('click', () => {
+            const newDestination = card.querySelector('.transfer-dest-select').value;
+            handleTransferItem(item, newDestination);
         });
     }
 
@@ -270,7 +286,7 @@ const renderCart = () => {
                 </div>
                 
                 <select data-index="${index}" class="item-dest-select w-full bg-stone-900 border border-stone-700 rounded p-1.5 mb-2 text-stone-300 text-xs focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer font-bold tracking-wider">
-                    <option value="personagem" ${cartItem.destination === 'personagem' || !cartItem.destination ? 'selected' : ''}>📍 Destino: Inventário Pessoal</option>
+                    <option value="personagem" ${cartItem.destination === 'personagem' ? 'selected' : ''}>📍 Destino: Inventário Pessoal</option>
                     <option value="oficina1" ${cartItem.destination === 'oficina1' ? 'selected' : ''}>📍 Destino: MCMT 1</option>
                     <option value="oficina2" ${cartItem.destination === 'oficina2' ? 'selected' : ''}>📍 Destino: MCMT 2</option>
                 </select>
@@ -286,13 +302,14 @@ const renderCart = () => {
     cartTotalPersonalEl.textContent = `${totalPersonal.toLocaleString()} Créditos`;
     cartTotalReaisEl.textContent = `R$ ${totalInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-    // Listeners de remoção e de mudança de destino
+    // Listeners Reativos: Gravam a mudança de rota IMEDIATAMENTE na memória
     document.querySelectorAll('.remove-from-cart-btn').forEach(btn => btn.addEventListener('click', (e) => handleRemoveFromCart(parseInt(e.target.dataset.index))));
 
     document.querySelectorAll('.item-dest-select').forEach(select => {
         select.addEventListener('change', (e) => {
             const idx = parseInt(e.target.dataset.index);
             state.cart[idx].destination = e.target.value;
+            console.log(`[Roteamento] Item ${idx} redirecionado para: ${e.target.value}`);
         });
     });
 };
@@ -342,7 +359,9 @@ const showNotification = (message, type = 'success') => {
 
 const handleAddToCart = (item) => {
     const uniqueItem = { ...item, uid: Date.now() + Math.random() };
-    state.cart.push({ item: uniqueItem, destination: null });
+
+    state.cart.push({ item: uniqueItem, destination: 'personagem' });
+
     cartEl.classList.remove('translate-x-full');
     renderCart();
     showNotification(`${item.name} adicionado ao carrinho!`);
@@ -374,12 +393,10 @@ const handleCheckout = async () => {
     let personalCost = 0;
     state.cart.forEach(cartItem => { personalCost += cartItem.item.price; });
 
-    // Desativa o botão temporariamente para evitar cliques duplos (Double Spend)
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = "PROCESSANDO TRANSAÇÃO...";
 
     if (selectedPayment === 'credits') {
-        // BLINDAGEM: Busca o saldo atual e real do banco de dados antes de cobrar
         const { data: dbData, error: dbError } = await supabaseClient
             .from('personagens')
             .select('creditos')
@@ -397,7 +414,6 @@ const handleCheckout = async () => {
 
         if (saldoReal < personalCost) {
             showNotification('Transação Negada: Fundos Insuficientes!', 'danger');
-            // Pune tentativas de manipulação restaurando o valor visual real
             state.personalCredits = saldoReal;
             renderCredits();
             checkoutBtn.disabled = false;
@@ -407,7 +423,6 @@ const handleCheckout = async () => {
 
         const novoSaldo = saldoReal - personalCost;
 
-        // Debita o valor na conta do Supabase
         const { error: updateError } = await supabaseClient
             .from('personagens')
             .update({ creditos: novoSaldo })
@@ -422,7 +437,6 @@ const handleCheckout = async () => {
 
         state.personalCredits = novoSaldo;
 
-        // REGISTRA O LOG DE COMPRA COM RELATÓRIO FINANCEIRO
         const nomesItens = state.cart.map(c => c.item.name).join(', ');
         await registarLog(
             currentPersonagemId,
@@ -434,7 +448,6 @@ const handleCheckout = async () => {
         window.open('https://livepix.gg/doisimperadores', '_blank');
         showNotification('Aguardando compensação via Livepix. Itens despachados!', 'success');
 
-        // REGISTRA O LOG DE COMPRA COM REAIS
         const nomesItens = state.cart.map(c => c.item.name).join(', ');
         await registarLog(
             currentPersonagemId,
@@ -444,18 +457,9 @@ const handleCheckout = async () => {
         );
     }
 
-    // Captura o destino selecionado no carrinho
-    const destinationSelect = document.getElementById('cart-destination').value;
-    let targetPersonagemId = currentPersonagemId; // Padrão é o jogador
-
-    if (destinationSelect === 'oficina1') {
-        targetPersonagemId = OFICINA1_ID;
-    } else if (destinationSelect === 'oficina2') {
-        targetPersonagemId = OFICINA2_ID;
-    }
-
+    // A MÁGICA ACONTECE AQUI: O empacotador mapeia o destino item a item
     const itensParaInserir = state.cart.map(cartItem => {
-        let targetPersonagemId = currentPersonagemId; // Padrão
+        let targetPersonagemId = currentPersonagemId;
 
         if (cartItem.destination === 'oficina1') {
             targetPersonagemId = OFICINA1_ID;
@@ -465,7 +469,7 @@ const handleCheckout = async () => {
 
         return {
             user_id: currentUser.id,
-            personagem_id: targetPersonagemId, // Aqui o roteamento individual acontece
+            personagem_id: targetPersonagemId,
             item_id: cartItem.item.id,
             quantidade: 1,
             origem: selectedPayment === 'credits' ? 'loja_comum' : 'loja_reais'
@@ -489,13 +493,44 @@ const handleCheckout = async () => {
         state.cart = [];
         cartEl.classList.add('translate-x-full');
 
-        // Recarrega os dados do banco de dados para garantir que a interface está atualizada
+        // Puxa o banco atualizado (agora as abas corretas vão receber os itens novos)
         await carregarDadosDoBanco();
         renderCart();
     }
 
     checkoutBtn.disabled = false;
     checkoutBtn.textContent = "FINALIZAR COMPRA";
+};
+
+const handleTransferItem = async (item, destAlias) => {
+    let sourceName = "Inventário Pessoal";
+    if (item.owner_id === OFICINA1_ID) sourceName = "MCMT 1";
+    else if (item.owner_id === OFICINA2_ID) sourceName = "MCMT 2";
+
+    let targetId = currentPersonagemId;
+    let destName = "Inventário Pessoal";
+
+    if (destAlias === 'oficina1') {
+        targetId = OFICINA1_ID;
+        destName = "MCMT 1";
+    } else if (destAlias === 'oficina2') {
+        targetId = OFICINA2_ID;
+        destName = "MCMT 2";
+    }
+
+    if (item.owner_id === targetId) return;
+
+    const { error } = await supabaseClient.from('inventario').update({ personagem_id: targetId }).eq('id', item.db_id);
+
+    if (error) {
+        showNotification('Erro na matriz de transferência.', 'danger');
+    } else {
+        const nomeItem = item.name || item.nome || 'Desconhecido';
+        // LOG DETALHADO ADICIONADO:
+        await registarLog(currentPersonagemId, 'TRANSFERENCIA_ITEM', `Equipamento realocado de [${sourceName}] para [${destName}]: ${nomeItem}`);
+        showNotification(`${nomeItem} transferido para ${destName}!`, 'success');
+        await carregarDadosDoBanco();
+    }
 };
 
 const handleRemoveFromInventory = async (itemToRemove) => {
@@ -588,6 +623,88 @@ const handleCustomItemSubmit = async (e) => {
     submitBtn.textContent = "Salvar Item";
 };
 
+/* INICIO DO CONTROLE FINANCEIRO DAS MCMTs */
+// 1. Edição Manual (Lapiseira)
+window.editarCreditos = async (oficinaAlias) => {
+    const targetId = oficinaAlias === 'oficina1' ? OFICINA1_ID : OFICINA2_ID;
+    const nomeOficina = oficinaAlias === 'oficina1' ? 'MCMT 1' : 'MCMT 2';
+    const saldoAtual = oficinaAlias === 'oficina1' ? state.mcmt1Credits : state.mcmt2Credits;
+
+    const novoValorStr = prompt(`Digite o novo saldo de créditos exato para o cofre da ${nomeOficina}:`, saldoAtual);
+    if (novoValorStr === null || novoValorStr.trim() === '') return;
+
+    const novoValor = parseInt(novoValorStr);
+    if (isNaN(novoValor) || novoValor < 0) {
+        showNotification('Valor inválido.', 'danger');
+        return;
+    }
+
+    const { error } = await supabaseClient.from('personagens').update({ creditos: novoValor }).eq('id', targetId);
+
+    if (!error) {
+        await registarLog(currentPersonagemId, 'AJUSTE_FUNDOS', `Auditoria: Cofre da ${nomeOficina} alterado manualmente. De ${saldoAtual} para ${novoValor} Créditos.`);
+        showNotification(`Cofre da ${nomeOficina} atualizado!`, 'success');
+        await carregarDadosDoBanco();
+    } else {
+        showNotification('Falha de conexão com o Banco.', 'danger');
+    }
+};
+
+// 2. Lógica do Modal de Transferência Bancária
+const handleTransferCreditsSubmit = async (e) => {
+    e.preventDefault();
+    const fromAlias = document.getElementById('transfer-from').value;
+    const toAlias = document.getElementById('transfer-to').value;
+    const amount = parseInt(document.getElementById('transfer-amount').value);
+
+    if (fromAlias === toAlias) {
+        showNotification('As contas de origem e destino devem ser diferentes.', 'danger');
+        return;
+    }
+    if (amount <= 0 || isNaN(amount)) {
+        showNotification('Insira um valor de remessa válido.', 'danger');
+        return;
+    }
+
+    const contas = {
+        'personagem': { id: currentPersonagemId, name: 'Inventário Pessoal', saldo: state.personalCredits },
+        'oficina1': { id: OFICINA1_ID, name: 'MCMT 1', saldo: state.mcmt1Credits },
+        'oficina2': { id: OFICINA2_ID, name: 'MCMT 2', saldo: state.mcmt2Credits }
+    };
+
+    const cOrigem = contas[fromAlias];
+    const cDestino = contas[toAlias];
+
+    if (cOrigem.saldo < amount) {
+        showNotification(`Saldo insuficiente na conta: ${cOrigem.name}.`, 'danger');
+        return;
+    }
+
+    const btnSubmit = document.querySelector('#transfer-credits-form button[type="submit"]');
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = 'AUTORIZANDO REMESSA...';
+
+    // Dispara as duas atualizações simultaneamente
+    const p1 = supabaseClient.from('personagens').update({ creditos: cOrigem.saldo - amount }).eq('id', cOrigem.id);
+    const p2 = supabaseClient.from('personagens').update({ creditos: cDestino.saldo + amount }).eq('id', cDestino.id);
+
+    const [res1, res2] = await Promise.all([p1, p2]);
+
+    if (!res1.error && !res2.error) {
+        await registarLog(currentPersonagemId, 'TRANSFERENCIA_FUNDOS', `Transferência Bancária: ${amount} Créditos movidos de [${cOrigem.name}] para [${cDestino.name}].`);
+        showNotification('Transferência efetuada com sucesso!', 'success');
+        document.getElementById('transfer-credits-modal').classList.add('hidden');
+        document.getElementById('transfer-credits-form').reset();
+        await carregarDadosDoBanco();
+    } else {
+        showNotification('A transação falhou.', 'danger');
+    }
+
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = 'CONFIRMAR TRANSAÇÃO';
+};
+/* FIM DO CONTROLE FINANCEIRO */
+
 // --- INICIALIZAÇÃO ---
 const init = async () => {
     tabsEl.addEventListener('click', handleTabClick);
@@ -597,6 +714,12 @@ const init = async () => {
 
     closeCartBtn.addEventListener('click', () => cartEl.classList.add('translate-x-full'));
     openCartBtn.addEventListener('click', () => cartEl.classList.remove('translate-x-full'));
+
+    // Adicione isto no meio da sua função init()
+    const transModal = document.getElementById('transfer-credits-modal');
+    document.getElementById('btn-open-transfer-modal').addEventListener('click', () => transModal.classList.remove('hidden'));
+    document.getElementById('close-transfer-modal-btn').addEventListener('click', () => transModal.classList.add('hidden'));
+    document.getElementById('transfer-credits-form').addEventListener('submit', handleTransferCreditsSubmit);
 
     checkoutBtn.addEventListener('click', handleCheckout);
     resetBtn.addEventListener('click', handleReset);
