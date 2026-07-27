@@ -987,17 +987,31 @@ function initFicha() {
     /* FIM DE FUNÇÃO DE [Adicionar Talentos de Classe] */
 
 
-    /* INÍCIO DE FUNÇÃO DE [Controle da Barra de Vida corrigido] */
+    /* INÍCIO DE FUNÇÃO DE [Controle da Barra de Vida corrigido]; esta função atualiza os pontos de vida garantindo o limite máximo correto somando as multiclasses */
     window.alterarPV = function (acao) {
-        const nivel = parseInt(appState.biografia.nivel) || 1;
+        const nivelPrincipal = parseInt(appState.biografia.nivel) || 1;
         const classeKey = appState.biografia.classe;
         const modsCon = Math.floor(((parseInt(appState.atributosBase.constituicao) || 10) - 10) / 2);
 
         let pvBase = 0;
         if (classeKey && DADOS_CLASSES[classeKey]) {
             const classeData = DADOS_CLASSES[classeKey];
-            pvBase = classeData.pvIniciais + ((nivel - 1) * classeData.dadoVida) + (modsCon * nivel);
+            pvBase = classeData.pvIniciais + ((nivelPrincipal - 1) * classeData.dadoVida) + (modsCon * nivelPrincipal);
         }
+
+        // Adiciona os PVs extras vindos das multiclasses
+        if (appState.biografia.multiclasse) {
+            appState.biografia.multiclasse.forEach(c => {
+                const multiNome = typeof c === 'string' ? c : (c.nome || "");
+                const multiNivel = typeof c === 'string' ? 1 : (parseInt(c.nivel) || 1);
+
+                if (multiNome && DADOS_CLASSES[multiNome]) {
+                    const classDataMulti = DADOS_CLASSES[multiNome];
+                    pvBase += (multiNivel * classDataMulti.dadoVida) + (modsCon * multiNivel);
+                }
+            });
+        }
+
         const maxHp = pvBase + (parseInt(appState.modificadoresManuais.status.modVidaMaxima) || 0);
 
         let currentHp = (appState.recursos.pontosVidaAtual !== null) ? parseInt(appState.recursos.pontosVidaAtual) : maxHp;
@@ -1242,26 +1256,49 @@ function initFicha() {
     };
 
     window.rolarDadoAtributo = async function (atributoId, label) {
-        const nivel = parseInt(appState.biografia.nivel) || 1;
-        const halfLevel = Math.floor(nivel / 2);
+        // 1. Calcula o Nível Total corretamente (Principal + Multiclasses)
+        const nivelPrincipal = parseInt(appState.biografia.nivel) || 1;
+        let nivelTotal = nivelPrincipal;
+        if (appState.biografia.multiclasse) {
+            appState.biografia.multiclasse.forEach(c => {
+                const multiNivel = typeof c === 'string' ? 1 : (parseInt(c.nivel) || 1);
+                nivelTotal += multiNivel;
+            });
+        }
+        const halfLevel = Math.floor(nivelTotal / 2);
 
-        // 1. Identificar o modificador correto (atributo ou perícia)
         let bonusTotal = 0;
         let detalhamento = "";
 
-        // Se for uma perícia (que passa o skillId em atributoId)
+        // Se for rolagem de Perícia
         if (appState.pericias[atributoId]) {
             const p = appState.pericias[atributoId];
-            const attrMod = (atributoId === 'escalar' || atributoId === 'nadar' || atributoId === 'saltar') ?
-                Math.floor(((parseInt(appState.atributosBase.vigor) || 10) - 10) / 2) : 0;
-            // ... (você pode simplificar pegando o mod direto do objeto 'mods' que calculamos na função matemática)
 
-            bonusTotal = halfLevel + p.bonusManual + (p.treinada ? 5 : 0) + (p.foco ? 5 : 0);
-            detalhamento = `1d20 + Nível(${halfLevel}) + Manual(${p.bonusManual}) ${p.treinada ? '+ Treino(5)' : ''} ${p.foco ? '+ Foco(5)' : ''}`;
+            // Mapeia a sigla (ex: 'des') para o nome extenso do ID na tela
+            let attrFullName = '';
+            switch (p.atributoBase) {
+                case 'vig': attrFullName = 'vigor'; break;
+                case 'des': attrFullName = 'destreza'; break;
+                case 'con': attrFullName = 'constituicao'; break;
+                case 'int': attrFullName = 'inteligencia'; break;
+                case 'sab': attrFullName = 'sabedoria'; break;
+                case 'car': attrFullName = 'carisma'; break;
+            }
+
+            // Lê o modificador direto da interface (que já possui os bônus raciais calculados)
+            const modElement = document.getElementById('mod-' + attrFullName);
+            const attrMod = modElement ? parseInt(modElement.textContent) || 0 : 0;
+
+            // Soma todos os fatores no Bônus Total
+            bonusTotal = halfLevel + attrMod + (parseInt(p.bonusManual) || 0) + (p.treinada ? 5 : 0) + (p.foco ? 5 : 0);
+            detalhamento = `1d20 + Nível(${halfLevel}) + Atributo(${attrMod}) + Manual(${p.bonusManual}) ${p.treinada ? '+ Treino(5)' : ''} ${p.foco ? '+ Foco(5)' : ''}`;
+
         } else {
-            // Se for um atributo básico
-            const val = parseInt(appState.atributosBase[atributoId]) || 10;
-            bonusTotal = Math.floor((val - 10) / 2);
+            // Se for rolagem de Atributo Puro
+            const modElement = document.getElementById('mod-' + atributoId);
+            const attrMod = modElement ? parseInt(modElement.textContent) || 0 : 0;
+
+            bonusTotal = attrMod;
             detalhamento = `1d20 + Atributo(${bonusTotal})`;
         }
 
@@ -1280,15 +1317,16 @@ function initFicha() {
             detalhamento: detalhamento
         }]);
 
-        // 4. Feedback Visual para o Jogador
+        // 4. Feedback Visual
         const titleEl = document.getElementById('modal-title');
         const resultEl = document.getElementById('roll-result');
         const detailsEl = document.getElementById('modal-details');
+        const descEl = document.getElementById('modal-desc');
 
         if (titleEl) titleEl.textContent = `Resultado: ${label}`;
         if (resultEl) resultEl.innerHTML = `<span class="text-cyan-400 font-mono text-5xl">${resultadoFinal}</span>`;
         if (detailsEl) detailsEl.textContent = `Dado: ${dadoPuro} | Bônus: ${bonusTotal}`;
-
+        if (descEl) descEl.textContent = `Detalhes: ${detalhamento}`;
         const diceModal = document.getElementById('dice-modal');
         if (diceModal) diceModal.classList.add('show');
     };
