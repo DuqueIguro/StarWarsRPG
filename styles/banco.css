@@ -1,15 +1,26 @@
-/* Variables & Theme Setup */
+/* Variables & Theme Setup - Green & Gold Star Wars Sci-Fi Terminal */
 :root {
-  --bg-color: #03080e;
-  --panel-bg: rgba(6, 20, 32, 0.85);
-  --primary: #00f0ff;
-  --primary-glow: rgba(0, 240, 255, 0.4);
-  --accent: #ffb700;
-  --accent-glow: rgba(255, 183, 0, 0.4);
-  --danger: #ff3366;
-  --text-main: #c0eaeb;
-  --text-dim: #4a7580;
-  --border-color: #0e4052;
+  --bg-color: #030d07;
+  --panel-bg: rgba(6, 28, 16, 0.88);
+  
+  /* Verde Terminal Futurista (Monitores Holo/Matrix Sci-Fi) */
+  --primary: #00ff66;
+  --primary-glow: rgba(0, 255, 102, 0.4);
+  --primary-dark: #003b15;
+  
+  /* Dourado Imperial / Beskar Gold */
+  --accent: #ffd700;
+  --accent-glow: rgba(255, 215, 0, 0.4);
+  --accent-dim: #b39700;
+  
+  /* Perigo / Alertas */
+  --danger: #ff3333;
+  
+  --text-main: #d0f5db;
+  --text-dim: #518c65;
+  --border-color: #124d27;
+  --border-gold: #8c7600;
+  
   --font-title: 'Orbitron', sans-serif;
   --font-mono: 'Share Tech Mono', monospace;
 }
@@ -31,9 +42,10 @@ body {
   padding: 20px;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05) 0%, transparent 80%),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 4px;
+    radial-gradient(circle at 50% 50%, rgba(0, 255, 102, 0.05) 0%, transparent 80%),
+    radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+    linear-gradient(to bottom, rgba(0, 255, 102, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 4px;
 }
 
 /* CRT Lines Effect */
@@ -45,12 +57,12 @@ body {
   height: 100vh;
   background: linear-gradient(
     rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.25) 50%
+    rgba(0, 0, 0, 0.3) 50%
   );
   background-size: 100% 4px;
   z-index: 99;
   pointer-events: none;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 /* Main Container */
@@ -59,7 +71,7 @@ body {
   max-width: 950px;
   background: var(--panel-bg);
   border: 1px solid var(--border-color);
-  box-shadow: 0 0 25px rgba(0, 240, 255, 0.15), inset 0 0 15px rgba(0, 240, 255, 0.05);
+  box-shadow: 0 0 30px rgba(0, 255, 102, 0.15), inset 0 0 20px rgba(0, 255, 102, 0.05);
   padding: 24px;
   clip-path: polygon(
     0 20px, 20px 0, 
@@ -68,6 +80,17 @@ body {
     20px 100%, 0 calc(100% - 20px)
   );
   position: relative;
+}
+
+/* Borda decorativa dourada no topo */
+.terminal-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
 /* Header */
@@ -87,40 +110,45 @@ body {
 }
 
 .logo-icon {
-  font-size: 2rem;
-  color: var(--primary);
-  text-shadow: 0 0 10px var(--primary-glow);
+  font-size: 2.2rem;
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent-glow);
 }
 
 .brand h1 {
   font-family: var(--font-title);
   font-size: 1.3rem;
-  color: var(--primary);
+  color: var(--accent);
   letter-spacing: 2px;
-  text-shadow: 0 0 8px var(--primary-glow);
+  text-shadow: 0 0 8px var(--accent-glow);
 }
 
 .subtext {
   font-size: 0.75rem;
-  color: var(--text-dim);
+  color: var(--primary);
   display: block;
   letter-spacing: 1px;
+  opacity: 0.85;
 }
 
 .status-indicator {
   font-size: 0.8rem;
-  color: #00ff66;
-  text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+  color: var(--primary);
+  text-shadow: 0 0 8px var(--primary-glow);
   display: flex;
   align-items: center;
   gap: 8px;
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  background: rgba(0, 255, 102, 0.05);
 }
 
 .blink-dot {
   width: 8px;
   height: 8px;
-  background-color: #00ff66;
+  background-color: var(--primary);
   border-radius: 50%;
+  box-shadow: 0 0 6px var(--primary);
   animation: blink 1.5s infinite;
 }
 
@@ -147,10 +175,11 @@ body {
 
 /* Panels Styling */
 .panel {
-  background: rgba(2, 12, 20, 0.7);
+  background: rgba(2, 18, 10, 0.85);
   border: 1px solid var(--border-color);
-  padding: 16px;
+  padding: 18px;
   position: relative;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .panel-header {
@@ -160,6 +189,9 @@ body {
   letter-spacing: 1.5px;
   margin-bottom: 15px;
   text-shadow: 0 0 6px var(--accent-glow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Profile Panel */
@@ -167,11 +199,11 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(0, 240, 255, 0.05);
+  background: rgba(0, 255, 102, 0.04);
   border: 1px dashed var(--primary);
   padding: 8px 12px;
-  margin-top: 5px;
-  margin-bottom: 15px;
+  margin-top: 6px;
+  margin-bottom: 16px;
 }
 
 .highlight-text {
@@ -180,42 +212,46 @@ body {
   font-weight: bold;
   letter-spacing: 1.5px;
   word-break: break-all;
+  text-shadow: 0 0 6px var(--primary-glow);
 }
 
 .balance-box {
-  background: rgba(255, 183, 0, 0.08);
+  background: rgba(255, 215, 0, 0.08);
   border-left: 3px solid var(--accent);
-  padding: 10px 14px;
+  border-right: 1px solid rgba(255, 215, 0, 0.2);
+  padding: 12px 16px;
 }
 
 .balance-label {
   display: block;
   font-size: 0.75rem;
-  color: var(--text-dim);
+  color: var(--accent-dim);
+  letter-spacing: 1px;
 }
 
 .balance-value {
   font-family: var(--font-title);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-glow);
 }
 
 /* Forms */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 label {
   display: block;
   font-size: 0.75rem;
   color: var(--text-dim);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   letter-spacing: 1px;
 }
 
 input, textarea {
   width: 100%;
-  background: rgba(0, 10, 20, 0.9);
+  background: rgba(1, 15, 8, 0.95);
   border: 1px solid var(--border-color);
   color: var(--primary);
   font-family: var(--font-mono);
@@ -226,49 +262,58 @@ input, textarea {
 }
 
 input:focus, textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 10px var(--primary-glow);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  color: #ffffff;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-dim);
+  opacity: 0.6;
 }
 
 /* Buttons */
 .btn-primary {
   width: 100%;
-  background: var(--primary);
-  color: #000;
+  background: linear-gradient(135deg, var(--accent) 0%, #c4a500 100%);
+  color: #030d07;
   font-family: var(--font-title);
-  font-weight: bold;
+  font-weight: 900;
   padding: 12px;
   border: none;
   cursor: pointer;
   letter-spacing: 1.5px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   margin-top: 5px;
+  box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .btn-primary:hover {
-  background: #fff;
-  box-shadow: 0 0 15px var(--primary);
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 0 20px var(--accent);
 }
 
 .btn-small {
   background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
+  border: 1px solid var(--accent);
+  color: var(--accent);
   font-family: var(--font-mono);
-  padding: 4px 8px;
+  padding: 4px 10px;
   cursor: pointer;
   font-size: 0.75rem;
   transition: all 0.2s ease;
 }
 
 .btn-small:hover {
-  background: var(--primary);
-  color: #000;
+  background: var(--accent);
+  color: #030d07;
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 /* Transaction History */
 .history-list {
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -283,9 +328,9 @@ input:focus, textarea:focus {
 }
 
 .history-item {
-  background: rgba(0, 240, 255, 0.03);
-  border: 1px solid rgba(0, 240, 255, 0.1);
-  padding: 10px;
+  background: rgba(0, 255, 102, 0.03);
+  border: 1px solid rgba(0, 255, 102, 0.15);
+  padding: 10px 14px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -294,7 +339,8 @@ input:focus, textarea:focus {
 }
 
 .history-item.sent {
-  border-left-color: var(--danger);
+  border-left-color: var(--accent);
+  background: rgba(255, 215, 0, 0.03);
 }
 
 .history-item .tx-info {
@@ -310,7 +356,7 @@ input:focus, textarea:focus {
 }
 
 .history-item.sent .tx-amount {
-  color: var(--danger);
+  color: var(--accent);
 }
 
 .history-item .tx-msg {
@@ -320,10 +366,21 @@ input:focus, textarea:focus {
   margin-top: 4px;
 }
 
+/* Custom Scrollbar */
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+.history-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+.history-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+
 /* Footer */
 .terminal-footer {
   margin-top: 20px;
-  padding-top: 10px;
+  padding-top: 12px;
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
