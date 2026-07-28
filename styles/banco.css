@@ -101,6 +101,36 @@ body {
   border-bottom: 2px solid var(--border-color);
   padding-bottom: 15px;
   margin-bottom: 20px;
+  gap: 12px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--accent);
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-gold);
+  background: rgba(255, 215, 0, 0.08);
+  transition: all 0.25s ease;
+}
+
+.back-btn:hover {
+  background: var(--accent);
+  color: #030d07;
+  box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .brand {
