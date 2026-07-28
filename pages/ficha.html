@@ -82,6 +82,20 @@
                         </div>
                         <div id="multiclasse-container" class="flex flex-col gap-2 mt-2"></div>
                     </div>
+                    <div class="col-span-2">
+                        <label class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Grupo de
+                            Operações (Facção)</label>
+                        <select data-json-path="biografia.grupo_faccao"
+                            class="w-full text-white bg-stone-900/80 border border-stone-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none text-sm transition-all"
+                            title="Apenas o Mestre pode alterar sua designação oficial.">
+                            <option value="Não Atribuído">Não Atribuído / Civil</option>
+                            <option value="Diretiva Orion">Diretiva Orion</option>
+                            <option value="Movimento Astara">Movimento Astara</option>
+                            <option value="O Caminho">O Caminho</option>
+                            <option value="Grupo Massassi">Grupo Massassi</option>
+                            <option value="Império">Império Galáctico</option>
+                        </select>
+                    </div>
                     <div>
                         <label>Nível</label>
                         <input type="number" data-json-path="biografia.nivel" min="1">
@@ -493,6 +507,15 @@
             ⚠️ OBLITERAR REGISTRO ⚠️
         </button>
         <input type="file" id="importar-ficha-input" accept="application/json" class="hidden">
+        <!-- Seletor de Múltiplos Personagens -->
+        <div id="seletor-personagem-container" class="hidden mt-4 pt-4 border-t border-stone-800">
+            <label class="block text-stone-500 font-orbitron text-[10px] tracking-widest mb-1 uppercase">Alternar
+                Identidade</label>
+            <select id="seletor-personagem"
+                class="w-full text-stone-300 bg-stone-900/80 border border-stone-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none text-xs transition-all cursor-pointer font-bold tracking-wider">
+                <option value="" disabled selected>Consultando banco de dados...</option>
+            </select>
+        </div>
     </footer>
 
     <div id="dice-modal">
@@ -501,7 +524,8 @@
             <div id="roll-result">0</div>
             <p id="modal-details" class="text-stone-400 text-sm font-semibold tracking-wider uppercase mb-6">Calculando
                 modificadores galácticos</p>
-            <p id="modal-desc" class="text-stone-400 text-sm font-semibold tracking-wider uppercase mb-6"> Calculando detalhes</p>
+            <p id="modal-desc" class="text-stone-400 text-sm font-semibold tracking-wider uppercase mb-6"> Calculando
+                detalhes</p>
             <button onclick="fecharModal()"
                 class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg uppercase tracking-wider text-sm transition-all">
                 Fechar Monitor

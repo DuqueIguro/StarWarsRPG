@@ -1,7 +1,7 @@
 /* Substitua o seu defaultState atual por este */
 const defaultState = {
     biografia: {
-        nome: "", jogador: "", classe: "", multiclasse: [], nivel: 1, especie: "", tamanho: "", idade: "", sexo: "", peso: "", altura: "", destino: ""
+        nome: "", jogador: "", classe: "", multiclasse: [], grupo_faccao: "Não Atribuído", nivel: 1, especie: "", tamanho: "", idade: "", sexo: "", peso: "", altura: "", destino: ""
     },
     atributosBase: {
         vigor: 10, destreza: 10, constituicao: 10, inteligencia: 10, sabedoria: 10, carisma: 10
@@ -62,17 +62,17 @@ const defaultState = {
 /* INÍCIO DE FUNÇÃO DE [Inicialização do Estado]; Verifica se há backup no navegador */
 if (typeof _internalState === 'undefined') {
     const savedState = localStorage.getItem('starWarsFichaAutoSave');
-    if (savedState) {
-        try {
-            var _internalState = JSON.parse(savedState);
-            console.log("[Backup] Ficha restaurada do auto-save local.");
-        } catch (e) {
-            console.error("[Backup] Erro ao ler auto-save. Carregando ficha limpa.");
-            var _internalState = JSON.parse(JSON.stringify(defaultState));
-        }
-    } else {
-        var _internalState = JSON.parse(JSON.stringify(defaultState));
-    }
+    // if (savedState) {
+    //     try {
+    //         var _internalState = JSON.parse(savedState);
+    //         console.log("[Backup] Ficha restaurada do auto-save local.");
+    //     } catch (e) {
+    //         console.error("[Backup] Erro ao ler auto-save. Carregando ficha limpa.");
+    //         var _internalState = JSON.parse(JSON.stringify(defaultState));
+    //     }
+    // } else {
+    var _internalState = JSON.parse(JSON.stringify(defaultState));
+    // }
 }
 /* FIM DE FUNÇÃO DE [Inicialização do Estado] */
 
@@ -320,6 +320,7 @@ function calcularMatematicaDaFicha() {
     const bbaDisplay = document.getElementById('bba-display');
     if (bbaDisplay) {
         bbaDisplay.textContent = bbaFinal;
+        // console.log("BBA FINAL: " + bbaFinal);
     }
     // 7. Dano Limite
     if (document.getElementById('limiar-dano-display')) document.getElementById('limiar-dano-display').textContent = defFort;
@@ -1342,6 +1343,10 @@ function initFicha() {
             if (fichaParaExportar.recursos && fichaParaExportar.recursos.creditos !== undefined) {
                 delete fichaParaExportar.recursos.creditos;
             }
+            if (fichaParaExportar.biografia && fichaParaExportar.biografia.grupo_faccao !== undefined) {
+                delete fichaParaExportar.biografia.grupo_faccao;
+            }
+
             const dataToSave = { ficha: fichaParaExportar };
 
             // Converte para string JSON com indentação de 2 espaços para ficar bonito e legível
@@ -1396,7 +1401,17 @@ function initFicha() {
                             delete importedData.ficha.recursos.creditos;
                         }
 
+                        if (importedData.ficha.biografia && importedData.ficha.biografia.grupo_faccao !== undefined) {
+                            delete importedData.ficha.biografia.grupo_faccao;
+                        }
+
                         const creditosAutenticos = appState.recursos.creditos;
+                        const faccaoAutentica = appState.biografia.grupo_faccao; // <-- Salva a facção verdadeira
+
+                        Object.assign(appState, importedData.ficha);
+
+                        appState.recursos.creditos = creditosAutenticos;
+                        appState.biografia.grupo_faccao = faccaoAutentica; //
 
                         Object.assign(appState, importedData.ficha);
 
@@ -1574,6 +1589,18 @@ async function carregarFichaDoBanco() {
         Object.assign(appState, dbFicha.dados_ficha);
         setStateByPath('biografia.nome', dbFicha.nome);
         setStateByPath('recursos.creditos', dbFicha.creditos);
+        setStateByPath('biografia.grupo_faccao', dbFicha.grupo_faccao || 'Não Atribuído');
+
+        const faccaoInput = document.querySelector('[data-json-path="biografia.grupo_faccao"]');
+        if (faccaoInput) {
+            if (!isMestre) {
+                faccaoInput.disabled = true;
+                faccaoInput.classList.add('opacity-50', 'cursor-not-allowed', 'border-red-900/50');
+            } else {
+                faccaoInput.disabled = false;
+                faccaoInput.classList.remove('opacity-50', 'cursor-not-allowed', 'border-red-900/50');
+            }
+        }
 
         const { data: invData, error: invError } = await supabaseClient
             .from('inventario')
@@ -1614,6 +1641,7 @@ async function carregarFichaDoBanco() {
         if (typeof calcularMatematicaDaFicha === 'function') calcularMatematicaDaFicha();
 
         console.log("[Banco de Dados] Ficha e Inventário Relacional carregados da nuvem.");
+        popularSeletorMultiplosPersonagens(currentUser.id, personagemIdAtual);
     }
 }
 
@@ -1629,9 +1657,14 @@ async function salvarFichaNoBanco() {
     if (jsonLimpo.combate && jsonLimpo.combate.armas !== undefined) delete jsonLimpo.combate.armas;
     if (jsonLimpo.inventario && jsonLimpo.inventario.equipamentos !== undefined) delete jsonLimpo.inventario.equipamentos;
 
+    // --- BLINDAGEM ANTI-CHEAT (FACÇÃO) ---
+    // Limpa qualquer manipulação feita via DevTools (F12) de dentro do JSON da ficha
+    if (!isMestre && jsonLimpo.biografia && jsonLimpo.biografia.grupo_faccao !== undefined) {
+        delete jsonLimpo.biografia.grupo_faccao;
+    }
+
     const creditosAtuais = parseInt(appState.recursos.creditos) || 0;
 
-    // REMOVIDO o user_id do payload base. Ele não deve ser sobrescrito em atualizações.
     const payload = {
         nome: appState.biografia.nome || 'Desconhecido',
         creditos: creditosAtuais,
@@ -1639,9 +1672,13 @@ async function salvarFichaNoBanco() {
         updated_at: new Date().toISOString()
     };
 
+    // A coluna oficial do banco de dados SÓ RECEBE a facção se a variável global de autorização ISB for verdadeira
+    if (isMestre) {
+        payload.grupo_faccao = appState.biografia.grupo_faccao || 'Não Atribuído';
+    }
+
     let dbError = null;
 
-    // MODO ATUALIZAÇÃO (Ficha já existe)
     if (personagemIdAtual) {
         const { data: prevData } = await supabaseClient.from('personagens').select('creditos').eq('id', personagemIdAtual).single();
         if (prevData && prevData.creditos !== creditosAtuais) {
@@ -1691,6 +1728,52 @@ async function salvarFichaNoBanco() {
         alert("Erro ao salvar na nuvem. Verifique a sua conexão.");
     }
 }
+
+/* INÍCIO DE FUNÇÃO DE [Alternância de Personagens] */
+async function popularSeletorMultiplosPersonagens(userId, currentId) {
+    // Se for o Mestre inspecionando, ele não precisa deste menu (ele usa a página ISB para navegar)
+    if (isMestre) return;
+
+    const { data: personagens, error } = await supabaseClient
+        .from('personagens')
+        .select('id, nome')
+        .eq('user_id', userId)
+        .order('nome');
+
+    const container = document.getElementById('seletor-personagem-container');
+    const select = document.getElementById('seletor-personagem');
+
+    // Só exibe o menu se o jogador tiver 2 ou mais personagens cadastrados
+    if (!error && personagens && personagens.length > 1 && container && select) {
+        container.classList.remove('hidden');
+        select.innerHTML = '';
+
+        personagens.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.nome || 'Identidade Desconhecida';
+            if (p.id === currentId) {
+                opt.selected = true;
+            }
+            select.appendChild(opt);
+        });
+
+        // Remove listeners antigos criando um clone limpo do elemento
+        const novoSelect = select.cloneNode(true);
+        select.parentNode.replaceChild(novoSelect, select);
+
+        novoSelect.addEventListener('change', (e) => {
+            const selectedId = e.target.value;
+            if (selectedId && selectedId !== currentId) {
+                // EXTREMAMENTE IMPORTANTE: Limpa o auto-save para não misturar os JSONs dos personagens
+                localStorage.removeItem('starWarsFichaAutoSave');
+                // Força a página a recarregar buscando o UUID do novo personagem
+                window.location.href = `?id=${selectedId}`;
+            }
+        });
+    }
+}
+/* FIM DE FUNÇÃO DE [Alternância de Personagens] */
 
 initFicha();
 

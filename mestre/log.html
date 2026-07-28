@@ -288,7 +288,9 @@
                             // B) Cria o Cartão Clicável de Acesso Rápido
                             if (rosterPanel) {
                                 const card = document.createElement('a');
-                                card.href = `../pages/ficha.html?id=${p.id}`; // O link seguro do Gatekeeper
+                                if(p.id !== '6eef10e3-b1c0-475a-b2f6-811bc065706c' && p.id !== '2924a75f-6638-49c8-bb65-10e8ab55f134'){
+                                    card.href = `../pages/ficha.html?id=${p.id}`; // O link seguro do Gatekeeper
+                                }
                                 card.target = '_blank';
                                 card.className = 'bg-stone-900/40 border border-cyan-900/30 hover:border-cyan-500 hover:bg-stone-900 p-3 rounded flex flex-col justify-between transition-all cursor-pointer group shadow-sm';
                                 card.innerHTML = `
