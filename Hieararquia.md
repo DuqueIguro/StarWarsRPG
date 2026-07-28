@@ -4,14 +4,9 @@ StarWarsRPG
 ├─ .nojekyll
 ├─ 404.html
 ├─ backups
-│  ├─ Escudo
-│  │  └─ mestre.html
-│  ├─ ficha
-│  │  ├─ backup.js
-│  │  └─ script.js
 │  ├─ holonetBackup.json
-│  └─ Oficina
-│     └─ oficinaBackup.js
+│  ├─ inventarioOficina.js.bkp
+│  └─ invetarioOficina.html.bkp
 ├─ CNAME
 ├─ data
 │  ├─ Aurebesh.woff
@@ -49,6 +44,7 @@ StarWarsRPG
 │  ├─ droids.js
 │  ├─ durtoc.html
 │  ├─ durtoc.js
+│  ├─ durtocGateKeeper.js
 │  ├─ fornecedores
 │  │  ├─ fornecedores.js
 │  │  └─ fornecedores.json
@@ -58,8 +54,8 @@ StarWarsRPG
 │  │  ├─ fuelDurtoc.js
 │  │  ├─ hangarAutorizado.html
 │  │  └─ status.js
+│  ├─ inventarioOficina.html
 │  ├─ inventarioOficina.js
-│  ├─ invetarioOficina.html
 │  ├─ oficina.html
 │  ├─ oficina.js
 │  ├─ ordens_de_servico
@@ -131,7 +127,9 @@ StarWarsRPG
 │     └─ PreZarek.png
 ├─ index.html
 ├─ js
+│  ├─ armazem.js
 │  ├─ backupFicha.js
+│  ├─ banco.js
 │  ├─ dadosClassesFicha.js
 │  ├─ dadosRacasFicha.js
 │  ├─ dadosTamanhosFicha.js
@@ -170,6 +168,8 @@ StarWarsRPG
 │  ├─ log.html
 │  └─ redirecionamentos.html
 ├─ pages
+│  ├─ armazem.html
+│  ├─ banco.html
 │  ├─ comunicacao.html
 │  ├─ ficha.html
 │  ├─ frotaRebeldes.html
@@ -198,6 +198,8 @@ StarWarsRPG
 │  └─ mestre.html
 ├─ styles
 │  ├─ 404.css
+│  ├─ armazem.css
+│  ├─ banco.css
 │  ├─ comunicacao.css
 │  ├─ distanciaPlanetas.css
 │  ├─ durtoc.css
