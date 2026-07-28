@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Tático da Resistência</title>
+    <title>Painel Tático da Resistência (ISB)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../img/d20.png">
@@ -30,31 +30,50 @@
             background-color: #020610;
             border: 1px solid #4da8da;
             color: white;
-            padding: 4px;
+            padding: 6px;
             width: 100%;
             border-radius: 4px;
+            outline: none;
         }
 
-        /* Holograma 3D */
+        .combat-input:focus {
+            border-color: white;
+            box-shadow: 0 0 8px #4da8da;
+        }
+
+        /* Efeito Volumétrico Adaptado */
         .holo-container {
             perspective: 800px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100px;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .holo-spin-wrapper {
+            animation: spin 8s linear infinite;
+            transform-style: preserve-3d;
             position: relative;
         }
 
-        .holo-spin {
-            animation: spin 8s linear infinite;
-            transform-style: preserve-3d;
+        .holo-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            filter: drop-shadow(0 0 5px rgba(77, 168, 218, 0.8));
+            opacity: 0.4;
         }
 
-        .holo-img {
-            filter: sepia(100%) hue-rotate(160deg) saturate(500%) brightness(1.2);
-            mix-blend-mode: screen;
-            width: 60px;
-            transform: rotateX(20deg);
+        .holo-main {
+            filter: drop-shadow(0 0 10px rgba(77, 168, 218, 1));
+            z-index: 10;
+        }
+
+        .holo-image {
+            height: 80px;
+            object-fit: contain;
         }
 
         @keyframes spin {
@@ -67,56 +86,174 @@
             }
         }
 
-        .status-pill {
-            padding: 4px 8px;
-            font-size: 10px;
-            font-weight: bold;
-            text-align: center;
-            border-radius: 4px;
-            border: 1px solid;
+        /* Scrollbar do Terminal */
+        .terminal-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: #4da8da;
+            border-radius: 2px;
         }
     </style>
 </head>
 
-<body class="min-h-screen p-8 text-[#4da8da]">
+<body class="min-h-screen p-4 lg:p-8 text-[#4da8da]">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase.js"></script>
     <script src="../js/isb_gatekeeper.js"></script>
 
-    <header class="mb-12 text-center">
-        <h1 class="text-4xl font-bold uppercase tracking-widest text-[#4da8da]">Comando Central da Resistência</h1>
+    <header class="mb-12 text-center relative flex flex-col items-center">
+        <h1 class="text-3xl md:text-4xl font-bold uppercase tracking-widest text-[#4da8da]">Comando Central da
+            Resistência</h1>
+        <button onclick="carregarFrotaMestre()"
+            class="mt-4 md:absolute md:right-0 md:top-0 bg-transparent border border-[#4da8da] text-[#4da8da] hover:bg-[#4da8da] hover:text-black py-2 px-6 rounded text-xs font-bold uppercase tracking-widest transition-all shadow-[0_0_10px_rgba(77,168,218,0.3)]">
+            Sincronizar (Atualizar)
+        </button>
     </header>
 
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <aside class="lg:col-span-1 neon-border p-6 rounded-lg h-fit">
+    <main class="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-4 gap-8">
+
+        <!-- Formulário de Registro (Apenas ISB) -->
+        <aside class="xl:col-span-1 neon-border p-6 rounded-lg h-fit xl:sticky xl:top-8">
             <div class="panel-header p-2 mb-6 uppercase font-bold text-center">> Adicionar Unidade</div>
-            <select id="fAction" class="combat-input mb-2">
+
+            <select id="fAction" class="combat-input mb-4 text-xs font-bold tracking-wider cursor-pointer">
+                <option value="Império">Império Galáctico</option>
                 <option value="Diretiva Orion">Diretiva Orion</option>
                 <option value="Movimento Astara">Movimento Astara</option>
                 <option value="O Caminho">O Caminho</option>
                 <option value="Grupo Massassi">Grupo Massassi</option>
             </select>
-            <input type="text" id="sImg" class="combat-input mb-2" placeholder="URL da Imagem">
-            <input type="number" id="sShield" class="combat-input mb-2" placeholder="Escudo">
-            <input type="number" id="sHull" class="combat-input mb-2" placeholder="Vida">
-            <input type="number" id="sCost" class="combat-input mb-2" placeholder="Custo">
+
+            <input type="text" id="sName" class="combat-input mb-3 text-xs" placeholder="Designação (Nome da Nave)">
+            <input type="text" id="sImg" class="combat-input mb-4 text-xs" placeholder="URL da Imagem Tática">
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="text-[10px] text-[#3b82f6] font-bold tracking-widest mb-1 block">ESCUDO MAX</label>
+                    <input type="number" id="sShield" class="combat-input text-xs border-[#3b82f6]" placeholder="0"
+                        min="0">
+                </div>
+                <div>
+                    <label class="text-[10px] text-[#22c55e] font-bold tracking-widest mb-1 block">CASCO MAX</label>
+                    <input type="number" id="sHull" class="combat-input text-xs border-[#22c55e]" placeholder="1"
+                        min="1">
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="text-[10px] text-yellow-500 font-bold tracking-widest mb-1 block">CUSTO DE
+                    ORÇAMENTO</label>
+                <input type="number" id="sCost" class="combat-input text-xs border-yellow-500" placeholder="0" min="0">
+            </div>
+
             <button onclick="addShip()"
-                class="w-full bg-[#4da8da] text-black font-bold py-2 uppercase hover:bg-white transition-all rounded">Registrar
-                no Comando</button>
-            <div id="globalMsg" class="mt-4 text-xs font-bold text-center"></div>
+                class="w-full bg-[#4da8da] text-black font-bold py-3 uppercase tracking-widest hover:bg-white hover:shadow-[0_0_15px_#ffffff] transition-all rounded text-xs">
+                Mobilizar Unidade
+            </button>
+            <div id="globalMsg"
+                class="mt-4 text-[10px] uppercase font-bold tracking-widest text-center transition-all duration-300">
+            </div>
         </aside>
 
-        <section class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6" id="factionsContainer"></section>
+        <!-- Grade de Naves por Grupo -->
+        <section class="xl:col-span-3 grid grid-cols-1 gap-8" id="factionsContainer"></section>
     </main>
 
+    <!-- Terminal Tático Lateral (Log Viewer) -->
+    <div id="tactical-terminal"
+        class="fixed bottom-0 right-4 w-[90%] md:w-96 bg-[#020610]/95 border border-[#4da8da] shadow-[0_0_20px_rgba(77,168,218,0.4)] z-50 transition-transform duration-300 transform translate-y-[14rem] rounded-t-lg backdrop-blur-sm">
+        <div class="flex justify-between items-center bg-[#4da8da]/20 border-b border-[#4da8da] p-3 cursor-pointer hover:bg-[#4da8da]/30 transition-colors"
+            onclick="toggleTerminal()">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-[#4da8da]">Terminal de Auditoria
+                    Tática</span>
+
+                <!-- NOVO BOTÃO DE RECARREGAR -->
+                <button onclick="event.stopPropagation(); carregarLogsTerminal();"
+                    class="ml-2 text-[#4da8da] hover:text-white transition-colors bg-[#0a1526] border border-[#4da8da]/50 p-1 rounded shadow-[0_0_5px_rgba(77,168,218,0.3)]"
+                    title="Puxar Dados da Holonet">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <span id="terminal-icon" class="text-xs text-[#4da8da]">▲</span>
+        </div>
+        <div id="terminal-content"
+            class="h-56 overflow-y-auto p-3 text-[10px] space-y-2 font-mono terminal-scroll flex flex-col">
+            <span class="text-stone-500 italic text-center mt-4">Aguardando decodificação de logs...</span>
+        </div>
+    </div>
+
     <script>
+        const IMG_PLACEHOLDER = 'https://placehold.co/400x250/0a1526/ffffff?text=SCANNER+OFFLINE&font=oswald';
+
+        // Substitua a constante factions no JS por esta:
         const factions = {
+            "Império": { credits: 999999, budget: 999999, spent: 0, fleet: [] },
             "Diretiva Orion": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
             "Movimento Astara": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
             "O Caminho": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
             "Grupo Massassi": { credits: 10000, budget: 5000, spent: 0, fleet: [] }
         };
 
+        let currentUserLogName = "Comando ISB";
+
+        // 1. Função Global de Log (Injeção no Banco)
+        async function registrarLogTatico(faccao, nomeNave, acao, detalhes) {
+            await supabaseClient.from('logs_taticos').insert([{
+                user_id: (await supabaseClient.auth.getUser()).data.user?.id || null,
+                nome_jogador: currentUserLogName,
+                nave_nome: nomeNave,
+                faccao: faccao,
+                acao: acao,
+                detalhes: detalhes
+            }]);
+            carregarLogsTerminal();
+        }
+
+        // 2. Carga Principal do Banco de Dados
+        async function carregarFrotaMestre() {
+            const { data: userData } = await supabaseClient.auth.getUser();
+            if (userData?.user?.id) {
+                // Busca o nome do personagem do Mestre no banco
+                const { data: pData } = await supabaseClient.from('personagens').select('nome').eq('user_id', userData.user.id).limit(1);
+                if (pData && pData.length > 0) {
+                    currentUserLogName = pData[0].nome;
+                } else {
+                    currentUserLogName = "Comando ISB";
+                }
+            }
+
+            // Reset local memory
+            Object.keys(factions).forEach(f => {
+                factions[f].fleet = [];
+                factions[f].spent = 0;
+            });
+
+            const { data, error } = await supabaseClient.from('frota_ativa').select('*').order('created_at', { ascending: false });
+
+            if (!error && data) {
+                data.forEach(ship => {
+                    if (factions[ship.faccao]) {
+                        factions[ship.faccao].fleet.push(ship);
+                        factions[ship.faccao].spent += (ship.custo || 0);
+                    }
+                });
+            } else {
+                console.error("Erro ao puxar frota:", error);
+            }
+
+            renderAll();
+            carregarLogsTerminal();
+        }
+
+        // 3. Renderização Dinâmica do HTML
         function renderAll() {
             const container = document.getElementById('factionsContainer');
             container.innerHTML = '';
@@ -127,60 +264,270 @@
 
                 if (data.spent > data.budget) {
                     statusText = "CONSEQUÊNCIAS ATIVADAS!";
-                    statusColor = "border-red-500 text-red-500 animate-pulse";
+                    statusColor = "border-red-500 text-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.3)]";
                 } else if (data.spent === data.budget) {
                     statusText = "NO LIMITE!";
                     statusColor = "border-orange-500 text-orange-500";
                 } else if (data.spent >= (data.budget * 0.9)) {
-                    statusText = "QUASE NO LIMITE!";
+                    statusText = "ALERTA ORÇAMENTÁRIO!";
                     statusColor = "border-yellow-500 text-yellow-500";
                 }
 
                 const card = document.createElement('div');
-                card.className = 'neon-border p-5 rounded-lg';
+                card.className = 'neon-border p-5 rounded-lg mb-4 bg-gradient-to-b from-[#050a10] to-black/80';
+
+                let fleetHTML = data.fleet.map(s => {
+                    const isDestroyed = s.casco_atual <= 0;
+                    let holoLayers = '';
+                    for (let i = -3; i <= 3; i++) {
+                        holoLayers += `<img src="${s.imagem || IMG_PLACEHOLDER}" class="holo-image ${i === 0 ? 'holo-main' : 'holo-layer'}" style="transform: translateZ(${i * 2}px);" onerror="this.src='${IMG_PLACEHOLDER}'">`;
+                    }
+
+                    // Lógica de Renderização do Botão de Visibilidade (Exclusivo para o Império)
+                    let visibilityBtn = '';
+                    if (s.faccao === 'Império') {
+                        const vIcon = s.visivel ? '👁️ RADAR ON' : '🚫 STEALTH';
+                        const vColor = s.visivel ? 'text-green-400 border-green-500/50' : 'text-stone-500 border-stone-700 hover:text-white';
+                        visibilityBtn = `<button onclick="toggleVisibilidadeNave('${s.id}', ${!s.visivel}, '${s.nome}')" class="w-full mt-2 bg-[#020610] border ${vColor} hover:bg-stone-800 py-1.5 text-[9px] uppercase font-bold tracking-widest transition-all rounded relative z-10">${vIcon}</button>`;
+                    }
+
+                    return `
+            <div class="border ${isDestroyed ? 'border-red-500/50 bg-red-950/20' : 'border-[#4da8da]/30 bg-[#020610]'} p-4 rounded flex flex-col justify-between shadow-lg relative transition-all hover:border-[#4da8da]">
+                ${isDestroyed ? '<div class="absolute inset-0 bg-[url(\'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><line x1=%220%22 y1=%220%22 x2=%22100%22 y2=%22100%22 stroke=%22rgba(255,0,0,0.3)%22 stroke-width=%222%22/></svg>\')] pointer-events-none z-0"></div>' : ''}
+                
+                <div class="flex justify-between items-start mb-4 relative z-10">
+                    <div class="font-bold text-xs uppercase truncate w-36 text-cyan-300 tracking-wider" title="${s.nome}">${s.nome}</div>
+                    <button onclick="removerNave('${s.id}', '${s.nome}', '${s.faccao}')" class="text-red-500 hover:bg-red-500 hover:text-white px-2 py-1 rounded text-[9px] font-bold tracking-widest uppercase transition-colors border border-red-500/50">Excluir</button>
+                </div>
+                
+                <div class="holo-container mb-4 border border-[#4da8da]/20 bg-black rounded shadow-[inset_0_0_15px_rgba(77,168,218,0.1)] relative z-10">
+                    <div class="holo-spin-wrapper">
+                        ${holoLayers}
+                    </div>
+                </div>
+
+                <div class="space-y-3 text-[10px] font-bold relative z-10">
+                    <div class="flex items-center justify-between bg-[#3b82f6]/10 p-1.5 rounded border border-[#3b82f6]/20">
+                        <span class="text-[#3b82f6] tracking-widest">SHIELD:</span>
+                        <div class="flex gap-2 items-center">
+                            <input type="number" id="shd-${s.id}" class="combat-input w-16 text-center text-[#3b82f6] font-mono font-bold" value="${s.escudo_atual}">
+                            <span class="text-stone-500 w-10">/ ${s.escudo_maximo}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-[#22c55e]/10 p-1.5 rounded border border-[#22c55e]/20">
+                        <span class="text-[#22c55e] tracking-widest">HULL:</span>
+                        <div class="flex gap-2 items-center">
+                            <input type="number" id="hull-${s.id}" class="combat-input w-16 text-center text-[#22c55e] font-mono font-bold" value="${s.casco_atual}">
+                            <span class="text-stone-500 w-10">/ ${s.casco_maximo}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="atualizarStatusNave('${s.id}', '${s.nome}', '${s.faccao}')" class="w-full mt-4 bg-[#0a1526] border border-[#4da8da]/50 hover:bg-[#4da8da] hover:text-black text-[#4da8da] py-2 text-[10px] uppercase font-bold tracking-widest transition-all rounded relative z-10">
+                    Sincronizar Manualmente
+                </button>
+                ${visibilityBtn}
+            </div>
+            `;
+                }).join('');
+
+                if (fleetHTML === '') {
+                    fleetHTML = '<div class="col-span-full text-center text-stone-600 text-xs tracking-widest py-8">SISTEMA SEM UNIDADES VINCULADAS NESTE SETOR</div>';
+                }
+
+                // Botões de Mass Control do Império
+                let massControlHTML = '';
+                if (name === 'Império') {
+                    massControlHTML = `
+                    <div class="flex justify-center gap-4 mb-6">
+                        <button onclick="toggleTodasImperiais(true)" class="bg-transparent border border-green-500 text-green-500 hover:bg-green-500 hover:text-black py-1 px-4 text-[10px] uppercase font-bold tracking-widest rounded transition-all shadow-[0_0_8px_rgba(34,197,94,0.3)]">EXIBIR TODAS</button>
+                        <button onclick="toggleTodasImperiais(false)" class="bg-transparent border border-stone-500 text-stone-500 hover:bg-stone-500 hover:text-black py-1 px-4 text-[10px] uppercase font-bold tracking-widest rounded transition-all">OCULTAR TODAS</button>
+                    </div>`;
+                }
+
                 card.innerHTML = `
-                    <div class="panel-header p-2 mb-4 uppercase font-bold text-center">${name}</div>
-                    <div class="grid grid-cols-2 gap-2 mb-4 text-[10px]">
-                        <div>Créditos: <input type="number" class="combat-input" value="${data.credits}" onchange="factions['${name}'].credits = parseInt(this.value)"></div>
-                        <div>Orçamento: <input type="number" class="combat-input" value="${data.budget}" onchange="factions['${name}'].budget = parseInt(this.value); renderAll()"></div>
+            <div class="panel-header p-3 mb-5 uppercase font-bold text-center tracking-widest text-lg ${name === 'Império' ? 'text-red-500 border-red-500/50' : ''}">${name}</div>
+            ${massControlHTML}
+            
+            <div class="bg-black/60 p-4 rounded border border-stone-800 mb-6 ${name === 'Império' ? 'hidden' : ''}">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-xs font-bold uppercase tracking-widest">
+                    <div class="flex items-center justify-between bg-stone-900 p-2 rounded border border-stone-700">
+                        <span class="text-yellow-500">Créditos Base:</span> 
+                        <input type="number" class="combat-input w-28 text-right font-mono" value="${data.credits}" onchange="factions['${name}'].credits = parseInt(this.value)">
                     </div>
-                    <div class="mb-4 text-center">
-                        <div class="text-xs font-bold mb-2">GASTO: ${data.spent} / ${data.budget}</div>
-                        <div class="status-pill ${statusColor}">${statusText}</div>
+                    <div class="flex items-center justify-between bg-stone-900 p-2 rounded border border-stone-700">
+                        <span class="text-purple-400">Teto Orçamentário:</span> 
+                        <input type="number" class="combat-input w-28 text-right font-mono" value="${data.budget}" onchange="factions['${name}'].budget = parseInt(this.value); renderAll()">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        ${data.fleet.map(s => `
-                            <div class="border border-[#4da8da]/30 p-2 text-center rounded bg-black/40">
-                                <div class="holo-container"><div class="holo-spin"><img src="${s.img}" class="holo-img" onerror="this.src='https://placehold.co/100x100/000/fff?text=NO+IMG'"></div></div>
-                                <div class="text-[10px] mt-2 font-bold">UNIDADE</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                </div>
+                <div class="flex flex-col md:flex-row justify-between items-center bg-[#050a10] p-3 rounded border border-stone-800">
+                    <div class="text-xs font-bold tracking-widest text-stone-300 mb-2 md:mb-0">GASTO CONSOLIDADO DO GRUPO: <span class="text-white ml-2">${data.spent}</span> / <span class="text-stone-500">${data.budget}</span></div>
+                    <div class="status-pill ${statusColor} px-4 py-1 border rounded bg-black/50">${statusText}</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                ${fleetHTML}
+            </div>
+        `;
                 container.appendChild(card);
             }
-        }
+        } // <-- A CHAVE QUE FALTAVA ESTÁ AQUI.
 
-        function addShip() {
-            const fName = document.getElementById('fAction').value;
-            const cost = parseInt(document.getElementById('sCost').value) || 0;
-            const data = factions[fName];
+        // 4. Inserção Direta pelo Mestre
+        async function addShip() {
+            const faccao = document.getElementById('fAction').value;
+            const nome = document.getElementById('sName').value.trim();
+            const imagem = document.getElementById('sImg').value.trim();
+            const escudoMax = parseInt(document.getElementById('sShield').value) || 0;
+            const cascoMax = parseInt(document.getElementById('sHull').value) || 0;
+            const custo = parseInt(document.getElementById('sCost').value) || 0;
+            const msgBox = document.getElementById('globalMsg');
 
-            if (data.credits < cost) {
-                document.getElementById('globalMsg').textContent = "Créditos insuficientes!";
+            if (!nome || cascoMax <= 0) {
+                msgBox.textContent = "ALERTA: DESIGNAÇÃO E CASCO (MÍNIMO 1) SÃO OBRIGATÓRIOS.";
+                msgBox.className = "mt-4 text-[10px] uppercase font-bold tracking-widest text-center text-red-500 animate-pulse";
                 return;
             }
 
-            data.credits -= cost;
-            data.spent += cost;
-            data.fleet.push({
-                img: document.getElementById('sImg').value,
-                cost: cost
-            });
-            renderAll();
+            const btn = document.querySelector('button[onclick="addShip()"]');
+            btn.disabled = true;
+            btn.textContent = "COMPILANDO DIRETRIZ...";
+
+            const { error } = await supabaseClient.from('frota_ativa').insert([{
+                nome: nome,
+                imagem: imagem || IMG_PLACEHOLDER,
+                escudo_atual: escudoMax,
+                escudo_maximo: escudoMax,
+                casco_atual: cascoMax,
+                casco_maximo: cascoMax,
+                faccao: faccao,
+                custo: custo
+            }]);
+
+            if (!error) {
+                await registrarLogTatico(faccao, nome, 'MOBILIZAÇÃO', `Comando autorizou mobilização. (Custo: ${custo} créditos)`);
+                document.getElementById('sName').value = '';
+                document.getElementById('sImg').value = '';
+                document.getElementById('sShield').value = '';
+                document.getElementById('sHull').value = '';
+                document.getElementById('sCost').value = '';
+
+                msgBox.textContent = "DIRETRIZ APROVADA E UNIDADE MOBILIZADA.";
+                msgBox.className = "mt-4 text-[10px] uppercase font-bold tracking-widest text-center text-green-500";
+
+                await carregarFrotaMestre();
+            } else {
+                msgBox.textContent = "FALHA CRÍTICA AO COMUNICAR COM A HOLONET.";
+                msgBox.className = "mt-4 text-[10px] uppercase font-bold tracking-widest text-center text-red-500";
+            }
+
+            setTimeout(() => { msgBox.textContent = ""; }, 4000);
+            btn.disabled = false;
+            btn.textContent = "MOBILIZAR UNIDADE";
         }
 
-        window.onload = renderAll;
+        // 5. Edição Dinâmica via Mestre
+        async function atualizarStatusNave(id, nome, faccao) {
+            const shdInput = document.getElementById(`shd-${id}`).value;
+            const hullInput = document.getElementById(`hull-${id}`).value;
+
+            const novoShield = parseInt(shdInput) || 0;
+            const novoHull = parseInt(hullInput) || 0;
+
+            const { error } = await supabaseClient.from('frota_ativa')
+                .update({ escudo_atual: novoShield, casco_atual: novoHull })
+                .eq('id', id);
+
+            if (!error) {
+                await registrarLogTatico(faccao, nome, 'ISB OVERRIDE', `Mestre sobrescreveu telemetria. (SHD: ${novoShield}, HULL: ${novoHull})`);
+                await carregarFrotaMestre();
+            } else {
+                alert("Erro de Sincronização.");
+            }
+        }
+
+        // 6. Exclusão Permanente
+        async function removerNave(id, nome, faccao) {
+            if (!confirm(`CÓDIGO VERMELHO: Confirma a obliteração dos registros da unidade ${nome}?`)) return;
+
+            const { error } = await supabaseClient.from('frota_ativa').delete().eq('id', id);
+
+            if (!error) {
+                await registrarLogTatico(faccao, nome, 'DESTRUIÇÃO/REMOÇÃO', `O Comando apagou todos os registros operacionais desta unidade.`);
+                await carregarFrotaMestre();
+            }
+        }
+
+        // 7. Mini Terminal Tático
+        function toggleTerminal() {
+            const terminal = document.getElementById('tactical-terminal');
+            const icon = document.getElementById('terminal-icon');
+
+            if (terminal.classList.contains('translate-y-0')) {
+                terminal.classList.replace('translate-y-0', 'translate-y-[14rem]');
+                icon.textContent = '▲';
+            } else {
+                terminal.classList.replace('translate-y-[14rem]', 'translate-y-0');
+                icon.textContent = '▼';
+                carregarLogsTerminal();
+            }
+        }
+
+        // 8. Controles de Visibilidade (Radar)
+        async function toggleVisibilidadeNave(id, setVisivel, nome) {
+            const { error } = await supabaseClient.from('frota_ativa').update({ visivel: setVisivel }).eq('id', id);
+            if (!error) {
+                await registrarLogTatico('Império', nome, 'CONTRAMEDIDAS', `Nave alterada para status: ${setVisivel ? 'VISÍVEL NO RADAR' : 'STEALTH (OCULTA)'}`);
+                await carregarFrotaMestre();
+            }
+        }
+
+        async function toggleTodasImperiais(setVisivel) {
+            const { error } = await supabaseClient.from('frota_ativa').update({ visivel: setVisivel }).eq('faccao', 'Império');
+            if (!error) {
+                await registrarLogTatico('Império', 'FROTA INTEIRA', 'CONTRAMEDIDAS', `Todas as naves alteradas para: ${setVisivel ? 'VISÍVEL NO RADAR' : 'STEALTH (OCULTA)'}`);
+                await carregarFrotaMestre();
+            }
+        }
+
+        async function carregarLogsTerminal() {
+            const content = document.getElementById('terminal-content');
+
+            const { data, error } = await supabaseClient.from('logs_taticos')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(20);
+
+            if (error || !data) {
+                content.innerHTML = `<span class="text-red-500 text-center block mt-4">>> FALHA DE CONEXÃO COM O SERVIDOR <<</span>`;
+                return;
+            }
+
+            content.innerHTML = data.map(log => {
+                const time = new Date(log.created_at).toLocaleTimeString('pt-BR', { hour12: false });
+                let actionColor = "text-stone-300";
+                if (log.acao === 'DANO') actionColor = "text-red-400";
+                if (log.acao === 'REPARO') actionColor = "text-green-400";
+                if (log.acao === 'MOBILIZAÇÃO') actionColor = "text-cyan-400";
+                if (log.acao === 'DESTRUIÇÃO/REMOÇÃO') actionColor = "text-red-600 font-bold";
+                if (log.acao === 'ISB OVERRIDE') actionColor = "text-yellow-400 font-bold animate-pulse";
+
+                return `
+                <div class="border-b border-stone-800/50 pb-1.5 mb-1.5 leading-tight">
+                    <span class="text-stone-600">[${time}]</span> 
+                    <span class="text-emerald-400 font-bold">[${log.nome_jogador}]</span> 
+                    <span class="text-purple-400 font-bold">${log.faccao}</span> | 
+                    <span class="text-cyan-100">${log.nave_nome}</span> > 
+                    <span class="${actionColor} uppercase tracking-wider">${log.acao}</span>: 
+                    <span class="text-stone-400">${log.detalhes}</span>
+                </div>
+            `;
+            }).join('');
+        }
+
+        // Inicialização da Página
+        window.onload = carregarFrotaMestre;
     </script>
 </body>
 

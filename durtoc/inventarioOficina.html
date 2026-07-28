@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Inventário - Star Wars RPG</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../styles/inventario.css">
+    <link rel="icon" type="image/x-icon" href="../img/sabres.ico">
+</head>
+
+<body class="min-h-screen p-4 md:p-8">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="durtocGateKeeper.js"></script>
+
+    <button id="open-cart-btn"
+        class="fixed bottom-6 right-6 z-30 btn-cart-toggle text-white font-orbitron font-bold py-3 px-5 rounded-full flex items-center gap-2 cursor-pointer transition-transform hover:scale-110 active:scale-95">
+        <span>🛒</span> VER CARRINHO
+    </button>
+
+    <div id="notification"
+        class="notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px] transition-all duration-300">
+    </div>
+
+    <header class="text-center mb-8 relative">
+        <a href="../"
+            class="absolute top-0 left-0 flex items-center gap-1 py-1 px-3 rounded-md font-orbitron text-cyan-300 border border-cyan-700 bg-gray-900/70 hover:bg-cyan-900/60 transition-colors shadow-md text-xs font-bold"
+            style="text-decoration:none;">
+            <span class="text-lg">&#8592;</span> Voltar
+        </a>
+        <h1 class="text-3xl md:text-5xl font-orbitron text-cyan-300 tracking-widest uppercase">Terminal de Gerenciamento
+            de Recursos</h1>
+        <p class="font-aurebesh text-lg text-cyan-500">Terminal de Gerenciamento de Recursos</p>
+        <button id="reset-btn"
+            class="absolute top-0 right-0 btn-danger font-orbitron text-xs py-1 px-3 rounded-md border border-red-700 bg-red-900/80 hover:bg-red-700/80 transition-colors shadow-md font-bold">
+            Resetar Jogo
+        </button>
+    </header>
+
+    <main class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <!-- Pessoal -->
+            <div class="glass-pane p-4 rounded-lg text-center border-t-2 border-yellow-500">
+                <h2 class="font-orbitron text-xs text-yellow-300 tracking-widest">CRÉDITOS PESSOAIS</h2>
+                <div id="personal-credits"
+                    class="text-2xl font-bold mt-1 text-stone-300 cursor-not-allowed select-none">...</div>
+            </div>
+
+            <!-- MCMT 1 -->
+            <div class="glass-pane p-4 rounded-lg text-center border-t-2 border-cyan-500 relative group">
+                <h2 class="font-orbitron text-xs text-cyan-300 tracking-widest">MCMT 1</h2>
+                <div class="flex justify-center items-center gap-2 mt-1">
+                    <div id="mcmt1-credits" class="text-2xl font-bold text-stone-300 select-none">...</div>
+                    <button onclick="editarCreditos('oficina1')"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-cyan-900/50 hover:bg-cyan-700 text-cyan-100 px-2 py-1 rounded cursor-pointer"
+                        title="Editar Diretamente">✏️</button>
+                </div>
+            </div>
+
+            <!-- MCMT 2 -->
+            <div class="glass-pane p-4 rounded-lg text-center border-t-2 border-purple-500 relative group">
+                <h2 class="font-orbitron text-xs text-purple-300 tracking-widest">MCMT 2</h2>
+                <div class="flex justify-center items-center gap-2 mt-1">
+                    <div id="mcmt2-credits" class="text-2xl font-bold text-stone-300 select-none">...</div>
+                    <button onclick="editarCreditos('oficina2')"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-purple-900/50 hover:bg-purple-700 text-purple-100 px-2 py-1 rounded cursor-pointer"
+                        title="Editar Diretamente">✏️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-4 mb-8">
+            <button id="btn-open-transfer-modal"
+                class="bg-stone-900/80 border border-stone-600 hover:border-yellow-500 text-stone-300 hover:text-yellow-400 transition-colors font-orbitron font-bold py-2 px-6 rounded-md uppercase tracking-widest text-xs flex items-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                </svg>
+                Transferir Fundos
+            </button>
+        </div>
+
+        <div class="mb-4 border-b border-cyan-700">
+            <nav class="flex space-x-2" id="tabs">
+                <button data-tab="lojas"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-active">LOJAS</button>
+                <button data-tab="personagem"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">INVENTÁRIO
+                    PESSOAL</button>
+                <button data-tab="oficina1"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">MCMT 1</button>
+                <button data-tab="oficina2"
+                    class="tab-btn font-orbitron py-2 px-4 rounded-t-lg border-b-2 tab-inactive">MCMT 2</button>
+            </nav>
+        </div>
+
+        <div id="tab-content">
+            <div id="lojas-pane" class="tab-pane">
+                <div class="glass-pane p-4 rounded-lg mb-4">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-grow">
+                            <h3 class="font-orbitron text-lg mb-2 text-cyan-400">FILTROS DE BUSCA</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <input type="text" id="search-input" placeholder="Buscar por nome..."
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none text-white">
+                                <select id="quality-filter"
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none text-white">
+                                    <option value="all">Todas as Qualidades</option>
+                                    <option value="Lendária">Lendária</option>
+                                    <option value="Imperial">Imperial</option>
+                                    <option value="Excelente">Excelente</option>
+                                    <option value="Boa">Boa</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Baixa">Baixa</option>
+                                </select>
+                                <select id="category-filter"
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none text-white">
+                                    <option value="all">Todas as Categorias</option>
+                                    <option value="Naves Prontas">Naves Prontas</option>
+                                    <option value="Dróides Prontos">Dróides Prontos</option>
+                                    <option value="Peças de Naves">Peças de Naves</option>
+                                    <option value="Peças de Dróides">Peças de Dróides</option>
+                                    <option value="Equipamento">Equipamento</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                                <select id="sort-by"
+                                    class="bg-gray-900 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-400 focus:outline-none text-white">
+                                    <option value="price-desc">Preço (Maior para Menor)</option>
+                                    <option value="price-asc">Preço (Menor para Maior)</option>
+                                    <option value="name-asc">Nome (A-Z)</option>
+                                    <option value="name-desc">Nome (Z-A)</option>
+                                    <option value="quality-desc">Qualidade (Melhor para Pior)</option>
+                                    <option value="quality-asc">Qualidade (Pior para Melhor)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="md:pl-4 md:border-l border-cyan-700 flex-shrink-0 flex items-center">
+                            <button id="add-custom-item-btn"
+                                class="btn-success font-bold py-2 px-4 rounded-md w-full h-fit">Adicionar Item
+                                Customizado</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="item-grid"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-2">
+                </div>
+            </div>
+
+            <div id="personagem-pane" class="tab-pane hidden">
+                <div id="personal-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </div>
+            </div>
+            <div id="oficina1-pane" class="tab-pane hidden">
+                <div id="oficina1-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </div>
+            </div>
+
+            <div id="oficina2-pane" class="tab-pane hidden">
+                <div id="oficina2-inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="cart"
+        class="fixed top-0 right-0 h-[96dvh] w-full md:w-1/3 lg:w-1/4 glass-pane p-4 pb-6 transform translate-x-full z-40 flex flex-col transition-transform duration-300 ease-in-out">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="font-orbitron text-2xl text-cyan-300">CARRINHO</h2>
+            <button id="close-cart-btn"
+                class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
+        </div>
+        <div id="cart-items" class="flex-grow min-h-0 overflow-y-auto pr-2">
+        </div>
+        <div class="mt-4 pt-4 border-t border-cyan-700 flex-shrink-0">
+            <div class="mb-2 flex justify-between items-center">
+                <span class="font-bold">Total Pessoal:</span>
+                <div class="text-right">
+                    <span id="cart-total-personal" class="block text-yellow-400 font-bold">0 Créditos</span>
+                    <span id="cart-total-reais" class="block text-sm text-green-400 font-bold">R$ 0,00</span>
+                </div>
+            </div>
+            <div class="my-4 p-3 rounded-md bg-gray-900/60 border border-cyan-800">
+                <p class="text-xs font-orbitron text-cyan-400 mb-2 font-bold tracking-wider">FONTE PAGADORA</p>
+                <select id="cart-payment-source"
+                    class="w-full bg-stone-900 border border-stone-700 rounded p-1.5 text-stone-300 text-xs focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer font-bold tracking-wider">
+                    <option value="personagem">Inventário Pessoal (Padrão)</option>
+                    <option value="oficina1">Cofre da MCMT 1</option>
+                    <option value="oficina2">Cofre da MCMT 2</option>
+                </select>
+
+                <p
+                    class="text-xs font-orbitron text-cyan-400 mb-2 mt-3 font-bold tracking-wider border-t border-cyan-900/50 pt-3">
+                    MÉTODO DE PAGAMENTO</p>
+                <div class="flex flex-col space-y-2">
+                    <label class="flex items-center space-x-2 text-sm cursor-pointer select-none">
+                        <input type="radio" name="payment-method" value="credits" checked class="accent-cyan-500">
+                        <span class="text-white">Créditos Imperiais</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-sm cursor-pointer select-none">
+                        <input type="radio" name="payment-method" value="reais" class="accent-green-500">
+                        <span class="text-green-400 font-bold">Reais Brasileiros (R$)</span>
+                    </label>
+                </div>
+            </div>
+
+            <button id="checkout-btn"
+                class="w-full btn-primary font-bold py-2 rounded-md tracking-widest font-orbitron cursor-pointer">FINALIZAR
+                COMPRA</button>
+        </div>
+    </div>
+
+    <div id="custom-item-modal"
+        class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="glass-pane rounded-lg p-8 w-full max-w-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="font-orbitron text-2xl text-cyan-300">ADICIONAR ITEM CUSTOMIZADO</h2>
+                <button id="close-modal-btn"
+                    class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
+            </div>
+            <form id="custom-item-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="custom-item-name"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Nome do
+                            Item</label>
+                        <input type="text" id="custom-item-name" placeholder="Ex: Blaster Modificado"
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            required>
+                    </div>
+                    <div>
+                        <label for="custom-item-desc"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Descrição</label>
+                        <textarea id="custom-item-desc" placeholder="Detalhes do item..."
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            rows="3" required></textarea>
+                    </div>
+                    <div>
+                        <label for="custom-item-price"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Preço em
+                            Créditos</label>
+                        <input type="number" id="custom-item-price" placeholder="0"
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            min="0" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="custom-item-quality"
+                                class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Qualidade</label>
+                            <select id="custom-item-quality"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                                required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="Lendária">Lendária</option>
+                                <option value="Imperial">Imperial</option>
+                                <option value="Excelente">Excelente</option>
+                                <option value="Boa">Boa</option>
+                                <option value="Normal">Normal</option>
+                                <option value="Baixa">Baixa</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="custom-item-category"
+                                class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Categoria</label>
+                            <select id="custom-item-category"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                                required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="Naves Prontas">Nave Pronta</option>
+                                <option value="Dróides Prontos">Dróide Pronto</option>
+                                <option value="Peças de Naves">Peça de Nave</option>
+                                <option value="Peças de Dróides">Peça de Dróide</option>
+                                <option value="Equipamento">Equipamento</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label for="custom-item-destination"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Local de
+                            Entrega</label>
+                        <select id="custom-item-destination"
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer"
+                            required>
+                            <option value="personagem">Inventário Pessoal</option>
+                            <option value="oficina1">MCMT 1</option>
+                            <option value="oficina2">MCMT 2</option>
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full btn-success font-bold py-2 rounded-md cursor-pointer tracking-widest mt-4">SALVAR
+                        ITEM</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="transfer-credits-modal"
+        class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="glass-pane rounded-lg p-8 w-full max-w-md border border-yellow-800/50">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-orbitron text-lg text-yellow-500 tracking-wider">TRANSFERÊNCIA BANCÁRIA</h2>
+                <button id="close-transfer-modal-btn"
+                    class="text-2xl hover:text-red-500 bg-transparent border-0 text-white cursor-pointer">&times;</button>
+            </div>
+            <form id="transfer-credits-form">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-stone-400 font-orbitron text-[10px] tracking-widest mb-1 uppercase">Origem
+                                (De)</label>
+                            <select id="transfer-from"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-yellow-500 outline-none cursor-pointer text-xs"
+                                required>
+                                <option value="personagem">Inventário Pessoal</option>
+                                <option value="oficina1">MCMT 1</option>
+                                <option value="oficina2">MCMT 2</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-stone-400 font-orbitron text-[10px] tracking-widest mb-1 uppercase">Destino
+                                (Para)</label>
+                            <select id="transfer-to"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-yellow-500 outline-none cursor-pointer text-xs"
+                                required>
+                                <option value="oficina1">MCMT 1</option>
+                                <option value="oficina2">MCMT 2</option>
+                                <option value="personagem">Inventário Pessoal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-stone-400 font-orbitron text-[10px] tracking-widest mb-1 uppercase">Valor
+                            da Remessa (Créditos)</label>
+                        <input type="number" id="transfer-amount" placeholder="0"
+                            class="modal-input w-full text-yellow-400 bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-yellow-500 outline-none font-bold text-lg text-center"
+                            min="1" required>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-yellow-600/80 hover:bg-yellow-500 text-stone-900 font-bold py-3 rounded-md cursor-pointer tracking-widest mt-6 text-xs uppercase shadow-[0_0_10px_rgba(234,179,8,0.2)] transition-colors">
+                        Confirmar Transação
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/databaseInventario.js"></script>
+    <script src="./inventarioOficina.js" defer></script>
+
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,68 +10,64 @@
     <link rel="stylesheet" href="../styles/frotaRebeldes.css">
     <link rel="icon" type="image/x-icon" href="../img/rebelde.png">
 </head>
-<body class="min-h-screen flex flex-col p-4 md:p-8">
 
-    <header class="mb-8 text-center relative">
+<body class="min-h-screen flex flex-col p-4 md:p-8">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+
+    <header class="mb-8 text-center relative flex flex-col items-center">
+        <a href="../"
+            class="absolute top-0 left-0 flex items-center gap-1 py-1 px-3 rounded-md font-bold text-[#4da8da] border border-[#4da8da] bg-[#0a1526]/70 hover:bg-[#4da8da]/20 transition-colors shadow-md text-xs uppercase tracking-widest"
+            style="text-decoration:none;">
+            <span class="text-lg">&#8592;</span> Voltar
+        </a>
+
         <h1 class="text-3xl md:text-5xl font-bold uppercase tracking-widest text-[#4da8da] hologram-text">
-            Comando de Frota - Setor D'Qar
+            Comando de Frota
         </h1>
-        <p class="text-xs md:text-sm opacity-80 mt-2 tracking-widest">SISTEMA DE RASTREAMENTO TÁTICO HOLOGRÁFICO ATIVO</p>
-        <div class="absolute w-full h-[1px] bg-[#4da8da] mt-4 opacity-50 shadow-[0_0_10px_#4da8da]"></div>
+        <p id="player-faction-display"
+            class="text-xs md:text-sm opacity-80 mt-2 tracking-widest text-yellow-400 font-bold">CARREGANDO
+            IDENTIFICAÇÃO DE SETOR...</p>
+
+        <button onclick="carregarFrotaRebelde()"
+            class="mt-4 bg-transparent border border-[#4da8da] text-[#4da8da] hover:bg-[#4da8da] hover:text-black py-2 px-6 rounded text-xs font-bold uppercase tracking-widest transition-all shadow-[0_0_10px_rgba(77,168,218,0.3)]">
+            Sincronizar Sensores (Atualizar)
+        </button>
+
+        <div class="absolute w-full h-[1px] bg-[#4da8da] mt-24 opacity-50 shadow-[0_0_10px_#4da8da]"></div>
     </header>
 
-    <main class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
-        
-        <!-- Painel Lateral: Registro -->
-        <aside class="lg:col-span-1 neon-border p-5 rounded-lg h-fit lg:sticky lg:top-8 z-40 mb-4 lg:mb-0">
-            <div class="panel-header text-lg p-2 mb-5 uppercase font-bold tracking-wider">
-                > Registrar Unidade
-            </div>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs mb-1 tracking-wider opacity-80">DESIGNAÇÃO</label>
-                    <input type="text" id="shipName" class="w-full bg-[#0a1526] border border-[#4da8da] text-[#4da8da] p-2 focus:outline-none focus:border-white focus:shadow-[0_0_8px_#4da8da] transition-all" placeholder="Ex: Raddus">
-                </div>
-                
-                <div>
-                    <label class="block text-xs mb-1 tracking-wider opacity-80">IMAGEM TÁTICA (URL)</label>
-                    <input type="text" id="shipImage" class="w-full bg-[#0a1526] border border-[#4da8da] text-[#4da8da] p-2 focus:outline-none focus:border-white focus:shadow-[0_0_8px_#4da8da] transition-all" placeholder="http://...">
-                    <p class="text-[10px] opacity-60 mt-1">Renderizada em CSS Voxel volumétrico.</p>
-                </div>
+    <main class="max-w-7xl w-full mx-auto flex-grow mt-6">
+        <div id="alertBox"
+            class="mb-6 text-xs p-3 border hidden uppercase tracking-wider text-center transition-all duration-300">
+        </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs mb-1 tracking-wider opacity-80 text-[#3b82f6]">ESCUDOS (AZUL)</label>
-                        <input type="number" id="shipShield" class="w-full bg-[#0a1526] border border-[#3b82f6] text-[#3b82f6] p-2 focus:outline-none focus:shadow-[0_0_8px_#3b82f6] transition-all" value="100" min="0">
-                    </div>
-                    <div>
-                        <label class="block text-xs mb-1 tracking-wider opacity-80 text-[#22c55e]">CASCO (VERDE)</label>
-                        <input type="number" id="shipHull" class="w-full bg-[#0a1526] border border-[#22c55e] text-[#22c55e] p-2 focus:outline-none focus:shadow-[0_0_8px_#22c55e] transition-all" value="100" min="1">
-                    </div>
-                </div>
-                
-                <button onclick="addShip()" class="w-full mt-6 bg-transparent border-2 border-[#4da8da] text-[#4da8da] hover:bg-[#4da8da] hover:text-[#050a10] transition-colors py-2 uppercase font-bold tracking-widest hover:shadow-[0_0_15px_#4da8da]">
-                    Adicionar à Frota
-                </button>
-            </div>
-            
-            <div id="alertBox" class="mt-4 text-xs p-2 border hidden uppercase tracking-wider text-center transition-all duration-300"></div>
-        </aside>
-
-        <!-- Grade de Naves -->
-        <section class="lg:col-span-3">
-            <div class="panel-header text-lg p-2 mb-4 uppercase font-bold flex justify-between items-center">
+        <section class="w-full">
+            <div
+                class="panel-header text-lg p-2 mb-6 uppercase font-bold flex justify-between items-center bg-gradient-to-r from-[#4da8da]/20 to-transparent border-b border-[#4da8da] text-[#4da8da]">
                 <span>> Monitor de Combate</span>
-                <span class="text-xs animate-pulse text-red-400 font-normal">SISTEMA EM ALERTA VERMELHO</span>
+                <span id="combat-alert" class="text-xs text-stone-500 font-normal">AGUARDANDO DADOS TÁTICOS</span>
             </div>
-            
-            <div id="fleetGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+
+            <div id="fleetGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <!-- Naves injetadas via JS -->
+            </div>
+        </section>
+        <!-- Nova Seção: Ameaças Imperiais -->
+        <section id="empire-section" class="w-full mt-12 hidden">
+            <div
+                class="panel-header text-lg p-2 mb-6 uppercase font-bold flex justify-between items-center bg-gradient-to-r from-red-900/30 to-transparent border-b border-red-500 text-red-500">
+                <span>> Ameaças Imperiais Detectadas</span>
+                <span class="text-xs text-red-400 font-normal animate-pulse">SISTEMA COMPROMETIDO</span>
+            </div>
+
+            <div id="empireGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Naves Imperiais injetadas via JS -->
             </div>
         </section>
     </main>
 
     <script src="../js/frotaRebeldes.js"></script>
 </body>
+
 </html>
