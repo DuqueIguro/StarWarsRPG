@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARMAZÉM DE CARGA // TERMINAL DE LOGÍSTICA</title>
+  <link rel="stylesheet" href="../styles/armazem.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+  
+  <div class="terminal-container">
+    <!-- Cabeçalho do Terminal -->
+    <header class="terminal-header">
+      <div class="brand">
+        <span class="logo-icon">⚙</span>
+        <div>
+          <h1>TERMINAL DE LOGÍSTICA E ARMAZÉM</h1>
+          <span class="subtext">SISTEMA DE TRANSFERÊNCIA DE CARGA GALÁCTICA // SETOR DE MANIFESTO</span>
+        </div>
+      </div>
+      <div class="status-indicator">
+        <span class="blink-dot"></span> GUINCHO ELEVADOR: ONLINE
+      </div>
+    </header>
+
+    <!-- Painel Principal -->
+    <main class="terminal-grid">
+      
+      <!-- Cartão de Perfil do Operador de Carga -->
+      <section class="panel profile-panel">
+        <div class="panel-header">=== PERFIL DO DESPACHANTE ===</div>
+        <div class="account-card">
+          <div class="account-info">
+            <label>SUA CHAVE DE RECEBIMENTO DE CARGA:</label>
+            <div class="key-box">
+              <span id="my-cargo-key" class="highlight-text">GERANDO...</span>
+              <button id="copy-key-btn" class="btn-small">COPIAR CHAVE</button>
+            </div>
+            
+            <div class="warehouse-info-box">
+              <span class="info-label">CAPACIDADE DO ARMAZÉM:</span>
+              <span class="info-value"><span id="inventory-count">0</span> / 50 ITENS ARMAZENADOS</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Painel de Seleção do Item / Inventário -->
+      <section class="panel inventory-panel">
+        <div class="panel-header">=== INVENTÁRIO DO GALPÃO ===</div>
+        <div class="filter-bar">
+          <button class="filter-btn active" data-quality="all">TODOS</button>
+          <button class="filter-btn q-lendario" data-quality="lendario">LENDÁRIO</button>
+          <button class="filter-btn q-imperial" data-quality="imperial">IMPERIAL</button>
+          <button class="filter-btn q-excelente" data-quality="excelente">EXCELENTE</button>
+          <button class="filter-btn q-boa" data-quality="boa">BOA</button>
+          <button class="filter-btn q-normal" data-quality="normal">NORMAL</button>
+          <button class="filter-btn q-baixa" data-quality="baixa">BAIXA</button>
+        </div>
+        
+        <div class="item-grid" id="item-grid">
+          <!-- Gerado via JS -->
+        </div>
+      </section>
+
+      <!-- Formulário de Transferência de Carga -->
+      <section class="panel transfer-panel">
+        <div class="panel-header">=== MANIFESTO DE DESPACHO DE CARGA ===</div>
+        <form id="cargo-transfer-form">
+          
+          <div class="form-group">
+            <label for="sender-name">OPERADOR REMETENTE</label>
+            <input type="text" id="sender-name" placeholder="Ex: Mestre de Carga Rex" required>
+          </div>
+
+          <div class="form-group">
+            <label for="target-key">CHAVE DO ARMAZÉM DESTINATÁRIO</label>
+            <input type="text" id="target-key" placeholder="Ex: CRG-90A2-X77L" required uppercase>
+          </div>
+
+          <div class="form-group">
+            <label>ITENS SELECIONADOS PARA ENVIO</label>
+            <div id="selected-item-preview" class="item-preview-box empty">
+              <span>NENHUM ITEM SELECIONADO NO INVENTÁRIO</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="transfer-msg">NOTA DE FRETE DE MANIFESTO (OPCIONAL)</label>
+            <textarea id="transfer-msg" rows="2" placeholder="Ex: Carga frágil proveniente de Corellia..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" id="dispatch-btn" disabled>
+            DESPACHAR CARGA
+          </button>
+        </form>
+      </section>
+
+      <!-- Histórico de Transferências de Itens -->
+      <section class="panel history-panel">
+        <div class="panel-header">=== REGISTRO DE MOVIMENTAÇÃO DE ARMAZÉM ===</div>
+        <div class="history-list" id="cargo-history-list">
+          <div class="empty-history">NENHUMA CARGA DESPACHADA NESTA SESSÃO.</div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Rodapé Terminal -->
+    <footer class="terminal-footer">
+      <span>AUTORIDADE LOGÍSTICA DO SETOR DE DASSAS // GALPÃO DE CARGA HEAVY-DUTY</span>
+      <span id="system-time">00:00:00 STAR-DATE</span>
+    </footer>
+  </div>
+
+  <script src="../js/armazem.js"></script>
+</body>
+</html>
