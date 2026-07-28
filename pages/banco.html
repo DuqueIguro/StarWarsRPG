@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RESERVA FINANCEIRA IMPERIAL // TERMINAL DE TRANSFERÊNCIA</title>
+  <link rel="stylesheet" href="../styles/banco.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+  
+  <div class="terminal-container">
+    <!-- Cabeçalho do Terminal -->
+    <header class="terminal-header">
+      <div class="brand">
+        <span class="logo-icon">◈</span>
+        <div>
+          <h1>BANCO CENTRAL GALÁCTICO</h1>
+          <span class="subtext">REDE DE TRANSFERÊNCIA DE CRÉDITOS DA ORLA EXTERIOR</span>
+        </div>
+      </div>
+      <div class="status-indicator">
+        <span class="blink-dot"></span> REDE ON-LINE // SEGURA
+      </div>
+    </header>
+
+    <!-- Painel Principal -->
+    <main class="terminal-grid">
+      
+      <!-- Cartão de Perfil do Jogador -->
+      <section class="panel profile-panel">
+        <div class="panel-header">=== PERFIL DO OPERADOR ===</div>
+        <div class="account-card">
+          <div class="avatar-box">
+            <span>OPERADOR</span>
+            <div class="avatar-ring"></div>
+          </div>
+          <div class="account-info">
+            <label>SUA CHAVE DE TRANSFERÊNCIA (ID GALÁCTICO):</label>
+            <div class="key-box">
+              <span id="my-key" class="highlight-text">GERANDO...</span>
+              <button id="copy-btn" class="btn-small">COPIAR</button>
+            </div>
+            
+            <div class="balance-box">
+              <span class="balance-label">SALDO DISPONÍVEL:</span>
+              <span class="balance-value"><span id="user-balance">10000</span> <span>CRÉDITOS</span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Formulário de Transferência -->
+      <section class="panel transfer-panel">
+        <div class="panel-header">=== ENVIAR CRÉDITOS GALÁCTICOS ===</div>
+        <form id="transfer-form">
+          
+          <div class="form-group">
+            <label for="sender-name">NOME DO REMETENTE</label>
+            <input type="text" id="sender-name" placeholder="Ex: Caçador Mando" required>
+          </div>
+
+          <div class="form-group">
+            <label for="target-key">CHAVE DO DESTINATÁRIO</label>
+            <input type="text" id="target-key" placeholder="Ex: GAL-8F29-99X0" required uppercase>
+          </div>
+
+          <div class="form-group">
+            <label for="transfer-amount">VALOR DA TRANSFERÊNCIA (CR)</label>
+            <input type="number" id="transfer-amount" min="1" placeholder="0" required>
+          </div>
+
+          <div class="form-group">
+            <label for="transfer-msg">MENSAGEM DE TRANSMISSÃO (OPCIONAL)</label>
+            <textarea id="transfer-msg" rows="3" placeholder="Ex: Pagamento pelo trabalho em Tatooine..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" id="send-btn">
+            TRANSMITIR CRÉDITOS
+          </button>
+        </form>
+      </section>
+
+      <!-- Histórico de Transações -->
+      <section class="panel history-panel">
+        <div class="panel-header">=== REGISTRO DE TRANSAÇÕES ===</div>
+        <div class="history-list" id="history-list">
+          <div class="empty-history">NENHUMA TRANMISSÃO REGISTRADA NESTA SESSÃO.</div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Rodapé Terminal -->
+    <footer class="terminal-footer">
+      <span>SISTEMA AUDITADO PELA GUILDA FINANCEIRA GALÁCTICA</span>
+      <span id="system-time">00:00:00 STAR-DATE</span>
+    </footer>
+  </div>
+
+  <script src="../js/banco.js"></script>
+</body>
+</html>
