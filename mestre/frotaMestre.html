@@ -119,6 +119,7 @@
             <div class="panel-header p-2 mb-6 uppercase font-bold text-center">> Adicionar Unidade</div>
 
             <select id="fAction" class="combat-input mb-4 text-xs font-bold tracking-wider cursor-pointer">
+                <option value="Império">Império Galáctico</option>
                 <option value="Diretiva Orion">Diretiva Orion</option>
                 <option value="Movimento Astara">Movimento Astara</option>
                 <option value="O Caminho">O Caminho</option>
@@ -192,7 +193,9 @@
     <script>
         const IMG_PLACEHOLDER = 'https://placehold.co/400x250/0a1526/ffffff?text=SCANNER+OFFLINE&font=oswald';
 
+        // Substitua a constante factions no JS por esta:
         const factions = {
+            "Império": { credits: 999999, budget: 999999, spent: 0, fleet: [] },
             "Diretiva Orion": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
             "Movimento Astara": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
             "O Caminho": { credits: 10000, budget: 5000, spent: 0, fleet: [] },
@@ -280,6 +283,14 @@
                         holoLayers += `<img src="${s.imagem || IMG_PLACEHOLDER}" class="holo-image ${i === 0 ? 'holo-main' : 'holo-layer'}" style="transform: translateZ(${i * 2}px);" onerror="this.src='${IMG_PLACEHOLDER}'">`;
                     }
 
+                    // Lógica de Renderização do Botão de Visibilidade (Exclusivo para o Império)
+                    let visibilityBtn = '';
+                    if (s.faccao === 'Império') {
+                        const vIcon = s.visivel ? '👁️ RADAR ON' : '🚫 STEALTH';
+                        const vColor = s.visivel ? 'text-green-400 border-green-500/50' : 'text-stone-500 border-stone-700 hover:text-white';
+                        visibilityBtn = `<button onclick="toggleVisibilidadeNave('${s.id}', ${!s.visivel}, '${s.nome}')" class="w-full mt-2 bg-[#020610] border ${vColor} hover:bg-stone-800 py-1.5 text-[9px] uppercase font-bold tracking-widest transition-all rounded relative z-10">${vIcon}</button>`;
+                    }
+
                     return `
             <div class="border ${isDestroyed ? 'border-red-500/50 bg-red-950/20' : 'border-[#4da8da]/30 bg-[#020610]'} p-4 rounded flex flex-col justify-between shadow-lg relative transition-all hover:border-[#4da8da]">
                 ${isDestroyed ? '<div class="absolute inset-0 bg-[url(\'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><line x1=%220%22 y1=%220%22 x2=%22100%22 y2=%22100%22 stroke=%22rgba(255,0,0,0.3)%22 stroke-width=%222%22/></svg>\')] pointer-events-none z-0"></div>' : ''}
@@ -313,8 +324,9 @@
                 </div>
                 
                 <button onclick="atualizarStatusNave('${s.id}', '${s.nome}', '${s.faccao}')" class="w-full mt-4 bg-[#0a1526] border border-[#4da8da]/50 hover:bg-[#4da8da] hover:text-black text-[#4da8da] py-2 text-[10px] uppercase font-bold tracking-widest transition-all rounded relative z-10">
-                    Forçar Sincronização
+                    Sincronizar Manualmente
                 </button>
+                ${visibilityBtn}
             </div>
             `;
                 }).join('');
@@ -323,10 +335,21 @@
                     fleetHTML = '<div class="col-span-full text-center text-stone-600 text-xs tracking-widest py-8">SISTEMA SEM UNIDADES VINCULADAS NESTE SETOR</div>';
                 }
 
+                // Botões de Mass Control do Império
+                let massControlHTML = '';
+                if (name === 'Império') {
+                    massControlHTML = `
+                    <div class="flex justify-center gap-4 mb-6">
+                        <button onclick="toggleTodasImperiais(true)" class="bg-transparent border border-green-500 text-green-500 hover:bg-green-500 hover:text-black py-1 px-4 text-[10px] uppercase font-bold tracking-widest rounded transition-all shadow-[0_0_8px_rgba(34,197,94,0.3)]">EXIBIR TODAS</button>
+                        <button onclick="toggleTodasImperiais(false)" class="bg-transparent border border-stone-500 text-stone-500 hover:bg-stone-500 hover:text-black py-1 px-4 text-[10px] uppercase font-bold tracking-widest rounded transition-all">OCULTAR TODAS</button>
+                    </div>`;
+                }
+
                 card.innerHTML = `
-            <div class="panel-header p-3 mb-5 uppercase font-bold text-center tracking-widest text-lg">${name}</div>
+            <div class="panel-header p-3 mb-5 uppercase font-bold text-center tracking-widest text-lg ${name === 'Império' ? 'text-red-500 border-red-500/50' : ''}">${name}</div>
+            ${massControlHTML}
             
-            <div class="bg-black/60 p-4 rounded border border-stone-800 mb-6">
+            <div class="bg-black/60 p-4 rounded border border-stone-800 mb-6 ${name === 'Império' ? 'hidden' : ''}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-xs font-bold uppercase tracking-widest">
                     <div class="flex items-center justify-between bg-stone-900 p-2 rounded border border-stone-700">
                         <span class="text-yellow-500">Créditos Base:</span> 
@@ -448,6 +471,23 @@
                 terminal.classList.replace('translate-y-[14rem]', 'translate-y-0');
                 icon.textContent = '▼';
                 carregarLogsTerminal();
+            }
+        }
+
+        // 8. Controles de Visibilidade (Radar)
+        async function toggleVisibilidadeNave(id, setVisivel, nome) {
+            const { error } = await supabaseClient.from('frota_ativa').update({ visivel: setVisivel }).eq('id', id);
+            if (!error) {
+                await registrarLogTatico('Império', nome, 'CONTRAMEDIDAS', `Nave alterada para status: ${setVisivel ? 'VISÍVEL NO RADAR' : 'STEALTH (OCULTA)'}`);
+                await carregarFrotaMestre();
+            }
+        }
+
+        async function toggleTodasImperiais(setVisivel) {
+            const { error } = await supabaseClient.from('frota_ativa').update({ visivel: setVisivel }).eq('faccao', 'Império');
+            if (!error) {
+                await registrarLogTatico('Império', 'FROTA INTEIRA', 'CONTRAMEDIDAS', `Todas as naves alteradas para: ${setVisivel ? 'VISÍVEL NO RADAR' : 'STEALTH (OCULTA)'}`);
+                await carregarFrotaMestre();
             }
         }
 
