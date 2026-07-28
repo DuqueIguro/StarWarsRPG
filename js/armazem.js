@@ -1,18 +1,21 @@
-// Banco de Dados do Galpão de Exemplo
+// Banco de Dados de Exemplo (Cada item é único e individual)
 const mockInventory = [
-  { id: "item-1", name: "Cristal Kyber Puro", quality: "lendario", qty: 2 },
-  { id: "item-2", name: "Lingote de Beskar", quality: "imperial", qty: 15 },
-  { id: "item-3", name: "Blaster DL-44", quality: "excelente", qty: 5 },
-  { id: "item-4", name: "Núcleo de Hiperespaço", quality: "excelente", qty: 3 },
-  { id: "item-5", name: "Escudo Defletor Portátil", quality: "boa", qty: 8 },
-  { id: "item-6", name: "Célula Plasmática", quality: "boa", qty: 25 },
-  { id: "item-7", name: "Rações de Sobrevivência", quality: "normal", qty: 100 },
-  { id: "item-8", name: "Filtro de Ar de Traje", quality: "normal", qty: 40 },
-  { id: "item-9", name: "Placa de Sucata de Aço", quality: "baixa", qty: 200 },
-  { id: "item-10", name: "Fiação Elétrica Usada", quality: "baixa", qty: 85 }
+  { id: "item-101", name: "Cristal Kyber Puro", quality: "lendario" },
+  { id: "item-102", name: "Cristal Kyber Puro", quality: "lendario" },
+  { id: "item-103", name: "Lingote de Beskar #891", quality: "imperial" },
+  { id: "item-104", name: "Lingote de Beskar #892", quality: "imperial" },
+  { id: "item-105", name: "Blaster DL-44", quality: "excelente" },
+  { id: "item-106", name: "Núcleo de Hiperespaço R-300", quality: "excelente" },
+  { id: "item-107", name: "Escudo Defletor Portátil", quality: "boa" },
+  { id: "item-108", name: "Célula Plasmática Alpha", quality: "boa" },
+  { id: "item-109", name: "Ração de Sobrevivência", quality: "normal" },
+  { id: "item-110", name: "Filtro de Ar de Traje", quality: "normal" },
+  { id: "item-111", name: "Placa de Sucata de Aço", quality: "baixa" },
+  { id: "item-112", name: "Fiação Elétrica Usada", quality: "baixa" }
 ];
 
-let selectedItem = null;
+// Array que guarda os itens atualmente selecionados
+let selectedItems = [];
 let cargoKey = localStorage.getItem("cargo_warehouse_key");
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -23,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateTime, 1000);
 });
 
-// Chave Única de Armazém de Carga (Ex: CRG-89B1-X902)
+// Gerador de Chave de Carga
 function generateCargoKey() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const segment = () => {
@@ -45,7 +48,7 @@ function initCargoKey() {
   updateInventoryCounter();
 }
 
-// Botão Copiar Chave
+// Copiar Chave
 document.getElementById("copy-key-btn").addEventListener("click", () => {
   navigator.clipboard.writeText(cargoKey).then(() => {
     const btn = document.getElementById("copy-key-btn");
@@ -61,7 +64,7 @@ document.getElementById("copy-key-btn").addEventListener("click", () => {
   });
 });
 
-// Renderizar Inventário
+// Renderizar Inventário por Categoria de Qualidade
 function renderInventory(qualityFilter) {
   const grid = document.getElementById("item-grid");
   grid.innerHTML = "";
@@ -78,22 +81,25 @@ function renderInventory(qualityFilter) {
   filteredItems.forEach(item => {
     const card = document.createElement("div");
     card.classList.add("item-card", `quality-${item.quality}`);
-    if (selectedItem && selectedItem.id === item.id) {
+    
+    // Verifica se já está selecionado
+    const isSelected = selectedItems.some(i => i.id === item.id);
+    if (isSelected) {
       card.classList.add("selected");
     }
 
     card.innerHTML = `
       <div class="item-name">${escapeHTML(item.name)}</div>
       <span class="quality-badge badge-${item.quality}">${item.quality}</span>
-      <div class="item-qty">ESTOQUE: <strong>${item.qty}</strong></div>
+      <div class="item-id">ID: <strong>${item.id}</strong></div>
     `;
 
-    card.addEventListener("click", () => selectItem(item, card));
+    card.addEventListener("click", () => toggleItemSelection(item, card));
     grid.appendChild(card);
   });
 }
 
-// Configurar Filtros
+// Configuração dos Botões de Filtro
 function setupFilterButtons() {
   const buttons = document.querySelectorAll(".filter-btn");
   buttons.forEach(btn => {
@@ -106,104 +112,115 @@ function setupFilterButtons() {
   });
 }
 
-// Seleção de Item
-function selectItem(item, cardElement) {
-  selectedItem = item;
+// Função de Alternar Múltipla Seleção
+function toggleItemSelection(item, cardElement) {
+  const index = selectedItems.findIndex(i => i.id === item.id);
 
-  document.querySelectorAll(".item-card").forEach(c => c.classList.remove("selected"));
-  cardElement.classList.add("selected");
+  if (index > -1) {
+    // Se já estava selecionado, remove da lista
+    selectedItems.splice(index, 1);
+    cardElement.classList.remove("selected");
+  } else {
+    // Se não estava selecionado, adiciona à lista
+    selectedItems.push(item);
+    cardElement.classList.add("selected");
+  }
 
+  updatePreview();
+}
+
+// Atualiza o painel de itens selecionados e estado do botão de despacho
+function updatePreview() {
   const previewBox = document.getElementById("selected-item-preview");
-  previewBox.className = `item-preview-box has-item quality-${item.quality}`;
+  const dispatchBtn = document.getElementById("dispatch-btn");
+
+  if (selectedItems.length === 0) {
+    previewBox.className = "item-preview-box empty";
+    previewBox.innerHTML = `<span>NENHUM ITEM SELECIONADO NO INVENTÁRIO</span>`;
+    dispatchBtn.disabled = true;
+    return;
+  }
+
+  previewBox.className = "item-preview-box has-items";
   previewBox.innerHTML = `
-    <div>
-      <strong>${escapeHTML(item.name)}</strong>
-      <span class="quality-badge badge-${item.quality}" style="margin-left: 8px;">${item.quality}</span>
+    <div class="selected-tags-container">
+      ${selectedItems.map(item => `
+        <span class="preview-item-tag quality-${item.quality}">
+          ${escapeHTML(item.name)}
+          <span class="remove-tag" onclick="removeSingleItem('${item.id}')">×</span>
+        </span>
+      `).join('')}
     </div>
-    <small style="color: #aaa;">DISPONÍVEL: ${item.qty}</small>
+    <div class="selected-count-badge">${selectedItems.length} ITEM(NS)</div>
   `;
 
-  const qtyInput = document.getElementById("item-quantity");
-  qtyInput.disabled = false;
-  qtyInput.max = item.qty;
-  qtyInput.value = 1;
-
-  document.getElementById("dispatch-btn").disabled = false;
+  dispatchBtn.disabled = false;
 }
 
+// Permite remover um item direto clicando no 'x' do preview
+function removeSingleItem(id) {
+  selectedItems = selectedItems.filter(i => i.id !== id);
+  const activeFilter = document.querySelector(".filter-btn.active").getAttribute("data-quality");
+  renderInventory(activeFilter);
+  updatePreview();
+}
+
+// Atualiza contador de capacidade total
 function updateInventoryCounter() {
-  const total = mockInventory.reduce((acc, curr) => acc + curr.qty, 0);
-  document.getElementById("inventory-count").innerText = total;
+  document.getElementById("inventory-count").innerText = mockInventory.length;
 }
 
-// Formulário de Transferência
+// Submissão da Transferência
 const transferForm = document.getElementById("cargo-transfer-form");
 const historyList = document.getElementById("cargo-history-list");
 
 transferForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  if (!selectedItem) {
-    alert("ERRO: Nenhum item foi selecionado para transferência!");
+  if (selectedItems.length === 0) {
+    alert("ERRO: Selecione ao menos um item para despachar!");
     return;
   }
 
   const senderName = document.getElementById("sender-name").value.trim();
   const targetKey = document.getElementById("target-key").value.trim().toUpperCase();
-  const dispatchQty = parseInt(document.getElementById("item-quantity").value);
   const message = document.getElementById("transfer-msg").value.trim();
 
   if (targetKey === cargoKey) {
-    alert("ERRO DE PROTOCOLO: A chave de destino é a mesma deste galpão.");
+    alert("ERRO DE PROTOCOLO: A chave de destino é idêntica à deste armazém.");
     return;
   }
 
-  if (dispatchQty > selectedItem.qty || dispatchQty <= 0) {
-    alert("ERRO DE QUANTIDADE: Quantidade solicitada inválida ou superior ao estoque.");
-    return;
-  }
+  // Remove os itens despachados do banco de dados local
+  selectedItems.forEach(selected => {
+    const idx = mockInventory.findIndex(item => item.id === selected.id);
+    if (idx !== -1) mockInventory.splice(idx, 1);
+  });
 
-  // Abater do estoque
-  selectedItem.qty -= dispatchQty;
-
+  // Adiciona ao Histórico
   addCargoHistory({
     sender: senderName,
     target: targetKey,
-    itemName: selectedItem.name,
-    quality: selectedItem.quality,
-    qty: dispatchQty,
+    items: [...selectedItems],
     message: message,
     time: new Date().toLocaleTimeString()
   });
 
-  updateInventoryCounter();
+  // Limpa formulário e seleções
+  alert(`CARGA DESPACHADA: ${selectedItems.length} item(ns) enviado(s) com sucesso!`);
+  selectedItems = [];
   
-  if (selectedItem.qty <= 0) {
-    const index = mockInventory.findIndex(i => i.id === selectedItem.id);
-    if (index !== -1) mockInventory.splice(index, 1);
-    resetFormSelection();
-  } else {
-    document.getElementById("item-quantity").max = selectedItem.qty;
-    document.getElementById("item-quantity").value = 1;
-  }
+  updatePreview();
+  updateInventoryCounter();
+
+  document.getElementById("target-key").value = "";
+  document.getElementById("transfer-msg").value = "";
 
   const activeFilter = document.querySelector(".filter-btn.active").getAttribute("data-quality");
   renderInventory(activeFilter);
-
-  alert(`CARGA DESPACHADA: ${dispatchQty}x item(ns) enviado(s) com sucesso!`);
 });
 
-function resetFormSelection() {
-  selectedItem = null;
-  const previewBox = document.getElementById("selected-item-preview");
-  previewBox.className = "item-preview-box empty";
-  previewBox.innerHTML = `<span>NENHUM ITEM SELECIONADO NO INVENTÁRIO</span>`;
-
-  document.getElementById("item-quantity").value = 1;
-  document.getElementById("item-quantity").disabled = true;
-  document.getElementById("dispatch-btn").disabled = true;
-}
-
+// Adiciona Entrada no Histórico
 function addCargoHistory(data) {
   const emptyMsg = historyList.querySelector(".empty-history");
   if (emptyMsg) emptyMsg.remove();
@@ -211,9 +228,14 @@ function addCargoHistory(data) {
   const historyItem = document.createElement("div");
   historyItem.className = "history-item";
 
+  const itemListFormatted = data.items.map(i => 
+    `${escapeHTML(i.name)} <span class="quality-badge badge-${i.quality}">${i.quality}</span>`
+  ).join(", ");
+
   historyItem.innerHTML = `
     <div class="tx-info">
-      <div class="tx-item-name">${data.qty}x ${escapeHTML(data.itemName)} <span class="quality-badge badge-${data.quality}">${data.quality}</span></div>
+      <div class="tx-item-name">LOTE DESPACHADO (${data.items.length} ITENS):</div>
+      <div class="tx-item-list">${itemListFormatted}</div>
       <div><strong>DESPACHANTE:</strong> ${escapeHTML(data.sender)}</div>
       <div><strong>ARMAZÉM DESTINO:</strong> ${escapeHTML(data.target)}</div>
       ${data.message ? `<div class="tx-msg">Manifesto: "${escapeHTML(data.message)}"</div>` : ''}
