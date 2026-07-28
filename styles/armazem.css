@@ -171,7 +171,11 @@ body {
   .terminal-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .inventory-panel, .history-panel {
+  
+  .profile-panel,
+  .inventory-panel,
+  .transfer-panel,
+  .history-panel {
     grid-column: span 2;
   }
 }
