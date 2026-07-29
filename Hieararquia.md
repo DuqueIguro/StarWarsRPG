@@ -4,9 +4,7 @@ StarWarsRPG
 ├─ .nojekyll
 ├─ 404.html
 ├─ backups
-│  ├─ holonetBackup.json
-│  ├─ inventarioOficina.js.bkp
-│  └─ invetarioOficina.html.bkp
+│  └─ holonetBackup.json
 ├─ CNAME
 ├─ data
 │  ├─ Aurebesh.woff
