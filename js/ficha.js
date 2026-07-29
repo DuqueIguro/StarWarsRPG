@@ -291,12 +291,12 @@ function calcularMatematicaDaFicha() {
     let bbaTotal = 0;
 
     // A) Processa a Classe Principal
-    // const nivelPrincipal = parseInt(appState.biografia.nivel) || 1;
     if (classeKey && DADOS_CLASSES[classeKey] && DADOS_CLASSES[classeKey].bba) {
         const arrayBbaPrincipal = DADOS_CLASSES[classeKey].bba;
-        // O array é zero-indexado, então o nível 1 é o índice 0. Subtrai 1 e limita entre 0 e 19 (nível max 20)
-        const indicePrincipal = Math.max(0, Math.min(nivelPrincipal - 1, 19));
-        bbaTotal += arrayBbaPrincipal[indicePrincipal];
+        // Pega dinamicamente o tamanho do array para não buscar índices que não existem
+        const maxIndice = arrayBbaPrincipal.length - 1;
+        const indicePrincipal = Math.max(0, Math.min(nivelPrincipal - 1, maxIndice));
+        bbaTotal += (arrayBbaPrincipal[indicePrincipal] || 0);
     }
 
     // B) Processa todas as Multiclasses dinamicamente
@@ -307,8 +307,10 @@ function calcularMatematicaDaFicha() {
 
             if (multiNome && DADOS_CLASSES[multiNome] && DADOS_CLASSES[multiNome].bba) {
                 const arrayBbaMulti = DADOS_CLASSES[multiNome].bba;
-                const indiceMulti = Math.max(0, Math.min(multiNivel - 1, 9));
-                bbaTotal += arrayBbaMulti[indiceMulti];
+                // Calcula o teto com base no array específico daquela classe
+                const maxIndiceMulti = arrayBbaMulti.length - 1;
+                const indiceMulti = Math.max(0, Math.min(multiNivel - 1, maxIndiceMulti));
+                bbaTotal += (arrayBbaMulti[indiceMulti] || 0);
             }
         });
     }
@@ -320,7 +322,6 @@ function calcularMatematicaDaFicha() {
     const bbaDisplay = document.getElementById('bba-display');
     if (bbaDisplay) {
         bbaDisplay.textContent = bbaFinal;
-        // console.log("BBA FINAL: " + bbaFinal);
     }
     // 7. Dano Limite
     if (document.getElementById('limiar-dano-display')) document.getElementById('limiar-dano-display').textContent = defFort;
