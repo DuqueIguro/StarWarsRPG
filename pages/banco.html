@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../img/p2w.png">
-
 </head>
 
 <body>
@@ -49,13 +48,14 @@
                     <div class="account-info">
                         <label>SUA CHAVE DE TRANSFERÊNCIA (ID GALÁCTICO):</label>
                         <div class="key-box">
-                            <span id="my-key" class="highlight-text">GERANDO...</span>
+                            <span id="my-key" class="highlight-text animate-pulse">SINCRONIZANDO...</span>
                             <button id="copy-btn" class="btn-small">COPIAR</button>
+                            <button id="generate-key-btn" class="btn-small">GERAR NOVA</button>
                         </div>
 
                         <div class="balance-box">
                             <span class="balance-label">SALDO DISPONÍVEL:</span>
-                            <span class="balance-value"><span id="user-balance">10000</span>
+                            <span class="balance-value"><span id="user-balance">0</span>
                                 <span>CRÉDITOS</span></span>
                         </div>
                     </div>
@@ -68,13 +68,13 @@
                 <form id="transfer-form">
 
                     <div class="form-group">
-                        <label for="sender-name">NOME DO REMETENTE</label>
-                        <input type="text" id="sender-name" placeholder="Ex: Caçador Mando" required>
+                        <label for="sender-name">NOME DO REMETENTE (TRAVADO BIOMETRICAMENTE)</label>
+                        <input type="text" id="sender-name" class="opacity-70 cursor-not-allowed" readonly required>
                     </div>
 
                     <div class="form-group">
                         <label for="target-key">CHAVE DO DESTINATÁRIO</label>
-                        <input type="text" id="target-key" placeholder="Ex: GAL-8F29-99X0" required uppercase>
+                        <input type="text" id="target-key" placeholder="Ex: GAL-8F29-99X0" required style="text-transform: uppercase;">
                     </div>
 
                     <div class="form-group">
@@ -98,7 +98,7 @@
             <section class="panel history-panel">
                 <div class="panel-header">=== REGISTRO DE TRANSAÇÕES ===</div>
                 <div class="history-list" id="history-list">
-                    <div class="empty-history">NENHUMA TRANMISSÃO REGISTRADA NESTA SESSÃO.</div>
+                    <div class="empty-history text-stone-500 animate-pulse">CARREGANDO DADOS DA HOLONET...</div>
                 </div>
             </section>
 
@@ -111,6 +111,9 @@
         </footer>
     </div>
 
+    <!-- Integração do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
     <script src="../js/banco.js"></script>
 </body>
 

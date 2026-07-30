@@ -135,7 +135,7 @@
     </main>
 
     <div id="cart"
-        class="fixed top-0 right-0 h-[96dhv] w-full md:w-1/3 lg:w-1/4 glass-pane p-4 transform translate-x-full z-40 flex flex-col transition-transform duration-300 ease-in-out">
+        class="fixed top-0 bottom-0 right-0 h-screen w-full md:w-1/3 lg:w-1/4 glass-pane p-4 transform translate-x-full z-40 flex flex-col transition-transform duration-300 ease-in-out">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-orbitron text-2xl text-cyan-300">CARRINHO</h2>
             <button id="close-cart-btn"
@@ -183,21 +183,35 @@
             <form id="custom-item-form">
                 <div class="space-y-4">
                     <div>
-                        <label for="custom-item-name" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Nome do Item</label>
-                        <input type="text" id="custom-item-name" placeholder="Ex: Blaster Modificado" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
+                        <label for="custom-item-name"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Nome do
+                            Item</label>
+                        <input type="text" id="custom-item-name" placeholder="Ex: Blaster Modificado"
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            required>
                     </div>
                     <div>
-                        <label for="custom-item-desc" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Descrição</label>
-                        <textarea id="custom-item-desc" placeholder="Detalhes do item..." class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" rows="3" required></textarea>
+                        <label for="custom-item-desc"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Descrição</label>
+                        <textarea id="custom-item-desc" placeholder="Detalhes do item..."
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            rows="3" required></textarea>
                     </div>
                     <div>
-                        <label for="custom-item-price" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Preço em Créditos</label>
-                        <input type="number" id="custom-item-price" placeholder="0" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" min="0" required>
+                        <label for="custom-item-price"
+                            class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Preço em
+                            Créditos</label>
+                        <input type="number" id="custom-item-price" placeholder="0"
+                            class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                            min="0" required>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="custom-item-quality" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Qualidade</label>
-                            <select id="custom-item-quality" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
+                            <label for="custom-item-quality"
+                                class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Qualidade</label>
+                            <select id="custom-item-quality"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                                required>
                                 <option value="" disabled selected>Selecione...</option>
                                 <option value="Lendária">Lendária</option>
                                 <option value="Imperial">Imperial</option>
@@ -208,8 +222,11 @@
                             </select>
                         </div>
                         <div>
-                            <label for="custom-item-category" class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Categoria</label>
-                            <select id="custom-item-category" class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none" required>
+                            <label for="custom-item-category"
+                                class="block text-cyan-400 font-orbitron text-xs tracking-widest mb-1 uppercase">Categoria</label>
+                            <select id="custom-item-category"
+                                class="modal-input w-full text-white bg-gray-900 border border-gray-700 rounded p-2 focus:ring-1 focus:ring-cyan-500 outline-none"
+                                required>
                                 <option value="" disabled selected>Selecione...</option>
                                 <option value="Naves Prontas">Nave Pronta</option>
                                 <option value="Dróides Prontos">Dróide Pronto</option>
@@ -220,7 +237,9 @@
                             </select>
                         </div>
                     </div>
-                    <button type="submit" class="w-full btn-success font-bold py-2 rounded-md cursor-pointer tracking-widest mt-4">SALVAR ITEM</button>
+                    <button type="submit"
+                        class="w-full btn-success font-bold py-2 rounded-md cursor-pointer tracking-widest mt-4">SALVAR
+                        ITEM</button>
                 </div>
             </form>
         </div>

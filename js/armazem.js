@@ -1,61 +1,125 @@
-// Banco de Dados de Exemplo (Cada item é único e individual)
-const mockInventory = [
-  { id: "item-101", name: "Cristal Kyber Puro", quality: "lendario" },
-  { id: "item-102", name: "Cristal Kyber Puro", quality: "lendario" },
-  { id: "item-103", name: "Lingote de Beskar #891", quality: "imperial" },
-  { id: "item-104", name: "Lingote de Beskar #892", quality: "imperial" },
-  { id: "item-105", name: "Blaster DL-44", quality: "excelente" },
-  { id: "item-106", name: "Núcleo de Hiperespaço R-300", quality: "excelente" },
-  { id: "item-107", name: "Escudo Defletor Portátil", quality: "boa" },
-  { id: "item-108", name: "Célula Plasmática Alpha", quality: "boa" },
-  { id: "item-109", name: "Ração de Sobrevivência", quality: "normal" },
-  { id: "item-110", name: "Filtro de Ar de Traje", quality: "normal" },
-  { id: "item-111", name: "Placa de Sucata de Aço", quality: "baixa" },
-  { id: "item-112", name: "Fiação Elétrica Usada", quality: "baixa" }
-];
-
-// Array que guarda os itens atualmente selecionados
+let playerInventory = [];
 let selectedItems = [];
-let cargoKey = localStorage.getItem("cargo_warehouse_key");
+let playerKey = "";
+let playerName = "";
+let playerId = "";
 
-document.addEventListener("DOMContentLoaded", () => {
-  initCargoKey();
-  renderInventory('all');
+let globalTargetData = null; // Guarda o alvo validado para o modal usar
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await initPlayerData();
   setupFilterButtons();
   updateTime();
   setInterval(updateTime, 1000);
 });
 
-// Gerador de Chave de Carga
-function generateCargoKey() {
+// Gera um ID Galáctico no padrão GAL-XXXX-XXXX
+function generateGalacticKey() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const segment = () => {
-    let str = '';
-    for (let i = 0; i < 4; i++) {
-      str += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return str;
-  };
-  return `CRG-${segment()}-${segment()}`;
+  const segment = () => Array.from({ length: 4 }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+  return `GAL-${segment()}-${segment()}`;
 }
 
-function initCargoKey() {
-  if (!cargoKey) {
-    cargoKey = generateCargoKey();
-    localStorage.setItem("cargo_warehouse_key", cargoKey);
+/* INICIO DE FUNÇÃO DE initPlayerData; Sincronização Supabase */
+async function initPlayerData() {
+  const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+  if (userError || !userData.user) {
+    alert("Acesso negado. Autentique-se no terminal.");
+    window.location.href = '../index.html';
+    return;
   }
-  document.getElementById("my-cargo-key").innerText = cargoKey;
-  updateInventoryCounter();
+
+  const { data: pData } = await supabaseClient.from('personagens').select('id, nome, chave_transferencia').eq('user_id', userData.user.id).limit(1);
+
+  if (pData && pData.length > 0) {
+    playerId = pData[0].id;
+    playerName = pData[0].nome;
+
+    // Puxa a mesma chave gerada pelo Banco
+    playerKey = pData[0].chave_transferencia;
+    if (!playerKey) {
+      playerKey = generateGalacticKey();
+      await supabaseClient.from('personagens').update({ chave_transferencia: playerKey }).eq('id', playerId);
+    }
+
+    document.getElementById("my-cargo-key").innerText = playerKey;
+    document.getElementById("my-cargo-key").classList.remove('animate-pulse');
+
+    document.getElementById("sender-name").value = playerName;
+
+    await fetchInventory();
+    await carregarHistoricoArmazem();
+  }
 }
 
-// Copiar Chave
+/* INICIO DE FUNÇÃO DE gerarNovaChaveBackend; Invalida a anterior no DB */
+async function gerarNovaChaveBackend() {
+  if (!confirm("Gerar uma nova chave invalidará a sua atual em todas as transferências (Banco e Armazém). Tem certeza?")) return;
+
+  const novaChave = generateGalacticKey();
+
+  const { error } = await supabaseClient.from('personagens').update({ chave_transferencia: novaChave }).eq('id', playerId);
+
+  if (!error) {
+    playerKey = novaChave;
+    document.getElementById("my-cargo-key").innerText = playerKey;
+    alert("SISTEMA: Nova chave logística gerada e atrelada ao seu Dossiê.");
+  } else {
+    alert("ERRO DO SISTEMA: Falha ao registrar nova chave no banco de dados.");
+  }
+}
+
+const generateBtn = document.getElementById("generate-key-btn");
+if (generateBtn) {
+  generateBtn.addEventListener("click", async () => {
+    await gerarNovaChaveBackend();
+  });
+}
+
+async function fetchInventory() {
+  const { data, error } = await supabaseClient.from('inventario').select('*').eq('personagem_id', playerId);
+
+  if (!error && data) {
+    playerInventory = data.map(dbItem => {
+      // 1. Puxa os dados base do banco de itens da loja (se o arquivo databaseInventario.js estiver carregado no HTML)
+      let baseData = {};
+      if (dbItem.item_id && typeof itemDatabase !== 'undefined') {
+        baseData = itemDatabase.find(i => String(i.id) === String(dbItem.item_id)) || {};
+      }
+
+      // 2. Garante que os dados customizados sejam lidos como Objeto (mesmo se o banco devolver como string)
+      let customData = dbItem.dados_customizados;
+      if (typeof customData === 'string') {
+        try { customData = JSON.parse(customData); } catch (e) { customData = {}; }
+      } else if (!customData) {
+        customData = {};
+      }
+
+      // 3. Mescla tudo. Se a propriedade existir no customData, ela sobrescreve a do baseData.
+      const specs = { ...baseData, ...customData };
+
+      return {
+        id: dbItem.id, // O UUID real da tabela 'inventario'
+        name: specs.nome || specs.name || "Item Desconhecido",
+        quality: (specs.qualidade || specs.quality || "normal").toLowerCase()
+      };
+    });
+
+    selectedItems = [];
+    updatePreview();
+    updateInventoryCounter();
+    const activeFilter = document.querySelector(".filter-btn.active")?.getAttribute("data-quality") || 'all';
+    renderInventory(activeFilter);
+  }
+}
+
 document.getElementById("copy-key-btn").addEventListener("click", () => {
-  navigator.clipboard.writeText(cargoKey).then(() => {
+  navigator.clipboard.writeText(playerKey).then(() => {
     const btn = document.getElementById("copy-key-btn");
     btn.innerText = "COPIADO!";
     btn.style.background = "var(--accent)";
     btn.style.color = "#000";
-
     setTimeout(() => {
       btn.innerText = "COPIAR CHAVE";
       btn.style.background = "transparent";
@@ -64,72 +128,64 @@ document.getElementById("copy-key-btn").addEventListener("click", () => {
   });
 });
 
-// Renderizar Inventário por Categoria de Qualidade
 function renderInventory(qualityFilter) {
   const grid = document.getElementById("item-grid");
   grid.innerHTML = "";
 
-  const filteredItems = qualityFilter === 'all' 
-    ? mockInventory 
-    : mockInventory.filter(item => item.quality === qualityFilter);
+  const filteredItems = qualityFilter === 'all'
+    ? playerInventory
+    : playerInventory.filter(item => item.quality === qualityFilter);
 
   if (filteredItems.length === 0) {
-    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #666; padding: 20px;">NENHUM ITEM NESTA CATEGORIA</div>`;
+    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #666; padding: 20px;">NENHUM ITEM ENCONTRADO</div>`;
     return;
   }
 
   filteredItems.forEach(item => {
     const card = document.createElement("div");
     card.classList.add("item-card", `quality-${item.quality}`);
-    
-    // Verifica se já está selecionado
-    const isSelected = selectedItems.some(i => i.id === item.id);
-    if (isSelected) {
+
+    if (selectedItems.some(i => i.id === item.id)) {
       card.classList.add("selected");
     }
 
+    // Formata o UUID para ficar pequeno na interface do cartão
+    const shortId = item.id.split('-')[0].toUpperCase();
+
     card.innerHTML = `
-      <div class="item-name">${escapeHTML(item.name)}</div>
-      <span class="quality-badge badge-${item.quality}">${item.quality}</span>
-      <div class="item-id">ID: <strong>${item.id}</strong></div>
-    `;
+            <div class="item-name">${escapeHTML(item.name)}</div>
+            <span class="quality-badge badge-${item.quality}">${item.quality}</span>
+            <div class="item-id">SR: <strong>${shortId}</strong></div>
+        `;
 
     card.addEventListener("click", () => toggleItemSelection(item, card));
     grid.appendChild(card);
   });
 }
 
-// Configuração dos Botões de Filtro
 function setupFilterButtons() {
   const buttons = document.querySelectorAll(".filter-btn");
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
       buttons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      const quality = btn.getAttribute("data-quality");
-      renderInventory(quality);
+      renderInventory(btn.getAttribute("data-quality"));
     });
   });
 }
 
-// Função de Alternar Múltipla Seleção
 function toggleItemSelection(item, cardElement) {
   const index = selectedItems.findIndex(i => i.id === item.id);
-
   if (index > -1) {
-    // Se já estava selecionado, remove da lista
     selectedItems.splice(index, 1);
     cardElement.classList.remove("selected");
   } else {
-    // Se não estava selecionado, adiciona à lista
     selectedItems.push(item);
     cardElement.classList.add("selected");
   }
-
   updatePreview();
 }
 
-// Atualiza o painel de itens selecionados e estado do botão de despacho
 function updatePreview() {
   const previewBox = document.getElementById("selected-item-preview");
   const dispatchBtn = document.getElementById("dispatch-btn");
@@ -143,118 +199,192 @@ function updatePreview() {
 
   previewBox.className = "item-preview-box has-items";
   previewBox.innerHTML = `
-    <div class="selected-tags-container">
-      ${selectedItems.map(item => `
-        <span class="preview-item-tag quality-${item.quality}">
-          ${escapeHTML(item.name)}
-          <span class="remove-tag" onclick="removeSingleItem('${item.id}')">×</span>
-        </span>
-      `).join('')}
-    </div>
-    <div class="selected-count-badge">${selectedItems.length} ITEM(NS)</div>
-  `;
-
+        <div class="selected-tags-container">
+            ${selectedItems.map(item => `
+                <span class="preview-item-tag quality-${item.quality}">
+                    ${escapeHTML(item.name)}
+                    <span class="remove-tag" onclick="removeSingleItem('${item.id}')">×</span>
+                </span>
+            `).join('')}
+        </div>
+        <div class="selected-count-badge">${selectedItems.length} ITEM(NS)</div>
+    `;
   dispatchBtn.disabled = false;
 }
 
-// Permite remover um item direto clicando no 'x' do preview
-function removeSingleItem(id) {
+window.removeSingleItem = function (id) {
   selectedItems = selectedItems.filter(i => i.id !== id);
   const activeFilter = document.querySelector(".filter-btn.active").getAttribute("data-quality");
   renderInventory(activeFilter);
   updatePreview();
 }
 
-// Atualiza contador de capacidade total
 function updateInventoryCounter() {
-  document.getElementById("inventory-count").innerText = mockInventory.length;
+  document.getElementById("inventory-count").innerText = playerInventory.length;
 }
 
-// Submissão da Transferência
+/* INICIO DE FUNÇÃO DE Modal e Submissão */
 const transferForm = document.getElementById("cargo-transfer-form");
-const historyList = document.getElementById("cargo-history-list");
-
-transferForm.addEventListener("submit", (e) => {
+transferForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (selectedItems.length === 0) {
-    alert("ERRO: Selecione ao menos um item para despachar!");
-    return;
-  }
+  if (selectedItems.length === 0) return;
 
-  const senderName = document.getElementById("sender-name").value.trim();
   const targetKey = document.getElementById("target-key").value.trim().toUpperCase();
-  const message = document.getElementById("transfer-msg").value.trim();
+  const btn = document.getElementById("dispatch-btn");
 
-  if (targetKey === cargoKey) {
+  if (targetKey === playerKey) {
     alert("ERRO DE PROTOCOLO: A chave de destino é idêntica à deste armazém.");
     return;
   }
 
-  // Remove os itens despachados do banco de dados local
-  selectedItems.forEach(selected => {
-    const idx = mockInventory.findIndex(item => item.id === selected.id);
-    if (idx !== -1) mockInventory.splice(idx, 1);
+  btn.disabled = true;
+  btn.innerText = "VERIFICANDO ASSINATURAS...";
+
+  // CORREÇÃO AQUI: Agora nós puxamos também o 'user_id' do destinatário
+  const { data: targetData, error: targetError } = await supabaseClient
+    .from('personagens')
+    .select('id, nome, user_id')
+    .eq('chave_transferencia', targetKey)
+    .single();
+
+  if (targetError || !targetData) {
+    alert("ERRO DO SISTEMA: Armazém destinatário não localizado.");
+    btn.disabled = false;
+    btn.innerText = "GERAR ORDEM DE DESPACHO";
+    return;
+  }
+
+  // Passou na validação? Prepara e abre o modal.
+  globalTargetData = targetData;
+
+  const ul = document.getElementById("modal-item-list");
+  ul.innerHTML = selectedItems.map(i => `<li><span>${escapeHTML(i.name)}</span> <span style="color:var(--q-${i.quality})">${i.quality.toUpperCase()}</span></li>`).join('');
+
+  document.getElementById("cargo-modal").style.display = "flex";
+  btn.disabled = false;
+  btn.innerText = "GERAR ORDEM DE DESPACHO";
+});
+
+window.closeCargoModal = function () {
+  document.getElementById("cargo-modal").style.display = "none";
+  globalTargetData = null;
+}
+
+window.executeCargoTransfer = async function () {
+  if (!globalTargetData || selectedItems.length === 0) return;
+
+  const message = document.getElementById("transfer-msg").value.trim();
+  const itemIds = selectedItems.map(i => i.id);
+
+  // CORREÇÃO AQUI: Atualiza a Titularidade no Banco trocando o Personagem e a Conta(user_id)
+  await supabaseClient.from('inventario')
+    .update({
+      personagem_id: globalTargetData.id,
+      user_id: globalTargetData.user_id
+    })
+    .in('id', itemIds);
+
+  // 2. Prepara e salva o Log Tático com JSON
+  const namesList = selectedItems.map(i => i.name).join(', ');
+  const detalhesLog = JSON.stringify({
+    remetente_nome: playerName,
+    destinatario_nome: globalTargetData.nome,
+    mensagem: message,
+    itens: namesList
   });
 
-  // Adiciona ao Histórico
-  addCargoHistory({
-    sender: senderName,
-    target: targetKey,
-    items: [...selectedItems],
-    message: message,
-    time: new Date().toLocaleTimeString()
+  await supabaseClient.from('transacoes_log').insert({
+    tipo_transacao: 'ITENS',
+    remetente_id: playerId,
+    destinatario_id: globalTargetData.id,
+    valor_ou_quantidade: selectedItems.length,
+    detalhes: detalhesLog
   });
 
-  // Limpa formulário e seleções
-  alert(`CARGA DESPACHADA: ${selectedItems.length} item(ns) enviado(s) com sucesso!`);
-  selectedItems = [];
-  
-  updatePreview();
-  updateInventoryCounter();
+  // 3. Auditoria do Mestre
+  await supabaseClient.from('logs_auditoria').insert({
+    personagem_id: playerId,
+    tipo_evento: 'ENVIO_CARGA',
+    descricao: `Enviou ${selectedItems.length} item(ns) para ${globalTargetData.nome}: [${namesList}]. Msg: ${message || 'Sem nota'}`,
+    mudanca_creditos: 0
+  });
+
+  alert(`CARGA DESPACHADA: ${selectedItems.length} item(ns) enviados para ${globalTargetData.nome}!`);
 
   document.getElementById("target-key").value = "";
   document.getElementById("transfer-msg").value = "";
 
-  const activeFilter = document.querySelector(".filter-btn.active").getAttribute("data-quality");
-  renderInventory(activeFilter);
-});
-
-// Adiciona Entrada no Histórico
-function addCargoHistory(data) {
-  const emptyMsg = historyList.querySelector(".empty-history");
-  if (emptyMsg) emptyMsg.remove();
-
-  const historyItem = document.createElement("div");
-  historyItem.className = "history-item";
-
-  const itemListFormatted = data.items.map(i => 
-    `${escapeHTML(i.name)} <span class="quality-badge badge-${i.quality}">${i.quality}</span>`
-  ).join(", ");
-
-  historyItem.innerHTML = `
-    <div class="tx-info">
-      <div class="tx-item-name">LOTE DESPACHADO (${data.items.length} ITENS):</div>
-      <div class="tx-item-list">${itemListFormatted}</div>
-      <div><strong>DESPACHANTE:</strong> ${escapeHTML(data.sender)}</div>
-      <div><strong>ARMAZÉM DESTINO:</strong> ${escapeHTML(data.target)}</div>
-      ${data.message ? `<div class="tx-msg">Manifesto: "${escapeHTML(data.message)}"</div>` : ''}
-      <small style="color: #666; font-size: 0.65rem;">${data.time}</small>
-    </div>
-  `;
-
-  historyList.prepend(historyItem);
+  closeCargoModal();
+  await fetchInventory(); // Atualiza limpando o que foi enviado
+  await carregarHistoricoArmazem();
 }
 
+/* INICIO DE FUNÇÃO DE carregarHistoricoArmazem */
+async function carregarHistoricoArmazem() {
+  const historyList = document.getElementById("cargo-history-list");
+
+  const { data: logs, error } = await supabaseClient.from('transacoes_log')
+    .select('*')
+    .eq('tipo_transacao', 'ITENS')
+    .or(`remetente_id.eq.${playerId},destinatario_id.eq.${playerId}`)
+    .order('data_transacao', { ascending: false })
+    .limit(20);
+
+  if (error || !logs || logs.length === 0) {
+    historyList.innerHTML = '<div class="empty-history text-stone-500">NENHUMA CARGA DESPACHADA NESTA SESSÃO.</div>';
+    return;
+  }
+
+  historyList.innerHTML = '';
+
+  logs.forEach(log => {
+    let detailsObj = {};
+    try { detailsObj = JSON.parse(log.detalhes); } catch (e) { }
+
+    const isSent = log.remetente_id === playerId;
+    const time = new Date(log.data_transacao).toLocaleTimeString('pt-BR', { hour12: false });
+    const date = new Date(log.data_transacao).toLocaleDateString('pt-BR');
+
+    const labelName = isSent ? `PARA: ${escapeHTML(detailsObj.destinatario_nome || 'Desconhecido')}` : `DE: ${escapeHTML(detailsObj.remetente_nome || 'Desconhecido')}`;
+    const arrow = isSent ? '📤 ENVIO:' : '📥 RECEBIMENTO:';
+    const colorBorder = isSent ? 'border-left: 4px solid var(--accent);' : 'border-left: 4px solid var(--q-boa); background: rgba(40,167,69,0.05);';
+
+    const historyItem = document.createElement("div");
+    historyItem.className = "history-item";
+    historyItem.style = `cursor: pointer; flex-direction: column; ${colorBorder}`;
+
+    historyItem.innerHTML = `
+        <div style="display: flex; justify-content: space-between; width: 100%;">
+            <div>
+                <strong>${arrow} ${labelName}</strong><br>
+                <small style="color: #666; font-size: 0.65rem;">${date} às ${time} (CLIQUE PARA MANIFESTO)</small>
+            </div>
+            <div style="font-family: var(--font-title); font-weight: bold; color: var(--accent);">
+                ${log.valor_ou_quantidade} LOTE(S)
+            </div>
+        </div>
+        <div class="tx-details" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); width: 100%;">
+            <div style="font-size: 0.8rem; color: #ccc; margin-bottom: 8px;"><strong>Conteúdo:</strong> ${escapeHTML(detailsObj.itens || 'Itens não especificados.')}</div>
+            <div class="tx-msg">Nota: "${detailsObj.mensagem ? escapeHTML(detailsObj.mensagem) : 'Sem nota de frete.'}"</div>
+        </div>
+        `;
+
+    historyItem.addEventListener("click", function () {
+      const details = this.querySelector('.tx-details');
+      details.style.display = details.style.display === 'none' ? 'block' : 'none';
+    });
+
+    historyList.appendChild(historyItem);
+  });
+}
+/* FIM DE FUNÇÃO DE carregarHistoricoArmazem */
+
 function escapeHTML(str) {
-  return str.replace(/[&<>'"]/g, 
-    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-  );
+  return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
 }
 
 function updateTime() {
   const now = new Date();
-  const timeStr = now.toTimeString().split(' ')[0];
-  const starDate = `LOG-DATE ${now.getFullYear()}.${now.getMonth() + 1}${now.getDate()}`;
-  document.getElementById("system-time").innerText = `${starDate} // ${timeStr}`;
+  document.getElementById("system-time").innerText = `LOG-DATE ${now.getFullYear()}.${now.getMonth() + 1}${now.getDate()} // ${now.toTimeString().split(' ')[0]}`;
 }

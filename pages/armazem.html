@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,113 @@
   <link rel="stylesheet" href="../styles/armazem.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* Estilos Adicionais para o Modal de Confirmação do Armazém */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+      background: var(--panel-bg);
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+      padding: 24px;
+      width: 90%;
+      max-width: 500px;
+      color: var(--steel-light);
+    }
+
+    .modal-content h3 {
+      font-family: var(--font-title);
+      color: var(--accent);
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .modal-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .modal-list li {
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: var(--font-title);
+    }
+
+    .modal-btn-cancel {
+      background: transparent;
+      color: var(--steel-light);
+      border: 1px solid var(--border-color);
+    }
+
+    .modal-btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-btn-confirm {
+      background: var(--accent);
+      color: #000;
+      border: none;
+    }
+
+    .modal-btn-confirm:hover {
+      background: #fff;
+      box-shadow: 0 0 15px var(--accent);
+    }
+  </style>
 </head>
+
 <body>
   <div class="crt-overlay"></div>
-  
+
+  <!-- Modal de Confirmação -->
+  <div class="modal-overlay" id="cargo-modal">
+    <div class="modal-content">
+      <h3>VERIFICAÇÃO DE MANIFESTO</h3>
+      <p style="font-size: 0.85rem; margin-bottom: 10px; color: #aaa;">Os itens abaixo serão transferidos
+        permanentemente para a chave de destino. Confirma a operação?</p>
+      <ul class="modal-list" id="modal-item-list"></ul>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" onclick="closeCargoModal()">CANCELAR</button>
+        <button class="modal-btn modal-btn-confirm" onclick="executeCargoTransfer()">AUTORIZAR DESPACHO</button>
+      </div>
+    </div>
+  </div>
+
   <div class="terminal-container">
-    <!-- Cabeçalho do Terminal -->
     <header class="terminal-header">
       <div class="brand">
         <span class="logo-icon">⚙</span>
@@ -27,31 +128,29 @@
       </div>
     </header>
 
-    <!-- Painel Principal -->
     <main class="terminal-grid">
-      
-      <!-- Cartão de Perfil do Operador de Carga -->
+
       <section class="panel profile-panel">
         <div class="panel-header">=== PERFIL DO DESPACHANTE ===</div>
         <div class="account-card">
           <div class="account-info">
-            <label>SUA CHAVE DE RECEBIMENTO DE CARGA:</label>
+            <label>SUA CHAVE GERAL DE IDENTIFICAÇÃO (ID GALÁCTICO):</label>
             <div class="key-box">
-              <span id="my-cargo-key" class="highlight-text">GERANDO...</span>
+              <span id="my-cargo-key" class="highlight-text animate-pulse">SINCRONIZANDO...</span>
               <button id="copy-key-btn" class="btn-small">COPIAR CHAVE</button>
+              <button id="generate-key-btn" class="btn-small">GERAR NOVA</button>
             </div>
-            
+
             <div class="warehouse-info-box">
-              <span class="info-label">CAPACIDADE DO ARMAZÉM:</span>
-              <span class="info-value"><span id="inventory-count">0</span> / 50 ITENS ARMAZENADOS</span>
+              <span class="info-label">CAPACIDADE OCUPADA DO SEU INVENTÁRIO:</span>
+              <span class="info-value"><span id="inventory-count">0</span> ITENS ARMAZENADOS</span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Painel de Seleção do Item / Inventário -->
       <section class="panel inventory-panel">
-        <div class="panel-header">=== INVENTÁRIO DO GALPÃO ===</div>
+        <div class="panel-header">=== INVENTÁRIO PESSOAL ===</div>
         <div class="filter-bar">
           <button class="filter-btn active" data-quality="all">TODOS</button>
           <button class="filter-btn q-lendario" data-quality="lendario">LENDÁRIO</button>
@@ -61,25 +160,23 @@
           <button class="filter-btn q-normal" data-quality="normal">NORMAL</button>
           <button class="filter-btn q-baixa" data-quality="baixa">BAIXA</button>
         </div>
-        
         <div class="item-grid" id="item-grid">
           <!-- Gerado via JS -->
         </div>
       </section>
 
-      <!-- Formulário de Transferência de Carga -->
       <section class="panel transfer-panel">
         <div class="panel-header">=== MANIFESTO DE DESPACHO DE CARGA ===</div>
         <form id="cargo-transfer-form">
-          
           <div class="form-group">
-            <label for="sender-name">OPERADOR REMETENTE</label>
-            <input type="text" id="sender-name" placeholder="Ex: Mestre de Carga Rex" required>
+            <label for="sender-name">OPERADOR REMETENTE (TRAVADO BIOMETRICAMENTE)</label>
+            <input type="text" id="sender-name" class="opacity-50 cursor-not-allowed" readonly required>
           </div>
 
           <div class="form-group">
-            <label for="target-key">CHAVE DO ARMAZÉM DESTINATÁRIO</label>
-            <input type="text" id="target-key" placeholder="Ex: CRG-90A2-X77L" required uppercase>
+            <label for="target-key">CHAVE DO ARMAZÉM DESTINATÁRIO (ID GALÁCTICO)</label>
+            <input type="text" id="target-key" placeholder="Ex: GAL-90A2-X77L" required
+              style="text-transform: uppercase;">
           </div>
 
           <div class="form-group">
@@ -95,28 +192,30 @@
           </div>
 
           <button type="submit" class="btn-primary" id="dispatch-btn" disabled>
-            DESPACHAR CARGA
+            GERAR ORDEM DE DESPACHO
           </button>
         </form>
       </section>
 
-      <!-- Histórico de Transferências de Itens -->
       <section class="panel history-panel">
-        <div class="panel-header">=== REGISTRO DE MOVIMENTAÇÃO DE ARMAZÉM ===</div>
+        <div class="panel-header">=== REGISTRO DE MOVIMENTAÇÃO LOGÍSTICA ===</div>
         <div class="history-list" id="cargo-history-list">
-          <div class="empty-history">NENHUMA CARGA DESPACHADA NESTA SESSÃO.</div>
+          <div class="empty-history text-stone-500 animate-pulse">CARREGANDO DADOS DA HOLONET...</div>
         </div>
       </section>
-
     </main>
 
-    <!-- Rodapé Terminal -->
     <footer class="terminal-footer">
-      <span>AUTORIDADE LOGÍSTICA DO SETOR DE DASSAS // GALPÃO DE CARGA HEAVY-DUTY</span>
+      <span>AUTORIDADE LOGÍSTICA DO SETOR // GALPÃO DE CARGA HEAVY-DUTY</span>
       <span id="system-time">00:00:00 STAR-DATE</span>
     </footer>
   </div>
 
+  <!-- Integração do Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
   <script src="../js/armazem.js"></script>
+  <script src="../js/databaseInventario.js"></script>
 </body>
+
 </html>
