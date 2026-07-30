@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    
-    <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hangar - Star Wars RPG</title>
@@ -11,10 +11,14 @@
 </head>
 
 <body>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="durtocGateKeeper.js"></script>
+
     <div class="terminal">
         <h1 style="text-align: center;"><i class="fa-solid fa-warehouse"></i> Hangar Principal</h1>
         <section class="terminal" id="fuel-terminal">
-            
+
             <div id="fuel-toggle" class="terminal-header-collapsible">
                 <h2><i class="fa-solid fa-gas-pump"></i> DADOS DE COMBUSTÍVEL</h2>
                 <p class="toggle-prompt">// Iniciar Transmissão...</p>
@@ -86,26 +90,29 @@
                     </div>
                 </div>
                 <button id="save-fuel-btn"><i class="fa-solid fa-floppy-disk"></i> > REGISTRAR NÍVEIS < </button>
-                <p id="save-feedback"></p>
+                        <p id="save-feedback"></p>
             </div>
         </section>
 
         <section class="terminal">
-            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Codigos de Entrada e Saida do Hiperespaço</h2>
+            <h2 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Codigos de Entrada e Saida do
+                Hiperespaço</h2>
 
             <p><strong>Código de Saida para o Hiperespaço: </strong>CAPI-MR-IMC14427G-OUTGOING</p>
             <p><strong>Código de Entrada para a Orbita: </strong>CARI-LOG-IMC14427G-INBOUND`</p>
         </section>
 
         <div style="text-align: center; margin-top: 40px;">
-            <button id="open-travel-modal-btn" class="main-action-btn"><i class="fa-solid fa-rocket"></i> > FAZER VIAGEM < </button>
+            <button id="open-travel-modal-btn" class="main-action-btn"><i class="fa-solid fa-rocket"></i> > FAZER VIAGEM
+                < </button>
         </div>
 
         <hr class="section-divider">
 
         <h2 style="font-size: 52px; text-align: center;">A Engrenagem Mestra</h2>
         <p>
-            Obra-prima de Dur'toc, esta nave é a manifestação de seu brilhantismo e fúria. Foi concebida como um cruzador cargueiro totalmente autossuficiente e uma base de operações móvel.
+            Obra-prima de Dur'toc, esta nave é a manifestação de seu brilhantismo e fúria. Foi concebida como um
+            cruzador cargueiro totalmente autossuficiente e uma base de operações móvel.
         </p>
 
         <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações da Nave</h2>
@@ -116,36 +123,43 @@
             <li><strong>Propulsão:</strong> Motor de Hiperespaço Classe 1.2 (Primário), Classe 9 (Reserva)</li>
             <li><strong>Armamento:</strong> 2 Canhões Lasers Duplos e 2 Canhões Iônicos de Disparo Rápido</li>
             <li><strong>Defesas:</strong> Escudos defletores de alta capacidade e blindagem de casco reforçada.</li>
-            <li><strong>Instalações Notáveis:</strong> Hangares de Reparo Duplos, Oficina de Engenharia Central, Centro de Controle de Tiro, Sala de Comunicações, Porão de Carga Modular (1.000 toneladas)</li>
+            <li><strong>Instalações Notáveis:</strong> Hangares de Reparo Duplos, Oficina de Engenharia Central, Centro
+                de Controle de Tiro, Sala de Comunicações, Porão de Carga Modular (1.000 toneladas)</li>
             <li><strong>Tripulação Mínima:</strong> 1 (Dur'toc, auxiliado por enxame de droids)</li>
         </ul>
 
         <section class="terminal" id="vehicle-bay">
             <div class="terminal-header-collapsible">
-                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Engrenagem Mestra - rpg</h2>
+                <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Engrenagem Mestra -
+                    rpg</h2>
                 <p class="toggle-prompt">// Exibir Dados...</p>
             </div>
             <div class="collapsible-content collapsed">
                 <div class="status-bar-container">
                     <div class="status-bar vida" data-ship="cargueiro">
                         <span class="status-label">VIDA</span>
-                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="cargueiro">&laquo;</button>
+                        <button class="status-btn" data-type="vida" data-action="dec"
+                            data-ship="cargueiro">&laquo;</button>
                         <input type="number" class="status-input" id="vida-cargueiro" min="0" max="43">
                         <span class="status-max" id="vida-cargueiro-max"></span>
-                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="cargueiro">&raquo;</button>
+                        <button class="status-btn" data-type="vida" data-action="inc"
+                            data-ship="cargueiro">&raquo;</button>
                     </div>
                     <div class="status-bar escudo" data-ship="cargueiro">
                         <span class="status-label">ESCUDOS</span>
-                        <button class="status-btn" data-type="escudo" data-action="dec" data-ship="cargueiro">&laquo;</button>
+                        <button class="status-btn" data-type="escudo" data-action="dec"
+                            data-ship="cargueiro">&laquo;</button>
                         <input type="number" class="status-input" id="escudo-cargueiro" min="0" max="70">
                         <span class="status-max" id="escudo-cargueiro-max"></span>
-                        <button class="status-btn" data-type="escudo" data-action="inc" data-ship="cargueiro">&raquo;</button>
+                        <button class="status-btn" data-type="escudo" data-action="inc"
+                            data-ship="cargueiro">&raquo;</button>
                     </div>
                 </div>
                 <ul>
                     <li><strong>Nivel de Desafio: </strong>09</li>
                     <li><strong>Defesa: </strong>Ref 16 (desprevenido 12), Fort 30; +12 de armadura </li>
-                    <li><strong>Velocidade: </strong>vôo 12 quadrados (velocidade max. 800 km/h), vôo 3 quadrados (escala de nave interestelar);</li>
+                    <li><strong>Velocidade: </strong>vôo 12 quadrados (velocidade max. 800 km/h), vôo 3 quadrados
+                        (escala de nave interestelar);</li>
                     <li><strong>Espaço de Luta: </strong>2 quadrados (escala de nave interestelar);</li>
                     <li>
                         <strong>Cobertura: </strong>Total;
@@ -153,7 +167,8 @@
                         <strong>Agarrar: </strong>+43;
                     </li>
                     <li><strong>Atributos: </strong>Vig 43, Des 16, Con -, Int 16</li>
-                    <li><strong>Perícias: </strong>Iniciativa +5, Mecânica +9(+16*), Percepção +6, Pilotar +1(+8*), Usar Computador +9(+16*)</li>
+                    <li><strong>Perícias: </strong>Iniciativa +5, Mecânica +9(+16*), Percepção +6, Pilotar +1(+8*), Usar
+                        Computador +9(+16*)</li>
                     <li><strong>Tripulação: </strong>8 (Habilidos)</li>
                     <li><strong>Passageiros: </strong>Até 13(Totalizando 20)</li>
                     <li><strong>Consumivéis: </strong>6 Meses</li>
@@ -161,8 +176,10 @@
                     <li><strong>HiperDrive: </strong>Classe 1.2 (Primário), Classe 9 (Reserva)</li>
                     <li><strong>Disponibilidade: </strong>Unica; <strong>Custo: </strong>Não disponivél para Venda</li>
                     <li><strong>Armamento: </strong> <br>
-                        <strong>> 2x Canhões de Laser Duplos: </strong>+8 (-12* contra alvos menores que Colossal), <strong>Dano:</strong> 5d10×2 <br>
-                        <strong>> 2x Canhões de Íons: </strong>+8 (-12* contra alvos menores que Colossal), <strong>Dano:</strong> 4d10×2 <br>
+                        <strong>> 2x Canhões de Laser Duplos: </strong>+8 (-12* contra alvos menores que Colossal),
+                        <strong>Dano:</strong> 5d10×2 <br>
+                        <strong>> 2x Canhões de Íons: </strong>+8 (-12* contra alvos menores que Colossal),
+                        <strong>Dano:</strong> 4d10×2 <br>
                     </li>
                 </ul>
             </div>
@@ -170,7 +187,7 @@
 
         <hr class="section-divider">
 
-        <h2 style="font-size: 52px; text-align: center;"><i class="fa-solid fa-jet-fighter" ></i> O Cinzel</h2>
+        <h2 style="font-size: 52px; text-align: center;"><i class="fa-solid fa-jet-fighter"></i> O Cinzel</h2>
         <p>
             Nascido da frustração, o Cinzel é um caça leve construído para ser uma extensão de Dur'toc. Seu cockpit
             foi moldado meticulosamente em torno de seu corpo, tornando-o fisicamente impossível de pilotar para a
@@ -196,23 +213,28 @@
                 <div class="status-bar-container">
                     <div class="status-bar vida" data-ship="cinzel">
                         <span class="status-label">VIDA</span>
-                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="cinzel">&laquo;</button>
+                        <button class="status-btn" data-type="vida" data-action="dec"
+                            data-ship="cinzel">&laquo;</button>
                         <input type="number" class="status-input" id="vida-cinzel" min="0" max="34">
                         <span class="status-max" id="vida-cinzel-max"></span>
-                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="cinzel">&raquo;</button>
+                        <button class="status-btn" data-type="vida" data-action="inc"
+                            data-ship="cinzel">&raquo;</button>
                     </div>
                     <div class="status-bar escudo" data-ship="cinzel">
                         <span class="status-label">ESCUDOS</span>
-                        <button class="status-btn" data-type="escudo" data-action="dec" data-ship="cinzel">&laquo;</button>
+                        <button class="status-btn" data-type="escudo" data-action="dec"
+                            data-ship="cinzel">&laquo;</button>
                         <input type="number" class="status-input" id="escudo-cinzel" min="0" max="40">
                         <span class="status-max" id="escudo-cinzel-max"></span>
-                        <button class="status-btn" data-type="escudo" data-action="inc" data-ship="cinzel">&raquo;</button>
+                        <button class="status-btn" data-type="escudo" data-action="inc"
+                            data-ship="cinzel">&raquo;</button>
                     </div>
                 </div>
                 <ul>
                     <li><strong>Nivel de Desafio: </strong>08</li>
                     <li><strong>Defesa: </strong>Ref 19 (desprevenido 12), Fort 22; +4 de armadura</li>
-                    <li><strong>Velocidade: </strong>vôo 16 quadrados (velocidade max. 1.000 km/h), vôo 5 quadrados (escala de nave interestelar)</li>
+                    <li><strong>Velocidade: </strong>vôo 16 quadrados (velocidade max. 1.000 km/h), vôo 5 quadrados
+                        (escala de nave interestelar)</li>
                     <li><strong>Espaço de Luta: </strong>3x3 ou 1 quadrado (escala de nave interestelar)</li>
                     <li>
                         <strong>Cobertura: </strong>Total;
@@ -220,7 +242,8 @@
                         <strong>Agarrar: </strong>+46;
                     </li>
                     <li><strong>Atributos: </strong>Vig 34, Des 24, Con –, Int 16</li>
-                    <li><strong>Perícias: </strong>Iniciativa +12, Mecânica +12, Percepção +8, Pilotar +16, Usar Computador +12</li>
+                    <li><strong>Perícias: </strong>Iniciativa +12, Mecânica +12, Percepção +8, Pilotar +16, Usar
+                        Computador +12</li>
                     <li><strong>Tripulação: </strong>1 Piloto (Dur'toc) e 1 dróide assistente;</li>
                     <li><strong>Passageiros: </strong>Nenhum</li>
                     <li><strong>Armazenamento:</strong> <br>
@@ -234,7 +257,7 @@
                 </ul>
             </div>
         </section>
-        
+
         <hr class="section-divider">
 
         <h2 style="font-size: 52px; text-align: center;"><i class="fa-solid fa-motorcycle"></i> O Moedor</h2>
@@ -252,7 +275,7 @@
             <li><strong>Capacidade de Carga:</strong> 100 quilos</li>
             <li><strong>Armamento:</strong> Nenhum</li>
         </ul>
-        
+
         <section class="terminal" id="vehicle-bay">
             <div class="terminal-header-collapsible">
                 <h2 style="text-align: center;"><i class="fa-solid fa-dice-d20"></i> Ficha Técnica Moedor - rpg</h2>
@@ -262,10 +285,12 @@
                 <div class="status-bar-container">
                     <div class="status-bar vida" data-ship="moedor">
                         <span class="status-label">VIDA</span>
-                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="moedor">&laquo;</button>
+                        <button class="status-btn" data-type="vida" data-action="dec"
+                            data-ship="moedor">&laquo;</button>
                         <input type="number" class="status-input" id="vida-moedor" min="0" max="50">
                         <span class="status-max" id="vida-moedor-max"></span>
-                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="moedor">&raquo;</button>
+                        <button class="status-btn" data-type="vida" data-action="inc"
+                            data-ship="moedor">&raquo;</button>
                     </div>
                 </div>
                 <ul>
@@ -292,7 +317,9 @@
 
         <h2 style="font-size: 52px; text-align: center;">R5-T1N (Tino)</h2>
         <p>
-            A origem de Tino não começa em uma linha de montagem, mas em um beco esquecido nos níveis inferiores de Coruscant. Encontrado por Dur'toc como a carcaça abandonada de uma unidade R5, ele foi completamente demolido e reconstruído.
+            A origem de Tino não começa em uma linha de montagem, mas em um beco esquecido nos níveis inferiores de
+            Coruscant. Encontrado por Dur'toc como a carcaça abandonada de uma unidade R5, ele foi completamente
+            demolido e reconstruído.
         </p>
 
         <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações do Droid</h2>
@@ -321,11 +348,14 @@
                     <li><strong>Nivel de Desafio: </strong>04</li>
                     <li><strong>Defesa: </strong>Ref 20 (desprevenido 17), Fort 13, Von 16</li>
                     <li><strong>PV: </strong>29; <strong>Limiar: </strong>13</li>
-                    <li><strong>Velocidade: </strong>6 quadrados (com rodas), 4 quadrados (andarilho), 9 quadrados (vôo)</li>
+                    <li><strong>Velocidade: </strong>6 quadrados (com rodas), 4 quadrados (andarilho), 9 quadrados (vôo)
+                    </li>
                     <li><strong>Ataque Físico: </strong>sonda de eletro-choque +3 (1d8-1 ion)</li>
                     <li><strong>Atributos: </strong>Vig 8, Des 16, Con -, Int 17, Sab 13, Car 10</li>
-                    <li><strong>Perícias: </strong>Iniciativa +11, Mecânica +16, Percepção +9, Pilotar +11, Furtividade +16, Usar Computador +16</li>
-                    <li><strong>Talentos: </strong>Foco em Perícia (Mecânica), Foco em Perícia (Usar Computador), Treinamento em Perícia (Pilotar)</li>
+                    <li><strong>Perícias: </strong>Iniciativa +11, Mecânica +16, Percepção +9, Pilotar +11, Furtividade
+                        +16, Usar Computador +16</li>
+                    <li><strong>Talentos: </strong>Foco em Perícia (Mecânica), Foco em Perícia (Usar Computador),
+                        Treinamento em Perícia (Pilotar)</li>
                 </ul>
             </div>
         </section>
@@ -334,7 +364,8 @@
 
         <h2 style="font-size: 52px; text-align: center;">C3-VOK (Vok)</h2>
         <p>
-            Reconhecendo a necessidade de um tradutor confiável e discreto, Dur'toc adquiriu uma unidade de protocolo padrão da série 3PO e a modificou extensivamente para se assemelhar a um Twi'lek.
+            Reconhecendo a necessidade de um tradutor confiável e discreto, Dur'toc adquiriu uma unidade de protocolo
+            padrão da série 3PO e a modificou extensivamente para se assemelhar a um Twi'lek.
         </p>
 
         <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações do Droid</h2>
@@ -366,8 +397,10 @@
                     <li><strong>Velocidade: </strong>6 quadrados (andarilho)</li>
                     <li><strong>Ataque Físico: </strong>desarmado +1 (1d3-2)</li>
                     <li><strong>Atributos: </strong>Vig 7, Des 10, Con -, Int 13, Sab 14, Car 13</li>
-                    <li><strong>Perícias: </strong>Conhecimento (burocracia) +8, Conhecimento (tradições galácticas) +8, Iniciativa +2, Percepção +4, Persuasão +13</li>
-                    <li><strong>Talentos: </strong>Foco em Perícia (Persuasão), Lingüística, Treinamento em Perícia (Conhecimento [burocracia]), Treinamento em Perícia (Conhecimento [tradições galácticas])</li>
+                    <li><strong>Perícias: </strong>Conhecimento (burocracia) +8, Conhecimento (tradições galácticas) +8,
+                        Iniciativa +2, Percepção +4, Persuasão +13</li>
+                    <li><strong>Talentos: </strong>Foco em Perícia (Persuasão), Lingüística, Treinamento em Perícia
+                        (Conhecimento [burocracia]), Treinamento em Perícia (Conhecimento [tradições galácticas])</li>
                 </ul>
             </div>
         </section>
@@ -376,7 +409,8 @@
 
         <h2 style="font-size: 52px; text-align: center;">USM-07 (Comboio)</h2>
         <p>
-            Uma invenção inteiramente autoral de Dur'toc, o Comboio é um enxame de dróides menores que se unem magneticamente para formar uma única entidade semelhante a uma centopeia.
+            Uma invenção inteiramente autoral de Dur'toc, o Comboio é um enxame de dróides menores que se unem
+            magneticamente para formar uma única entidade semelhante a uma centopeia.
         </p>
 
         <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações do Droid</h2>
@@ -395,10 +429,12 @@
                 <div class="status-bar-container">
                     <div class="status-bar vida" data-ship="comboio">
                         <span class="status-label">VIDA</span>
-                        <button class="status-btn" data-type="vida" data-action="dec" data-ship="comboio">&laquo;</button>
+                        <button class="status-btn" data-type="vida" data-action="dec"
+                            data-ship="comboio">&laquo;</button>
                         <input type="number" class="status-input" id="vida-comboio" min="0" max="5">
                         <span class="status-max" id="vida-comboio-max"></span>
-                        <button class="status-btn" data-type="vida" data-action="inc" data-ship="comboio">&raquo;</button>
+                        <button class="status-btn" data-type="vida" data-action="inc"
+                            data-ship="comboio">&raquo;</button>
                     </div>
                 </div>
                 <ul>
@@ -409,7 +445,8 @@
                     <li><strong>Ataque Físico: </strong>Nenhum</li>
                     <li><strong>Atributos: </strong>Vig 13, Des 16, Con -, Int 7, Sab 10, Car 5</li>
                     <li><strong>Perícias: </strong>Acrobacia +9, Furtividade +19, Iniciativa +4, Percepção +1</li>
-                    <li><strong>Talentos: </strong>Treinamento em Perícia (Acrobacia), Treinamento em Perícia (Furtividade), Vitalidade</li>
+                    <li><strong>Talentos: </strong>Treinamento em Perícia (Acrobacia), Treinamento em Perícia
+                        (Furtividade), Vitalidade</li>
                 </ul>
             </div>
         </section>
@@ -418,7 +455,8 @@
 
         <h2 style="font-size: 52px; text-align: center;">CL-R (Bruto)</h2>
         <p>
-            Projetado e construído para tarefas que exigem força bruta, o Bruto é a personificação da filosofia funcional de Dur'toc: sem componentes desnecessários, apenas força e eficiência.
+            Projetado e construído para tarefas que exigem força bruta, o Bruto é a personificação da filosofia
+            funcional de Dur'toc: sem componentes desnecessários, apenas força e eficiência.
         </p>
 
         <h2><i class="fa-solid fa-clipboard-list"></i> // Especificações do Droid</h2>
@@ -495,7 +533,8 @@
             </div>
         </div>
 
-        <p style="font-size: 25px; text-align: center;"><a href="../index.html"><i class="fa-solid fa-arrow-left-long"></i> Retornar ao Sistema Principal...</a></p>
+        <p style="font-size: 25px; text-align: center;"><a href="../index.html"><i
+                    class="fa-solid fa-arrow-left-long"></i> Retornar ao Sistema Principal...</a></p>
 
     </div>
 
