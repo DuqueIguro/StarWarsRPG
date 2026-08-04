@@ -7,11 +7,13 @@
 
 :root {
     --neon-cyan: #00f3ff;
+    --neon-blue: #0088ff;
     --neon-green: #00ff66;
     --neon-red: #ff0055;
     --amber: #ffb700;
-    --terminal-bg: rgba(2, 8, 18, 0.96);
-    --border-glow: rgba(0, 243, 255, 0.45);
+    --terminal-bg: rgba(2, 8, 18, 0.92);
+    --card-bg: rgba(0, 15, 30, 0.5);
+    --border-glow: rgba(0, 243, 255, 0.25);
 }
 
 * {
@@ -21,25 +23,26 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #010206;
+body {
+    background-color: #01040a;
     color: #c4d7e6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    position: relative;
+    padding: 20px;
 }
 
-/* Efeito CRT / Hologram Overlay Tela Cheia */
+/* Overlay sutil CRT */
 body::before {
     content: " ";
     display: block;
     position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), 
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03), rgba(0, 255, 102, 0.01), rgba(0, 243, 255, 0.03));
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
+                linear-gradient(90deg, rgba(0, 243, 255, 0.02), rgba(0, 255, 102, 0.01), rgba(0, 243, 255, 0.02));
     z-index: 999;
     background-size: 100% 4px, 6px 100%;
     pointer-events: none;
@@ -47,101 +50,98 @@ body::before {
 
 .starfield {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(white, rgba(255, 255, 255, .15) 1px, transparent 20px);
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(white, rgba(255, 255, 255, .1) 1px, transparent 20px);
     background-size: 350px 350px;
-    opacity: 0.15;
+    opacity: 0.2;
     z-index: 1;
 }
 
-/* Container expandido para ocupação total da tela */
+/* Container Módulo Centralizado (Estilo Posto) */
 .terminal-container {
     position: relative;
     z-index: 10;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    max-width: 1080px;
     background: var(--terminal-bg);
-    border: 3px solid var(--neon-cyan);
-    box-shadow: inset 0 0 40px rgba(0, 243, 255, 0.2);
+    border: 1px solid var(--neon-blue);
+    border-radius: 8px;
+    box-shadow: 0 0 25px var(--border-glow), inset 0 0 20px rgba(0, 136, 255, 0.15);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr auto;
-    gap: 20px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    overflow-y: auto;
+    gap: 16px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
 }
 
 @media (max-width: 850px) {
     .terminal-container {
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto auto;
+        max-height: 95vh;
+        overflow-y: auto;
     }
 }
 
+/* Header com Visual HUD / Posto */
 .terminal-header {
     grid-column: 1 / -1;
-    border-bottom: 2px solid var(--neon-cyan);
-    padding-bottom: 12px;
+    border: 1px solid rgba(0, 243, 255, 0.25);
+    background: rgba(0, 10, 22, 0.7);
+    border-radius: 6px;
+    padding: 12px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 15px rgba(0, 243, 255, 0.2);
+    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.08);
 }
 
 .terminal-title {
-    font-size: 1.6rem;
+    font-size: 1.25rem;
     color: var(--neon-cyan);
-    text-shadow: 0 0 12px var(--neon-cyan);
-    letter-spacing: 3px;
+    text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+    letter-spacing: 2px;
     font-weight: bold;
 }
 
 .aurebesh-subtext {
     font-family: 'Aurebesh', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.65rem;
     color: var(--neon-cyan);
-    opacity: 0.75;
-    letter-spacing: 2px;
+    opacity: 0.7;
+    letter-spacing: 1px;
 }
 
 .aurebesh-label {
     font-family: 'Aurebesh', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     color: var(--amber);
-    opacity: 0.85;
+    opacity: 0.8;
 }
 
 .system-status {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     color: var(--neon-green);
-    animation: blink 1.5s infinite;
+    background: rgba(0, 255, 102, 0.08);
+    border: 1px solid rgba(0, 255, 102, 0.3);
+    padding: 4px 10px;
+    border-radius: 4px;
+    animation: blink 1.8s infinite;
 }
 
+/* Painéis de Controle e Cards */
 .control-panel {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    justify-content: space-between;
+    gap: 12px;
 }
 
 .panel-block {
-    border: 1px solid rgba(0, 243, 255, 0.35);
-    background: rgba(0, 12, 28, 0.7);
-    padding: 14px;
-    border-radius: 2px;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    background: var(--card-bg);
+    padding: 12px 14px;
+    border-radius: 6px;
     position: relative;
-}
-
-.panel-block::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: -1px;
-    width: 6px; height: 6px;
-    background: var(--neon-cyan);
+    box-shadow: inset 0 0 8px rgba(0, 243, 255, 0.04);
 }
 
 .panel-label {
@@ -154,7 +154,7 @@ body::before {
     align-items: center;
 }
 
-/* Autocomplete estilizado */
+/* Inputs e Autocomplete Estilo Posto */
 .autocomplete-container {
     position: relative;
     width: 100%;
@@ -162,96 +162,94 @@ body::before {
 
 input[type="text"], input[type="number"], select {
     width: 100%;
-    padding: 12px 14px;
-    background: #020914;
-    border: 1px solid var(--neon-cyan);
+    padding: 9px 12px;
+    background: #020712;
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 4px;
     color: #fff;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     outline: none;
-    transition: all 0.3s ease;
-    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.1);
+    transition: all 0.25s ease;
 }
 
 input[type="text"]:focus, input[type="number"]:focus, select:focus {
-    border-color: var(--neon-green);
-    box-shadow: 0 0 12px rgba(0, 255, 102, 0.4), inset 0 0 10px rgba(0, 255, 102, 0.15);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 8px rgba(0, 243, 255, 0.3), inset 0 0 6px rgba(0, 243, 255, 0.1);
 }
 
 .autocomplete-list {
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    max-height: 220px;
+    top: 100%; left: 0; right: 0;
+    max-height: 180px;
     overflow-y: auto;
-    background: #020b18;
+    background: #020916;
     border: 1px solid var(--neon-cyan);
-    border-top: none;
+    border-radius: 0 0 4px 4px;
     z-index: 100;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.85);
     display: none;
 }
 
 .autocomplete-item {
-    padding: 10px 14px;
+    padding: 8px 12px;
     cursor: pointer;
-    border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background 0.2s;
+    font-size: 0.8rem;
 }
 
 .autocomplete-item:hover, .autocomplete-item.active {
-    background: rgba(0, 243, 255, 0.25);
+    background: rgba(0, 243, 255, 0.18);
     color: var(--neon-cyan);
 }
 
 .autocomplete-item .item-region {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--amber);
 }
 
-/* Modos e Botoes */
+/* Botoes e Togglers */
 .hidden-mode { display: none !important; }
 
 #hyperspaceFields, #subluzFields {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
-.mode-toggle { display: flex; gap: 10px; }
+.mode-toggle { display: flex; gap: 8px; }
 
 .mode-option {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 10px;
-    border: 1px solid rgba(0, 243, 255, 0.35);
-    background: rgba(0, 4, 10, 0.6);
+    gap: 6px;
+    padding: 8px;
+    border: 1px solid rgba(0, 243, 255, 0.25);
+    background: rgba(0, 6, 16, 0.6);
+    border-radius: 4px;
     color: #c4d7e6;
     cursor: pointer;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
+    font-size: 0.8rem;
     transition: all 0.2s ease;
 }
 
 .mode-option.active {
     border-color: var(--neon-cyan);
     color: var(--neon-cyan);
-    background: rgba(0, 243, 255, 0.15);
-    box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
+    background: rgba(0, 243, 255, 0.12);
+    box-shadow: 0 0 8px rgba(0, 243, 255, 0.25);
 }
 
-.fuel-row { margin-top: 12px; }
+.fuel-row { margin-top: 10px; }
 
 .fuel-label {
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--amber);
     text-transform: uppercase;
     margin-bottom: 4px;
@@ -259,9 +257,10 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 
 .fuel-bar-track {
     width: 100%;
-    height: 16px;
-    background: #030a16;
-    border: 1px solid rgba(0, 243, 255, 0.35);
+    height: 12px;
+    background: #020712;
+    border: 1px solid rgba(0, 243, 255, 0.25);
+    border-radius: 2px;
     overflow: hidden;
 }
 
@@ -271,109 +270,94 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     transition: width 0.4s ease;
 }
 
-.fuel-bar-fill.subluz { background: linear-gradient(90deg, var(--neon-cyan), #0090a0); }
-.fuel-bar-fill.hiper { background: linear-gradient(90deg, var(--neon-green), #009933); }
-.fuel-bar-fill.low { background: linear-gradient(90deg, var(--neon-red), #990022); }
+.fuel-bar-fill.subluz { background: linear-gradient(90deg, var(--neon-cyan), #007799); }
+.fuel-bar-fill.hiper { background: linear-gradient(90deg, var(--neon-green), #008822); }
+.fuel-bar-fill.low { background: linear-gradient(90deg, var(--neon-red), #880011); }
 
 .btn-emergency {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     background: transparent;
     border: 1px solid var(--amber);
+    border-radius: 4px;
     color: var(--amber);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: bold;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     text-transform: uppercase;
 }
 
 .btn-emergency:hover, .btn-emergency.active {
-    background: var(--amber);
-    color: #000;
-    box-shadow: 0 0 15px rgba(255, 183, 0, 0.5);
+    background: rgba(255, 183, 0, 0.15);
+    box-shadow: 0 0 10px rgba(255, 183, 0, 0.3);
 }
 
 .emergency-block { display: none; }
-
-.emergency-block.show {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+.emergency-block.show { display: block; }
 
 .btn-hyperjump {
     width: 100%;
-    padding: 16px;
+    padding: 13px;
     background: rgba(255, 0, 85, 0.08);
-    border: 2px solid var(--neon-red);
+    border: 1px solid var(--neon-red);
+    border-radius: 4px;
     color: var(--neon-red);
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: bold;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     text-transform: uppercase;
-    box-shadow: 0 0 15px rgba(255, 0, 85, 0.25);
 }
 
 .btn-hyperjump:hover {
     background: var(--neon-red);
     color: #fff;
-    box-shadow: 0 0 30px rgba(255, 0, 85, 0.8);
-    text-shadow: 0 0 5px #fff;
+    box-shadow: 0 0 18px rgba(255, 0, 85, 0.6);
 }
 
+/* Holo Display Direito */
 .holo-display {
-    border: 1px solid rgba(0, 243, 255, 0.35);
-    background: rgba(0, 15, 30, 0.5);
-    padding: 20px;
-    border-radius: 2px;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    background: var(--card-bg);
+    padding: 14px;
+    border-radius: 6px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     position: relative;
-    justify-content: flex-start;
-}
-
-.holo-display::after {
-    content: "HOLO-DATA CORRESPONDENCE";
-    position: absolute;
-    bottom: 8px; right: 12px;
-    font-size: 0.65rem;
-    color: rgba(0, 243, 255, 0.35);
 }
 
 .data-row {
-    border-bottom: 1px solid rgba(0, 243, 255, 0.15);
-    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+    padding-bottom: 6px;
 }
 
 .data-title {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--amber);
     text-transform: uppercase;
 }
 
 .data-value {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: #fff;
-    margin-top: 3px;
+    margin-top: 2px;
 }
 
+/* Console de Saida Inferior */
 .output-screen {
     grid-column: 1 / -1;
-    border-top: 1px solid rgba(0, 243, 255, 0.35);
-    padding-top: 15px;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    background: rgba(0, 8, 18, 0.6);
+    border-radius: 6px;
+    padding: 12px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
 }
 
 @media (max-width: 700px) {
@@ -385,53 +369,43 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 
 .console-status {
     color: var(--neon-cyan);
-    font-size: 1.1rem;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
+    font-size: 0.85rem;
 }
 
 .metrics-grid {
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: flex-end;
+    gap: 10px;
     opacity: 0;
-    transform: translateY(5px);
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
 }
 
-.metrics-grid.show {
-    opacity: 1;
-    transform: translateY(0);
-}
+.metrics-grid.show { opacity: 1; }
 
 .calc-box {
-    background: #030a16;
+    background: #020712;
     border: 1px solid var(--neon-green);
-    padding: 10px 20px;
+    border-radius: 4px;
+    padding: 6px 14px;
     text-align: center;
-    min-width: 140px;
+    min-width: 100px;
 }
 
 .calc-box .label {
-    font-size: 0.7rem;
+    font-size: 0.80rem;
     color: var(--neon-green);
     text-transform: uppercase;
 }
 
 .calc-box .value {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     color: #fff;
-    margin-top: 4px;
-    text-shadow: 0 0 5px var(--neon-green);
+    margin-top: 2px;
 }
 
 .hyperspace-gate {
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: #000;
     z-index: 500;
     opacity: 0;
@@ -461,5 +435,5 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 
 @keyframes blink {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    50% { opacity: 0.3; }
 }
