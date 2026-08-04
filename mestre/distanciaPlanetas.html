@@ -34,6 +34,24 @@
                 <select id="destination" onchange="updatePlanetCard('destination')"></select>
             </div>
 
+            <div class="panel-block">
+                <div class="panel-label"><span>CLASSE DO MOTOR HIPERESPACIAL</span></div>
+                <select id="engineClass">
+                    <option value="0.5">Classe 0.5 — Elite / Protótipo</option>
+                    <option value="1" selected>Classe 1 — Padrão Militar</option>
+                    <option value="2">Classe 2 — Comercial</option>
+                    <option value="3">Classe 3+ — Carga Pesada</option>
+                </select>
+            </div>
+
+            <div class="panel-block">
+                <div class="panel-label"><span>PROTOCOLO DE PARADA DE EMERGÊNCIA</span></div>
+                <button type="button" class="btn-emergency" id="emergencyToggleBtn" onclick="toggleEmergencyStop()">Adicionar Parada de Emergência</button>
+                <div class="emergency-block" id="emergencyBlock">
+                    <select id="emergencyStop"></select>
+                </div>
+            </div>
+
             <button class="btn-hyperjump" onclick="engageHyperdrive()">Engajar Hiperpropulsor</button>
         </main>
 
@@ -69,8 +87,12 @@
                     <div class="value" id="distOut">0 PC</div>
                 </div>
                 <div class="calc-box" style="border-color: var(--amber);">
-                    <div class="label" style="color: var(--amber);">Saltos Estimados</div>
+                    <div class="label" style="color: var(--amber);">Saltos</div>
                     <div class="value" id="jumpsOut" style="text-shadow: 0 0 5px var(--amber);">0</div>
+                </div>
+                <div class="calc-box" style="border-color: var(--neon-cyan);">
+                    <div class="label" style="color: var(--neon-cyan);">Duração da Viagem</div>
+                    <div class="value" id="durationOut" style="text-shadow: 0 0 5px var(--neon-cyan);">0</div>
                 </div>
             </div>
         </footer>

@@ -136,6 +136,54 @@ select:focus {
     box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
 }
 
+.btn-emergency {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 2px solid var(--amber);
+    color: var(--amber);
+    font-size: 0.85rem;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.btn-emergency:hover {
+    background: var(--amber);
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 183, 0, 0.5);
+}
+
+.btn-emergency.active {
+    background: var(--amber);
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 183, 0, 0.5);
+}
+
+.emergency-block {
+    display: none;
+    margin-top: 12px;
+}
+
+.emergency-block.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .btn-hyperjump {
     width: 100%;
     padding: 16px;
@@ -219,6 +267,7 @@ select:focus {
 
 .metrics-grid {
     display: flex;
+    flex-wrap: wrap;
     gap: 15px;
     justify-content: flex-end;
     opacity: 0;
