@@ -25,74 +25,125 @@
 
         <main class="control-panel">
             <div class="panel-block">
-                <div class="panel-label"><span>PONTO DE ORIGEM</span><span id="origRegion">-</span></div>
-                <select id="origin" onchange="updatePlanetCard('origin')"></select>
-            </div>
-
-            <div class="panel-block">
-                <div class="panel-label"><span>VETOR DE DESTINO</span><span id="destRegion">-</span></div>
-                <select id="destination" onchange="updatePlanetCard('destination')"></select>
-            </div>
-
-            <div class="panel-block">
-                <div class="panel-label"><span>CLASSE DO MOTOR HIPERESPACIAL</span></div>
-                <select id="engineClass">
-                    <option value="0.5">Classe 0.5 — Elite / Protótipo</option>
-                    <option value="1" selected>Classe 1 — Padrão Militar</option>
-                    <option value="2">Classe 2 — Comercial</option>
-                    <option value="3">Classe 3+ — Carga Pesada</option>
-                </select>
-            </div>
-
-            <div class="panel-block">
-                <div class="panel-label"><span>PROTOCOLO DE PARADA DE EMERGÊNCIA</span></div>
-                <button type="button" class="btn-emergency" id="emergencyToggleBtn" onclick="toggleEmergencyStop()">Adicionar Parada de Emergência</button>
-                <div class="emergency-block" id="emergencyBlock">
-                    <select id="emergencyStop"></select>
+                <div class="panel-label"><span>MODO DE VIAGEM</span></div>
+                <div class="mode-toggle">
+                    <label class="mode-option" id="modeHyperLabel">
+                        <input type="radio" name="travelMode" value="hiperespaco" checked onchange="setTravelMode('hiperespaco')">
+                        <span>Hiperespaço</span>
+                    </label>
+                    <label class="mode-option" id="modeSubluzLabel">
+                        <input type="radio" name="travelMode" value="subluz" onchange="setTravelMode('subluz')">
+                        <span>Subluz</span>
+                    </label>
                 </div>
             </div>
 
-            <button class="btn-hyperjump" onclick="engageHyperdrive()">Engajar Hiperpropulsor</button>
+            <div id="hyperspaceFields">
+                <div class="panel-block">
+                    <div class="panel-label"><span>PONTO DE ORIGEM</span><span id="origRegion">-</span></div>
+                    <select id="origin" onchange="updatePlanetCard('origin')"></select>
+                </div>
+
+                <div class="panel-block">
+                    <div class="panel-label"><span>VETOR DE DESTINO</span><span id="destRegion">-</span></div>
+                    <select id="destination" onchange="updatePlanetCard('destination')"></select>
+                </div>
+
+                <div class="panel-block">
+                    <div class="panel-label"><span>CLASSE DO MOTOR HIPERESPACIAL</span><span>DEFINIDA PELA NAVE</span></div>
+                    <select id="engineClass" disabled>
+                        <option value="0.5">Classe 0.5 — Elite / Protótipo</option>
+                        <option value="1">Classe 1 — Padrão Militar</option>
+                        <option value="2">Classe 2 — Comercial</option>
+                        <option value="3">Classe 3+ — Carga Pesada</option>
+                    </select>
+                </div>
+
+                <div class="panel-block">
+                    <div class="panel-label"><span>PROTOCOLO DE PARADA DE EMERGÊNCIA</span></div>
+                    <button type="button" class="btn-emergency" id="emergencyToggleBtn" onclick="toggleEmergencyStop()">Adicionar Parada de Emergência</button>
+                    <div class="emergency-block" id="emergencyBlock">
+                        <select id="emergencyStop"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="subluzFields" class="hidden-mode">
+                <div class="panel-block">
+                    <div class="panel-label"><span>CONTEXTO DE OPERAÇÃO</span></div>
+                    <select id="subluzContext">
+                        <option value="espaco">Espaço Aberto</option>
+                        <option value="atmosfera">Atmosfera</option>
+                        <option value="combate">Combate</option>
+                    </select>
+                </div>
+
+                <div class="panel-block">
+                    <div class="panel-label"><span>DURAÇÃO DA MANOBRA (HORAS)</span></div>
+                    <input type="number" id="subluzHours" min="0.1" step="0.1" value="1">
+                </div>
+            </div>
+
+            <button class="btn-hyperjump" id="engageBtn" onclick="engageHyperdrive()">Engajar Hiperpropulsor</button>
         </main>
 
         <section class="holo-display">
+            <div class="panel-label" style="margin-bottom:10px;"><span>NAVE SELECIONADA</span></div>
+            <select id="shipSelect" onchange="updateShipCard()"></select>
+
             <div class="data-row">
-                <div class="data-title">Alvo Selecionado</div>
-                <div class="data-value" id="cardNome"
+                <div class="data-title">Designação</div>
+                <div class="data-value" id="shipNome"
                     style="color:var(--neon-cyan); font-weight:bold; font-size:1.2rem;">-</div>
             </div>
             <div class="data-row">
-                <div class="data-title">Classificação Regional / Setor</div>
-                <div class="data-value" id="cardLocal">-</div>
+                <div class="data-title">Classe / Status</div>
+                <div class="data-value" id="shipClasseStatus">-</div>
             </div>
             <div class="data-row">
-                <div class="data-title">Afiliação Governamental</div>
-                <div class="data-value" id="cardGov">-</div>
+                <div class="data-title">Motor Hiperespacial / Tripulação</div>
+                <div class="data-value" id="shipMotorTripulacao">-</div>
             </div>
-            <div class="data-row">
-                <div class="data-title">Espécies Catalogadas</div>
-                <div class="data-value" id="cardEspecies">-</div>
+
+            <div class="fuel-row">
+                <div class="fuel-label">
+                    <span>Combustível Subluz</span>
+                    <span id="subluzFuelText">- / -</span>
+                </div>
+                <div class="fuel-bar-track">
+                    <div class="fuel-bar-fill subluz" id="subluzFuelBar"></div>
+                </div>
             </div>
-            <div class="data-row">
-                <div class="data-title">Análise de Campo</div>
-                <div class="data-value" id="cardDesc" style="font-size:0.85rem; line-height:1.3; color:#a1bccc;">-</div>
+
+            <div class="fuel-row">
+                <div class="fuel-label">
+                    <span>Combustível Hiperespacial</span>
+                    <span id="hiperFuelText">- / -</span>
+                </div>
+                <div class="fuel-bar-track">
+                    <div class="fuel-bar-fill hiper" id="hiperFuelBar"></div>
+                </div>
             </div>
         </section>
 
         <footer class="output-screen">
             <div class="console-status" id="consoleOut">> PRONTO PARA ENTRADA DE COORDENADAS...</div>
             <div class="metrics-grid" id="metricsBox">
-                <div class="calc-box">
+                <div class="calc-box" id="distBox">
                     <div class="label">Distância Calculada</div>
                     <div class="value" id="distOut">0 PC</div>
                 </div>
-                <div class="calc-box" style="border-color: var(--amber);">
+                <div class="calc-box" id="jumpsBox" style="border-color: var(--amber);">
                     <div class="label" style="color: var(--amber);">Saltos</div>
                     <div class="value" id="jumpsOut" style="text-shadow: 0 0 5px var(--amber);">0</div>
                 </div>
-                <div class="calc-box" style="border-color: var(--neon-cyan);">
+                <div class="calc-box" id="durationBox" style="border-color: var(--neon-cyan);">
                     <div class="label" style="color: var(--neon-cyan);">Duração da Viagem</div>
                     <div class="value" id="durationOut" style="text-shadow: 0 0 5px var(--neon-cyan);">0</div>
+                </div>
+                <div class="calc-box" id="fuelBox" style="border-color: #ff5fd6;">
+                    <div class="label" style="color: #ff5fd6;">Combustível Consumido</div>
+                    <div class="value" id="fuelOut" style="text-shadow: 0 0 5px #ff5fd6;">0</div>
                 </div>
             </div>
         </footer>
