@@ -3,6 +3,10 @@ let emergencyStopActive = false;
 let travelMode = 'hiperespaco';
 let selectedShip = null;
 
+let selectedOriginPlanet = null;
+let selectedDestPlanet = null;
+let selectedEmergencyPlanet = null;
+
 const regionWeights = {
     "Núcleo": 1,
     "Orla Interior": 3,
@@ -10,7 +14,6 @@ const regionWeights = {
     "Orla Exterior": 8
 };
 
-// Horas de viagem por MIL parsecs, de acordo com a classe do motor hiperespacial.
 const hyperdriveClassFactors = {
     "0.5": 0.4,
     "1": 0.8,
@@ -18,7 +21,6 @@ const hyperdriveClassFactors = {
     "3": 2.5
 };
 
-// Unidades de combustível hiperespacial gastas por MIL parsecs percorridos.
 const hyperspaceFuelRates = {
     "0.5": 0.2,
     "1": 0.5,
@@ -26,18 +28,12 @@ const hyperspaceFuelRates = {
     "3": 1
 };
 
-// Unidades de combustível subluz gastas por HORA de operação, de acordo com o contexto.
 const subluzFuelRates = {
     espaco: 0.1,
     atmosfera: 0.2,
     combate: 50
 };
 
-/* ATENÇÃO: não foi encontrado um arquivo de dados de naves no projeto.
-Esta frota é apenas um placeholder embutido no próprio script. Assim que
-você tiver o JSON real (ex: data/frota_database.json), me passe o caminho
-e os nomes dos campos que eu substituo isso por um fetch, igual ao que já
-é feito com a base de planetas.*/
 let shipDatabase = [
     {
         nome: "TIE Interceptor 'Sombra Negra'",
@@ -85,13 +81,10 @@ let shipDatabase = [
     }
 ];
 
-const originSelect = document.getElementById('origin');
-const destSelect = document.getElementById('destination');
 const gateOverlay = document.getElementById('gate');
 const engineClassSelect = document.getElementById('engineClass');
 const emergencyToggleBtn = document.getElementById('emergencyToggleBtn');
 const emergencyBlock = document.getElementById('emergencyBlock');
-const emergencyStopSelect = document.getElementById('emergencyStop');
 const shipSelect = document.getElementById('shipSelect');
 const hyperspaceFieldsBlock = document.getElementById('hyperspaceFields');
 const subluzFieldsBlock = document.getElementById('subluzFields');
@@ -120,44 +113,82 @@ async function loadPlanetDatabase() {
     }
 }
 
-function populatePlanetSelectors() {
-    if (!originSelect || !destSelect) return;
+function setupAutocomplete(inputId, listId, onSelectCallback) {
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
 
-    originSelect.innerHTML = '';
-    destSelect.innerHTML = '';
+    if (!input || !list) return;
 
-    database
-        .slice()
-        .sort((a, b) => a.nome.localeCompare(b.nome))
-        .forEach((planet) => {
-            originSelect.add(new Option(planet.nome, planet.nome));
-            destSelect.add(new Option(planet.nome, planet.nome));
+    input.addEventListener('input', () => {
+        const query = input.value.trim().toLowerCase();
+        list.innerHTML = '';
+
+        if (!query) {
+            list.style.display = 'none';
+            return;
+        }
+
+        const matches = database.filter(p => p.nome.toLowerCase().includes(query));
+
+        if (matches.length === 0) {
+            list.style.display = 'none';
+            return;
+        }
+
+        matches.forEach(planet => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.innerHTML = `<span>${planet.nome}</span><span class="item-region">${planet.regiao}</span>`;
+            
+            item.addEventListener('click', () => {
+                input.value = planet.nome;
+                list.style.display = 'none';
+                onSelectCallback(planet);
+            });
+
+            list.appendChild(item);
         });
 
-    if (database.length) {
-        originSelect.selectedIndex = 0;
-        destSelect.selectedIndex = 1 < database.length ? 1 : 0;
-    }
+        list.style.display = 'block';
+    });
 
-    populateEmergencyStopSelector();
+    document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+            list.style.display = 'none';
+        }
+    });
 }
 
-function populateEmergencyStopSelector() {
-    if (!emergencyStopSelect) return;
+function setupPlanetAutocompletes() {
+    setupAutocomplete('originInput', 'originList', (planet) => {
+        selectedOriginPlanet = planet;
+        document.getElementById('origRegion').innerText = planet.regiao.toUpperCase();
+    });
 
-    emergencyStopSelect.innerHTML = '';
-    emergencyStopSelect.add(new Option('— Selecione um planeta —', ''));
+    setupAutocomplete('destInput', 'destList', (planet) => {
+        selectedDestPlanet = planet;
+        document.getElementById('destRegion').innerText = planet.regiao.toUpperCase();
+    });
 
-    database
-        .slice()
-        .sort((a, b) => a.nome.localeCompare(b.nome))
-        .forEach((planet) => {
-            emergencyStopSelect.add(new Option(planet.nome, planet.nome));
-        });
+    setupAutocomplete('emergencyInput', 'emergencyList', (planet) => {
+        selectedEmergencyPlanet = planet;
+    });
+
+    if (database.length >= 2) {
+        const sorted = database.slice().sort((a, b) => a.nome.localeCompare(b.nome));
+        selectedOriginPlanet = sorted[0];
+        selectedDestPlanet = sorted[1];
+
+        document.getElementById('originInput').value = selectedOriginPlanet.nome;
+        document.getElementById('origRegion').innerText = selectedOriginPlanet.regiao.toUpperCase();
+
+        document.getElementById('destInput').value = selectedDestPlanet.nome;
+        document.getElementById('destRegion').innerText = selectedDestPlanet.regiao.toUpperCase();
+    }
 }
 
 function toggleEmergencyStop() {
-    if (!emergencyBlock || !emergencyToggleBtn || !emergencyStopSelect) return;
+    if (!emergencyBlock || !emergencyToggleBtn) return;
 
     emergencyStopActive = !emergencyStopActive;
 
@@ -169,7 +200,8 @@ function toggleEmergencyStop() {
         emergencyBlock.classList.remove('show');
         emergencyToggleBtn.innerText = 'Adicionar Parada de Emergência';
         emergencyToggleBtn.classList.remove('active');
-        emergencyStopSelect.value = '';
+        document.getElementById('emergencyInput').value = '';
+        selectedEmergencyPlanet = null;
     }
 }
 
@@ -197,6 +229,7 @@ function updateShipCard() {
     if (!selectedShip) return;
 
     document.getElementById('shipNome').innerText = selectedShip.nome.toUpperCase();
+    document.getElementById('shipNomeAur').innerText = selectedShip.nome.toUpperCase();
     document.getElementById('shipClasseStatus').innerText = `${selectedShip.classe} // ${selectedShip.status}`;
 
     if (selectedShip.motor_hiperespacial) {
@@ -243,7 +276,6 @@ function renderFuelBars() {
 
 function setTravelMode(mode) {
     travelMode = mode;
-
     const isHyper = mode === 'hiperespaco';
 
     hyperspaceFieldsBlock.classList.toggle('hidden-mode', !isHyper);
@@ -280,26 +312,13 @@ function buildHyperspaceLines() {
 
 async function initTerminal() {
     await loadPlanetDatabase();
-    populatePlanetSelectors();
+    setupPlanetAutocompletes();
     populateShipSelector();
     buildHyperspaceLines();
-    updatePlanetCard('origin');
     updateShipCard();
     setTravelMode('hiperespaco');
 }
 
-function updatePlanetCard(type) {
-    if (!database.length) return;
-
-    const select = type === 'origin' ? originSelect : destSelect;
-    const planet = database.find((item) => item.nome === select.value);
-
-    if (!planet) return;
-
-    document.getElementById(`${type}Region`).innerText = `${planet.regiao.toUpperCase()}`;
-}
-
-// Calcula a distância (em parsecs, inteiro arredondado para cima) entre dois planetas.
 function calculateSegmentDistance(planetA, planetB) {
     const wA = regionWeights[planetA.regiao] || 4;
     const wB = regionWeights[planetB.regiao] || 4;
@@ -310,25 +329,21 @@ function calculateSegmentDistance(planetA, planetB) {
     return Math.ceil(baseDistance);
 }
 
-// Duração da viagem hiperespacial, com base 1000:1 (horas por MIL parsecs).
 function calculateHyperspaceDuration(parsecs, engineClass) {
     const factor = hyperdriveClassFactors[engineClass] || hyperdriveClassFactors["1"];
     return (parsecs / 1000) * factor;
 }
 
-// Gasto de combustível hiperespacial, também na base 1000:1.
 function calculateHyperspaceFuel(parsecs, engineClass) {
     const rate = hyperspaceFuelRates[engineClass] || hyperspaceFuelRates["1"];
     return (parsecs / 1000) * rate;
 }
 
-// Gasto de combustível subluz, por hora de operação, de acordo com o contexto.
 function calculateSubluzFuel(context, hours) {
     const rate = subluzFuelRates[context] ?? subluzFuelRates.espaco;
     return rate * hours;
 }
 
-// Formata a duração (em horas) de forma legível para o holo-display.
 function formatDuration(totalHours) {
     if (totalHours < 1) {
         const minutes = Math.max(1, Math.round(totalHours * 60));
@@ -355,13 +370,17 @@ function engageHyperdrive() {
 }
 
 function engageHyperspaceJump() {
-    const oName = originSelect.value;
-    const dName = destSelect.value;
     const consoleOut = document.getElementById('consoleOut');
     const metricsBox = document.getElementById('metricsBox');
 
-    if (!database.length) {
-        consoleOut.innerText = "> ERRO: BASE DE DADOS INDISPONÍVEL.";
+    const origInputVal = document.getElementById('originInput').value.trim();
+    const destInputVal = document.getElementById('destInput').value.trim();
+
+    const pOrig = database.find(p => p.nome.toLowerCase() === origInputVal.toLowerCase()) || selectedOriginPlanet;
+    const pDest = database.find(p => p.nome.toLowerCase() === destInputVal.toLowerCase()) || selectedDestPlanet;
+
+    if (!pOrig || !pDest) {
+        consoleOut.innerText = "> ERRO CÓDIGO 0x14: PLANETA DE ORIGEM OU DESTINO NÃO ENCONTRADO NA BASE.";
         consoleOut.style.color = "var(--neon-red)";
         metricsBox.classList.remove('show');
         return;
@@ -381,7 +400,7 @@ function engageHyperspaceJump() {
         return;
     }
 
-    if (oName === dName) {
+    if (pOrig.nome === pDest.nome) {
         consoleOut.innerText = "> ERRO CÓDIGO 0x44: COORDENADAS COINCIDENTES. ABORTANDO.";
         consoleOut.style.color = "var(--neon-red)";
         metricsBox.classList.remove('show');
@@ -390,12 +409,10 @@ function engageHyperspaceJump() {
 
     const engineClass = selectedShip.motor_hiperespacial;
 
-    const pOrig = database.find((planet) => planet.nome === oName);
-    const pDest = database.find((planet) => planet.nome === dName);
-
     let pStop = null;
-    if (emergencyStopActive && emergencyStopSelect && emergencyStopSelect.value) {
-        pStop = database.find((planet) => planet.nome === emergencyStopSelect.value);
+    if (emergencyStopActive) {
+        const emergencyInputVal = document.getElementById('emergencyInput').value.trim();
+        pStop = database.find(p => p.nome.toLowerCase() === emergencyInputVal.toLowerCase()) || selectedEmergencyPlanet;
 
         if (pStop && (pStop.nome === pOrig.nome || pStop.nome === pDest.nome)) {
             consoleOut.innerText = "> ERRO CÓDIGO 0x51: PARADA DE EMERGÊNCIA COINCIDE COM A ROTA PRINCIPAL.";
@@ -419,8 +436,6 @@ function engageHyperspaceJump() {
         let routeLabel = `${pOrig.sistema.toUpperCase()} AO ${pDest.sistema.toUpperCase()}`;
 
         if (pStop) {
-            // Uma parada de emergência exige sair do hiperespaço, portanto a viagem
-            // passa a ser composta por 2 saltos (origem->parada e parada->destino).
             const legA = calculateSegmentDistance(pOrig, pStop);
             const legB = calculateSegmentDistance(pStop, pDest);
 
@@ -428,7 +443,6 @@ function engageHyperspaceJump() {
             jumps = 2;
             routeLabel = `${pOrig.sistema.toUpperCase()} > ${pStop.sistema.toUpperCase()} (PARADA DE EMERGÊNCIA) > ${pDest.sistema.toUpperCase()}`;
         } else {
-            // Sem parada de emergência, a viagem é sempre concluída em um único salto.
             totalParsecs = calculateSegmentDistance(pOrig, pDest);
             jumps = 1;
         }

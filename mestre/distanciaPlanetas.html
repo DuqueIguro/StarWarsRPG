@@ -10,22 +10,28 @@
 </head>
 
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase.js"></script>
-    <script src="../js/isb_gatekeeper.js"></script>
+    <script src="../js/isb_gatekeeper.js"></script> -->
 
     <div class="starfield"></div>
     <div class="hyperspace-gate" id="gate"></div>
 
     <div class="terminal-container">
         <header class="terminal-header">
-            <div class="terminal-title">GALACTIC NAVIGATION COMPUTER v5.0</div>
+            <div class="header-left">
+                <div class="terminal-title">GALACTIC NAVIGATION COMPUTER</div>
+                <div class="aurebesh-subtext">IMPERIAL NAV-COMPUTER V5.0</div>
+            </div>
             <div class="system-status" id="sysStatus">SECURE_CONNECTION // IMPERIAL_NET_ONLINE</div>
         </header>
 
         <main class="control-panel">
             <div class="panel-block">
-                <div class="panel-label"><span>MODO DE VIAGEM</span></div>
+                <div class="panel-label">
+                    <span>MODO DE VIAGEM</span>
+                    <span class="aurebesh-label">TRAVEL MODE</span>
+                </div>
                 <div class="mode-toggle">
                     <label class="mode-option" id="modeHyperLabel">
                         <input type="radio" name="travelMode" value="hiperespaco" checked onchange="setTravelMode('hiperespaco')">
@@ -39,18 +45,35 @@
             </div>
 
             <div id="hyperspaceFields">
+                <!-- Autocomplete Origem -->
                 <div class="panel-block">
-                    <div class="panel-label"><span>PONTO DE ORIGEM</span><span id="origRegion">-</span></div>
-                    <select id="origin" onchange="updatePlanetCard('origin')"></select>
+                    <div class="panel-label">
+                        <span>PONTO DE ORIGEM</span>
+                        <span id="origRegion">-</span>
+                    </div>
+                    <div class="autocomplete-container">
+                        <input type="text" id="originInput" placeholder="Digite o planeta de origem..." autocomplete="off">
+                        <div id="originList" class="autocomplete-list"></div>
+                    </div>
+                </div>
+
+                <!-- Autocomplete Destino -->
+                <div class="panel-block">
+                    <div class="panel-label">
+                        <span>VETOR DE DESTINO</span>
+                        <span id="destRegion">-</span>
+                    </div>
+                    <div class="autocomplete-container">
+                        <input type="text" id="destInput" placeholder="Digite o planeta de destino..." autocomplete="off">
+                        <div id="destList" class="autocomplete-list"></div>
+                    </div>
                 </div>
 
                 <div class="panel-block">
-                    <div class="panel-label"><span>VETOR DE DESTINO</span><span id="destRegion">-</span></div>
-                    <select id="destination" onchange="updatePlanetCard('destination')"></select>
-                </div>
-
-                <div class="panel-block">
-                    <div class="panel-label"><span>CLASSE DO MOTOR HIPERESPACIAL</span><span>DEFINIDA PELA NAVE</span></div>
+                    <div class="panel-label">
+                        <span>CLASSE DO MOTOR HIPERESPACIAL</span>
+                        <span>DEFINIDA PELA NAVE</span>
+                    </div>
                     <select id="engineClass" disabled>
                         <option value="0.5">Classe 0.5 — Elite / Protótipo</option>
                         <option value="1">Classe 1 — Padrão Militar</option>
@@ -63,7 +86,11 @@
                     <div class="panel-label"><span>PROTOCOLO DE PARADA DE EMERGÊNCIA</span></div>
                     <button type="button" class="btn-emergency" id="emergencyToggleBtn" onclick="toggleEmergencyStop()">Adicionar Parada de Emergência</button>
                     <div class="emergency-block" id="emergencyBlock">
-                        <select id="emergencyStop"></select>
+                        <!-- Autocomplete Parada de Emergência -->
+                        <div class="autocomplete-container" style="margin-top: 10px;">
+                            <input type="text" id="emergencyInput" placeholder="Digite o planeta de parada..." autocomplete="off">
+                            <div id="emergencyList" class="autocomplete-list"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,13 +115,16 @@
         </main>
 
         <section class="holo-display">
-            <div class="panel-label" style="margin-bottom:10px;"><span>NAVE SELECIONADA</span></div>
+            <div class="panel-label" style="margin-bottom:10px;">
+                <span>NAVE SELECIONADA</span>
+                <span class="aurebesh-label">VESSEL MATRIX</span>
+            </div>
             <select id="shipSelect" onchange="updateShipCard()"></select>
 
             <div class="data-row">
                 <div class="data-title">Designação</div>
-                <div class="data-value" id="shipNome"
-                    style="color:var(--neon-cyan); font-weight:bold; font-size:1.2rem;">-</div>
+                <div class="data-value" id="shipNome" style="color:var(--neon-cyan); font-weight:bold; font-size:1.2rem;">-</div>
+                <div class="aurebesh-subtext" id="shipNomeAur">-</div>
             </div>
             <div class="data-row">
                 <div class="data-title">Classe / Status</div>
