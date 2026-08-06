@@ -1,165 +1,179 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oficinas MCMT - Tabela de Serviços e Custos</title>
-  <link rel="stylesheet" href="../styles/MCMT.css">
-  <link rel="stylesheet" href="servicosMCMT.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oficinas MCMT - Tabela de Serviços e Custos</title>
+    <link rel="stylesheet" href="../styles/MCMT.css">
+    <link rel="stylesheet" href="servicosMCMT.css">
 </head>
+
 <body>
-  <!-- Aurebesh Background Watermark -->
-  <div class="aurebesh-bg">MCMT WORKSHOP SERVICE SYSTEM - IMPERIAL & REBEL MECHANICAL LOGISTICS - ENGRENAGEM MESTRA</div>
-
-  <div class="mcmt-wrapper">
-    <!-- Header -->
-    <header class="mcmt-header">
-      <div class="logo">
-        <span class="logo-aurebesh">MCMT WORKSHOP</span>
-        <span>Oficinas Mecânicas MCMT</span>
-      </div>
-      <nav class="mcmt-nav">
-        <a href="oficina">Oficina</a>
-        <a href="#" class="active">Serviços & Custos</a>
-      </nav>
-    </header>
-
-    <!-- Hero Banner -->
-    <section class="mcmt-hero">
-      <div class="hero-eyebrow"><span>MCMT</span> Central de Manutenção e Serviços</div>
-      <h1>Tabela de Serviços & Custos</h1>
-      <p class="hero-sub">Gestão centralizada de orçamentos, reparos e substituição de peças para as Oficinas MCMT1 e MCMT2.</p>
-      <div class="hero-meta">
-        <span>SISTEMA REG.</span>
-        <span class="reg-num">SYS-MCMT-2026</span>
-      </div>
-    </section>
-
-    <!-- Mode Selector Bar -->
-    <div class="mode-bar">
-      <div class="workshop-selector">
-        <label for="workshopSelect">OFICINA ATIVA:</label>
-        <select id="workshopSelect" onchange="switchWorkshop(this.value)">
-          <option value="MCMT1">Oficina MCMT1 (Parte Baixa)</option>
-          <option value="MCMT2">Oficina MCMT2 (Parte Alta)</option>
-        </select>
-      </div>
-
-      <div class="mode-toggle-container">
-        <span class="mode-label">MODO ATUAL:</span>
-        <button id="viewModeBtn" class="btn-mode active" onclick="setMode('view')">
-          <span class="indicator">●</span> VISUALIZAÇÃO
-        </button>
-        <button id="editModeBtn" class="btn-mode" onclick="setMode('edit')">
-          <span class="indicator">●</span> EDIÇÃO / GESTÃO
-        </button>
-      </div>
+    <!-- Biblioteca oficial do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    
+    <!-- Aurebesh Background Watermark -->
+    <div class="aurebesh-bg">MCMT WORKSHOP SERVICE SYSTEM - IMPERIAL & REBEL MECHANICAL LOGISTICS - ENGRENAGEM MESTRA
     </div>
 
-    <!-- Edit Controls (Visible in Edit Mode) -->
-    <div id="editControls" class="edit-controls-panel hidden">
-      <div class="edit-banner">
-        ⚙ MODO DE EDIÇÃO ATIVO — Altere custos, margens e adicione novos serviços para a <span id="currentWorkshopLabel">MCMT1</span>.
-      </div>
-      <button class="btn-mcmt btn-primary" onclick="openAddServiceModal()">+ Adicionar Novo Serviço</button>
-    </div>
-
-    <!-- Category Filter Tabs -->
-    <div class="category-tabs">
-      <button class="tab-btn active" onclick="filterCategory('todas')">Todas</button>
-      <button class="tab-btn" onclick="filterCategory('naves')">Naves</button>
-      <button class="tab-btn" onclick="filterCategory('droids')">Droids</button>
-      <button class="tab-btn" onclick="filterCategory('equipamentos')">Equipamentos</button>
-      <button class="tab-btn" onclick="filterCategory('outros')">Outros</button>
-    </div>
-
-    <!-- Search and Controls -->
-    <div class="search-bar-wrap">
-      <input type="text" id="searchInput" placeholder="Buscar serviço ou peça por nome..." oninput="renderServices()">
-    </div>
-
-    <!-- Services Container -->
-    <main id="servicesContainer">
-      <!-- Dynamic Service Tables rendered here -->
-    </main>
-
-    <!-- Footer -->
-    <footer class="mcmt-footer">
-      <div>ENGRENAGEM MESTRA © GALACTIC LOGISTICS NETWORK</div>
-      <div class="footer-aurebesh">ENGRENAGEM MESTRA MCMT 1 & 2</div>
-    </footer>
-  </div>
-
-  <!-- Modal Add/Edit Service -->
-  <div id="serviceModal" class="mcmt-modal-overlay">
-    <div class="mcmt-modal">
-      <div class="modal-close">
-        <button onclick="closeServiceModal()">Fechar [X]</button>
-      </div>
-      <div class="modal-content-col" style="width: 100%;">
-        <div class="modal-eyebrow">GESTÃO DE SERVIÇOS</div>
-        <h2 class="modal-title" id="modalTitle">Adicionar Novo Serviço</h2>
-        <form id="serviceForm" onsubmit="handleServiceSubmit(event)" style="margin-top: 1rem;">
-          <input type="hidden" id="serviceId">
-
-          <div class="form-group">
-            <label for="serviceCategory">Categoria:</label>
-            <select id="serviceCategory" required>
-              <option value="naves">Naves</option>
-              <option value="droids">Droids</option>
-              <option value="equipamentos">Equipamentos</option>
-              <option value="outros">Outros</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="serviceName">Nome do Serviço:</label>
-            <input type="text" id="serviceName" placeholder="Ex: Calibragem de Hiperpropulsor" required>
-          </div>
-
-          <div class="form-group autocomplete-container">
-            <label for="partAutocomplete">Peça Utilizada (Apenas se aplicável):</label>
-            <input type="text" id="partAutocomplete" placeholder="Digite para buscar no catálogo..." oninput="onPartSearch(this.value)" autocomplete="off">
-            <div id="autocompleteList" class="autocomplete-items"></div>
-            <input type="hidden" id="selectedPartId">
-          </div>
-
-          <div id="partInfoBox" class="part-info-box hidden">
-            <div><strong>Peça Selecionada:</strong> <span id="infoPartName">-</span></div>
-            <div><strong>Qualidade:</strong> <span id="infoPartQuality" class="quality-badge">-</span></div>
-            <div><strong>Preço Base Database:</strong> <span id="infoPartPrice">0</span> cr</div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="laborCost">Mão de Obra (cr):</label>
-              <input type="number" id="laborCost" min="0" value="0" oninput="calculateTotalModal()" required>
+    <div class="mcmt-wrapper">
+        <!-- Header -->
+        <header class="mcmt-header">
+            <div class="logo">
+                <span class="logo-aurebesh">MCMT WORKSHOP</span>
+                <span>Oficinas Mecânicas MCMT</span>
             </div>
-            <div class="form-group">
-              <label for="partCostOverride">Custo do Componente (cr):</label>
-              <input type="number" id="partCostOverride" min="0" value="0" oninput="calculateTotalModal()" required>
+            <nav class="mcmt-nav">
+                <a href="oficina">Oficina</a>
+                <a href="#" class="active">Serviços & Custos</a>
+            </nav>
+        </header>
+
+        <!-- Hero Banner -->
+        <section class="mcmt-hero">
+            <div class="hero-eyebrow"><span>MCMT</span> Central de Manutenção e Serviços</div>
+            <h1>Tabela de Serviços & Custos</h1>
+            <p class="hero-sub">Gestão centralizada de orçamentos, reparos e substituição de peças para as Oficinas
+                MCMT1 e MCMT2.</p>
+            <div class="hero-meta">
+                <span>SISTEMA REG.</span>
+                <span class="reg-num">SYS-MCMT-2026</span>
             </div>
-          </div>
+        </section>
 
-          <div class="form-group">
-            <label>Preço Total Estimado:</label>
-            <div id="modalTotalCalculated" class="total-calculated-display">0 cr</div>
-          </div>
+        <!-- Mode Selector Bar -->
+        <div class="mode-bar">
+            <div class="workshop-selector">
+                <label for="workshopSelect">OFICINA ATIVA:</label>
+                <select id="workshopSelect" onchange="switchWorkshop(this.value)">
+                    <option value="MCMT1">Oficina MCMT1 (Parte Baixa)</option>
+                    <option value="MCMT2">Oficina MCMT2 (Parte Alta)</option>
+                </select>
+            </div>
 
-          <div class="form-group">
-            <label for="serviceDesc">Descrição do Serviço:</label>
-            <textarea id="serviceDesc" rows="3" placeholder="Detalhes do procedimento..."></textarea>
-          </div>
+            <div class="mode-toggle-container">
+                <span class="mode-label">MODO ATUAL:</span>
+                <button id="viewModeBtn" class="btn-mode active" onclick="setMode('view')">
+                    <span class="indicator">●</span> VISUALIZAÇÃO
+                </button>
+                <button id="editModeBtn" class="btn-mode" onclick="setMode('edit')">
+                    <span class="indicator">●</span> EDIÇÃO / GESTÃO
+                </button>
+            </div>
+        </div>
 
-          <div class="modal-actions">
-            <button type="button" class="btn-mcmt" onclick="closeServiceModal()">Cancelar</button>
-            <button type="submit" class="btn-mcmt btn-primary">Salvar Serviço</button>
-          </div>
-        </form>
-      </div>
+        <!-- Edit Controls (Visible in Edit Mode) -->
+        <div id="editControls" class="edit-controls-panel hidden">
+            <div class="edit-banner">
+                ⚙ MODO DE EDIÇÃO ATIVO — Altere custos, margens e adicione novos serviços para a <span
+                    id="currentWorkshopLabel">MCMT1</span>.
+            </div>
+            <button class="btn-mcmt btn-primary" onclick="openAddServiceModal()">+ Adicionar Novo Serviço</button>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="filterCategory('todas')">Todas</button>
+            <button class="tab-btn" onclick="filterCategory('naves')">Naves</button>
+            <button class="tab-btn" onclick="filterCategory('droids')">Droids</button>
+            <button class="tab-btn" onclick="filterCategory('equipamentos')">Equipamentos</button>
+            <button class="tab-btn" onclick="filterCategory('outros')">Outros</button>
+        </div>
+
+        <!-- Search and Controls -->
+        <div class="search-bar-wrap">
+            <input type="text" id="searchInput" placeholder="Buscar serviço ou peça por nome..."
+                oninput="renderServices()">
+        </div>
+
+        <!-- Services Container -->
+        <main id="servicesContainer">
+            <!-- Dynamic Service Tables rendered here -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="mcmt-footer">
+            <div>ENGRENAGEM MESTRA © GALACTIC LOGISTICS NETWORK</div>
+            <div class="footer-aurebesh">ENGRENAGEM MESTRA MCMT 1 & 2</div>
+        </footer>
     </div>
-  </div>
 
-  <script src="servicosMCMT.js"></script>
+    <!-- Modal Add/Edit Service -->
+    <div id="serviceModal" class="mcmt-modal-overlay">
+        <div class="mcmt-modal">
+            <div class="modal-close">
+                <button onclick="closeServiceModal()">Fechar [X]</button>
+            </div>
+            <div class="modal-content-col" style="width: 100%;">
+                <div class="modal-eyebrow">GESTÃO DE SERVIÇOS</div>
+                <h2 class="modal-title" id="modalTitle">Adicionar Novo Serviço</h2>
+                <form id="serviceForm" onsubmit="handleServiceSubmit(event)" style="margin-top: 1rem;">
+                    <input type="hidden" id="serviceId">
+
+                    <div class="form-group">
+                        <label for="serviceCategory">Categoria:</label>
+                        <select id="serviceCategory" required>
+                            <option value="naves">Naves</option>
+                            <option value="droids">Droids</option>
+                            <option value="equipamentos">Equipamentos</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceName">Nome do Serviço:</label>
+                        <input type="text" id="serviceName" placeholder="Ex: Calibragem de Hiperpropulsor" required>
+                    </div>
+
+                    <div class="form-group autocomplete-container">
+                        <label for="partAutocomplete">Peça Utilizada (Apenas se aplicável):</label>
+                        <input type="text" id="partAutocomplete" placeholder="Digite para buscar no catálogo..."
+                            oninput="onPartSearch(this.value)" autocomplete="off">
+                        <div id="autocompleteList" class="autocomplete-items"></div>
+                        <input type="hidden" id="selectedPartId">
+                    </div>
+
+                    <div id="partInfoBox" class="part-info-box hidden">
+                        <div><strong>Peça Selecionada:</strong> <span id="infoPartName">-</span></div>
+                        <div><strong>Qualidade:</strong> <span id="infoPartQuality" class="quality-badge">-</span></div>
+                        <div><strong>Preço Base Database:</strong> <span id="infoPartPrice">0</span> cr</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="laborCost">Mão de Obra (cr):</label>
+                            <input type="number" id="laborCost" min="0" value="0" oninput="calculateTotalModal()"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="partCostOverride">Custo do Componente (cr):</label>
+                            <input type="number" id="partCostOverride" min="0" value="0" oninput="calculateTotalModal()"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preço Total Estimado:</label>
+                        <div id="modalTotalCalculated" class="total-calculated-display">0 cr</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceDesc">Descrição do Serviço:</label>
+                        <textarea id="serviceDesc" rows="3" placeholder="Detalhes do procedimento..."></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-mcmt" onclick="closeServiceModal()">Cancelar</button>
+                        <button type="submit" class="btn-mcmt btn-primary">Salvar Serviço</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="servicosMCMT.js"></script>
 </body>
+
 </html>
