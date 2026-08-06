@@ -1,5 +1,5 @@
 /* =============================================
-   servicos.css — Estilos Customizados para Serviços MCMT
+   servicosMCMT.css — Estilos Customizados para Serviços MCMT
    Complementa o MCMT.css
    ============================================= */
 
@@ -80,22 +80,24 @@
   color: var(--green-neon);
 }
 
-/* Visual Distinction for Edit Mode */
+/* Visual Distinction for Edit Mode (Orange Theme) */
 body.edit-mode-active {
-  --bg-deep: #120d0e;
-  --bg-panel: #1e1416;
-  --bg-card: #281a1c;
-  --border: #4d2a2f;
-  --border-glow: #8c3b45;
-  --green-dim: #9e5a62;
-  --green-mid: #c96b76;
-  --green-bright: #f58a97;
-  --green-neon: #ffb3bd;
-  --text-primary: #eddcd e;
+  --bg-deep: #140f0a;
+  --bg-panel: #211710;
+  --bg-card: #2e1f14;
+  --bg-card-hover: #3b281a;
+  --border: #52351c;
+  --border-glow: #995c26;
+  --green-dim: #b3733b;
+  --green-mid: #d98e4a;
+  --green-bright: #ffa64d;
+  --green-neon: #ffc280;
+  --text-primary: #f2e3d5;
+  --text-dim: #997d66;
 }
 
 .edit-controls-panel {
-  background: rgba(140, 59, 69, 0.15);
+  background: rgba(153, 92, 38, 0.18);
   border: 1px dashed var(--border-glow);
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
@@ -154,13 +156,15 @@ body.edit-mode-active {
   color: var(--text-primary);
   padding: 0.7rem 1rem;
   font-family: var(--font-main);
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   border-radius: var(--radius);
   outline: none;
+  transition: border-color 0.2s;
 }
 
 .search-bar-wrap input:focus {
   border-color: var(--border-glow);
+  box-shadow: 0 0 6px rgba(153, 92, 38, 0.3);
 }
 
 /* Table Styling */
@@ -229,8 +233,8 @@ body.edit-mode-active {
 }
 
 .quality-Baixa { background: #3d2c20; color: #e69d6e; border: 1px solid #734a2e; }
-.quality-Normal { background: #20352b; color: #81c7a1; border: 1px solid #3c6e54; }
-.quality-Boa { background: #1c3847; color: #72beeb; border: 1px solid #346787; }
+.quality-Normal { background: #1c3847; color: #72beeb; border: 1px solid #346787; }
+.quality-Boa { background: #20352b; color: #81c7a1; border: 1px solid #3c6e54; }
 .quality-Excelente { background: #3c234d; color: #c483f0; border: 1px solid #6b3f87; }
 .quality-Imperial { background: #4a1d1d; color: #f07878; border: 1px solid #8c3838; }
 .quality-Lendária { background: #473a1c; color: #f2ce6b; border: 1px solid #8a6f30; }
@@ -282,9 +286,10 @@ body.edit-mode-active {
   left: 0;
   right: 0;
   background-color: var(--bg-panel);
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
   border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
 .autocomplete-items div {

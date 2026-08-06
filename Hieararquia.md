@@ -193,6 +193,10 @@ StarWarsRPG
 │  ├─ mapa.html
 │  ├─ MCMT.html
 │  └─ mestre.html
+├─ staging
+│  ├─ servicosMCMT.css
+│  ├─ servicosMCMT.html
+│  └─ servicosMCMT.js
 ├─ styles
 │  ├─ 404.css
 │  ├─ armazem.css

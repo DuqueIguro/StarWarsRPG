@@ -3,7 +3,7 @@
 let currentMode = 'view'; // 'view' or 'edit'
 let currentWorkshop = 'MCMT1';
 let currentCategory = 'todas';
-let itemDatabasePrice = []; // Populated via databaseInventario.js
+let partsDatabase = []; // Populated via databaseInventario.js (itemDatabase)
 let workshopServices = { MCMT1: [], MCMT2: [] };
 
 // Initialize Data
@@ -13,27 +13,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderServices();
 });
 
-// Load database JavaScript file
+// Load database JavaScript file (js/databaseInventario.js -> itemDatabase)
 async function loadDatabase() {
   try {
-    // Try dynamic import if the JS file is an ES module exporting the data.
-    try {
-      const module = await import('../js/databaseInventario.js');
-      itemDatabasePrice = module.default || module.itemDatabasePrice || module.databaseInventario || [];
-      if (itemDatabasePrice.length) {
-        return;
-      }
-    } catch (moduleErr) {
-      // Ignore module import failure and try loading as a plain script.
+    // Check if itemDatabase is already loaded globally via script tag
+    if (typeof itemDatabase !== 'undefined' && Array.isArray(itemDatabase)) {
+      partsDatabase = itemDatabase;
+      return;
     }
 
-    // Fallback: load script into document and read global variable.
+    // Try dynamic import
+    try {
+      const module = await import('../js/databaseInventario.js');
+      partsDatabase = module.itemDatabase || module.default || [];
+      if (partsDatabase.length) return;
+    } catch (e) {
+      // Ignore module import error
+    }
+
+    // Load via script tag injection as fallback
     await new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = '../js/databaseInventario.js';
-      script.async = true;
       script.onload = () => {
-        itemDatabasePrice = window.databaseInventario || window.itemDatabasePrice || window.default || [];
+        if (typeof itemDatabase !== 'undefined') {
+          partsDatabase = itemDatabase;
+        } else if (window.itemDatabase) {
+          partsDatabase = window.itemDatabase;
+        }
         resolve();
       };
       script.onerror = reject;
@@ -137,26 +144,30 @@ function filterCategory(cat) {
   renderServices();
 }
 
-// Render Services
+// Render Services with Search Filter
 function renderServices() {
   const container = document.getElementById("servicesContainer");
-  const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+  const searchQuery = document.getElementById("searchInput").value.toLowerCase().trim();
   
   let list = workshopServices[currentWorkshop] || [];
 
+  // Category filter
   if (currentCategory !== 'todas') {
     list = list.filter(s => s.category === currentCategory);
   }
 
+  // Text search filter across service name, part name, description, and quality
   if (searchQuery) {
     list = list.filter(s => 
-      s.name.toLowerCase().includes(searchQuery) || 
-      (s.partName && s.partName.toLowerCase().includes(searchQuery))
+      (s.name && s.name.toLowerCase().includes(searchQuery)) || 
+      (s.partName && s.partName.toLowerCase().includes(searchQuery)) ||
+      (s.description && s.description.toLowerCase().includes(searchQuery)) ||
+      (s.quality && s.quality.toLowerCase().includes(searchQuery))
     );
   }
 
   if (list.length === 0) {
-    container.innerHTML = `<div style="text-align:center; padding: 3rem; color: var(--text-dim);">Nenhum serviço registrado nesta categoria/busca para a ${currentWorkshop}.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding: 3rem; color: var(--text-dim);">Nenhum serviço encontrado com os filtros aplicados para a ${currentWorkshop}.</div>`;
     return;
   }
 
@@ -228,15 +239,27 @@ function renderServices() {
   container.innerHTML = html;
 }
 
-// Autocomplete Logic
+// Autocomplete Logic using itemDatabase from databaseInventario.js
 function onPartSearch(val) {
   const listContainer = document.getElementById("autocompleteList");
   listContainer.innerHTML = "";
-  if (!val) return;
+  if (!val || val.trim() === "") return;
 
-  const matches = itemDatabasePrice.filter(item => 
-    item.name.toLowerCase().includes(val.toLowerCase())
-  ).slice(0, 8); // Max 8 suggestions
+  const db = partsDatabase.length ? partsDatabase : (typeof itemDatabase !== 'undefined' ? itemDatabase : []);
+  const query = val.toLowerCase().trim();
+
+  const matches = db.filter(item => 
+    item.name && item.name.toLowerCase().includes(query)
+  ).slice(0, 10); // Max 10 suggestions
+
+  if (matches.length === 0) {
+    const div = document.createElement("div");
+    div.style.color = "var(--text-dim)";
+    div.style.cursor = "default";
+    div.textContent = "Nenhuma peça encontrada";
+    listContainer.appendChild(div);
+    return;
+  }
 
   matches.forEach(item => {
     const div = document.createElement("div");
