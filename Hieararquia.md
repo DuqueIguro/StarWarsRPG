@@ -35,6 +35,16 @@ StarWarsRPG
 │  │  ├─ manifesto.json
 │  │  ├─ manifestoSigiloso.json
 │  │  ├─ modeloOS.json
+│  │  ├─ ordens_de_servico
+│  │  │  ├─ OS-04-COR-001.json
+│  │  │  ├─ OS-14-EGM-001.json
+│  │  │  ├─ OS-14-JAK-001.json
+│  │  │  ├─ OS-14-OFI-001.json
+│  │  │  └─ OS-14-OFI-002.json
+│  │  ├─ ordens_sigilosas
+│  │  │  ├─ OS-04-UND-001.json
+│  │  │  ├─ OS-14-SIG-001.json
+│  │  │  └─ OS-14-SIG-002.json
 │  │  ├─ OS-04-COR-001.json
 │  │  ├─ OS-04-UND-001.json
 │  │  └─ siglasLocalidade.json
@@ -56,16 +66,6 @@ StarWarsRPG
 │  ├─ inventarioOficina.js
 │  ├─ oficina.html
 │  ├─ oficina.js
-│  ├─ ordens_de_servico
-│  │  ├─ OS-04-COR-001.json
-│  │  ├─ OS-14-EGM-001.json
-│  │  ├─ OS-14-JAK-001.json
-│  │  ├─ OS-14-OFI-001.json
-│  │  └─ OS-14-OFI-002.json
-│  ├─ ordens_sigilosas
-│  │  ├─ OS-04-UND-001.json
-│  │  ├─ OS-14-SIG-001.json
-│  │  └─ OS-14-SIG-002.json
 │  └─ tripulantes.html
 ├─ Hieararquia.md
 ├─ img
@@ -126,7 +126,6 @@ StarWarsRPG
 ├─ index.html
 ├─ js
 │  ├─ armazem.js
-│  ├─ backupFicha.js
 │  ├─ banco.js
 │  ├─ dadosClassesFicha.js
 │  ├─ dadosRacasFicha.js
