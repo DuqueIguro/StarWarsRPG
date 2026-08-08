@@ -56,31 +56,31 @@
         "contato_emergencia": "Esquadrão Labareda (Dona Eu'nisse San-Tos, Dona Vanya O'liv-Eira, Dona N'eyde Sou-Zaa, Dona Kleonixe Pe'Reira, Dona Kreu-Zah Costcha)",
         "foto_emergencia": "../img/contatoMassassi.png",
         "noticias": [
-            "Patrulhas de Caças TIE limparam o setor orbital 3.",
-            "Sensores de varredura profunda captaram anomalias no espaço real."
+            "A base de Yavin 4 recebeu reforços de escudos e patrulhas de caça após a onda de ataques imperiais.",
+            "Relatos apontam que os sensores massassi detectaram uma nova rota de suprimentos nas bordas do setor orbital."
         ],
         "agentes": [
             { "nome": "Ren'Tai Sol", "cargo": "Capitão Naval/Líder ouro", "foto": "../img/personagens/renTaiSol.jpeg" },
             { "nome": "Lihua", "cargo": "Capitã/Ouro 4", "foto": "../img/personagens/lihua.jpeg" }
         ],
         "inventario": {
-            "naves": ["10x Caças T-65B X-Wing", "6x Bombardeiros BTL Y-Wing", "18x Caças Z-95 Headhunter", "2x Transporte Medio Mobquet"],
-            "itens": ["250 mil créditos", "15x Lancador de Misseis Portatil Merr-Sonn PLX-2M", "40x Blastech 500 Riot Gun", "80x Rifle Blaster SG-4", "20x Granada de Concussao", "40x Armadura de Motim Merr-Sonn KZZ"]
+            "naves": ["5x Caças T-65B X-Wing", "3x Bombardeiros BTL Y-Wing", "10x Caças Z-95 Headhunter", "2x Transporte Medio Mobquet"],
+            "itens": ["220 mil créditos", "10x Lancador de Misseis Portatil Merr-Sonn PLX-2M", "32x Blastech 500 Riot Gun", "74x Rifle Blaster SG-4", "15x Granada de Concussao", "30x Armadura de Motim Merr-Sonn KZZ"]
         },
         "missoes": {
             "convocados": [
-                "Defesa de Ponto do Perímetro Yavin — reforço das defesas e coordenação antiaérea em torno de um satélite de comunicação vulnerável; incluir controle de foco de fogo e patrulhas de interceptação."
+                "Operação Fogo de Vanguarda — mobilização de uma força de assalto para interromper um comboio imperial em rota para o setor de abastecimento interno."
             ],
             "disponiveis": [
-                "Reconhecimento Técnico Orbital — sondagem de rotas de suprimento imperial via sensores ocultos; objetivo: mapear corredores de abastecimento e criar janelas para ataques de interdição."
+                "Ataque de Diversão em Rothana — desvio de energia e infiltração em uma instalação de manutenção para desorganizar a produção de peças de reparo imperiais."
             ],
-            "andamento": [
-                "Invasão ao Complexo de D'Qar — desdobramento de Equipe de Solo para incursão em fortificação imperial nas florestas; objetivos: engajar em combate direto nos arredores e avançar progressivamente em direção ao centro da instalação."
-            ],
+            "andamento": [],
             "concluidas": [
+                "Invasão ao Complexo de D'Qar — desdobramento de Equipe de Solo para incursão em fortificação imperial nas florestas; objetivos: engajar em combate direto nos arredores e avançar progressivamente em direção ao centro da instalação.",
                 "Evacuação de Posto Avançado Dantooine — retirada organizada de civis e material sensível após quebra de segurança; operação completada com sucesso, garantidos rotas de exfiltração seguras."
             ],
             "falhas": [
+                "Ataque em Rothana — missão de assalto a uma instalação de manutenção imperial que terminou em retirada com perdas e falha no desvio de energia.",
                 "Assalto ao Cargueiro de Suprimentos na Orla Interior — ataque mal sincronizado a um cargueiro escoltado; resistência superior e perda de cobertura de sensores resultaram em retirada com danos."
             ]
         }
@@ -99,30 +99,29 @@
         "contato_emergencia": "Especialista Jaxon 'Jax' Thorne",
         "foto_emergencia": "../img/contatoOrion.png",
         "noticias": [
-            "Interceptação de Holomensagem Imperial descriptografada com sucesso.",
-            "Varreduras de longo alcance sugerem movimentos de frotas na Orla Exterior."
+            "A Diretiva Orion interceptou novos pacotes de comunicação imperial e reordenou a prioridade das rotas de exfiltração.",
+            "Uma nova onda de ataques a antenas de rastreio já alterou a movimentação das patrulhas no setor de Crait."
         ],
         "agentes": [
             { "nome": "Renn Dravos", "cargo": "Capitão da Inteligência/Líder Verde", "foto": "../img/personagens/dravos.jpeg" }
         ],
         "inventario": {
-            "naves": ["4x Transporte Medio Mobquet", "2x Caças TIE Avançado", "6x Nova Courier YKL-37R", "5x Cargueiro Ghtroc 720"],
-            "itens": ["100 mil créditos", "20x Amplificador Auricular Ambiental", "5x Transceptor HoloNet", "2x Transponder Disfarçado", "6x Computador de Interface Computadorizada (Mira)", "20x Kit de ferramentas"]
+            "naves": ["2x Transporte Medio Mobquet", "1x Caças TIE Avançado", "4x Nova Courier YKL-37R", "3x Cargueiro Ghtroc 720"],
+            "itens": ["50 mil créditos", "12x Amplificador Auricular Ambiental", "2x Transceptor HoloNet", "1x Transponder Disfarçado", "2x Computador de Interface Computadorizada (Mira)", "5x Kit de ferramentas"]
         },
         "missoes": {
             "convocados": [
-                "Decodificação de Transmissões Imperiais — operação de inteligência para quebrar um novo algoritmo de cifra; prazo: 7 dias; objetivo: acessar ordens de movimentação de frota e identificar alvos prioritários."
+                "Rastreamento de Rota de Suprimentos — mapeamento de uma cadeia logística em Ryloth para encontrar depósitos clandestinos de munição."
             ],
             "disponiveis": [
-                "Sabotagem de Antena Sônica — infiltração curta para plantar explosivos de precisão em uma antena de rastreio; enfraquecerá a rede de comunicação local por até 72 horas."
+                "Roubo de Dados de Protocolo — extração de códigos de atualização de blindagem de uma estação de manutenção imperial."
             ],
-            "andamento": [
-                "Diretiva de Infiltração em Mapuzo — sabotagem tática na antena de transmissão imperial com infiltração em instalação de comunicações; objetivo: corromper o sinal de monitoramento e interromper a rede local."
-            ],
+            "andamento": [],
             "concluidas": [
                 "Mapeamento de Rotas no Setor de Transição — coleta e curadoria de rotas seguras alternativas usadas por contrabandistas, agora incorporadas aos bancos de dados de exfiltração."
             ],
             "falhas": [
+                "Diretiva de Infiltração em Mapuzo — sabotagem tática na antena de transmissão imperial com infiltração em instalação de comunicações; objetivo: corromper o sinal de monitoramento e interromper a rede local.",
                 "Extração de Agente Duplo em Jedha — tentativa de recuperar um ativo comprometido que acabou sendo capturado; operação expôs vulnerabilidades nos protocolos de extradição."
             ]
         }
@@ -141,8 +140,8 @@
         "contato_emergencia": "Condutora Zara Ven Nordan",
         "foto_emergencia": "../img/contatoCaminho.png",
         "noticias": [
-            "Múltiplos sensitivos à Força evacuados com sucesso através da rede segura.",
-            "Aviso: Inquisidores imperiais rastreando portos fantasmas na Orla Exterior."
+            "Diversos sensitivos à Força foram levados com segurança para casas seguras após o aumento de varreduras imperiais.",
+            "O Caminho reforçou as rotas de fuga e passou a monitorar portos fantasmas em busca de novas ameaças."
         ],
         "agentes": [
             { "nome": "Keiran Jinn", "cargo": "Refúgiado", "foto": "../img/personagens/keiranJinn.jpeg" },
@@ -153,18 +152,17 @@
         },
         "missoes": {
             "convocados": [
-                "Corredor da Lua — operação urgente para abrir e manter uma rota segura de passagem para sensitives e refugiados através de estações ocultas; coordenação entre condutores e casas seguras necessária."
+                "Ponte de Vácuo — transferência de refugiados por meio de um corredor de fuga em uma estação semiabandonada em Zygerria."
             ],
             "disponiveis": [
-                "Rede Fantasma — estabelecimento de novos pontos de contato temporários em planetas 'fantasmas' para expansão de rotas; objetivo: reduzir risco em 30% criando redundância de rotas."
+                "Rota da Chuva — reabertura de uma casa segura em Ryloth para servir como ponto de descanso temporário."
             ],
-            "andamento": [
-                "Retirada de Célula Oculta em Mapuzo — exfiltração urgente de usuários da Força e simpatizantes abrigados em refúgio clandestino; prioridade: máxima; desafios: evitar confrontos diretos, patrulhas intensificadas, varreduras inquisitoriais e droides de busca."
-            ],
+            "andamento": [],
             "concluidas": [
                 "Evacuação de Tanalorr — retirada bem-sucedida de um pequeno grupo de refugiados para um santuário temporário, mantendo discrição e sem alertar patrulhas imperiais."
             ],
             "falhas": [
+                "Retirada de Célula Oculta em Mapuzo — exfiltração urgente de usuários da Força e simpatizantes abrigados em refúgio clandestino; prioridade: máxima; desafios: evitar confrontos diretos, patrulhas intensificadas, varreduras inquisitoriais e droides de busca.",
                 "Ponto Quebrado em Jedha — operação de extração que vazarou e comprometeu a localização de um armazém de artefatos; resultou em mudança de padrão e fechamento temporário de uma rota."
             ]
         },
