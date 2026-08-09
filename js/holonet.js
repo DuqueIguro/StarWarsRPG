@@ -23,12 +23,12 @@ const HNN = (() => {
   };
 
   const MERCADOS = [
-    { nome: 'CRÉDITO GAL.',  val: '4.231',  variacao: '+0.8%',  dir: 'up' },
-    { nome: 'BESKAR',        val: '8.800',  variacao: '+41.2%', dir: 'up' },
-    { nome: 'TIBANNA GAS',   val: '1.154',  variacao: '+23.0%', dir: 'up' },
-    { nome: 'CORTOSIS',      val: '622',    variacao: '-8.3%',  dir: 'down' },
-    { nome: 'SPICE (KESSEL)',val: '3.410',  variacao: '-2.1%',  dir: 'down' },
-    { nome: 'RHYDONIUM',     val: '290',    variacao: '+5.4%',  dir: 'up' },
+    { nome: 'COAXIUM.',  val: '4.231',  variacao: '+15.7%',  dir: 'up' },
+    { nome: 'BACTA',        val: '8.800',  variacao: '-4.2%', dir: 'down' },
+    { nome: 'KYBER CRYSTALS',   val: '1.154',  variacao: '+89.5%', dir: 'up' },
+    { nome: 'DURASTEEL',      val: '622',    variacao: '+1.1%',  dir: 'up' },
+    { nome: 'AURODIUM',val: '3.410',  variacao: '-12.4%',  dir: 'down' },
+    { nome: 'NEURANIUM',     val: '290',    variacao: '+3.6%',  dir: 'up' },
   ];
 
   /* ─── Inicialização ─── */
