@@ -1,31 +1,31 @@
 {
   "hnn_version": "HNN-7.4.2",
-  "ultima_atualizacao": "Dia 14, Mês 3, Ano 04 ABY",
+  "ultima_atualizacao": "Dia 16, Mês 4, Ano 04 ABY",
   "ticker": [
-    "ALERTA: Zona de exclusão declarada no Setor Anoat",
-    "MERCADOS: Tibanna Gas +23% / Cortosis -8% / Beskar +41%",
-    "CLIMA: Tempestades de areia em Tatooine - setores 4 a 9",
-    "COMUNICADO: Nova República reforça presença na Borda Exterior",
-    "PROCURADO: Caçadores de recompensas buscam contrabandista em Ord Mantell",
-    "ESPORTES: Resultados da Liga de Sabacc de Coruscant - Rodada 7",
-    "AVISO: Rota Kessel temporariamente fechada por atividade pirata",
-    "IMPERIAL: Sobreviventes imperiais reportados em sistemas remotos do Desconhecido"
+    "ALERTA: Ameaça de pirataria em curso na Rota de Comércio Perlemiana",
+    "MERCADOS: Ações da Corporação Kuat em queda após escândalo de corrupção",
+    "CLIMA: Tempestade de poeira em Tatooine - visibilidade reduzida",
+    "COMUNICADO: Atenção, cidadãos de Coruscant - patrulhas do ISB em operação",
+    "PROCURADO: Contrabandista Zorba Vex - recompensa de 50.000 créditos",
+    "ESPORTES: Corrida de Pods em Malastare - inscrições abertas",
+    "AVISO: Interdição de tráfego em Brentaal IV - patrulhas do ISB em operação",
+    "IMPERIAL: Grão-Almirante Thrawn em visita oficial a Mapuzo - cobertura completa"
   ],
   "transmissoes_ao_vivo": [
     {
       "canal": "HNN-ALPHA",
       "status": "AO VIVO",
-      "descricao": "Cobertura: Operações de Pacificação do BSI no Setor Lothal"
+      "descricao": "Dia 16 - Turnê da Fidelidade por Lyra Tarkin, com cobertura de eventos e entrevistas com a cantora e líderes locais."
     },
     {
       "canal": "HNN-BETA",
       "status": "AO VIVO",
-      "descricao": "Sessão do Senado - Debates sobre Segurança e Orçamento Militar"
+      "descricao": "Sessão do Senado - Debate sobre a nova Diretriz de Supervisão Direta na Orla Média"
     },
     {
       "canal": "HNN-GAMA",
       "status": "GRAVADO",
-      "descricao": "Especial: 15 Anos da Nova Ordem e a Paz de Palpatine"
+      "descricao": "Grão-Almirante Thrawn discursa sobre a recente operação de contenção ostensiva em Mapuzo"
     }
   ]
 }
