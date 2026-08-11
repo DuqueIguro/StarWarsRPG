@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terminal Bancário Imperial - Datapad v8.4</title>
+  <title>Terminal Bancário Imperial - Datapad v9.2</title>
   <link rel="stylesheet" href="terminalBancario/terminalBancario.css">
   <link rel="icon" href="../img/imperio.png" type="image/png">
 </head>
@@ -15,11 +15,23 @@
   <div class="hologram-flicker"></div>
 
   <div class="datapad-frame">
-    <!-- Cantoneiras de Moldura de Datapad -->
+    <!-- Cantoneiras de Moldura do Datapad -->
     <div class="corner-corner top-left"></div>
     <div class="corner-corner top-right"></div>
     <div class="corner-corner bottom-left"></div>
     <div class="corner-corner bottom-right"></div>
+
+    <!-- Barra de Topo: Botão Voltar & Horário em Tempo Real -->
+    <div class="top-nav-bar">
+      <button class="hud-btn-back" onclick="window.history.back()">
+        <span class="btn-icon">◄</span> VOLTAR AO PAINEL
+      </button>
+
+      <div class="realtime-clock-container">
+        <span class="clock-label">SINCRO GALÁCTICA:</span>
+        <span id="realtime-clock">00:00:00</span>
+      </div>
+    </div>
 
     <!-- Header com Aurebesh e HUD Imperial -->
     <header class="datapad-header">
@@ -30,7 +42,7 @@
       
       <div class="header-main">
         <div class="aurebesh-sub">BANKING TERMINAL IMPERIAL</div>
-        <h1 class="glitch-title" data-text="TERMINAL BANCÁRIO IMPERIAL">TERMINAL BANCÁRIO IMPERIAL</h1>
+        <h1 class="glitch-title">TERMINAL BANCÁRIO IMPERIAL</h1>
       </div>
 
       <div class="hud-decor-line">
@@ -40,21 +52,19 @@
       </div>
     </header>
 
-    <!-- 1. Saldo Bancário Holográfico -->
+    <!-- 1. Saldo Bancário Unificado (Créditos + R$ convertidos) -->
     <section class="hud-card balance-card">
-      <div class="hud-corner-br"></div>
       <div class="card-title">
         <span class="hud-icon">Ͼ</span>
-        <h3>BALANÇO TOTAL ACUMULADO DA LOJA</h3>
-        <span class="aurebesh-mini">CREDITS & BRL</span>
+        <h3>BALANÇO DE CRÉDITOS TOTAIS GASTOS NO SITE</h3>
+        <span class="aurebesh-mini">TAXA: R$ 1.00 = 10.000 CR</span>
       </div>
 
       <div class="balance-container">
         <div class="balance-block">
-          <span class="label">CRÉDITOS IMPERIAIS GASTOS</span>
+          <span class="label">GASTO DIRETO EM CRÉDITOS</span>
           <div class="amount-glow credits">
-            <span class="currency-symbol">75</span>
-            <span id="total-credits">0</span>
+            <span id="direct-credits">0</span>
             <span class="unit">CR</span>
           </div>
         </div>
@@ -62,21 +72,30 @@
         <div class="hud-divider-v"></div>
 
         <div class="balance-block">
-          <span class="label">VALOR CONVERTIDO ESTIMADO</span>
+          <span class="label">GASTO EM REAIS (R$)</span>
           <div class="amount-glow brl">
             <span class="unit">R$</span>
-            <span id="total-brl">0,00</span>
+            <span id="direct-brl">0,00</span>
+          </div>
+        </div>
+
+        <div class="hud-divider-v"></div>
+
+        <div class="balance-block total-highlight">
+          <span class="label">TOTAL CONVERTIDO EM CRÉDITOS IMPERIAIS</span>
+          <div class="amount-glow total-credits">
+            <span id="total-imperial-credits">0</span>
+            <span class="unit">CR</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Grid do Mestre -->
+    <!-- Grid Central -->
     <div class="datapad-grid">
 
-      <!-- 2. Form de Criação de Cupons -->
+      <!-- Criar Cupons de Desconto -->
       <section class="hud-card create-card">
-        <div class="hud-corner-br"></div>
         <div class="card-title">
           <span class="hud-icon">✚</span>
           <h3>GERAR CÓDIGO DE DESCONTO</h3>
@@ -85,21 +104,16 @@
         <form id="coupon-form" onsubmit="handleCreateCoupon(event)">
           <div class="input-hud-group">
             <label for="coupon-code">CÓDIGO DO CUPOM</label>
-            <div class="input-wrapper">
-              <input type="text" id="coupon-code" placeholder="EX: VADER2026" maxlength="20" required>
-              <span class="input-glow"></span>
-            </div>
+            <input type="text" id="coupon-code" placeholder="EX: REBELDES2026" maxlength="20" required>
           </div>
 
           <div class="input-hud-group">
             <label for="currency-type">MOEDA DE APLICAÇÃO</label>
-            <div class="select-wrapper">
-              <select id="currency-type" required>
-                <option value="AMBAS">AMBAS (CRÉDITOS & R$)</option>
-                <option value="CREDITOS">APENAS CRÉDITOS IMPERIAIS (CR)</option>
-                <option value="BRL">APENAS REAIS (R$)</option>
-              </select>
-            </div>
+            <select id="currency-type" required>
+              <option value="AMBAS">AMBAS (CRÉDITOS & R$)</option>
+              <option value="CREDITOS">APENAS CRÉDITOS IMPERIAIS (CR)</option>
+              <option value="BRL">APENAS REAIS (R$)</option>
+            </select>
           </div>
 
           <div class="input-hud-row">
@@ -124,17 +138,15 @@
 
           <button type="submit" class="hud-btn btn-create">
             <span class="btn-text">INJETAR CUPOM NA HOLONET</span>
-            <span class="btn-glare"></span>
           </button>
         </form>
       </section>
 
-      <!-- 3 e 4. Tabela de Cupons & Ações de Controle -->
+      <!-- Cupons Ativos e Estatísticas -->
       <section class="hud-card list-card">
-        <div class="hud-corner-br"></div>
         <div class="card-title">
           <span class="hud-icon">☰</span>
-          <h3>REGISTRO DE CUPONS ATIVOS & USO</h3>
+          <h3>CUPONS REGISTRADOS & ESTATÍSTICAS</h3>
         </div>
 
         <div class="hud-table-wrapper">
@@ -157,9 +169,37 @@
       </section>
 
     </div>
+
+    <!-- 2. Log de Últimas Transações Galácticas -->
+    <section class="hud-card log-card">
+      <div class="card-title">
+        <span class="hud-icon">📡</span>
+        <h3>LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET</h3>
+        <span class="aurebesh-mini">TRANSACTIONS MONITOR</span>
+      </div>
+
+      <div class="hud-table-wrapper">
+        <table class="hud-table log-table">
+          <thead>
+            <tr>
+              <th>HORÁRIO</th>
+              <th>ORIGEM / REMETENTE</th>
+              <th>DESTINO / DESTINATÁRIO</th>
+              <th>VALOR GASTO</th>
+              <th>MOEDA</th>
+              <th>PÁGINA DO SITE</th>
+            </tr>
+          </thead>
+          <tbody id="logs-table-body">
+            <!-- Renderizado via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
   </div>
 
-  <!-- Modal Holográfico para Edição -->
+  <!-- Modal Holográfico para Edição de Cupom -->
   <div id="edit-modal" class="hud-modal">
     <div class="modal-card hud-card">
       <div class="card-title">
