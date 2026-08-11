@@ -14,14 +14,14 @@ const CONVERSION_RATE_BRL_TO_CREDITS = 10000;
 let cupons = [];
 let logsTransacoes = [];
 let emprestimos = [];
-let saldoAtualBanco = 5000000; // Saldo de Créditos disponível no Tesouro Imperial
+let saldoAtualBanco = 5000000;
 
 document.addEventListener('DOMContentLoaded', () => {
   iniciarRelogioEmTempoReal();
   carregarDadosBancarios();
-  carregarCupons();
-  carregarEmprestimos();
   carregarLogsTransacoes();
+  carregarEmprestimos();
+  carregarCupons();
 });
 
 /**
@@ -44,10 +44,9 @@ function iniciarRelogioEmTempoReal() {
 }
 
 /**
- * 1. Saldo Bancário Atual e Conversão de Gastos
+ * 1. TESOURO IMPERIAL & HISTÓRICO DE VENDAS
  */
 function carregarDadosBancarios() {
-  // Saldo Atual do Banco
   const saldoSalvo = localStorage.getItem(STORAGE_BANK_BALANCE_KEY);
   if (saldoSalvo !== null) {
     saldoAtualBanco = parseInt(saldoSalvo);
@@ -55,7 +54,6 @@ function carregarDadosBancarios() {
     localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
   }
 
-  // Vendas acumuladas da loja
   let gastoCreditosPuros = 0;
   let gastoReaisPuros = 0;
 
@@ -79,11 +77,9 @@ function carregarDadosBancarios() {
     gastoReaisPuros = 150.00;
   }
 
-  // R$ 1.00 = 10.000 CR
   const reaisConvertidos = gastoReaisPuros * CONVERSION_RATE_BRL_TO_CREDITS;
   const totalImperialCredits = gastoCreditosPuros + reaisConvertidos;
 
-  // Atualiza a tela
   document.getElementById('bank-current-credits').innerText = saldoAtualBanco.toLocaleString('pt-BR');
   document.getElementById('direct-credits').innerText = gastoCreditosPuros.toLocaleString('pt-BR');
   document.getElementById('direct-brl').innerText = gastoReaisPuros.toLocaleString('pt-BR', {
@@ -94,7 +90,84 @@ function carregarDadosBancarios() {
 }
 
 /**
- * 2. Empréstimos Bancários
+ * 2. LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET
+ */
+function carregarLogsTransacoes() {
+  const logsSalvos = localStorage.getItem(STORAGE_LOGS_KEY);
+  if (logsSalvos) {
+    try {
+      logsTransacoes = JSON.parse(logsSalvos);
+    } catch(e) {
+      logsTransacoes = getLogsDefault();
+    }
+  } else {
+    logsTransacoes = getLogsDefault();
+    localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
+  }
+
+  renderizarTabelaLogs();
+}
+
+function registrarLogTransacao(dados) {
+  const now = new Date();
+  const horario = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+  const novoLog = {
+    horario: horario,
+    remetente: dados.remetente,
+    destinatario: dados.destinatario,
+    valor: dados.valor,
+    moeda: dados.moeda,
+    pagina: dados.pagina
+  };
+
+  logsTransacoes.unshift(novoLog);
+  if (logsTransacoes.length > 20) logsTransacoes.pop();
+
+  localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
+  renderizarTabelaLogs();
+}
+
+function getLogsDefault() {
+  return [
+    { horario: '18:42:10', remetente: 'Darth Dravos', destinatario: 'Oficina Durtoc', valor: 15000, moeda: 'CREDITOS', pagina: 'oficina.html' },
+    { horario: '17:15:33', remetente: 'Keiran Jinn', destinatario: 'Loja Imperial', valor: 45.00, moeda: 'BRL', pagina: 'p2w.html' },
+    { horario: '15:02:44', remetente: 'Lihua', destinatario: 'Ren Tai Sol', valor: 5000, moeda: 'CREDITOS', pagina: 'banco.html' }
+  ];
+}
+
+function renderizarTabelaLogs() {
+  const tbody = document.getElementById('logs-table-body');
+  tbody.innerHTML = '';
+
+  if (logsTransacoes.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--neon-blue);">[ NENHUMA TRANSAÇÃO REGISTRADA RECENTEMENTE ]</td></tr>`;
+    return;
+  }
+
+  logsTransacoes.forEach(log => {
+    const tr = document.createElement('tr');
+
+    const moedaFormatada = log.moeda === 'BRL' ? 'R$' : 'CR';
+    const valorFormatado = log.moeda === 'BRL' 
+      ? log.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+      : log.valor.toLocaleString('pt-BR');
+
+    tr.innerHTML = `
+      <td>${log.horario}</td>
+      <td><span class="player-transfer">${log.remetente || 'Sistema'}</span></td>
+      <td><span class="player-transfer">${log.destinatario || 'Loja Imperial'}</span></td>
+      <td><strong>${valorFormatado}</strong></td>
+      <td>${moedaFormatada}</td>
+      <td><span class="page-tag">${log.pagina}</span></td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+/**
+ * 3 & 4. CONCEDER EMPRÉSTIMO BANCÁRIO & EMPRÉSTIMOS IMPERIAIS ATIVOS
  */
 function carregarEmprestimos() {
   const empSalvos = localStorage.getItem(STORAGE_LOANS_KEY);
@@ -141,11 +214,9 @@ function handleCreateLoan(event) {
 
   emprestimos.push(newLoan);
   
-  // Deduz do saldo do banco
   saldoAtualBanco -= amount;
   localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
 
-  // Registra no Log automaticamente
   registrarLogTransacao({
     remetente: 'Banco Imperial',
     destinatario: player,
@@ -181,7 +252,7 @@ function renderizarTabelaEmprestimos() {
       <td><span class="player-transfer">${loan.player}</span></td>
       <td>${loan.amount.toLocaleString('pt-BR')} CR</td>
       <td>${loan.interest}%</td>
-      <td><strong style="color: var(--neon-gold);">${loan.totalToPay.toLocaleString('pt-BR')} CR</strong></td>
+      <td><strong style="color: var(--neon-blue);">${loan.totalToPay.toLocaleString('pt-BR')} CR</strong></td>
       <td>${loan.notes}</td>
       <td>
         <button class="btn-icon" onclick="quitarEmprestimo('${loan.id}')" title="Marcar Pago">QUITAR</button>
@@ -194,8 +265,7 @@ function renderizarTabelaEmprestimos() {
 
 function quitarEmprestimo(id) {
   const loan = emprestimos.find(l => l.id === id);
-  if (loan && confirm(`DESEJA CONFIRMAR A QUITAÇÃO DO EMPRÉSTIMO DE ${loan.player}?`)) {
-    // Retorna o valor pago de volta ao Banco
+  if (loan && confirm(`TERMINAL IMPERIAL: Confirmar a quitação do empréstimo de ${loan.player}?`)) {
     saldoAtualBanco += loan.totalToPay;
     localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
 
@@ -215,84 +285,7 @@ function quitarEmprestimo(id) {
 }
 
 /**
- * 3. Log de Transações do Site
- */
-function carregarLogsTransacoes() {
-  const logsSalvos = localStorage.getItem(STORAGE_LOGS_KEY);
-  if (logsSalvos) {
-    try {
-      logsTransacoes = JSON.parse(logsSalvos);
-    } catch(e) {
-      logsTransacoes = getLogsDefault();
-    }
-  } else {
-    logsTransacoes = getLogsDefault();
-    localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
-  }
-
-  renderizarTabelaLogs();
-}
-
-function registrarLogTransacao(dados) {
-  const now = new Date();
-  const horario = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-
-  const novoLog = {
-    horario: horario,
-    remetente: dados.remetente,
-    destinatario: dados.destinatario,
-    valor: dados.valor,
-    moeda: dados.moeda,
-    pagina: dados.pagina
-  };
-
-  logsTransacoes.unshift(novoLog); // Adiciona no topo
-  if (logsTransacoes.length > 20) logsTransacoes.pop(); // Mantém os últimos 20
-
-  localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
-  renderizarTabelaLogs();
-}
-
-function getLogsDefault() {
-  return [
-    { horario: '18:42:10', remetente: 'Darth Dravos', destinatario: 'Oficina Durtoc', valor: 15000, moeda: 'CREDITOS', pagina: 'oficina.html' },
-    { horario: '17:15:33', remetente: 'Keiran Jinn', destinatario: 'Loja Imperial', valor: 45.00, moeda: 'BRL', pagina: 'p2w.html' },
-    { horario: '15:02:44', remetente: 'Lihua', destinatario: 'Ren Tai Sol', valor: 5000, moeda: 'CREDITOS', pagina: 'banco.html' }
-  ];
-}
-
-function renderizarTabelaLogs() {
-  const tbody = document.getElementById('logs-table-body');
-  tbody.innerHTML = '';
-
-  if (logsTransacoes.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--neon-gold);">[ NENHUMA TRANSAÇÃO REGISTRADA RECENTEMENTE ]</td></tr>`;
-    return;
-  }
-
-  logsTransacoes.forEach(log => {
-    const tr = document.createElement('tr');
-
-    const moedaFormatada = log.moeda === 'BRL' ? 'R$' : 'CR';
-    const valorFormatado = log.moeda === 'BRL' 
-      ? log.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
-      : log.valor.toLocaleString('pt-BR');
-
-    tr.innerHTML = `
-      <td>${log.horario}</td>
-      <td><span class="player-transfer">${log.remetente || 'Sistema'}</span></td>
-      <td><span class="player-transfer">${log.destinatario || 'Loja Imperial'}</span></td>
-      <td><strong>${valorFormatado}</strong></td>
-      <td>${moedaFormatada}</td>
-      <td><span class="page-tag">${log.pagina}</span></td>
-    `;
-
-    tbody.appendChild(tr);
-  });
-}
-
-/**
- * 4. Gestão de Cupons
+ * 5 & 6. GERAR CÓDIGO DE DESCONTO & CUPONS REGISTRADOS & ESTATÍSTICAS
  */
 function carregarCupons() {
   const cuponsSalvos = localStorage.getItem(STORAGE_CUPONS_KEY);
@@ -358,7 +351,7 @@ function renderizarTabelaCupons() {
   tbody.innerHTML = '';
 
   if (cupons.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--neon-gold);">[ NENHUM CUPOM REGISTRADO ]</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--neon-blue);">[ NENHUM CUPOM REGISTRADO ]</td></tr>`;
     return;
   }
 
