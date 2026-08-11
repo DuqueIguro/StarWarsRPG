@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terminal Bancário Imperial - Datapad ISB v12.0</title>
+  <title>Terminal Bancário Imperial - Datapad ISB v13.0</title>
   <link rel="stylesheet" href="terminalBancario/terminalBancario.css">
   <link rel="icon" href="../img/imperio.png" type="image/png">
 </head>
@@ -113,6 +113,7 @@
               <th>VALOR GASTO</th>
               <th>MOEDA</th>
               <th>PÁGINA DO SITE</th>
+              <th>AÇÃO</th>
             </tr>
           </thead>
           <tbody id="logs-table-body">
@@ -122,7 +123,7 @@
       </div>
     </section>
 
-    <!-- 3. ÁREA DE EMPRÉSTIMOS (Grid Adaptativa de 1 ou 2 Colunas) -->
+    <!-- 3. ÁREA DE EMPRÉSTIMOS (Grid Adaptativa) -->
     <div id="loans-grid" class="dynamic-grid single-col">
       <!-- Coluna 1: Formulário -->
       <section class="hud-card loan-form-card">
@@ -187,48 +188,43 @@
       </section>
     </div>
 
-    <!-- 4. ÁREA DE TAXAS, IMPOSTOS E LICENÇAS (Grid Adaptativa) -->
+    <!-- 4. ÁREA DE TAXAS, IMPOSTOS E DÍVIDAS (Grid Adaptativa) -->
     <div id="taxes-grid" class="dynamic-grid single-col">
       <!-- Coluna 1: Formulário de Criação -->
       <section class="hud-card tax-form-card">
         <div class="card-title">
           <span class="hud-icon">📜</span>
-          <h3>DECRETAR TAXA / IMPOSTO / LICENÇA</h3>
+          <h3>DECRETAR TAXA / DÍVIDA IMPERIAL</h3>
         </div>
 
         <form id="tax-form" onsubmit="handleCreateTax(event)">
           <div class="input-hud-group">
-            <label for="tax-name">NOME DA TAXA OU LICENÇA</label>
-            <input type="text" id="tax-name" placeholder="Ex: Licença de Armamento, Imposto de Atracagem" required>
+            <label for="tax-name">NOME DA TAXA OU TÍTULO DA DÍVIDA</label>
+            <input type="text" id="tax-name" placeholder="Ex: Imposto de Atracagem, Dívida de Recompensa" required>
+          </div>
+
+          <div class="input-hud-group">
+            <label for="tax-target">ATRIBUIR A / ALVO(S)</label>
+            <input type="text" id="tax-target" placeholder="Ex: Todos os Jogadores, Han Solo, Esquadrão Rebelde" required>
           </div>
 
           <div class="input-hud-row">
             <div class="input-hud-group">
-              <label for="tax-currency">MOEDA</label>
-              <select id="tax-currency" required>
-                <option value="CREDITOS">CRÉDITOS (CR)</option>
-                <option value="BRL">REAIS (R$)</option>
-              </select>
+              <label for="tax-value">VALOR COBRADO (EM CRÉDITOS IMPERIAIS)</label>
+              <input type="number" id="tax-value" min="1" step="1" placeholder="Ex: 5000 CR" required>
             </div>
 
             <div class="input-hud-group">
-              <label for="tax-value">VALOR COBRADO</label>
-              <input type="number" id="tax-value" min="1" step="0.01" placeholder="Ex: 2500" required>
+              <label for="tax-type">FREQUÊNCIA DE COBRANÇA</label>
+              <select id="tax-type" required>
+                <option value="UNICA">COBRANÇA ÚNICA / MULTA</option>
+                <option value="MENSAL">IMPOSTO MENSAL</option>
+              </select>
             </div>
           </div>
 
-          <div class="input-hud-group">
-            <label for="tax-type">FREQUÊNCIA DE COBRANÇA</label>
-            <select id="tax-type" required>
-              <option value="UNICA">TAXA ÚNICA / LICENÇA</option>
-              <option value="DIARIA">IMPOSTO DIÁRIO</option>
-              <option value="SEMANAL">IMPOSTO SEMANAL</option>
-              <option value="MENSAL">IMPOSTO MENSAL</option>
-            </select>
-          </div>
-
           <button type="submit" class="hud-btn btn-create">
-            <span class="btn-text">PUBLICAR DECRETO NA HOLONET</span>
+            <span class="btn-text">REGISTRAR DÍVIDA NA HOLONET</span>
           </button>
         </form>
       </section>
@@ -237,7 +233,7 @@
       <section id="taxes-card-list" class="hud-card taxes-list-card" style="display: none;">
         <div class="card-title">
           <span class="hud-icon">📑</span>
-          <h3>TAXAS E LICENÇAS VIGENTES</h3>
+          <h3>TAXAS E DÍVIDAS ATRIBUÍDAS</h3>
           <span class="aurebesh-mini">IMPERIAL TAXES</span>
         </div>
 
@@ -246,8 +242,9 @@
             <thead>
               <tr>
                 <th>NOME</th>
-                <th>VALOR</th>
-                <th>FREQUÊNCIA</th>
+                <th>ALVO(S)</th>
+                <th>VALOR (CR)</th>
+                <th>TIPO</th>
                 <th>STATUS</th>
                 <th>AÇÕES</th>
               </tr>

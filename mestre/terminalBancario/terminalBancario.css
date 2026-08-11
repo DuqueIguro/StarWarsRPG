@@ -1,5 +1,5 @@
 /* ===================================================
-   DATAPAD BANCÁRIO IMPERIAL - STAR WARS RPG v12.0
+   DATAPAD BANCÁRIO IMPERIAL - STAR WARS RPG v13.0
    Dominância: Vermelho Imperial (#ff1a1a) & Azul Cyberpunk (#0088ff)
    =================================================== */
 
@@ -47,7 +47,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Background sci-fi e scanlines com efeito vermelho dominante */
+/* Background sci-fi e scanlines */
 .datapad-grid-bg {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
@@ -208,7 +208,7 @@ body {
 
 .line-center { color: var(--neon-blue); font-size: 0.8rem; }
 
-/* CARDS HUD */
+/* CARDS HUD - FUNDO E BORDAS VERMELHAS */
 .hud-card {
   background: var(--red-dark);
   border: 1px solid var(--red-border);
@@ -320,7 +320,6 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 
-/* Garante que o card dentro do grid não force margin-bottom duplo */
 .dynamic-grid .hud-card {
   margin-bottom: 0;
 }
@@ -453,7 +452,7 @@ input:focus, select:focus {
 .btn-icon.del { border-color: var(--danger-color); color: var(--danger-color); }
 .btn-icon.del:hover { background: var(--danger-color); color: #fff; }
 
-/* Empréstimos & Logs */
+/* Empréstimos, Taxas & Logs */
 .loans-list-card { border-color: var(--neon-red); }
 .taxes-list-card { border-color: var(--neon-blue); }
 .log-card { border-color: var(--neon-red); }

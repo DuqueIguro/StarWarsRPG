@@ -93,7 +93,7 @@ function carregarDadosBancarios() {
 }
 
 /**
- * 2. LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET
+ * 2. LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET (Com remoção)
  */
 function carregarLogsTransacoes() {
   const logsSalvos = localStorage.getItem(STORAGE_LOGS_KEY);
@@ -116,6 +116,7 @@ function registrarLogTransacao(dados) {
   const horario = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
   const novoLog = {
+    id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
     horario: horario,
     remetente: dados.remetente,
     destinatario: dados.destinatario,
@@ -125,17 +126,25 @@ function registrarLogTransacao(dados) {
   };
 
   logsTransacoes.unshift(novoLog);
-  if (logsTransacoes.length > 20) logsTransacoes.pop();
+  if (logsTransacoes.length > 30) logsTransacoes.pop();
 
   localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
   renderizarTabelaLogs();
 }
 
+function deleteLog(id) {
+  if (confirm("TERMINAL IMPERIAL: Deseja apagar este registro de log permanentemente?")) {
+    logsTransacoes = logsTransacoes.filter(log => log.id !== id);
+    localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
+    renderizarTabelaLogs();
+  }
+}
+
 function getLogsDefault() {
   return [
-    { horario: '18:42:10', remetente: 'Darth Dravos', destinatario: 'Oficina Durtoc', valor: 15000, moeda: 'CREDITOS', pagina: 'oficina.html' },
-    { horario: '17:15:33', remetente: 'Keiran Jinn', destinatario: 'Loja Imperial', valor: 45.00, moeda: 'BRL', pagina: 'p2w.html' },
-    { horario: '15:02:44', remetente: 'Lihua', destinatario: 'Ren Tai Sol', valor: 5000, moeda: 'CREDITOS', pagina: 'banco.html' }
+    { id: 'l1', horario: '18:42:10', remetente: 'Darth Dravos', destinatario: 'Oficina Durtoc', valor: 15000, moeda: 'CREDITOS', pagina: 'oficina.html' },
+    { id: 'l2', horario: '17:15:33', remetente: 'Keiran Jinn', destinatario: 'Loja Imperial', valor: 45.00, moeda: 'BRL', pagina: 'p2w.html' },
+    { id: 'l3', horario: '15:02:44', remetente: 'Lihua', destinatario: 'Ren Tai Sol', valor: 5000, moeda: 'CREDITOS', pagina: 'banco.html' }
   ];
 }
 
@@ -144,7 +153,7 @@ function renderizarTabelaLogs() {
   tbody.innerHTML = '';
 
   if (logsTransacoes.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--neon-blue);">[ NENHUMA TRANSAÇÃO REGISTRADA RECENTEMENTE ]</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--neon-blue);">[ NENHUMA TRANSAÇÃO REGISTRADA RECENTEMENTE ]</td></tr>`;
     return;
   }
 
@@ -163,6 +172,9 @@ function renderizarTabelaLogs() {
       <td><strong>${valorFormatado}</strong></td>
       <td>${moedaFormatada}</td>
       <td><span class="page-tag">${log.pagina}</span></td>
+      <td>
+        <button class="btn-icon del" onclick="deleteLog('${log.id}')" title="Apagar Log">🗑️</button>
+      </td>
     `;
 
     tbody.appendChild(tr);
@@ -240,7 +252,7 @@ function renderizarTabelaEmprestimos() {
   const cardList = document.getElementById('loans-card-list');
   const tbody = document.getElementById('loans-table-body');
 
-  // REQUISITO: Se não houver empréstimos, ocupa 1 coluna. Se houver, vira 2 colunas.
+  // REGRA DE COLUNAS DINÂMICAS: Sem empréstimos = 1 coluna. Com empréstimos = 2 colunas.
   if (emprestimos.length === 0) {
     grid.className = 'dynamic-grid single-col';
     cardList.style.display = 'none';
@@ -290,7 +302,7 @@ function quitarEmprestimo(id) {
 }
 
 /**
- * 4. TAXAS, IMPOSTOS E LICENÇAS
+ * 4. TAXAS, IMPOSTOS E DÍVIDAS (Apenas Créditos Imperiais)
  */
 function carregarTaxas() {
   const taxasSalvas = localStorage.getItem(STORAGE_TAXES_KEY);
@@ -315,14 +327,14 @@ function handleCreateTax(event) {
   event.preventDefault();
 
   const name = document.getElementById('tax-name').value.trim();
-  const currency = document.getElementById('tax-currency').value;
-  const value = parseFloat(document.getElementById('tax-value').value);
+  const target = document.getElementById('tax-target').value.trim();
+  const value = parseInt(document.getElementById('tax-value').value);
   const type = document.getElementById('tax-type').value;
 
   const newTax = {
     id: Date.now().toString(),
     name: name,
-    currency: currency,
+    target: target,
     value: value,
     type: type,
     active: true
@@ -340,7 +352,7 @@ function renderizarTabelaTaxas() {
   const cardList = document.getElementById('taxes-card-list');
   const tbody = document.getElementById('taxes-table-body');
 
-  // REQUISITO: Se não houver taxas, ocupa 1 coluna. Se houver, vira 2 colunas.
+  // REGRA DE COLUNAS DINÂMICAS: Sem taxas = 1 coluna. Com taxas = 2 colunas.
   if (taxas.length === 0) {
     grid.className = 'dynamic-grid single-col';
     cardList.style.display = 'none';
@@ -354,16 +366,13 @@ function renderizarTabelaTaxas() {
   taxas.forEach(tax => {
     const tr = document.createElement('tr');
 
-    const valorFormatado = tax.currency === 'BRL'
-      ? `R$ ${tax.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-      : `${tax.value.toLocaleString('pt-BR')} CR`;
-
     const statusClass = tax.active ? 'badge-active' : 'badge-inactive';
     const statusText = tax.active ? 'VIGENTE' : 'SUSPENSA';
 
     tr.innerHTML = `
       <td><strong>${tax.name}</strong></td>
-      <td>${valorFormatado}</td>
+      <td><span class="player-transfer">${tax.target}</span></td>
+      <td>${tax.value.toLocaleString('pt-BR')} CR</td>
       <td>${tax.type}</td>
       <td><span class="badge ${statusClass}">${statusText}</span></td>
       <td>
@@ -457,7 +466,7 @@ function renderizarTabelaCupons() {
   const cardList = document.getElementById('coupons-card-list');
   const tbody = document.getElementById('coupons-table-body');
 
-  // REQUISITO: Cupons registrados só aparece se houver cupom (1 col -> 2 col)
+  // REGRA DE COLUNAS DINÂMICAS: Sem cupons = 1 coluna. Com cupons = 2 colunas.
   if (cupons.length === 0) {
     grid.className = 'dynamic-grid single-col';
     cardList.style.display = 'none';
@@ -551,7 +560,7 @@ function handleSaveEditCoupon(event) {
   if (coupon) {
     coupon.currency = document.getElementById('edit-currency-type').value;
     coupon.discountType = document.getElementById('edit-discount-type').value;
-    coupon.discountValue = parseFloat(document.getElementById('edit-discount-value').value) || coupon.discountValue;
+    coupon.discountValue = parseFloat(document.getElementById('discount-value').value) || coupon.discountValue;
     
     const limitValue = document.getElementById('edit-usage-limit').value;
     coupon.usageLimit = limitValue ? parseInt(limitValue) : null;
