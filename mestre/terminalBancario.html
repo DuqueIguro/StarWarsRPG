@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terminal Bancário Imperial - Datapad v9.2</title>
+  <title>Terminal Bancário Imperial - Datapad ISB v10.0</title>
   <link rel="stylesheet" href="terminalBancario/terminalBancario.css">
   <link rel="icon" href="../img/imperio.png" type="image/png">
 </head>
@@ -28,7 +28,7 @@
       </button>
 
       <div class="realtime-clock-container">
-        <span class="clock-label">SINCRO GALÁCTICA:</span>
+        <span class="clock-label">SINCRO IMPERIAL:</span>
         <span id="realtime-clock">00:00:00</span>
       </div>
     </div>
@@ -37,11 +37,11 @@
     <header class="datapad-header">
       <div class="sys-status">
         <span class="status-dot"></span>
-        <span class="sys-text">HOLONET BANCÁRIA :: CONEXÃO SEGURA [MUUNILINST-NODE-09]</span>
+        <span class="sys-text">ISB FINANCIAL TERMINAL :: ACESSO NÍVEL 5 [MUUNILINST-NODE-RED]</span>
       </div>
       
       <div class="header-main">
-        <div class="aurebesh-sub">BANKING TERMINAL IMPERIAL</div>
+        <div class="aurebesh-sub">TERMINAL BANCARIO IMPERIAL</div>
         <h1 class="glitch-title">TERMINAL BANCÁRIO IMPERIAL</h1>
       </div>
 
@@ -52,37 +52,41 @@
       </div>
     </header>
 
-    <!-- 1. Saldo Bancário Unificado (Créditos + R$ convertidos) -->
+    <!-- 1. Balanço Bancário: Saldo Atual do Banco + Total Gasto Convertido -->
     <section class="hud-card balance-card">
       <div class="card-title">
         <span class="hud-icon">Ͼ</span>
-        <h3>BALANÇO DE CRÉDITOS TOTAIS GASTOS NO SITE</h3>
-        <span class="aurebesh-mini">TAXA: R$ 1.00 = 10.000 CR</span>
+        <h3>TESOURO IMPERIAL & HISTÓRICO DE VENDAS</h3>
+        <span class="aurebesh-mini">R$ 1.00 = 10.000 CR</span>
       </div>
 
       <div class="balance-container">
-        <div class="balance-block">
-          <span class="label">GASTO DIRETO EM CRÉDITOS</span>
-          <div class="amount-glow credits">
-            <span id="direct-credits">0</span>
+        <!-- Saldo Atual -->
+        <div class="balance-block bank-current">
+          <span class="label">SALDO ATUAL DO BANCO</span>
+          <div class="amount-glow bank-balance">
+            <span id="bank-current-credits">0</span>
             <span class="unit">CR</span>
           </div>
         </div>
 
         <div class="hud-divider-v"></div>
 
+        <!-- Gastos Diretos -->
         <div class="balance-block">
-          <span class="label">GASTO EM REAIS (R$)</span>
-          <div class="amount-glow brl">
-            <span class="unit">R$</span>
-            <span id="direct-brl">0,00</span>
+          <span class="label">GASTO EM CRÉDITOS / REAIS</span>
+          <div class="amount-glow credits-small">
+            <span id="direct-credits">0</span> <span class="unit">CR</span>
+            <span class="separator">/</span>
+            <span class="unit">R$</span> <span id="direct-brl">0,00</span>
           </div>
         </div>
 
         <div class="hud-divider-v"></div>
 
+        <!-- Total Convertido -->
         <div class="balance-block total-highlight">
-          <span class="label">TOTAL CONVERTIDO EM CRÉDITOS IMPERIAIS</span>
+          <span class="label">TOTAL GASTO CONVERTIDO EM CRÉDITOS</span>
           <div class="amount-glow total-credits">
             <span id="total-imperial-credits">0</span>
             <span class="unit">CR</span>
@@ -91,10 +95,10 @@
       </div>
     </section>
 
-    <!-- Grid Central -->
+    <!-- Grid do Mestre (Cupons & Empréstimos) -->
     <div class="datapad-grid">
 
-      <!-- Criar Cupons de Desconto -->
+      <!-- Gerar Cupons -->
       <section class="hud-card create-card">
         <div class="card-title">
           <span class="hud-icon">✚</span>
@@ -104,7 +108,7 @@
         <form id="coupon-form" onsubmit="handleCreateCoupon(event)">
           <div class="input-hud-group">
             <label for="coupon-code">CÓDIGO DO CUPOM</label>
-            <input type="text" id="coupon-code" placeholder="EX: REBELDES2026" maxlength="20" required>
+            <input type="text" id="coupon-code" placeholder="EX: VADER2026" maxlength="20" required>
           </div>
 
           <div class="input-hud-group">
@@ -142,35 +146,98 @@
         </form>
       </section>
 
-      <!-- Cupons Ativos e Estatísticas -->
-      <section class="hud-card list-card">
+      <!-- Conceder Empréstimo -->
+      <section class="hud-card loan-form-card">
         <div class="card-title">
-          <span class="hud-icon">☰</span>
-          <h3>CUPONS REGISTRADOS & ESTATÍSTICAS</h3>
+          <span class="hud-icon">🏦</span>
+          <h3>CONCEDER EMPRÉSTIMO BANCÁRIO</h3>
         </div>
 
-        <div class="hud-table-wrapper">
-          <table class="hud-table">
-            <thead>
-              <tr>
-                <th>CÓDIGO</th>
-                <th>DESCONTO</th>
-                <th>MOEDA</th>
-                <th>USOS</th>
-                <th>STATUS</th>
-                <th>AÇÕES</th>
-              </tr>
-            </thead>
-            <tbody id="coupons-table-body">
-              <!-- Renderizado via JS -->
-            </tbody>
-          </table>
-        </div>
+        <form id="loan-form" onsubmit="handleCreateLoan(event)">
+          <div class="input-hud-group">
+            <label for="loan-player">NOME DO JOGADOR / ALVO</label>
+            <input type="text" id="loan-player" placeholder="Ex: Han Solo, Caçador de Recompensas" required>
+          </div>
+
+          <div class="input-hud-row">
+            <div class="input-hud-group">
+              <label for="loan-amount">VALOR (CRÉDITOS)</label>
+              <input type="number" id="loan-amount" min="100" placeholder="Ex: 50000" required>
+            </div>
+
+            <div class="input-hud-group">
+              <label for="loan-interest">JUROS (%)</label>
+              <input type="number" id="loan-interest" min="0" max="100" value="10" required>
+            </div>
+          </div>
+
+          <div class="input-hud-group">
+            <label for="loan-notes">OBSERVAÇÕES / GARANTIA (OPCIONAL)</label>
+            <input type="text" id="loan-notes" placeholder="Ex: Nave Millennium Falcon como garantia">
+          </div>
+
+          <button type="submit" class="hud-btn btn-create">
+            <span class="btn-text">EFETUAR TRANSFERÊNCIA DE EMPRÉSTIMO</span>
+          </button>
+        </form>
       </section>
 
     </div>
 
-    <!-- 2. Log de Últimas Transações Galácticas -->
+    <!-- Tabela de Cupons Ativos -->
+    <section class="hud-card list-card">
+      <div class="card-title">
+        <span class="hud-icon">☰</span>
+        <h3>CUPONS REGISTRADOS & ESTATÍSTICAS</h3>
+      </div>
+
+      <div class="hud-table-wrapper">
+        <table class="hud-table">
+          <thead>
+            <tr>
+              <th>CÓDIGO</th>
+              <th>DESCONTO</th>
+              <th>MOEDA</th>
+              <th>USOS</th>
+              <th>STATUS</th>
+              <th>AÇÕES</th>
+            </tr>
+          </thead>
+          <tbody id="coupons-table-body">
+            <!-- Renderizado via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. Empréstimos Ativos (Aparece DINAMICAMENTE apenas se houver empréstimos) -->
+    <section id="loans-section" class="hud-card loans-list-card" style="display: none;">
+      <div class="card-title">
+        <span class="hud-icon">⚖</span>
+        <h3>EMPRÉSTIMOS IMPERIAIS ATIVOS</h3>
+        <span class="aurebesh-mini">ACTIVE LOANS</span>
+      </div>
+
+      <div class="hud-table-wrapper">
+        <table class="hud-table">
+          <thead>
+            <tr>
+              <th>JOGADOR</th>
+              <th>VALOR ORIGINAL</th>
+              <th>JUROS</th>
+              <th>TOTAL A PAGAR</th>
+              <th>OBSERVAÇÕES</th>
+              <th>AÇÕES</th>
+            </tr>
+          </thead>
+          <tbody id="loans-table-body">
+            <!-- Renderizado via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Log de Últimas Transações Galácticas -->
     <section class="hud-card log-card">
       <div class="card-title">
         <span class="hud-icon">📡</span>
@@ -203,7 +270,7 @@
   <div id="edit-modal" class="hud-modal">
     <div class="modal-card hud-card">
       <div class="card-title">
-        <h3>RECONFIGURAR PARAMETROS DO CUPOM</h3>
+        <h3>RECONFIGURAR PARÂMETROS DO CUPOM</h3>
         <span class="close-hud-btn" onclick="closeEditModal()">&times;</span>
       </div>
 

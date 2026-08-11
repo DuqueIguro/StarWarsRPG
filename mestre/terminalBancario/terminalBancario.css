@@ -1,6 +1,6 @@
 /* ===================================================
-   DATAPAD BANCÁRIO IMPERIAL - STAR WARS RPG v9.2
-   Cores: Verde HoloNet (#00ff66), Dourado (#ffb700), Branco Puro (#fff)
+   DATAPAD BANCÁRIO IMPERIAL - STAR WARS RPG v10.0
+   Cores Principais: Vermelho Sith/Imperial (#ff1a1a), Dourado (#ffb700), Branco
    =================================================== */
 
 @font-face {
@@ -11,16 +11,18 @@
 }
 
 :root {
-  --neon-green: #00ff66;
-  --green-glow: rgba(0, 255, 102, 0.4);
-  --green-dark: rgba(0, 40, 15, 0.85);
+  /* Vermelho Imperial / ISB */
+  --neon-red: #ff1a1a;
+  --red-glow: rgba(255, 26, 26, 0.45);
+  --red-dark: rgba(40, 0, 0, 0.85);
 
+  /* Dourado de Destaque */
   --neon-gold: #ffb700;
   --gold-glow: rgba(255, 183, 0, 0.4);
 
   --pure-white: #ffffff;
-  --hud-bg: rgba(6, 12, 16, 0.92);
-  --danger-color: #ff3344;
+  --hud-bg: rgba(12, 4, 6, 0.93);
+  --danger-color: #ff0033;
   
   --font-hud: 'Consolas', 'Courier New', monospace;
 }
@@ -32,7 +34,7 @@
 }
 
 body {
-  background-color: #030608;
+  background-color: #050203;
   color: var(--pure-white);
   font-family: var(--font-hud);
   min-height: 100vh;
@@ -43,13 +45,13 @@ body {
   overflow-x: hidden;
 }
 
-/* Background sci-fi e scanlines */
+/* Background sci-fi e scanlines com efeito vermelho */
 .datapad-grid-bg {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
   background-image: 
-    linear-gradient(rgba(0, 255, 102, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 102, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(255, 26, 26, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 26, 26, 0.05) 1px, transparent 1px);
   background-size: 30px 30px;
   z-index: -3;
 }
@@ -57,7 +59,7 @@ body {
 .scanlines {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+  background: linear-gradient(rgba(18, 0, 0, 0) 50%, rgba(0, 0, 0, 0.5) 50%);
   background-size: 100% 3px;
   z-index: -2;
   pointer-events: none;
@@ -66,7 +68,7 @@ body {
 .hologram-flicker {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0, 255, 102, 0.015);
+  background: rgba(255, 26, 26, 0.015);
   z-index: -1;
   animation: flicker 0.15s infinite;
   pointer-events: none;
@@ -82,11 +84,11 @@ body {
 .datapad-frame {
   position: relative;
   width: 100%;
-  max-width: 1300px;
+  max-width: 1320px;
   background: var(--hud-bg);
-  border: 2px solid var(--neon-gold);
+  border: 2px solid var(--neon-red);
   border-radius: 4px;
-  box-shadow: 0 0 35px var(--gold-glow), inset 0 0 20px rgba(0,0,0,0.9);
+  box-shadow: 0 0 35px var(--red-glow), inset 0 0 20px rgba(0,0,0,0.95);
   padding: 25px;
   backdrop-filter: blur(8px);
 }
@@ -96,7 +98,7 @@ body {
   position: absolute;
   width: 16px;
   height: 16px;
-  border: 3px solid var(--neon-green);
+  border: 3px solid var(--neon-gold);
   z-index: 10;
 }
 .top-left { top: -6px; left: -6px; border-right: none; border-bottom: none; }
@@ -111,13 +113,13 @@ body {
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 183, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 26, 26, 0.3);
 }
 
 .hud-btn-back {
   background: rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--neon-gold);
-  color: var(--neon-gold);
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
   padding: 8px 16px;
   font-family: var(--font-hud);
   font-weight: bold;
@@ -129,15 +131,15 @@ body {
 }
 
 .hud-btn-back:hover {
-  background: var(--neon-gold);
+  background: var(--neon-red);
   color: #000;
-  box-shadow: 0 0 15px var(--gold-glow);
+  box-shadow: 0 0 15px var(--red-glow);
 }
 
 .realtime-clock-container {
   font-size: 0.9rem;
-  color: var(--neon-green);
-  text-shadow: 0 0 8px var(--green-glow);
+  color: var(--neon-red);
+  text-shadow: 0 0 8px var(--red-glow);
   letter-spacing: 2px;
 }
 
@@ -147,25 +149,23 @@ body {
 }
 
 /* Header */
-.datapad-header {
-  margin-bottom: 25px;
-}
+.datapad-header { margin-bottom: 25px; }
 
 .sys-status {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.75rem;
-  color: var(--neon-green);
+  color: var(--neon-red);
   margin-bottom: 10px;
 }
 
 .status-dot {
   width: 8px;
   height: 8px;
-  background-color: var(--neon-green);
+  background-color: var(--neon-red);
   border-radius: 50%;
-  box-shadow: 0 0 8px var(--neon-green);
+  box-shadow: 0 0 8px var(--neon-red);
   animation: pulse 1.5s infinite;
 }
 
@@ -178,7 +178,7 @@ body {
 
 .aurebesh-sub {
   font-family: 'Aurebesh', sans-serif;
-  color: var(--neon-green);
+  color: var(--neon-red);
   font-size: 1.1rem;
   letter-spacing: 4px;
 }
@@ -201,27 +201,27 @@ body {
 .line-left, .line-right {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--neon-gold), transparent);
+  background: linear-gradient(90deg, transparent, var(--neon-red), transparent);
 }
 
-.line-center { color: var(--neon-green); font-size: 0.8rem; }
+.line-center { color: var(--neon-gold); font-size: 0.8rem; }
 
 /* CARDS HUD */
 .hud-card {
-  background: rgba(8, 18, 22, 0.8);
-  border: 1px solid rgba(255, 183, 0, 0.4);
+  background: rgba(22, 6, 8, 0.85);
+  border: 1px solid rgba(255, 26, 26, 0.4);
   clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
   padding: 20px;
   margin-bottom: 25px;
   position: relative;
-  box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.05);
+  box-shadow: inset 0 0 15px rgba(255, 26, 26, 0.05);
 }
 
 .card-title {
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid rgba(0, 255, 102, 0.2);
+  border-bottom: 1px solid rgba(255, 26, 26, 0.25);
   padding-bottom: 8px;
   margin-bottom: 18px;
 }
@@ -232,7 +232,7 @@ body {
   letter-spacing: 2px;
 }
 
-.hud-icon { color: var(--neon-green); font-size: 1.2rem; }
+.hud-icon { color: var(--neon-red); font-size: 1.2rem; }
 
 .aurebesh-mini {
   font-family: 'Aurebesh', sans-serif;
@@ -241,10 +241,10 @@ body {
   margin-left: auto;
 }
 
-/* CARD DE SALDO UNIFICADO */
+/* CARD DE SALDO */
 .balance-card {
-  border-color: var(--neon-green);
-  box-shadow: 0 0 20px var(--green-glow), inset 0 0 15px var(--green-glow);
+  border-color: var(--neon-red);
+  box-shadow: 0 0 20px var(--red-glow), inset 0 0 15px var(--red-glow);
 }
 
 .balance-container {
@@ -265,25 +265,30 @@ body {
 }
 
 .amount-glow {
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   font-weight: bold;
   letter-spacing: 2px;
 }
 
-.amount-glow.credits {
-  color: var(--neon-green);
-  text-shadow: 0 0 12px var(--green-glow);
+.amount-glow.bank-balance {
+  color: var(--neon-red);
+  text-shadow: 0 0 15px var(--red-glow);
 }
 
-.amount-glow.brl {
+.amount-glow.credits-small {
   color: var(--pure-white);
-  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  font-size: 1.5rem;
+}
+
+.amount-glow.credits-small .separator {
+  color: var(--neon-red);
+  margin: 0 4px;
 }
 
 .amount-glow.total-credits {
   color: var(--neon-gold);
   text-shadow: 0 0 15px var(--gold-glow);
-  font-size: 2.5rem;
+  font-size: 2.4rem;
 }
 
 .amount-glow .unit {
@@ -294,13 +299,13 @@ body {
 .hud-divider-v {
   width: 2px;
   height: 55px;
-  background: linear-gradient(180deg, transparent, var(--neon-green), transparent);
+  background: linear-gradient(180deg, transparent, var(--neon-red), transparent);
 }
 
 /* Grid do Mestre */
 .datapad-grid {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 25px;
 }
 
@@ -325,8 +330,8 @@ label {
 
 input, select {
   width: 100%;
-  background: rgba(0, 20, 10, 0.7);
-  border: 1px solid var(--neon-green);
+  background: rgba(30, 0, 5, 0.7);
+  border: 1px solid var(--neon-red);
   color: var(--pure-white);
   padding: 10px 12px;
   font-family: var(--font-hud);
@@ -337,7 +342,7 @@ input, select {
 
 input:focus, select:focus {
   outline: none;
-  background: rgba(0, 40, 20, 0.9);
+  background: rgba(50, 0, 10, 0.9);
   border-color: var(--neon-gold);
   box-shadow: 0 0 12px var(--gold-glow);
 }
@@ -354,8 +359,8 @@ input:focus, select:focus {
   width: 100%;
   padding: 12px;
   background: transparent;
-  border: 1px solid var(--neon-gold);
-  color: var(--neon-gold);
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
   font-family: var(--font-hud);
   font-weight: bold;
   font-size: 0.9rem;
@@ -367,9 +372,9 @@ input:focus, select:focus {
 }
 
 .hud-btn:hover {
-  background: var(--neon-gold);
+  background: var(--neon-red);
   color: #000;
-  box-shadow: 0 0 20px var(--gold-glow);
+  box-shadow: 0 0 20px var(--red-glow);
 }
 
 .btn-secondary {
@@ -387,9 +392,9 @@ input:focus, select:focus {
 .hud-table { width: 100%; border-collapse: collapse; }
 
 .hud-table th {
-  background: rgba(0, 255, 102, 0.1);
-  color: var(--neon-green);
-  border-bottom: 2px solid var(--neon-green);
+  background: rgba(255, 26, 26, 0.15);
+  color: var(--neon-red);
+  border-bottom: 2px solid var(--neon-red);
   padding: 10px;
   font-size: 0.8rem;
   letter-spacing: 1px;
@@ -398,24 +403,24 @@ input:focus, select:focus {
 
 .hud-table td {
   padding: 12px 10px;
-  border-bottom: 1px solid rgba(0, 255, 102, 0.15);
+  border-bottom: 1px solid rgba(255, 26, 26, 0.15);
   font-size: 0.85rem;
 }
 
 .hud-table tr:hover { background: rgba(255, 183, 0, 0.08); }
 
 .code-tag {
-  color: var(--neon-green);
-  background: rgba(0, 255, 102, 0.15);
-  border: 1px solid var(--neon-green);
+  color: var(--neon-red);
+  background: rgba(255, 26, 26, 0.15);
+  border: 1px solid var(--neon-red);
   padding: 3px 8px;
   border-radius: 2px;
   font-weight: bold;
 }
 
 .badge { padding: 3px 8px; border-radius: 2px; font-size: 0.75rem; font-weight: bold; }
-.badge-active { color: var(--neon-green); border: 1px solid var(--neon-green); background: rgba(0, 255, 102, 0.1); }
-.badge-inactive { color: var(--danger-color); border: 1px solid var(--danger-color); background: rgba(255, 51, 68, 0.1); }
+.badge-active { color: var(--neon-red); border: 1px solid var(--neon-red); background: rgba(255, 26, 26, 0.1); }
+.badge-inactive { color: #888; border: 1px solid #666; background: rgba(255, 255, 255, 0.05); }
 
 .action-grid { display: flex; gap: 5px; }
 
@@ -432,10 +437,11 @@ input:focus, select:focus {
 .btn-icon.del { border-color: var(--danger-color); color: var(--danger-color); }
 .btn-icon.del:hover { background: var(--danger-color); color: #fff; }
 
-/* Log específico */
-.log-card { border-color: var(--neon-green); }
+/* Empréstimos & Logs */
+.loans-list-card { border-color: var(--neon-gold); }
+.log-card { border-color: var(--neon-red); }
 .player-transfer { color: var(--neon-gold); font-weight: bold; }
-.page-tag { color: var(--neon-green); font-style: italic; }
+.page-tag { color: var(--neon-red); font-style: italic; }
 
 /* Modal */
 .hud-modal {
@@ -450,6 +456,6 @@ input:focus, select:focus {
 }
 
 .hud-modal.active { display: flex; }
-.modal-card { width: 90%; max-width: 480px; border-color: var(--neon-green); }
+.modal-card { width: 90%; max-width: 480px; border-color: var(--neon-red); }
 .close-hud-btn { margin-left: auto; font-size: 1.4rem; color: var(--danger-color); cursor: pointer; }
 .modal-btns { display: flex; gap: 10px; }

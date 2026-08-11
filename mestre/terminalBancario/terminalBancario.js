@@ -4,18 +4,23 @@
 
 const STORAGE_CUPONS_KEY = 'starwars_rpg_cupons';
 const STORAGE_LOGS_KEY = 'starwars_rpg_banco_logs';
+const STORAGE_LOANS_KEY = 'starwars_rpg_emprestimos';
 const STORAGE_P2W_KEY = 'starwars_rpg_p2w_sales';
+const STORAGE_BANK_BALANCE_KEY = 'starwars_rpg_banco_saldo_atual';
 
 // Taxa de conversão: R$ 1.00 = 10.000 Créditos Imperiais
 const CONVERSION_RATE_BRL_TO_CREDITS = 10000;
 
 let cupons = [];
 let logsTransacoes = [];
+let emprestimos = [];
+let saldoAtualBanco = 5000000; // Saldo de Créditos disponível no Tesouro Imperial
 
 document.addEventListener('DOMContentLoaded', () => {
   iniciarRelogioEmTempoReal();
   carregarDadosBancarios();
   carregarCupons();
+  carregarEmprestimos();
   carregarLogsTransacoes();
 });
 
@@ -39,15 +44,22 @@ function iniciarRelogioEmTempoReal() {
 }
 
 /**
- * 1. Saldo Bancário Unificado
- * Preço gasto em Créditos + (Preço gasto em BRL * 10000) = Total em Créditos Imperiais
+ * 1. Saldo Bancário Atual e Conversão de Gastos
  */
 function carregarDadosBancarios() {
+  // Saldo Atual do Banco
+  const saldoSalvo = localStorage.getItem(STORAGE_BANK_BALANCE_KEY);
+  if (saldoSalvo !== null) {
+    saldoAtualBanco = parseInt(saldoSalvo);
+  } else {
+    localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
+  }
+
+  // Vendas acumuladas da loja
   let gastoCreditosPuros = 0;
   let gastoReaisPuros = 0;
 
   const vendasSalvas = localStorage.getItem(STORAGE_P2W_KEY);
-  
   if (vendasSalvas) {
     try {
       const vendas = JSON.parse(vendasSalvas);
@@ -63,16 +75,16 @@ function carregarDadosBancarios() {
       gastoReaisPuros = 150.00;
     }
   } else {
-    // Valores iniciais padrão para exibição de demonstração
     gastoCreditosPuros = 250000;
     gastoReaisPuros = 150.00;
   }
 
-  // Conversão de BRL em Créditos Imperiais
-  const reaisConvertidosEmCreditos = gastoReaisPuros * CONVERSION_RATE_BRL_TO_CREDITS;
-  const totalImperialCredits = gastoCreditosPuros + reaisConvertidosEmCreditos;
+  // R$ 1.00 = 10.000 CR
+  const reaisConvertidos = gastoReaisPuros * CONVERSION_RATE_BRL_TO_CREDITS;
+  const totalImperialCredits = gastoCreditosPuros + reaisConvertidos;
 
-  // Atualiza os valores no DOM
+  // Atualiza a tela
+  document.getElementById('bank-current-credits').innerText = saldoAtualBanco.toLocaleString('pt-BR');
   document.getElementById('direct-credits').innerText = gastoCreditosPuros.toLocaleString('pt-BR');
   document.getElementById('direct-brl').innerText = gastoReaisPuros.toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
@@ -82,11 +94,131 @@ function carregarDadosBancarios() {
 }
 
 /**
- * 2. Log das últimas transferências do site
+ * 2. Empréstimos Bancários
+ */
+function carregarEmprestimos() {
+  const empSalvos = localStorage.getItem(STORAGE_LOANS_KEY);
+  if (empSalvos) {
+    try {
+      emprestimos = JSON.parse(empSalvos);
+    } catch(e) {
+      emprestimos = [];
+    }
+  } else {
+    emprestimos = [];
+  }
+
+  renderizarTabelaEmprestimos();
+}
+
+function salvarEmprestimosStorage() {
+  localStorage.setItem(STORAGE_LOANS_KEY, JSON.stringify(emprestimos));
+}
+
+function handleCreateLoan(event) {
+  event.preventDefault();
+
+  const player = document.getElementById('loan-player').value.trim();
+  const amount = parseInt(document.getElementById('loan-amount').value);
+  const interest = parseFloat(document.getElementById('loan-interest').value);
+  const notes = document.getElementById('loan-notes').value.trim();
+
+  if (amount > saldoAtualBanco) {
+    alert('ERRO IMPERIAL: Saldo insuficiente no Tesouro Banco!');
+    return;
+  }
+
+  const totalToPay = Math.round(amount + (amount * (interest / 100)));
+
+  const newLoan = {
+    id: Date.now().toString(),
+    player: player,
+    amount: amount,
+    interest: interest,
+    totalToPay: totalToPay,
+    notes: notes || 'Nenhuma'
+  };
+
+  emprestimos.push(newLoan);
+  
+  // Deduz do saldo do banco
+  saldoAtualBanco -= amount;
+  localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
+
+  // Registra no Log automaticamente
+  registrarLogTransacao({
+    remetente: 'Banco Imperial',
+    destinatario: player,
+    valor: amount,
+    moeda: 'CREDITOS',
+    pagina: 'mestre/terminalBancario.html'
+  });
+
+  salvarEmprestimosStorage();
+  carregarDadosBancarios();
+  renderizarTabelaEmprestimos();
+
+  document.getElementById('loan-form').reset();
+}
+
+function renderizarTabelaEmprestimos() {
+  const section = document.getElementById('loans-section');
+  const tbody = document.getElementById('loans-table-body');
+
+  // REGRA: Se não houver empréstimos, a área NÃO aparece
+  if (emprestimos.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+  tbody.innerHTML = '';
+
+  emprestimos.forEach(loan => {
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = `
+      <td><span class="player-transfer">${loan.player}</span></td>
+      <td>${loan.amount.toLocaleString('pt-BR')} CR</td>
+      <td>${loan.interest}%</td>
+      <td><strong style="color: var(--neon-gold);">${loan.totalToPay.toLocaleString('pt-BR')} CR</strong></td>
+      <td>${loan.notes}</td>
+      <td>
+        <button class="btn-icon" onclick="quitarEmprestimo('${loan.id}')" title="Marcar Pago">QUITAR</button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+function quitarEmprestimo(id) {
+  const loan = emprestimos.find(l => l.id === id);
+  if (loan && confirm(`DESEJA CONFIRMAR A QUITAÇÃO DO EMPRÉSTIMO DE ${loan.player}?`)) {
+    // Retorna o valor pago de volta ao Banco
+    saldoAtualBanco += loan.totalToPay;
+    localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
+
+    registrarLogTransacao({
+      remetente: loan.player,
+      destinatario: 'Banco Imperial',
+      valor: loan.totalToPay,
+      moeda: 'CREDITOS',
+      pagina: 'mestre/terminalBancario.html'
+    });
+
+    emprestimos = emprestimos.filter(l => l.id !== id);
+    salvarEmprestimosStorage();
+    carregarDadosBancarios();
+    renderizarTabelaEmprestimos();
+  }
+}
+
+/**
+ * 3. Log de Transações do Site
  */
 function carregarLogsTransacoes() {
   const logsSalvos = localStorage.getItem(STORAGE_LOGS_KEY);
-
   if (logsSalvos) {
     try {
       logsTransacoes = JSON.parse(logsSalvos);
@@ -101,32 +233,31 @@ function carregarLogsTransacoes() {
   renderizarTabelaLogs();
 }
 
+function registrarLogTransacao(dados) {
+  const now = new Date();
+  const horario = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+  const novoLog = {
+    horario: horario,
+    remetente: dados.remetente,
+    destinatario: dados.destinatario,
+    valor: dados.valor,
+    moeda: dados.moeda,
+    pagina: dados.pagina
+  };
+
+  logsTransacoes.unshift(novoLog); // Adiciona no topo
+  if (logsTransacoes.length > 20) logsTransacoes.pop(); // Mantém os últimos 20
+
+  localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
+  renderizarTabelaLogs();
+}
+
 function getLogsDefault() {
   return [
-    {
-      horario: '18:42:10',
-      remetente: 'Darth Dravos',
-      destinatario: 'Oficina Durtoc',
-      valor: 15000,
-      moeda: 'CREDITOS',
-      pagina: 'oficina.html'
-    },
-    {
-      horario: '17:15:33',
-      remetente: 'Keiran Jinn',
-      destinatario: 'Mandalorian Black Market',
-      valor: 45.00,
-      moeda: 'BRL',
-      pagina: 'p2w.html'
-    },
-    {
-      horario: '15:02:44',
-      remetente: 'Lihua (Piloto)',
-      destinatario: 'Ren Tai Sol',
-      valor: 5000,
-      moeda: 'CREDITOS',
-      pagina: 'banco.html'
-    }
+    { horario: '18:42:10', remetente: 'Darth Dravos', destinatario: 'Oficina Durtoc', valor: 15000, moeda: 'CREDITOS', pagina: 'oficina.html' },
+    { horario: '17:15:33', remetente: 'Keiran Jinn', destinatario: 'Loja Imperial', valor: 45.00, moeda: 'BRL', pagina: 'p2w.html' },
+    { horario: '15:02:44', remetente: 'Lihua', destinatario: 'Ren Tai Sol', valor: 5000, moeda: 'CREDITOS', pagina: 'banco.html' }
   ];
 }
 
@@ -147,14 +278,10 @@ function renderizarTabelaLogs() {
       ? log.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
       : log.valor.toLocaleString('pt-BR');
 
-    // Transferência entre jogadores ou compra no sistema
-    const remetenteText = log.remetente || 'Sistema';
-    const destinatarioText = log.destinatario || 'Loja Imperial';
-
     tr.innerHTML = `
       <td>${log.horario}</td>
-      <td><span class="player-transfer">${remetenteText}</span></td>
-      <td><span class="player-transfer">${destinatarioText}</span></td>
+      <td><span class="player-transfer">${log.remetente || 'Sistema'}</span></td>
+      <td><span class="player-transfer">${log.destinatario || 'Loja Imperial'}</span></td>
       <td><strong>${valorFormatado}</strong></td>
       <td>${moedaFormatada}</td>
       <td><span class="page-tag">${log.pagina}</span></td>
@@ -165,11 +292,10 @@ function renderizarTabelaLogs() {
 }
 
 /**
- * Gestão de Cupons
+ * 4. Gestão de Cupons
  */
 function carregarCupons() {
   const cuponsSalvos = localStorage.getItem(STORAGE_CUPONS_KEY);
-  
   if (cuponsSalvos) {
     try {
       cupons = JSON.parse(cuponsSalvos);
