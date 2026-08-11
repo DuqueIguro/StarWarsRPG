@@ -1,6 +1,6 @@
 /* ===================================================
    DATAPAD BANCÁRIO IMPERIAL - STAR WARS RPG v12.0
-   Dominância: Vermelho Imperial (#ff1a1a) com detalhes em Azul (#0077ff)
+   Dominância: Vermelho Imperial (#ff1a1a) & Azul Cyberpunk (#0088ff)
    =================================================== */
 
 @font-face {
@@ -11,13 +11,13 @@
 }
 
 :root {
-  /* Vermelho Imperial (COR PRINCIPAL / DOMINANTE) */
+  /* Vermelho Imperial (COR PRINCIPAL) */
   --neon-red: #ff1a1a;
   --red-glow: rgba(255, 26, 26, 0.55);
   --red-dark: rgba(35, 6, 10, 0.92);
   --red-border: #cc0000;
 
-  /* Azul Escuro Cyberpunk (DETALHES E CONTRANSTE SECUNDÁRIO) */
+  /* Azul Escuro Cyberpunk (DETALHES E CONTRASTE) */
   --neon-blue: #0088ff;
   --blue-glow: rgba(0, 136, 255, 0.4);
   --blue-dark: rgba(4, 15, 30, 0.85);
@@ -82,7 +82,7 @@ body {
   100% { opacity: 0.98; }
 }
 
-/* Moldura Principal do Datapad - VERMELHA */
+/* Moldura Principal do Datapad */
 .datapad-frame {
   position: relative;
   width: 100%;
@@ -95,7 +95,7 @@ body {
   backdrop-filter: blur(8px);
 }
 
-/* Cantoneiras Azuis para Contraste */
+/* Cantoneiras Azuis */
 .corner-corner {
   position: absolute;
   width: 16px;
@@ -208,7 +208,7 @@ body {
 
 .line-center { color: var(--neon-blue); font-size: 0.8rem; }
 
-/* CARDS HUD - FUNDO E BORDAS VERMELHAS */
+/* CARDS HUD */
 .hud-card {
   background: var(--red-dark);
   border: 1px solid var(--red-border);
@@ -302,6 +302,33 @@ body {
   width: 2px;
   height: 55px;
   background: linear-gradient(180deg, transparent, var(--neon-red), transparent);
+}
+
+/* DYNAMIC GRID - ADAPTAÇÃO DE 1 OU 2 COLUNAS */
+.dynamic-grid {
+  display: grid;
+  gap: 25px;
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+}
+
+.dynamic-grid.single-col {
+  grid-template-columns: 1fr;
+}
+
+.dynamic-grid.double-col {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Garante que o card dentro do grid não force margin-bottom duplo */
+.dynamic-grid .hud-card {
+  margin-bottom: 0;
+}
+
+@media (max-width: 980px) {
+  .dynamic-grid.double-col { grid-template-columns: 1fr; }
+  .balance-container { flex-direction: column; gap: 20px; }
+  .hud-divider-v { width: 100%; height: 1px; }
 }
 
 /* Formulários */
@@ -428,6 +455,7 @@ input:focus, select:focus {
 
 /* Empréstimos & Logs */
 .loans-list-card { border-color: var(--neon-red); }
+.taxes-list-card { border-color: var(--neon-blue); }
 .log-card { border-color: var(--neon-red); }
 .player-transfer { color: var(--neon-blue); font-weight: bold; }
 .page-tag { color: var(--neon-red); font-style: italic; }

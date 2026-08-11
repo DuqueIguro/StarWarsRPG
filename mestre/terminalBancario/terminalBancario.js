@@ -5,6 +5,7 @@
 const STORAGE_CUPONS_KEY = 'starwars_rpg_cupons';
 const STORAGE_LOGS_KEY = 'starwars_rpg_banco_logs';
 const STORAGE_LOANS_KEY = 'starwars_rpg_emprestimos';
+const STORAGE_TAXES_KEY = 'starwars_rpg_taxas';
 const STORAGE_P2W_KEY = 'starwars_rpg_p2w_sales';
 const STORAGE_BANK_BALANCE_KEY = 'starwars_rpg_banco_saldo_atual';
 
@@ -14,6 +15,7 @@ const CONVERSION_RATE_BRL_TO_CREDITS = 10000;
 let cupons = [];
 let logsTransacoes = [];
 let emprestimos = [];
+let taxas = [];
 let saldoAtualBanco = 5000000;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   carregarDadosBancarios();
   carregarLogsTransacoes();
   carregarEmprestimos();
+  carregarTaxas();
   carregarCupons();
 });
 
@@ -167,7 +170,7 @@ function renderizarTabelaLogs() {
 }
 
 /**
- * 3 & 4. CONCEDER EMPRÉSTIMO BANCÁRIO & EMPRÉSTIMOS IMPERIAIS ATIVOS
+ * 3. EMPRÉSTIMOS IMPERIAIS
  */
 function carregarEmprestimos() {
   const empSalvos = localStorage.getItem(STORAGE_LOANS_KEY);
@@ -233,16 +236,19 @@ function handleCreateLoan(event) {
 }
 
 function renderizarTabelaEmprestimos() {
-  const section = document.getElementById('loans-section');
+  const grid = document.getElementById('loans-grid');
+  const cardList = document.getElementById('loans-card-list');
   const tbody = document.getElementById('loans-table-body');
 
-  // REGRA: Se não houver empréstimos, a área NÃO aparece
+  // REQUISITO: Se não houver empréstimos, ocupa 1 coluna. Se houver, vira 2 colunas.
   if (emprestimos.length === 0) {
-    section.style.display = 'none';
+    grid.className = 'dynamic-grid single-col';
+    cardList.style.display = 'none';
     return;
   }
 
-  section.style.display = 'block';
+  grid.className = 'dynamic-grid double-col';
+  cardList.style.display = 'block';
   tbody.innerHTML = '';
 
   emprestimos.forEach(loan => {
@@ -253,7 +259,6 @@ function renderizarTabelaEmprestimos() {
       <td>${loan.amount.toLocaleString('pt-BR')} CR</td>
       <td>${loan.interest}%</td>
       <td><strong style="color: var(--neon-blue);">${loan.totalToPay.toLocaleString('pt-BR')} CR</strong></td>
-      <td>${loan.notes}</td>
       <td>
         <button class="btn-icon" onclick="quitarEmprestimo('${loan.id}')" title="Marcar Pago">QUITAR</button>
       </td>
@@ -285,7 +290,116 @@ function quitarEmprestimo(id) {
 }
 
 /**
- * 5 & 6. GERAR CÓDIGO DE DESCONTO & CUPONS REGISTRADOS & ESTATÍSTICAS
+ * 4. TAXAS, IMPOSTOS E LICENÇAS
+ */
+function carregarTaxas() {
+  const taxasSalvas = localStorage.getItem(STORAGE_TAXES_KEY);
+  if (taxasSalvas) {
+    try {
+      taxas = JSON.parse(taxasSalvas);
+    } catch(e) {
+      taxas = [];
+    }
+  } else {
+    taxas = [];
+  }
+
+  renderizarTabelaTaxas();
+}
+
+function salvarTaxasStorage() {
+  localStorage.setItem(STORAGE_TAXES_KEY, JSON.stringify(taxas));
+}
+
+function handleCreateTax(event) {
+  event.preventDefault();
+
+  const name = document.getElementById('tax-name').value.trim();
+  const currency = document.getElementById('tax-currency').value;
+  const value = parseFloat(document.getElementById('tax-value').value);
+  const type = document.getElementById('tax-type').value;
+
+  const newTax = {
+    id: Date.now().toString(),
+    name: name,
+    currency: currency,
+    value: value,
+    type: type,
+    active: true
+  };
+
+  taxas.push(newTax);
+  salvarTaxasStorage();
+  renderizarTabelaTaxas();
+
+  document.getElementById('tax-form').reset();
+}
+
+function renderizarTabelaTaxas() {
+  const grid = document.getElementById('taxes-grid');
+  const cardList = document.getElementById('taxes-card-list');
+  const tbody = document.getElementById('taxes-table-body');
+
+  // REQUISITO: Se não houver taxas, ocupa 1 coluna. Se houver, vira 2 colunas.
+  if (taxas.length === 0) {
+    grid.className = 'dynamic-grid single-col';
+    cardList.style.display = 'none';
+    return;
+  }
+
+  grid.className = 'dynamic-grid double-col';
+  cardList.style.display = 'block';
+  tbody.innerHTML = '';
+
+  taxas.forEach(tax => {
+    const tr = document.createElement('tr');
+
+    const valorFormatado = tax.currency === 'BRL'
+      ? `R$ ${tax.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+      : `${tax.value.toLocaleString('pt-BR')} CR`;
+
+    const statusClass = tax.active ? 'badge-active' : 'badge-inactive';
+    const statusText = tax.active ? 'VIGENTE' : 'SUSPENSA';
+
+    tr.innerHTML = `
+      <td><strong>${tax.name}</strong></td>
+      <td>${valorFormatado}</td>
+      <td>${tax.type}</td>
+      <td><span class="badge ${statusClass}">${statusText}</span></td>
+      <td>
+        <div class="action-grid">
+          <button class="btn-icon" onclick="toggleTaxStatus('${tax.id}')">
+            ${tax.active ? 'SUSPENDER' : 'ATIVAR'}
+          </button>
+          <button class="btn-icon del" onclick="deleteTax('${tax.id}')">REVOGAR</button>
+        </div>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleTaxStatus(id) {
+  const tax = taxas.find(t => t.id === id);
+  if (tax) {
+    tax.active = !tax.active;
+    salvarTaxasStorage();
+    renderizarTabelaTaxas();
+  }
+}
+
+function deleteTax(id) {
+  const tax = taxas.find(t => t.id === id);
+  if (tax && confirm(`DECRETO IMPERIAL: Revogar a taxa [${tax.name}]?`)) {
+    taxas = taxas.filter(t => t.id !== id);
+    salvarTaxasStorage();
+    renderizarTabelaTaxas();
+  }
+}
+
+/**
+ * 5. CUPONS DE DESCONTO
  */
 function carregarCupons() {
   const cuponsSalvos = localStorage.getItem(STORAGE_CUPONS_KEY);
@@ -293,21 +407,13 @@ function carregarCupons() {
     try {
       cupons = JSON.parse(cuponsSalvos);
     } catch(e) {
-      cupons = getCuponsDefault();
+      cupons = [];
     }
   } else {
-    cupons = getCuponsDefault();
-    salvarCuponsStorage();
+    cupons = [];
   }
 
   renderizarTabelaCupons();
-}
-
-function getCuponsDefault() {
-  return [
-    { id: '1', code: 'IMPERIO10', currency: 'AMBAS', discountType: 'PERCENTAGE', discountValue: 10, usageLimit: 100, usageCount: 28, active: true },
-    { id: '2', code: 'SITH1000', currency: 'CREDITOS', discountType: 'FIXED', discountValue: 1000, usageLimit: 50, usageCount: 12, active: true }
-  ];
 }
 
 function salvarCuponsStorage() {
@@ -347,13 +453,20 @@ function handleCreateCoupon(event) {
 }
 
 function renderizarTabelaCupons() {
+  const grid = document.getElementById('coupons-grid');
+  const cardList = document.getElementById('coupons-card-list');
   const tbody = document.getElementById('coupons-table-body');
-  tbody.innerHTML = '';
 
+  // REQUISITO: Cupons registrados só aparece se houver cupom (1 col -> 2 col)
   if (cupons.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--neon-blue);">[ NENHUM CUPOM REGISTRADO ]</td></tr>`;
+    grid.className = 'dynamic-grid single-col';
+    cardList.style.display = 'none';
     return;
   }
+
+  grid.className = 'dynamic-grid double-col';
+  cardList.style.display = 'block';
+  tbody.innerHTML = '';
 
   cupons.forEach(coupon => {
     const tr = document.createElement('tr');

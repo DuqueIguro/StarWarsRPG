@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terminal Bancário Imperial - Datapad ISB v11.0</title>
+  <title>Terminal Bancário Imperial - Datapad ISB v12.0</title>
   <link rel="stylesheet" href="terminalBancario/terminalBancario.css">
   <link rel="icon" href="../img/imperio.png" type="image/png">
 </head>
@@ -122,142 +122,220 @@
       </div>
     </section>
 
-    <!-- 3. CONCEDER EMPRÉSTIMO BANCÁRIO -->
-    <section class="hud-card loan-form-card">
-      <div class="card-title">
-        <span class="hud-icon">🏦</span>
-        <h3>CONCEDER EMPRÉSTIMO BANCÁRIO</h3>
-      </div>
-
-      <form id="loan-form" onsubmit="handleCreateLoan(event)">
-        <div class="input-hud-group">
-          <label for="loan-player">NOME DO JOGADOR / ALVO</label>
-          <input type="text" id="loan-player" placeholder="Ex: Han Solo, Caçador de Recompensas" required>
+    <!-- 3. ÁREA DE EMPRÉSTIMOS (Grid Adaptativa de 1 ou 2 Colunas) -->
+    <div id="loans-grid" class="dynamic-grid single-col">
+      <!-- Coluna 1: Formulário -->
+      <section class="hud-card loan-form-card">
+        <div class="card-title">
+          <span class="hud-icon">🏦</span>
+          <h3>CONCEDER EMPRÉSTIMO BANCÁRIO</h3>
         </div>
 
-        <div class="input-hud-row">
+        <form id="loan-form" onsubmit="handleCreateLoan(event)">
           <div class="input-hud-group">
-            <label for="loan-amount">VALOR (CRÉDITOS)</label>
-            <input type="number" id="loan-amount" min="100" placeholder="Ex: 50000" required>
+            <label for="loan-player">NOME DO JOGADOR / ALVO</label>
+            <input type="text" id="loan-player" placeholder="Ex: Han Solo, Caçador de Recompensas" required>
+          </div>
+
+          <div class="input-hud-row">
+            <div class="input-hud-group">
+              <label for="loan-amount">VALOR (CRÉDITOS)</label>
+              <input type="number" id="loan-amount" min="100" placeholder="Ex: 50000" required>
+            </div>
+
+            <div class="input-hud-group">
+              <label for="loan-interest">JUROS (%)</label>
+              <input type="number" id="loan-interest" min="0" max="100" value="10" required>
+            </div>
           </div>
 
           <div class="input-hud-group">
-            <label for="loan-interest">JUROS (%)</label>
-            <input type="number" id="loan-interest" min="0" max="100" value="10" required>
+            <label for="loan-notes">OBSERVAÇÕES / GARANTIA (OPCIONAL)</label>
+            <input type="text" id="loan-notes" placeholder="Ex: Nave Millennium Falcon como garantia">
           </div>
+
+          <button type="submit" class="hud-btn btn-create">
+            <span class="btn-text">EFETUAR TRANSFERÊNCIA DE EMPRÉSTIMO</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Coluna 2: Empréstimos Imperiais Ativos (Condicional) -->
+      <section id="loans-card-list" class="hud-card loans-list-card" style="display: none;">
+        <div class="card-title">
+          <span class="hud-icon">⚖</span>
+          <h3>EMPRÉSTIMOS IMPERIAIS ATIVOS</h3>
+          <span class="aurebesh-mini">ACTIVE LOANS</span>
         </div>
 
-        <div class="input-hud-group">
-          <label for="loan-notes">OBSERVAÇÕES / GARANTIA (OPCIONAL)</label>
-          <input type="text" id="loan-notes" placeholder="Ex: Nave Millennium Falcon como garantia">
+        <div class="hud-table-wrapper">
+          <table class="hud-table">
+            <thead>
+              <tr>
+                <th>JOGADOR</th>
+                <th>ORIGINAL</th>
+                <th>JUROS</th>
+                <th>A PAGAR</th>
+                <th>AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody id="loans-table-body">
+              <!-- Renderizado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- 4. ÁREA DE TAXAS, IMPOSTOS E LICENÇAS (Grid Adaptativa) -->
+    <div id="taxes-grid" class="dynamic-grid single-col">
+      <!-- Coluna 1: Formulário de Criação -->
+      <section class="hud-card tax-form-card">
+        <div class="card-title">
+          <span class="hud-icon">📜</span>
+          <h3>DECRETAR TAXA / IMPOSTO / LICENÇA</h3>
         </div>
 
-        <button type="submit" class="hud-btn btn-create">
-          <span class="btn-text">EFETUAR TRANSFERÊNCIA DE EMPRÉSTIMO</span>
-        </button>
-      </form>
-    </section>
-
-    <!-- 4. EMPRÉSTIMOS IMPERIAIS ATIVOS (Aparece apenas se houver empréstimos) -->
-    <section id="loans-section" class="hud-card loans-list-card" style="display: none;">
-      <div class="card-title">
-        <span class="hud-icon">⚖</span>
-        <h3>EMPRÉSTIMOS IMPERIAIS ATIVOS</h3>
-        <span class="aurebesh-mini">ACTIVE LOANS</span>
-      </div>
-
-      <div class="hud-table-wrapper">
-        <table class="hud-table">
-          <thead>
-            <tr>
-              <th>JOGADOR</th>
-              <th>VALOR ORIGINAL</th>
-              <th>JUROS</th>
-              <th>TOTAL A PAGAR</th>
-              <th>OBSERVAÇÕES</th>
-              <th>AÇÕES</th>
-            </tr>
-          </thead>
-          <tbody id="loans-table-body">
-            <!-- Renderizado via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- 5. GERAR CÓDIGO DE DESCONTO -->
-    <section class="hud-card create-card">
-      <div class="card-title">
-        <span class="hud-icon">✚</span>
-        <h3>GERAR CÓDIGO DE DESCONTO</h3>
-      </div>
-
-      <form id="coupon-form" onsubmit="handleCreateCoupon(event)">
-        <div class="input-hud-group">
-          <label for="coupon-code">CÓDIGO DO CUPOM</label>
-          <input type="text" id="coupon-code" placeholder="EX: REBELDES2026" maxlength="20" required>
-        </div>
-
-        <div class="input-hud-group">
-          <label for="currency-type">MOEDA DE APLICAÇÃO</label>
-          <select id="currency-type" required>
-            <option value="AMBAS">AMBAS (CRÉDITOS & R$)</option>
-            <option value="CREDITOS">APENAS CRÉDITOS IMPERIAIS (CR)</option>
-            <option value="BRL">APENAS REAIS (R$)</option>
-          </select>
-        </div>
-
-        <div class="input-hud-row">
+        <form id="tax-form" onsubmit="handleCreateTax(event)">
           <div class="input-hud-group">
-            <label for="discount-type">TIPO</label>
-            <select id="discount-type" required>
-              <option value="PERCENTAGE">PORCENTAGEM (%)</option>
-              <option value="FIXED">VALOR FIXO</option>
+            <label for="tax-name">NOME DA TAXA OU LICENÇA</label>
+            <input type="text" id="tax-name" placeholder="Ex: Licença de Armamento, Imposto de Atracagem" required>
+          </div>
+
+          <div class="input-hud-row">
+            <div class="input-hud-group">
+              <label for="tax-currency">MOEDA</label>
+              <select id="tax-currency" required>
+                <option value="CREDITOS">CRÉDITOS (CR)</option>
+                <option value="BRL">REAIS (R$)</option>
+              </select>
+            </div>
+
+            <div class="input-hud-group">
+              <label for="tax-value">VALOR COBRADO</label>
+              <input type="number" id="tax-value" min="1" step="0.01" placeholder="Ex: 2500" required>
+            </div>
+          </div>
+
+          <div class="input-hud-group">
+            <label for="tax-type">FREQUÊNCIA DE COBRANÇA</label>
+            <select id="tax-type" required>
+              <option value="UNICA">TAXA ÚNICA / LICENÇA</option>
+              <option value="DIARIA">IMPOSTO DIÁRIO</option>
+              <option value="SEMANAL">IMPOSTO SEMANAL</option>
+              <option value="MENSAL">IMPOSTO MENSAL</option>
             </select>
           </div>
 
+          <button type="submit" class="hud-btn btn-create">
+            <span class="btn-text">PUBLICAR DECRETO NA HOLONET</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Coluna 2: Tabela de Taxas Registradas (Condicional) -->
+      <section id="taxes-card-list" class="hud-card taxes-list-card" style="display: none;">
+        <div class="card-title">
+          <span class="hud-icon">📑</span>
+          <h3>TAXAS E LICENÇAS VIGENTES</h3>
+          <span class="aurebesh-mini">IMPERIAL TAXES</span>
+        </div>
+
+        <div class="hud-table-wrapper">
+          <table class="hud-table">
+            <thead>
+              <tr>
+                <th>NOME</th>
+                <th>VALOR</th>
+                <th>FREQUÊNCIA</th>
+                <th>STATUS</th>
+                <th>AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody id="taxes-table-body">
+              <!-- Renderizado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- 5. ÁREA DE CUPONS DE DESCONTO (Grid Adaptativa) -->
+    <div id="coupons-grid" class="dynamic-grid single-col">
+      <!-- Coluna 1: Formulário de Criação -->
+      <section class="hud-card create-card">
+        <div class="card-title">
+          <span class="hud-icon">✚</span>
+          <h3>GERAR CÓDIGO DE DESCONTO</h3>
+        </div>
+
+        <form id="coupon-form" onsubmit="handleCreateCoupon(event)">
           <div class="input-hud-group">
-            <label for="discount-value">VALOR</label>
-            <input type="number" id="discount-value" min="1" step="0.01" placeholder="Ex: 10 ou 500" required>
+            <label for="coupon-code">CÓDIGO DO CUPOM</label>
+            <input type="text" id="coupon-code" placeholder="EX: REBELDES2026" maxlength="20" required>
           </div>
+
+          <div class="input-hud-group">
+            <label for="currency-type">MOEDA DE APLICAÇÃO</label>
+            <select id="currency-type" required>
+              <option value="AMBAS">AMBAS (CRÉDITOS & R$)</option>
+              <option value="CREDITOS">APENAS CRÉDITOS IMPERIAIS (CR)</option>
+              <option value="BRL">APENAS REAIS (R$)</option>
+            </select>
+          </div>
+
+          <div class="input-hud-row">
+            <div class="input-hud-group">
+              <label for="discount-type">TIPO</label>
+              <select id="discount-type" required>
+                <option value="PERCENTAGE">PORCENTAGEM (%)</option>
+                <option value="FIXED">VALOR FIXO</option>
+              </select>
+            </div>
+
+            <div class="input-hud-group">
+              <label for="discount-value">VALOR</label>
+              <input type="number" id="discount-value" min="1" step="0.01" placeholder="Ex: 10 ou 500" required>
+            </div>
+          </div>
+
+          <div class="input-hud-group">
+            <label for="usage-limit">LIMITE DE USOS (OPCIONAL)</label>
+            <input type="number" id="usage-limit" min="1" placeholder="Ilimitado se vazio">
+          </div>
+
+          <button type="submit" class="hud-btn btn-create">
+            <span class="btn-text">INJETAR CUPOM NA HOLONET</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Coluna 2: Cupons Registrados & Estatísticas (Condicional) -->
+      <section id="coupons-card-list" class="hud-card list-card" style="display: none;">
+        <div class="card-title">
+          <span class="hud-icon">☰</span>
+          <h3>CUPONS REGISTRADOS & ESTATÍSTICAS</h3>
         </div>
 
-        <div class="input-hud-group">
-          <label for="usage-limit">LIMITE DE USOS (OPCIONAL)</label>
-          <input type="number" id="usage-limit" min="1" placeholder="Ilimitado se vazio">
+        <div class="hud-table-wrapper">
+          <table class="hud-table">
+            <thead>
+              <tr>
+                <th>CÓDIGO</th>
+                <th>DESCONTO</th>
+                <th>MOEDA</th>
+                <th>USOS</th>
+                <th>STATUS</th>
+                <th>AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody id="coupons-table-body">
+              <!-- Renderizado via JS -->
+            </tbody>
+          </table>
         </div>
-
-        <button type="submit" class="hud-btn btn-create">
-          <span class="btn-text">INJETAR CUPOM NA HOLONET</span>
-        </button>
-      </form>
-    </section>
-
-    <!-- 6. CUPONS REGISTRADOS & ESTATÍSTICAS -->
-    <section class="hud-card list-card">
-      <div class="card-title">
-        <span class="hud-icon">☰</span>
-        <h3>CUPONS REGISTRADOS & ESTATÍSTICAS</h3>
-      </div>
-
-      <div class="hud-table-wrapper">
-        <table class="hud-table">
-          <thead>
-            <tr>
-              <th>CÓDIGO</th>
-              <th>DESCONTO</th>
-              <th>MOEDA</th>
-              <th>USOS</th>
-              <th>STATUS</th>
-              <th>AÇÕES</th>
-            </tr>
-          </thead>
-          <tbody id="coupons-table-body">
-            <!-- Renderizado via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+      </section>
+    </div>
 
   </div>
 
