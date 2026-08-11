@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal Bancário Imperial - Datapad v8.4</title>
+  <link rel="stylesheet" href="terminalBancario/terminalBancario.css">
+  <link rel="icon" href="../img/imperio.png" type="image/png">
+</head>
+<body>
+
+  <!-- Overlay de Efeitos Especiais Sci-Fi -->
+  <div class="datapad-grid-bg"></div>
+  <div class="scanlines"></div>
+  <div class="hologram-flicker"></div>
+
+  <div class="datapad-frame">
+    <!-- Cantoneiras de Moldura de Datapad -->
+    <div class="corner-corner top-left"></div>
+    <div class="corner-corner top-right"></div>
+    <div class="corner-corner bottom-left"></div>
+    <div class="corner-corner bottom-right"></div>
+
+    <!-- Header com Aurebesh e HUD Imperial -->
+    <header class="datapad-header">
+      <div class="sys-status">
+        <span class="status-dot"></span>
+        <span class="sys-text">HOLONET BANCÁRIA :: CONEXÃO SEGURA [MUUNILINST-NODE-09]</span>
+      </div>
+      
+      <div class="header-main">
+        <div class="aurebesh-sub">BANKING TERMINAL IMPERIAL</div>
+        <h1 class="glitch-title" data-text="TERMINAL BANCÁRIO IMPERIAL">TERMINAL BANCÁRIO IMPERIAL</h1>
+      </div>
+
+      <div class="hud-decor-line">
+        <div class="line-left"></div>
+        <div class="line-center">◈ ❖ ◈</div>
+        <div class="line-right"></div>
+      </div>
+    </header>
+
+    <!-- 1. Saldo Bancário Holográfico -->
+    <section class="hud-card balance-card">
+      <div class="hud-corner-br"></div>
+      <div class="card-title">
+        <span class="hud-icon">Ͼ</span>
+        <h3>BALANÇO TOTAL ACUMULADO DA LOJA</h3>
+        <span class="aurebesh-mini">CREDITS & BRL</span>
+      </div>
+
+      <div class="balance-container">
+        <div class="balance-block">
+          <span class="label">CRÉDITOS IMPERIAIS GASTOS</span>
+          <div class="amount-glow credits">
+            <span class="currency-symbol">75</span>
+            <span id="total-credits">0</span>
+            <span class="unit">CR</span>
+          </div>
+        </div>
+
+        <div class="hud-divider-v"></div>
+
+        <div class="balance-block">
+          <span class="label">VALOR CONVERTIDO ESTIMADO</span>
+          <div class="amount-glow brl">
+            <span class="unit">R$</span>
+            <span id="total-brl">0,00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid do Mestre -->
+    <div class="datapad-grid">
+
+      <!-- 2. Form de Criação de Cupons -->
+      <section class="hud-card create-card">
+        <div class="hud-corner-br"></div>
+        <div class="card-title">
+          <span class="hud-icon">✚</span>
+          <h3>GERAR CÓDIGO DE DESCONTO</h3>
+        </div>
+
+        <form id="coupon-form" onsubmit="handleCreateCoupon(event)">
+          <div class="input-hud-group">
+            <label for="coupon-code">CÓDIGO DO CUPOM</label>
+            <div class="input-wrapper">
+              <input type="text" id="coupon-code" placeholder="EX: VADER2026" maxlength="20" required>
+              <span class="input-glow"></span>
+            </div>
+          </div>
+
+          <div class="input-hud-group">
+            <label for="currency-type">MOEDA DE APLICAÇÃO</label>
+            <div class="select-wrapper">
+              <select id="currency-type" required>
+                <option value="AMBAS">AMBAS (CRÉDITOS & R$)</option>
+                <option value="CREDITOS">APENAS CRÉDITOS IMPERIAIS (CR)</option>
+                <option value="BRL">APENAS REAIS (R$)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-hud-row">
+            <div class="input-hud-group">
+              <label for="discount-type">TIPO</label>
+              <select id="discount-type" required>
+                <option value="PERCENTAGE">PORCENTAGEM (%)</option>
+                <option value="FIXED">VALOR FIXO</option>
+              </select>
+            </div>
+
+            <div class="input-hud-group">
+              <label for="discount-value">VALOR</label>
+              <input type="number" id="discount-value" min="1" step="0.01" placeholder="Ex: 10 ou 500" required>
+            </div>
+          </div>
+
+          <div class="input-hud-group">
+            <label for="usage-limit">LIMITE DE USOS (OPCIONAL)</label>
+            <input type="number" id="usage-limit" min="1" placeholder="Ilimitado se vazio">
+          </div>
+
+          <button type="submit" class="hud-btn btn-create">
+            <span class="btn-text">INJETAR CUPOM NA HOLONET</span>
+            <span class="btn-glare"></span>
+          </button>
+        </form>
+      </section>
+
+      <!-- 3 e 4. Tabela de Cupons & Ações de Controle -->
+      <section class="hud-card list-card">
+        <div class="hud-corner-br"></div>
+        <div class="card-title">
+          <span class="hud-icon">☰</span>
+          <h3>REGISTRO DE CUPONS ATIVOS & USO</h3>
+        </div>
+
+        <div class="hud-table-wrapper">
+          <table class="hud-table">
+            <thead>
+              <tr>
+                <th>CÓDIGO</th>
+                <th>DESCONTO</th>
+                <th>MOEDA</th>
+                <th>USOS</th>
+                <th>STATUS</th>
+                <th>AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody id="coupons-table-body">
+              <!-- Renderizado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Modal Holográfico para Edição -->
+  <div id="edit-modal" class="hud-modal">
+    <div class="modal-card hud-card">
+      <div class="card-title">
+        <h3>RECONFIGURAR PARAMETROS DO CUPOM</h3>
+        <span class="close-hud-btn" onclick="closeEditModal()">&times;</span>
+      </div>
+
+      <form id="edit-coupon-form" onsubmit="handleSaveEditCoupon(event)">
+        <input type="hidden" id="edit-coupon-id">
+        
+        <div class="input-hud-group">
+          <label>CÓDIGO ALVO</label>
+          <input type="text" id="edit-coupon-code" readonly class="input-disabled">
+        </div>
+
+        <div class="input-hud-group">
+          <label for="edit-currency-type">MOEDA PERMITIDA</label>
+          <select id="edit-currency-type" required>
+            <option value="AMBAS">AMBAS (CRÉDITOS & R$)</option>
+            <option value="CREDITOS">APENAS CRÉDITOS IMPERIAIS (CR)</option>
+            <option value="BRL">APENAS REAIS (R$)</option>
+          </select>
+        </div>
+
+        <div class="input-hud-row">
+          <div class="input-hud-group">
+            <label for="edit-discount-type">TIPO</label>
+            <select id="edit-discount-type" required>
+              <option value="PERCENTAGE">PORCENTAGEM (%)</option>
+              <option value="FIXED">VALOR FIXO</option>
+            </select>
+          </div>
+
+          <div class="input-hud-group">
+            <label for="edit-discount-value">VALOR</label>
+            <input type="number" id="edit-discount-value" min="1" step="0.01" required>
+          </div>
+        </div>
+
+        <div class="input-hud-group">
+          <label for="edit-usage-limit">LIMITE DE USO</label>
+          <input type="number" id="edit-usage-limit" min="1">
+        </div>
+
+        <div class="modal-btns">
+          <button type="button" class="hud-btn btn-secondary" onclick="closeEditModal()">CANCELAR</button>
+          <button type="submit" class="hud-btn btn-create">ATUALIZAR DADOS</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="terminalBancario/terminalBancario.js"></script>
+</body>
+</html>

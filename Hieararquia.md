@@ -48,6 +48,7 @@ StarWarsRPG
 │  │  ├─ OS-04-COR-001.json
 │  │  ├─ OS-04-UND-001.json
 │  │  └─ siglasLocalidade.json
+│  ├─ droids
 │  ├─ droids.html
 │  ├─ droids.js
 │  ├─ durtoc.html
@@ -87,10 +88,6 @@ StarWarsRPG
 │  ├─ d20.png
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
-│  ├─ DurtocDocumento.png
-│  ├─ DurtocGenDocumento.png
-│  ├─ DurtocGeneral.png
-│  ├─ DurtocMec.png
 │  ├─ error-404.ico
 │  ├─ HNN.ico
 │  ├─ imperio.png
@@ -107,6 +104,11 @@ StarWarsRPG
 │  ├─ p2w.png
 │  ├─ personagens
 │  │  ├─ dravos.jpeg
+│  │  ├─ durtocFotos
+│  │  │  ├─ DurtocDocumento.png
+│  │  │  ├─ DurtocGenDocumento.png
+│  │  │  ├─ DurtocGeneral.png
+│  │  │  └─ DurtocMec.png
 │  │  ├─ keiranJinn.jpeg
 │  │  ├─ lihua.jpeg
 │  │  ├─ rapinFloo.jpeg
@@ -115,6 +117,7 @@ StarWarsRPG
 │  ├─ r2d2.ico
 │  ├─ rebelde.png
 │  ├─ sabres.ico
+│  ├─ servicos.png
 │  └─ tripulantes
 │     ├─ PreFaisca.png
 │     ├─ PreKael.png
@@ -163,7 +166,11 @@ StarWarsRPG
 │  ├─ fichasBalanceamento.html
 │  ├─ frotaMestre.html
 │  ├─ log.html
-│  └─ redirecionamentos.html
+│  ├─ redirecionamentos.html
+│  ├─ terminalBancario
+│  │  ├─ terminalBancario.css
+│  │  └─ terminalBancario.js
+│  └─ terminalBancario.html
 ├─ pages
 │  ├─ armazem.html
 │  ├─ banco.html
