@@ -19,7 +19,7 @@
   <!-- Carcaça do Datapad -->
   <div class="datapad-chassis">
     
-    <!-- Parafusos / Detalhes de Hardware do Datapad -->
+    <!-- Detalhes de Hardware -->
     <div class="hardware-bolt top-left"></div>
     <div class="hardware-bolt top-right"></div>
     <div class="hardware-bolt bottom-left"></div>
@@ -79,7 +79,7 @@
     </header>
 
     <!-- Barra de Navegação de Módulos (Jogos) -->
-    <nav class="datapad-tabs">
+    <nav class="datapad-tabs" id="mainGameTabs">
       <button class="tab-module active" onclick="switchGame('roulette', this)">
         <span class="tab-index">01</span>
         <span class="tab-title">ROLETA QUÂNTICA</span>
@@ -92,7 +92,7 @@
       </button>
       <button class="tab-module" onclick="switchGame('poker', this)">
         <span class="tab-index">03</span>
-        <span class="tab-title">HOLO-POKER 1v1</span>
+        <span class="tab-title">TEXAS HOLD'EM 1v1</span>
         <span class="tab-glow"></span>
       </button>
       <button class="tab-module" onclick="switchGame('slots', this)">
@@ -115,12 +115,10 @@
       <!-- ============================================== -->
       <section id="game-roulette" class="game-section active">
         <div class="section-titlebar">
-          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE ROLETA EUROPEIA // ENERGIA QUÂNTICA</div>
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE ROLETA QUÂNTICA</div>
           <div class="history-tracker">
             <span class="history-label">ÚLTIMOS SETORES:</span>
-            <div id="rouletteHistory" class="history-chips">
-              <!-- Histórico via JS -->
-            </div>
+            <div id="rouletteHistory" class="history-chips"></div>
           </div>
         </div>
 
@@ -252,7 +250,7 @@
           </div>
 
           <div class="bj-table-center">
-            <div class="bj-payout-rules">BLACKJACK PAGA 3:2 // CRUPIÊ PARA NO 17 // SEGURO 2:1</div>
+            <div class="bj-payout-rules">BLACKJACK</div>
           </div>
 
           <div class="bj-hand-container player-zone">
@@ -294,12 +292,12 @@
       </section>
 
       <!-- ============================================== -->
-      <!-- JOGO 3: HOLO-POKER 1v1 (HEADS-UP HOLD'EM)      -->
+      <!-- JOGO 3: TEXAS HOLD'EM 1v1 COM ALL-IN E FASES   -->
       <!-- ============================================== -->
       <section id="game-poker" class="game-section">
         <div class="section-titlebar">
-          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE HOLO-POKER 1v1 // HEADS-UP HOLD'EM</div>
-          <div class="poker-status-badge" id="pokerStatusBadge">DEFINA SEU ANTE INICIAL</div>
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE TEXAS HOLD'EM</div>
+          <div class="poker-status-badge" id="pokerStatusBadge">FAÇA SUA APOSTA OU BLIND INICIAL</div>
         </div>
 
         <div class="poker-arena">
@@ -307,20 +305,23 @@
           <div class="poker-zone poker-dealer-zone">
             <div class="poker-meta">
               <span class="actor-title"><span class="bot-icon">🤖</span> CRUPIÊ ANDROIDE</span>
-              <span class="hand-eval-tag" id="pokerDealerEval">AGUARDANDO CARTAS</span>
+              <div class="actor-stats">
+                <span class="actor-chips-tag" id="pokerDealerBetTag">APOSTADO: 0 FG</span>
+                <span class="hand-eval-tag" id="pokerDealerEval">AGUARDANDO RODADA</span>
+              </div>
             </div>
             <div class="poker-cards-wrap" id="pokerDealerCards"></div>
           </div>
 
-          <!-- Área Central: Cartas Comunitárias do Bordo e Pote -->
+          <!-- Área Central: Cartas Comunitárias do Bordo (Flop, Turn, River) e Pote -->
           <div class="poker-community-zone">
             <div class="community-header">
               <div class="pot-display">
                 POTE TOTAL: <span id="pokerPotValue" class="pot-number">0</span> FICHAS
               </div>
-              <span class="community-label">CARTAS COMUNITÁRIAS (BORDO)</span>
-              <div class="ante-bet-info">
-                ANTE: <span id="pokerAnteDisplay">0</span> | CALL: <span id="pokerCallDisplay">0</span>
+              <div class="round-phase-indicator" id="pokerPhaseIndicator">FASE: PRÉ-FLOP</div>
+              <div class="call-to-match">
+                VALOR PARA COBRIR: <span id="pokerToCallAmount">0</span> FG
               </div>
             </div>
             <div class="community-cards-wrap" id="pokerCommunityCards"></div>
@@ -330,33 +331,56 @@
           <div class="poker-zone poker-player-zone">
             <div class="poker-meta">
               <span class="actor-title"><span class="user-icon">👤</span> SUA MÃO DE PÔQUER</span>
-              <span class="hand-eval-tag player-highlight" id="pokerPlayerEval">DEFINA SUA JOGADA</span>
+              <div class="actor-stats">
+                <span class="actor-chips-tag" id="pokerPlayerBetTag">APOSTADO: 0 FG</span>
+                <span class="hand-eval-tag player-highlight" id="pokerPlayerEval">SELECIONE SUA AÇÃO</span>
+              </div>
             </div>
             <div class="poker-cards-wrap" id="pokerPlayerCards"></div>
           </div>
 
-          <!-- Controles de Aposta e Decisão de Pôquer -->
+          <!-- Controles de Pôquer com Check, Bet, Call, Raise, Fold e ALL-IN -->
           <div class="poker-controls-panel">
-            <div class="poker-bet-adjuster" id="pokerAnteControls">
-              <label>ANTE INICIAL (FICHAS):</label>
+            <!-- Controle de Início de Partida -->
+            <div class="poker-bet-adjuster" id="pokerStartControls">
+              <label>BLIND / APOSTA INICIAL (FICHAS):</label>
               <div class="spin-bet-inputs">
-                <button class="btn-step" onclick="adjustPokerAnte(-5)">-5</button>
-                <input type="number" id="pokerAnteInput" value="10" min="1" step="1" readonly>
-                <button class="btn-step" onclick="adjustPokerAnte(5)">+5</button>
-                <button class="btn-step" onclick="adjustPokerAnte(25)">+25</button>
-                <button class="btn-step max-btn" onclick="setPokerAnteMax()">MÁX</button>
+                <button class="btn-step" onclick="adjustPokerBlind(-5)">-5</button>
+                <input type="number" id="pokerBlindInput" value="10" min="2" step="2" readonly>
+                <button class="btn-step" onclick="adjustPokerBlind(5)">+5</button>
+                <button class="btn-step" onclick="adjustPokerBlind(25)">+25</button>
+                <button class="btn-step max-btn" onclick="setPokerBlindMax()">MÁX</button>
               </div>
-              <button class="btn-cyber-primary" id="btnPokerDeal" onclick="startPokerHand()">
-                DAR CARTAS (ANTE)
+              <button class="btn-cyber-primary" id="btnPokerStart" onclick="startHoldemHand()">
+                INICIAR RODADA
               </button>
             </div>
 
-            <div class="poker-decision-actions" id="pokerDecisionActions" style="display: none;">
-              <button class="btn-cyber-action btn-call" id="btnPokerCall" onclick="pokerPlayerCall()">
-                <span class="action-icon">&#x2714;</span> PAGAR / CONTINUAR (<span id="callCostLabel">20</span> FICHAS)
+            <!-- Controles de Ação Por Turno -->
+            <div class="poker-turn-actions" id="pokerTurnActions" style="display: none;">
+              <button class="btn-cyber-action btn-fold" id="btnPokerFold" onclick="pokerActionFold()">
+                <span class="action-icon">&#x2716;</span> SAIR / DESISTIR (FOLD)
               </button>
-              <button class="btn-cyber-action btn-fold" id="btnPokerFold" onclick="pokerPlayerFold()">
-                <span class="action-icon">&#x2716;</span> DESISTIR (FOLD)
+
+              <button class="btn-cyber-action btn-check" id="btnPokerCheck" onclick="pokerActionCheck()">
+                <span class="action-icon">&#x21BB;</span> MESA (CHECK)
+              </button>
+
+              <button class="btn-cyber-action btn-call" id="btnPokerCall" onclick="pokerActionCall()">
+                <span class="action-icon">&#x2714;</span> PAGAR (<span id="pokerCallBtnAmount">0</span> FG)
+              </button>
+
+              <!-- Aumentar Aposta -->
+              <div class="raise-action-group">
+                <input type="number" id="pokerRaiseAmountInput" value="10" min="5" step="5">
+                <button class="btn-cyber-action btn-raise" id="btnPokerRaise" onclick="pokerActionRaise()">
+                  <span class="action-icon">&#x25B2;</span> AUMENTAR (RAISE)
+                </button>
+              </div>
+
+              <!-- Botão ALL-IN -->
+              <button class="btn-cyber-action btn-allin glow-red" id="btnPokerAllIn" onclick="pokerActionAllIn()">
+                <span class="action-icon">&#x26A1;</span> ALL-IN (<span id="pokerAllInBtnAmount">0</span> FG)
               </button>
             </div>
           </div>
@@ -499,7 +523,7 @@
         <div class="console-stream" id="consoleStream">
           <div class="log-line sys-init">> [DATAPAD BOOT]: Inicialização de sub-rotinas criptográficas concluída.</div>
           <div class="log-line sys-info">> [CÂMBIO]: Taxa atual fixada em: 10 Créditos Imperiais = 1 Ficha Galáctica.</div>
-          <div class="log-line sys-ready">> [SISTEMA]: Mesa de Pôquer 1v1 Heads-Up integrada ao Datapad.</div>
+          <div class="log-line sys-ready">> [SISTEMA]: Texas Hold'em 1v1 com All-In integrado ao Datapad.</div>
         </div>
       </div>
     </footer>

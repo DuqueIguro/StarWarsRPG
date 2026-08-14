@@ -182,9 +182,7 @@ body {
   50% { opacity: 0.4; transform: scale(0.8); }
 }
 
-.brand-badge {
-  text-align: center;
-}
+.brand-badge { text-align: center; }
 .brand-glitch {
   font-family: var(--font-display);
   font-size: 1.35rem;
@@ -279,9 +277,7 @@ body {
   font-size: 0.65rem;
   opacity: 0.7;
 }
-.chip-glow-icon {
-  color: var(--neon-cyan);
-}
+.chip-glow-icon { color: var(--neon-cyan); }
 .balance-divider {
   width: 1px;
   height: 28px;
@@ -361,9 +357,7 @@ body {
   display: none;
   animation: fadeInModule 0.35s ease-out forwards;
 }
-.game-section.active {
-  display: block;
-}
+.game-section.active { display: block; }
 @keyframes fadeInModule {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
@@ -404,10 +398,7 @@ body {
   font-size: 0.72rem;
   color: #6b8caa;
 }
-.history-chips {
-  display: flex;
-  gap: 5px;
-}
+.history-chips { display: flex; gap: 5px; }
 .hist-badge {
   width: 26px;
   height: 26px;
@@ -573,10 +564,7 @@ body {
   font-size: 0.72rem;
   color: #799bbb;
 }
-.chip-options {
-  display: flex;
-  gap: 8px;
-}
+.chip-options { display: flex; gap: 8px; }
 .chip-btn {
   width: 36px;
   height: 36px;
@@ -910,10 +898,7 @@ body {
   color: #799fc4;
 }
 
-.bj-play-actions, .poker-decision-actions {
-  display: flex;
-  gap: 12px;
-}
+.bj-play-actions { display: flex; gap: 12px; }
 
 .btn-cyber-action {
   background: rgba(10, 20, 36, 0.9);
@@ -923,7 +908,7 @@ body {
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 1px;
-  padding: 12px 18px;
+  padding: 10px 16px;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -942,11 +927,20 @@ body {
 .btn-stand, .btn-fold { border-color: var(--neon-red); color: var(--neon-red); }
 .btn-stand:hover, .btn-fold:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 15px var(--neon-red-glow); }
 
+.btn-check { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+.btn-check:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+
+.btn-raise { border-color: var(--neon-amber); color: var(--neon-amber); }
+.btn-raise:hover { background: var(--neon-amber); color: #000; box-shadow: 0 0 15px var(--neon-amber); }
+
+.btn-allin { border-color: #ff0055; color: #ff0055; background: rgba(255, 0, 85, 0.15); }
+.btn-allin:hover { background: #ff0055; color: #fff; box-shadow: 0 0 20px rgba(255, 0, 85, 0.8); }
+
 .btn-double { border-color: var(--neon-amber); color: var(--neon-amber); }
 .btn-double:hover { background: var(--neon-amber); color: #000; box-shadow: 0 0 15px var(--neon-amber); }
 
 /* ==========================================================================
-   3. HOLO-POKER 1v1 (CASINO HOLD'EM)
+   3. TEXAS HOLD'EM 1v1 COMPLETO COM TURNOS E ALL-IN
    ========================================================================== */
 .poker-arena {
   display: flex;
@@ -975,6 +969,22 @@ body {
   align-items: center;
 }
 
+.actor-stats {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.actor-chips-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--neon-amber);
+  background: rgba(255, 170, 0, 0.08);
+  border: 1px solid rgba(255, 170, 0, 0.25);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
 .hand-eval-tag {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -997,7 +1007,6 @@ body {
   min-height: 100px;
 }
 
-/* Área Comunitária do Pôquer */
 .poker-community-zone {
   background: radial-gradient(circle at center, rgba(0, 240, 255, 0.08) 0%, rgba(3, 8, 16, 0.95) 75%);
   border: 1px solid rgba(0, 240, 255, 0.3);
@@ -1027,12 +1036,18 @@ body {
   color: #ffd700;
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
 }
-.community-label {
-  color: #6385a5;
+.round-phase-indicator {
+  color: var(--neon-cyan);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
   letter-spacing: 1.5px;
 }
-.ante-bet-info {
-  color: #799fc4;
+.call-to-match {
+  color: #a8c4e0;
+}
+.call-to-match span {
+  color: var(--neon-amber);
+  font-weight: bold;
 }
 
 .community-cards-wrap {
@@ -1041,6 +1056,33 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100px;
+}
+
+.poker-turn-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.raise-action-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.raise-action-group input {
+  background: #000;
+  border: 1px solid var(--neon-amber);
+  color: #ffd700;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  width: 75px;
+  text-align: center;
+  padding: 8px;
+  border-radius: 4px;
+  outline: none;
 }
 
 /* ==========================================================================
@@ -1176,9 +1218,7 @@ body {
   border-color: var(--neon-amber);
 }
 
-.btn-spin-slot {
-  width: 220px;
-}
+.btn-spin-slot { width: 220px; }
 
 /* ==========================================================================
    5. DADOS SABACC 3D
@@ -1315,9 +1355,7 @@ body {
 /* ==========================================================================
    FOOTER: CONSOLE LOG E TELEMETRIA
    ========================================================================== */
-.datapad-footer {
-  margin-top: 4px;
-}
+.datapad-footer { margin-top: 4px; }
 .console-box {
   background: rgba(2, 5, 10, 0.95);
   border: 1px solid rgba(0, 240, 255, 0.25);
@@ -1369,7 +1407,7 @@ body {
 .log-warn { color: var(--neon-amber); }
 
 /* ==========================================================================
-   MODAL DE CÂMBIO (COMPRA E DEVOLUÇÃO DE FICHAS)
+   MODAL DE CÂMBIO
    ========================================================================== */
 .cambio-modal-backdrop {
   position: fixed;
@@ -1421,9 +1459,7 @@ body {
   align-items: center;
   gap: 8px;
 }
-.modal-symbol {
-  color: var(--neon-amber);
-}
+.modal-symbol { color: var(--neon-amber); }
 .btn-modal-close {
   background: transparent;
   border: none;
@@ -1524,14 +1560,9 @@ body {
   font-size: 0.78rem;
   color: #a0c2e2;
 }
-.cost-preview strong {
-  color: #ffd700;
-}
+.cost-preview strong { color: #ffd700; }
 
-.quick-chip-buttons {
-  display: flex;
-  gap: 6px;
-}
+.quick-chip-buttons { display: flex; gap: 6px; }
 .quick-chip-buttons button {
   flex: 1;
   background: rgba(0, 240, 255, 0.1);
@@ -1549,10 +1580,7 @@ body {
   color: #000;
 }
 
-.btn-modal-action {
-  margin-top: 6px;
-  padding: 10px;
-}
+.btn-modal-action { margin-top: 6px; padding: 10px; }
 
 .modal-footer-note {
   text-align: center;
@@ -1567,10 +1595,6 @@ body {
     grid-template-columns: 1fr;
     justify-items: center;
   }
-  .exchange-grid {
-    grid-template-columns: 1fr;
-  }
-  .datapad-tabs {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .exchange-grid { grid-template-columns: 1fr; }
+  .datapad-tabs { grid-template-columns: repeat(3, 1fr); }
 }

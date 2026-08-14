@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DATAPAD CASINO - LÓGICA DE JOGOS, CÂMBIO, BLACKJACK 21 & HOLO-POKER 1v1
+   DATAPAD CASINO - LÓGICA DE JOGOS, CÂMBIO, BLACKJACK 21 & TEXAS HOLD'EM 1v1
    ========================================================================== */
 
 // Estado da Carteira Galáctica (1 Ficha = 10 Créditos Imperiais)
@@ -10,7 +10,61 @@ let audioMuted = false;
 let currentSelectedChip = 1; // 1, 5, 10, 50, 100 Fichas
 
 // ==========================================================================
-// 1. MOTOR DE ÁUDIO SINTETIZADO (Web Audio API)
+// 1. TRAVA DE NAVEGAÇÃO ENTRE JOGOS EM ANDAMENTO
+// ==========================================================================
+function isAnyGameInProgress() {
+  if (isRouletteSpinning) return "a Roleta Quântica terminar de girar";
+  if (bjGameActive) return "a rodada atual de Blackjack ser finalizada";
+  if (pokerState.active) return "a mão de Texas Hold'em ser concluída ou você dar Fold";
+  if (isSlotSpinning) return "as bobinas do Slot Matrix pararem";
+  if (isSabaccRolling) return "os Dados de Sabacc terminarem de rolar";
+  return null;
+}
+
+function switchGame(gameId, buttonElement) {
+  const ongoing = isAnyGameInProgress();
+  if (ongoing) {
+    playSound('loss');
+    logConsole(`ACESSO BLOQUEADO: Você deve aguardar ${ongoing} para trocar de setor!`, 'log-warn');
+    alert(`Atenção: Finalize a rodada em andamento antes de trocar de jogo! (${ongoing})`);
+    return;
+  }
+
+  playSound('click');
+  document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-module').forEach(b => b.classList.remove('active'));
+  
+  document.getElementById(`game-${gameId}`).classList.add('active');
+  buttonElement.classList.add('active');
+  logConsole(`Interface alternada para o setor: ${gameId.toUpperCase()}`);
+}
+
+function voltarInicio() {
+  const ongoing = isAnyGameInProgress();
+  if (ongoing) {
+    playSound('loss');
+    alert(`Você não pode sair do cassino enquanto uma partida estiver em andamento! (${ongoing})`);
+    return;
+  }
+
+  playSound('click');
+  if (casinoChips > 0) {
+    const querDevolver = confirm(`Você ainda possui ${casinoChips} Fichas Galácticas! Deseja converter tudo de volta para ${casinoChips * 10} Créditos Imperiais antes de sair?`);
+    if (querDevolver) {
+      imperialCredits += casinoChips * 10;
+      casinoChips = 0;
+      updateDisplays();
+      logConsole("Todas as fichas foram devolvidas ao cofre central.", "log-win");
+    } else {
+      logConsole("Fichas mantidas no armazenamento de memória do Datapad.", "log-info");
+    }
+  }
+  alert("Redirecionando para o Terminal Central");
+  window.location.href = "../menu";
+}
+
+// ==========================================================================
+// 2. MOTOR DE ÁUDIO SINTETIZADO (Web Audio API)
 // ==========================================================================
 let audioCtx = null;
 
@@ -64,6 +118,19 @@ function playSound(type) {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
       osc.start(now);
       osc.stop(now + 0.03);
+    } else if (type === 'allin') {
+      [220, 440, 880, 1760].forEach((f, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(f, now + i * 0.05);
+        g.gain.setValueAtTime(0.2, now + i * 0.05);
+        g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.25);
+        o.start(now + i * 0.05);
+        o.stop(now + i * 0.05 + 0.25);
+      });
     } else if (type === 'win') {
       const notes = [440, 554.37, 659.25, 880];
       notes.forEach((freq, i) => {
@@ -100,7 +167,7 @@ function toggleAudio() {
 }
 
 // ==========================================================================
-// 2. FUNDO CANVAS DE HIPERESPAÇO
+// 3. FUNDO CANVAS DE HIPERESPAÇO
 // ==========================================================================
 const canvas = document.getElementById('spaceCanvas');
 const ctx = canvas.getContext('2d');
@@ -140,7 +207,7 @@ function renderSpace() {
 renderSpace();
 
 // ==========================================================================
-// 3. ATUALIZAÇÃO DE SALDOS, LOGS & NAVEGAÇÃO
+// 4. ATUALIZAÇÃO DE SALDOS E LOGS
 // ==========================================================================
 function updateDisplays() {
   document.getElementById('imperialCreditsDisplay').textContent = imperialCredits.toLocaleString('pt-BR');
@@ -161,37 +228,15 @@ function clearConsoleLog() {
   logConsole('Buffer de telemetria limpo.', 'log-info');
 }
 
-function switchGame(gameId, buttonElement) {
-  playSound('click');
-  document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab-module').forEach(b => b.classList.remove('active'));
-  
-  document.getElementById(`game-${gameId}`).classList.add('active');
-  buttonElement.classList.add('active');
-  logConsole(`Interface alternada para o setor: ${gameId.toUpperCase()}`);
-}
-
-function voltarInicio() {
-  playSound('click');
-  if (casinoChips > 0) {
-    const querDevolver = confirm(`Você ainda possui ${casinoChips} Fichas Galácticas! Deseja converter tudo de volta para ${casinoChips * 10} Créditos Imperiais antes de sair?`);
-    if (querDevolver) {
-      imperialCredits += casinoChips * 10;
-      casinoChips = 0;
-      updateDisplays();
-      logConsole("Todas as fichas foram devolvidas ao cofre central.", "log-win");
-    } else {
-      logConsole("Fichas mantidas no armazenamento de memória do Datapad.", "log-info");
-    }
-  }
-  alert("Redirecionando para o Terminal Central / Hangar Principal...");
-  // window.location.href = "index.html";
-}
-
 // ==========================================================================
-// 4. CASA DE CÂMBIO (COMPRA E RESGATE DE FICHAS)
+// 5. CASA DE CÂMBIO
 // ==========================================================================
 function openExchangeModal() {
+  if (isAnyGameInProgress()) {
+    playSound('loss');
+    alert("Finalize a rodada do jogo em andamento antes de realizar câmbio!");
+    return;
+  }
   playSound('click');
   document.getElementById('exchangeModal').classList.add('active');
   updateBuyCostPreview();
@@ -280,7 +325,7 @@ function executeSellChips() {
 }
 
 // ==========================================================================
-// 5. MÓDULO ROLETA EUROPEIA COMPLETA (EM FICHAS)
+// 6. MÓDULO ROLETA EUROPEIA COMPLETA
 // ==========================================================================
 const ROULETTE_NUMBERS = [
   0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 
@@ -393,6 +438,7 @@ function initRouletteBoard() {
 }
 
 function selectChip(amount, elem) {
+  if (isRouletteSpinning) return;
   playSound('chip');
   currentSelectedChip = amount;
   document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
@@ -597,7 +643,7 @@ function addRouletteHistory(num, color) {
 }
 
 // ==========================================================================
-// 6. MOTOR DE CARTAS & BLACKJACK 21
+// 7. MOTOR DE CARTAS & BLACKJACK 21
 // ==========================================================================
 const CARD_SUITS = [
   { name: 'kyber', symbol: '♦', isRed: true },
@@ -828,40 +874,47 @@ function finishBlackjackRound() {
 }
 
 // ==========================================================================
-// 7. MÓDULO HOLO-POKER 1v1 (CASINO HOLD'EM COMPLETO)
+// 8. MÓDULO TEXAS HOLD'EM 1v1 (COM SISTEMA DE ALL-IN)
 // ==========================================================================
-let pokerDeck = [];
-let pokerPlayerHand = [];
-let pokerDealerHand = [];
-let pokerCommunityCards = [];
-let pokerAnteBet = 10;
-let pokerCallBet = 0;
-let pokerStage = 'idle'; // 'idle', 'flop_dealt', 'finished'
-
 const RANK_VALUES_POKER = {
   '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
   '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
 };
 
-function adjustPokerAnte(delta) {
-  if (pokerStage !== 'idle') return;
+let pokerState = {
+  active: false,
+  phase: 'preflop', // 'preflop', 'flop', 'turn', 'river', 'showdown'
+  deck: [],
+  playerHand: [],
+  dealerHand: [],
+  communityCards: [],
+  pot: 0,
+  playerRoundBet: 0,
+  dealerRoundBet: 0,
+  currentHighBet: 0,
+  minRaise: 10,
+  isAllIn: false
+};
+
+function adjustPokerBlind(delta) {
+  if (pokerState.active) return;
   playSound('click');
-  const input = document.getElementById('pokerAnteInput');
+  const input = document.getElementById('pokerBlindInput');
   let val = parseInt(input.value) + delta;
-  if (val < 1) val = 1;
-  if (val * 3 > casinoChips) val = Math.max(1, Math.floor(casinoChips / 3));
+  if (val < 2) val = 2;
+  if (val > casinoChips) val = Math.max(2, casinoChips);
   input.value = val;
 }
 
-function setPokerAnteMax() {
-  if (pokerStage !== 'idle') return;
+function setPokerBlindMax() {
+  if (pokerState.active) return;
   playSound('chip');
-  document.getElementById('pokerAnteInput').value = Math.max(1, Math.floor(casinoChips / 3));
+  document.getElementById('pokerBlindInput').value = Math.max(2, casinoChips);
 }
 
-// Avaliador de Mãos de Pôquer (Texas Hold'em 7 Cartas)
-function evaluatePokerHand(sevenCards) {
-  const cards = sevenCards.map(c => ({
+// Avaliador Universal de Mãos de Poker (Texas Hold'em 7 cartas)
+function evaluatePokerHand(allCards) {
+  const cards = allCards.map(c => ({
     rank: c.rank,
     val: RANK_VALUES_POKER[c.rank],
     suit: c.suit.name
@@ -886,7 +939,6 @@ function evaluatePokerHand(sevenCards) {
     hand.sort((a, b) => b.val - a.val);
 
     const isFlush = hand.every(c => c.suit === hand[0].suit);
-    
     let isStraight = false;
     let straightHigh = 0;
     const uniqueVals = [...new Set(hand.map(c => c.val))];
@@ -957,45 +1009,83 @@ function evaluatePokerHand(sevenCards) {
   return bestScore;
 }
 
-function startPokerHand() {
-  if (pokerStage !== 'idle') return;
-  const ante = parseInt(document.getElementById('pokerAnteInput').value) || 0;
+// Inicia a Mão de Hold'em
+function startHoldemHand() {
+  if (pokerState.active) return;
+  const blind = parseInt(document.getElementById('pokerBlindInput').value) || 10;
 
-  if (ante <= 0 || ante > casinoChips) {
+  if (blind > casinoChips || blind <= 0) {
     playSound('loss');
-    logConsole("Fichas insuficientes para o Ante de Pôquer!", "log-loss");
+    logConsole("Fichas insuficientes para os Blinds do Pôquer!", "log-loss");
     return;
   }
 
-  casinoChips -= ante;
-  pokerAnteBet = ante;
-  pokerCallBet = ante * 2;
+  casinoChips -= blind;
   updateDisplays();
 
-  pokerDeck = createShuffledDeck();
-  pokerPlayerHand = [pokerDeck.pop(), pokerDeck.pop()];
-  pokerDealerHand = [pokerDeck.pop(), pokerDeck.pop()];
-  pokerCommunityCards = [pokerDeck.pop(), pokerDeck.pop(), pokerDeck.pop()];
+  pokerState.active = true;
+  pokerState.isAllIn = false;
+  pokerState.phase = 'preflop';
+  pokerState.deck = createShuffledDeck();
+  pokerState.playerHand = [pokerState.deck.pop(), pokerState.deck.pop()];
+  pokerState.dealerHand = [pokerState.deck.pop(), pokerState.deck.pop()];
+  pokerState.communityCards = [];
+  pokerState.pot = blind * 2;
+  pokerState.playerRoundBet = blind;
+  pokerState.dealerRoundBet = blind;
+  pokerState.currentHighBet = blind;
+  pokerState.minRaise = Math.max(5, blind);
 
-  pokerStage = 'flop_dealt';
   playSound('card');
 
-  document.getElementById('pokerAnteDisplay').textContent = pokerAnteBet;
-  document.getElementById('pokerCallDisplay').textContent = '0';
-  document.getElementById('pokerPotValue').textContent = pokerAnteBet;
-  document.getElementById('callCostLabel').textContent = pokerCallBet;
-
-  document.getElementById('pokerAnteControls').style.display = 'none';
-  document.getElementById('pokerDecisionActions').style.display = 'flex';
-  document.getElementById('btnPokerCall').disabled = (casinoChips < pokerCallBet);
-
-  document.getElementById('pokerStatusBadge').textContent = `FLOP NA MESA! PAGUE (${pokerCallBet} FG) OU DESISTA (FOLD)`;
+  document.getElementById('pokerStartControls').style.display = 'none';
+  document.getElementById('pokerTurnActions').style.display = 'flex';
   document.getElementById('pokerDealerEval').textContent = "CARTAS OCULTAS";
-
+  
+  updatePokerHUD();
   renderPokerTable(true);
+  updatePokerTurnButtons();
+}
 
-  const currentEval = evaluatePokerHand([...pokerPlayerHand, ...pokerCommunityCards]);
-  document.getElementById('pokerPlayerEval').textContent = `MÃO ATUAL: ${currentEval.name.toUpperCase()}`;
+function updatePokerHUD() {
+  document.getElementById('pokerPotValue').textContent = pokerState.pot;
+  document.getElementById('pokerPlayerBetTag').textContent = `APOSTADO: ${pokerState.playerRoundBet} FG`;
+  document.getElementById('pokerDealerBetTag').textContent = `APOSTADO: ${pokerState.dealerRoundBet} FG`;
+  document.getElementById('pokerPhaseIndicator').textContent = `FASE: ${pokerState.phase.toUpperCase()}`;
+
+  const toCall = pokerState.currentHighBet - pokerState.playerRoundBet;
+  document.getElementById('pokerToCallAmount').textContent = toCall;
+  document.getElementById('pokerCallBtnAmount').textContent = toCall;
+  document.getElementById('pokerAllInBtnAmount').textContent = casinoChips;
+
+  // Avalia mão atual do jogador
+  const playerEvalCards = [...pokerState.playerHand, ...pokerState.communityCards];
+  if (playerEvalCards.length >= 5) {
+    const ev = evaluatePokerHand(playerEvalCards);
+    document.getElementById('pokerPlayerEval').textContent = `MÃO: ${ev.name.toUpperCase()}`;
+  } else {
+    document.getElementById('pokerPlayerEval').textContent = `MÃO: ${pokerState.playerHand[0].rank} & ${pokerState.playerHand[1].rank}`;
+  }
+}
+
+function updatePokerTurnButtons() {
+  const toCall = pokerState.currentHighBet - pokerState.playerRoundBet;
+  
+  if (toCall === 0) {
+    document.getElementById('btnPokerCheck').style.display = 'inline-flex';
+    document.getElementById('btnPokerCall').style.display = 'none';
+  } else {
+    document.getElementById('btnPokerCheck').style.display = 'none';
+    document.getElementById('btnPokerCall').style.display = 'inline-flex';
+    document.getElementById('btnPokerCall').disabled = (casinoChips < toCall);
+  }
+
+  const raiseInput = document.getElementById('pokerRaiseAmountInput');
+  raiseInput.min = pokerState.minRaise;
+  raiseInput.value = Math.max(pokerState.minRaise, toCall + pokerState.minRaise);
+
+  document.getElementById('btnPokerRaise').disabled = (casinoChips <= toCall);
+  document.getElementById('btnPokerAllIn').disabled = (casinoChips === 0);
 }
 
 function renderPokerTable(hideDealer = true) {
@@ -1007,100 +1097,270 @@ function renderPokerTable(hideDealer = true) {
   dCards.innerHTML = '';
   cCards.innerHTML = '';
 
-  pokerPlayerHand.forEach(c => pCards.appendChild(renderBjCard(c)));
-  pokerDealerHand.forEach(c => dCards.appendChild(renderBjCard(c, hideDealer)));
-  pokerCommunityCards.forEach(c => cCards.appendChild(renderBjCard(c)));
+  pokerState.playerHand.forEach(c => pCards.appendChild(renderBjCard(c)));
+  pokerState.dealerHand.forEach(c => dCards.appendChild(renderBjCard(c, hideDealer)));
+  pokerState.communityCards.forEach(c => cCards.appendChild(renderBjCard(c)));
 }
 
-function pokerPlayerFold() {
-  if (pokerStage !== 'flop_dealt') return;
+// Ações do Jogador
+function pokerActionFold() {
+  if (!pokerState.active) return;
   playSound('loss');
-  pokerStage = 'idle';
+  
+  pokerState.active = false;
+  document.getElementById('pokerStatusBadge').textContent = `VOCÊ DESISTIU (FOLD)! Pote de ${pokerState.pot} FG recolhido pelo Crupiê.`;
+  logConsole(`PÔQUER: Você desistiu. Perda de ${pokerState.playerRoundBet} FG nesta mão.`, 'log-loss');
 
-  document.getElementById('pokerStatusBadge').textContent = `VOCÊ DESISTIU! Perda do Ante de ${pokerAnteBet} Fichas.`;
-  logConsole(`PÔQUER: Você desistiu (Fold). -${pokerAnteBet} Fichas perdidas.`, 'log-loss');
-
-  document.getElementById('pokerAnteControls').style.display = 'flex';
-  document.getElementById('pokerDecisionActions').style.display = 'none';
-  document.getElementById('pokerPotValue').textContent = '0';
-  document.getElementById('pokerPlayerEval').textContent = 'DESISTIU DA RODADA';
+  endPokerHandUI();
 }
 
-function pokerPlayerCall() {
-  if (pokerStage !== 'flop_dealt') return;
-  if (casinoChips < pokerCallBet) {
+function pokerActionCheck() {
+  if (!pokerState.active) return;
+  playSound('click');
+  logConsole("PÔQUER: Você deu Mesa (Check).", "log-info");
+
+  dealerTurnDecision('check');
+}
+
+function pokerActionCall() {
+  if (!pokerState.active) return;
+  const toCall = pokerState.currentHighBet - pokerState.playerRoundBet;
+  
+  if (casinoChips < toCall) {
     playSound('loss');
-    logConsole("Fichas insuficientes para dar Call!", "log-loss");
+    logConsole("Fichas insuficientes para pagar a aposta!", "log-loss");
     return;
   }
 
-  casinoChips -= pokerCallBet;
+  casinoChips -= toCall;
+  pokerState.playerRoundBet += toCall;
+  pokerState.pot += toCall;
   updateDisplays();
 
-  pokerCommunityCards.push(pokerDeck.pop(), pokerDeck.pop());
-  pokerStage = 'finished';
+  playSound('chip');
+  logConsole(`PÔQUER: Você pagou (Call) ${toCall} FG.`, "log-info");
+
+  advancePokerPhase();
+}
+
+function pokerActionRaise() {
+  if (!pokerState.active) return;
+  const raiseVal = parseInt(document.getElementById('pokerRaiseAmountInput').value) || pokerState.minRaise;
+  const toCall = pokerState.currentHighBet - pokerState.playerRoundBet;
+  const totalNeeded = toCall + raiseVal;
+
+  if (casinoChips < totalNeeded) {
+    playSound('loss');
+    logConsole("Fichas insuficientes para aumentar a aposta! Use All-In.", "log-loss");
+    return;
+  }
+
+  casinoChips -= totalNeeded;
+  pokerState.playerRoundBet += totalNeeded;
+  pokerState.pot += totalNeeded;
+  pokerState.currentHighBet = pokerState.playerRoundBet;
+  updateDisplays();
 
   playSound('chip');
-  playSound('card');
+  logConsole(`PÔQUER: Você aumentou (Raise) em +${raiseVal} FG! (Total apostado: ${pokerState.playerRoundBet} FG)`, "log-win");
 
-  const totalPot = pokerAnteBet + pokerCallBet;
-  document.getElementById('pokerCallDisplay').textContent = pokerCallBet;
-  document.getElementById('pokerPotValue').textContent = totalPot * 2;
+  dealerTurnDecision('facing_raise', totalNeeded);
+}
+
+// SISTEMA DE ALL-IN DO JOGADOR
+function pokerActionAllIn() {
+  if (!pokerState.active || casinoChips <= 0) return;
+  
+  const allInAmount = casinoChips;
+  casinoChips = 0;
+  pokerState.playerRoundBet += allInAmount;
+  pokerState.pot += allInAmount;
+  pokerState.currentHighBet = Math.max(pokerState.currentHighBet, pokerState.playerRoundBet);
+  pokerState.isAllIn = true;
+  updateDisplays();
+
+  playSound('allin');
+  document.getElementById('pokerStatusBadge').textContent = `⚡ ALL-IN DO JOGADOR! ${allInAmount} FICHAS NO POTE!`;
+  logConsole(`⚡ ALL-IN! Você arriscou todas as suas ${allInAmount} Fichas Galácticas!`, 'log-warn');
+  
+  updatePokerHUD();
+
+  dealerTurnDecision('facing_allin', allInAmount);
+}
+
+// IA do Crupiê Androide
+function dealerTurnDecision(context, raiseAmount = 0) {
+  updatePokerHUD();
+  const currentDealerCards = [...pokerState.dealerHand, ...pokerState.communityCards];
+  let dealerStrength = 0;
+  
+  if (currentDealerCards.length >= 5) {
+    const ev = evaluatePokerHand(currentDealerCards);
+    dealerStrength = ev.rank;
+  } else {
+    const r1 = RANK_VALUES_POKER[pokerState.dealerHand[0].rank];
+    const r2 = RANK_VALUES_POKER[pokerState.dealerHand[1].rank];
+    if (r1 === r2) dealerStrength = 2;
+    else if (r1 >= 10 || r2 >= 10) dealerStrength = 1;
+  }
+
+  setTimeout(() => {
+    if (context === 'check') {
+      if (dealerStrength >= 2 && Math.random() < 0.6) {
+        const dBet = 10;
+        pokerState.dealerRoundBet += dBet;
+        pokerState.pot += dBet;
+        pokerState.currentHighBet = pokerState.dealerRoundBet;
+        playSound('chip');
+        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ APOSTOU ${dBet} FG! PAGUE (CALL), AUMENTE OU ALL-IN.`;
+        logConsole(`CRUPIÊ: Apostou +${dBet} FG na mesa!`, 'log-warn');
+        updatePokerHUD();
+        updatePokerTurnButtons();
+      } else {
+        logConsole("CRUPIÊ: Deu Mesa (Check). Avançando rodada...", "log-info");
+        advancePokerPhase();
+      }
+    } else if (context === 'facing_raise') {
+      const toCallDealer = pokerState.currentHighBet - pokerState.dealerRoundBet;
+      if (dealerStrength >= 1 || Math.random() < 0.45) {
+        pokerState.dealerRoundBet += toCallDealer;
+        pokerState.pot += toCallDealer;
+        playSound('chip');
+        logConsole(`CRUPIÊ: Pagou o seu Raise (+${toCallDealer} FG).`, "log-info");
+        advancePokerPhase();
+      } else {
+        playSound('win');
+        casinoChips += pokerState.pot;
+        updateDisplays();
+        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ DESISTIU (FOLD)! Você venceu o pote de ${pokerState.pot} FG!`;
+        logConsole(`PÔQUER: Crupiê desistiu! Você levou o pote de +${pokerState.pot} FG!`, 'log-win');
+        pokerState.active = false;
+        endPokerHandUI();
+      }
+    } else if (context === 'facing_allin') {
+      const toCallDealer = pokerState.currentHighBet - pokerState.dealerRoundBet;
+      
+      if (dealerStrength >= 1 || (dealerStrength === 0 && Math.random() < 0.25)) {
+        pokerState.dealerRoundBet += toCallDealer;
+        pokerState.pot += toCallDealer;
+        playSound('allin');
+        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ PAGOU SEU ALL-IN (+${toCallDealer} FG)! REVELANDO O BORDO...`;
+        logConsole(`⚡ CRUPIÊ: Aceitou e pagou o seu ALL-IN! Distribuindo cartas restantes...`, 'log-warn');
+        
+        runAllInShowdownSequence();
+      } else {
+        playSound('win');
+        casinoChips += pokerState.pot;
+        updateDisplays();
+        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ FOLDOU DIANTE DO ALL-IN! Pote total de ${pokerState.pot} FG é seu!`;
+        logConsole(`PÔQUER: Crupiê não pagou o All-In. Você recolheu +${pokerState.pot} FG!`, 'log-win');
+        pokerState.active = false;
+        endPokerHandUI();
+      }
+    }
+  }, 750);
+}
+
+// Sequência dramática de cartas quando o All-In é pago
+function runAllInShowdownSequence() {
+  document.getElementById('pokerTurnActions').style.display = 'none';
+
+  function revealNextCommunityCard() {
+    if (pokerState.communityCards.length < 3) {
+      pokerState.communityCards.push(pokerState.deck.pop(), pokerState.deck.pop(), pokerState.deck.pop());
+    } else if (pokerState.communityCards.length < 5) {
+      pokerState.communityCards.push(pokerState.deck.pop());
+    }
+    
+    playSound('card');
+    renderPokerTable(true);
+    updatePokerHUD();
+
+    if (pokerState.communityCards.length < 5) {
+      setTimeout(revealNextCommunityCard, 900);
+    } else {
+      setTimeout(finalizePokerShowdown, 1000);
+    }
+  }
+
+  setTimeout(revealNextCommunityCard, 800);
+}
+
+// Avanço Normal de Fases
+function advancePokerPhase() {
+  pokerState.playerRoundBet = 0;
+  pokerState.dealerRoundBet = 0;
+  pokerState.currentHighBet = 0;
+
+  if (pokerState.phase === 'preflop') {
+    pokerState.phase = 'flop';
+    pokerState.communityCards.push(pokerState.deck.pop(), pokerState.deck.pop(), pokerState.deck.pop());
+    playSound('card');
+    document.getElementById('pokerStatusBadge').textContent = "FLOP NA MESA! AVALIE SUAS CARTAS E DEFINA A APOSTA.";
+  } else if (pokerState.phase === 'flop') {
+    pokerState.phase = 'turn';
+    pokerState.communityCards.push(pokerState.deck.pop());
+    playSound('card');
+    document.getElementById('pokerStatusBadge').textContent = "TURN NA MESA! QUARTA CARTA COMUNITÁRIA ABERTA.";
+  } else if (pokerState.phase === 'turn') {
+    pokerState.phase = 'river';
+    pokerState.communityCards.push(pokerState.deck.pop());
+    playSound('card');
+    document.getElementById('pokerStatusBadge').textContent = "RIVER NA MESA! ÚLTIMA RODADA DE APOSTAS ANTES DO SHOWDOWN.";
+  } else if (pokerState.phase === 'river') {
+    finalizePokerShowdown();
+    return;
+  }
+
+  renderPokerTable(true);
+  updatePokerHUD();
+  updatePokerTurnButtons();
+}
+
+function finalizePokerShowdown() {
+  pokerState.phase = 'showdown';
+  pokerState.active = false;
 
   renderPokerTable(false);
 
-  const playerResult = evaluatePokerHand([...pokerPlayerHand, ...pokerCommunityCards]);
-  const dealerResult = evaluatePokerHand([...pokerDealerHand, ...pokerCommunityCards]);
+  const playerEval = evaluatePokerHand([...pokerState.playerHand, ...pokerState.communityCards]);
+  const dealerEval = evaluatePokerHand([...pokerState.dealerHand, ...pokerState.communityCards]);
 
-  document.getElementById('pokerPlayerEval').textContent = `SUA MÃO: ${playerResult.name.toUpperCase()}`;
-  document.getElementById('pokerDealerEval').textContent = `CRUPIÊ: ${dealerResult.name.toUpperCase()}`;
+  document.getElementById('pokerPlayerEval').textContent = `SUA MÃO: ${playerEval.name.toUpperCase()}`;
+  document.getElementById('pokerDealerEval').textContent = `CRUPIÊ: ${dealerEval.name.toUpperCase()}`;
 
-  const dealerQualifies = (dealerResult.rank >= 1 && dealerResult.score >= 1040000) || dealerResult.rank >= 2;
-
-  let winnings = 0;
-  let statusMsg = '';
-
-  if (playerResult.score > dealerResult.score) {
-    let anteMult = 1;
-    if (playerResult.rank === 9) anteMult = 100;
-    else if (playerResult.rank === 8) anteMult = 20;
-    else if (playerResult.rank === 7) anteMult = 10;
-    else if (playerResult.rank === 6) anteMult = 3;
-    else if (playerResult.rank === 5) anteMult = 2;
-
-    const antePay = pokerAnteBet * (1 + anteMult);
-    const callPay = dealerQualifies ? (pokerCallBet * 2) : (pokerCallBet);
-
-    winnings = antePay + callPay;
-    casinoChips += winnings;
+  if (playerEval.score > dealerEval.score) {
+    casinoChips += pokerState.pot;
     updateDisplays();
-
     playSound('win');
-    statusMsg = `VITÓRIA NO PÔQUER! ${playerResult.name} vence ${dealerResult.name}! Ganhou +${winnings} Fichas!`;
-    logConsole(statusMsg, 'log-win');
-  } else if (playerResult.score === dealerResult.score) {
-    winnings = pokerAnteBet + pokerCallBet;
-    casinoChips += winnings;
+    const msg = `SHOWDOWN VITORIOSO! Seu ${playerEval.name} venceu ${dealerEval.name} do Crupiê! Ganhou o Pote de +${pokerState.pot} FG!`;
+    document.getElementById('pokerStatusBadge').textContent = msg;
+    logConsole(msg, 'log-win');
+  } else if (playerEval.score === dealerEval.score) {
+    const split = Math.floor(pokerState.pot / 2);
+    casinoChips += split;
     updateDisplays();
-
     playSound('chip');
-    statusMsg = `EMPATE (PUSH)! Ambas as mãos iguais (${playerResult.name}). Fichas devolvidas.`;
-    logConsole(statusMsg, 'log-info');
+    const msg = `EMPATE NO SHOWDOWN (${playerEval.name})! Pote dividido: +${split} FG.`;
+    document.getElementById('pokerStatusBadge').textContent = msg;
+    logConsole(msg, 'log-info');
   } else {
     playSound('loss');
-    statusMsg = `CRUPIÊ VENCEU com ${dealerResult.name} contra seu ${playerResult.name}. -${pokerAnteBet + pokerCallBet} Fichas.`;
-    logConsole(statusMsg, 'log-loss');
+    const msg = `CRUPIÊ VENCEU NO SHOWDOWN com ${dealerEval.name} contra seu ${playerEval.name}. Pote perdido.`;
+    document.getElementById('pokerStatusBadge').textContent = msg;
+    logConsole(msg, 'log-loss');
   }
 
-  document.getElementById('pokerStatusBadge').textContent = statusMsg;
+  endPokerHandUI();
+}
 
-  pokerStage = 'idle';
-  document.getElementById('pokerAnteControls').style.display = 'flex';
-  document.getElementById('pokerDecisionActions').style.display = 'none';
+function endPokerHandUI() {
+  document.getElementById('pokerStartControls').style.display = 'flex';
+  document.getElementById('pokerTurnActions').style.display = 'none';
 }
 
 // ==========================================================================
-// 8. MÓDULO SLOTS MATRIX (EM FICHAS)
+// 9. MÓDULO SLOTS MATRIX (EM FICHAS)
 // ==========================================================================
 const SLOT_SYMBOLS = ['⚔️', '💎', '🪐', '🚀', '⚡', '👾'];
 let isSlotSpinning = false;
@@ -1120,6 +1380,7 @@ function buildSlotReels() {
 }
 
 function adjustSlotBet(delta) {
+  if (isSlotSpinning) return;
   playSound('click');
   const input = document.getElementById('slotBetInput');
   let val = parseInt(input.value) + delta;
@@ -1129,6 +1390,7 @@ function adjustSlotBet(delta) {
 }
 
 function setSlotBetMax() {
+  if (isSlotSpinning) return;
   playSound('chip');
   document.getElementById('slotBetInput').value = Math.max(1, casinoChips);
 }
@@ -1202,7 +1464,7 @@ function spinSlotMachine() {
 }
 
 // ==========================================================================
-// 9. MÓDULO DADOS SABACC 3D (EM FICHAS)
+// 10. MÓDULO DADOS SABACC 3D (EM FICHAS)
 // ==========================================================================
 let isSabaccRolling = false;
 
