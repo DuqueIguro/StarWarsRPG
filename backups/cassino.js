@@ -1,33 +1,13 @@
 /* ==========================================================================
-   DATAPAD CASINO - LÓGICA DE JOGOS & SINTETIZADOR WEB AUDIO
+   DATAPAD CASINO - LÓGICA DE JOGOS, CÂMBIO & BLACKJACK 21
    ========================================================================== */
 
-// Estado Global do Jogador
-let galacticCredits = 5000;
+// Estado da Carteira Galáctica (1 Ficha = 10 Créditos Imperiais)
+let imperialCredits = 10000; // Créditos Imperiais (CI)
+let casinoChips = 200;       // Fichas Galácticas (FG)
+
 let audioMuted = false;
-let currentSelectedChip = 10;
-
-// Ordem dos números na Roleta Europeia real
-const ROULETTE_NUMBERS = [
-  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 
-  5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
-];
-
-const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-const BLACK_NUMBERS = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35];
-
-// Armazenamento de apostas na mesa da Roleta
-let activeRouletteBets = {
-  numbers: {},      // { "0": 50, "17": 100 }
-  colors: {},       // { "red": 100, "black": 0 }
-  even_odd: {},     // { "even": 50, "odd": 0 }
-  halves: {},       // { "1": 50, "2": 0 } (1-18, 19-36)
-  dozens: {},       // { "1": 100, "2": 0, "3": 0 }
-  columns: {}       // { "1": 50, "2": 0, "3": 0 }
-};
-
-let isRouletteSpinning = false;
-let rouletteHistoryList = [];
+let currentSelectedChip = 1; // 1, 5, 10, 50, 100 Fichas
 
 // ==========================================================================
 // 1. MOTOR DE ÁUDIO SINTETIZADO (Web Audio API)
@@ -69,6 +49,14 @@ function playSound(type) {
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
       osc.start(now);
       osc.stop(now + 0.08);
+    } else if (type === 'card') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(350, now);
+      osc.frequency.linearRampToValueAtTime(150, now + 0.06);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+      osc.start(now);
+      osc.stop(now + 0.06);
     } else if (type === 'spinTick') {
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(450, now);
@@ -152,10 +140,11 @@ function renderSpace() {
 renderSpace();
 
 // ==========================================================================
-// 3. UTILITÁRIOS GERAIS & NAVEGAÇÃO
+// 3. ATUALIZAÇÃO DE SALDOS, LOGS & NAVEGAÇÃO
 // ==========================================================================
-function updateCreditDisplay() {
-  document.getElementById('creditBalance').textContent = galacticCredits.toLocaleString('pt-BR');
+function updateDisplays() {
+  document.getElementById('imperialCreditsDisplay').textContent = imperialCredits.toLocaleString('pt-BR');
+  document.getElementById('casinoChipsDisplay').textContent = casinoChips.toLocaleString('pt-BR');
 }
 
 function logConsole(msg, type = 'log-info') {
@@ -184,19 +173,133 @@ function switchGame(gameId, buttonElement) {
 
 function voltarInicio() {
   playSound('click');
-  logConsole("Comando recebido: Retornar ao Terminal Principal.");
+  if (casinoChips > 0) {
+    const querDevolver = confirm(`Você ainda possui ${casinoChips} Fichas Galácticas! Deseja converter tudo de volta para ${casinoChips * 10} Créditos Imperiais antes de sair?`);
+    if (querDevolver) {
+      imperialCredits += casinoChips * 10;
+      casinoChips = 0;
+      updateDisplays();
+      logConsole("Todas as fichas foram devolvidas ao cofre central.", "log-win");
+    } else {
+      logConsole("Fichas mantidas no armazenamento de memória do Datapad.", "log-info");
+    }
+  }
   alert("Redirecionando para o Terminal Central / Hangar Principal...");
   // window.location.href = "index.html";
 }
 
 // ==========================================================================
-// 4. MÓDULO ROLETA EUROPEIA COMPLETA
+// 4. CASA DE CÂMBIO (COMPRA E RESGATE DE FICHAS)
 // ==========================================================================
+function openExchangeModal() {
+  playSound('click');
+  document.getElementById('exchangeModal').classList.add('active');
+  updateBuyCostPreview();
+  updateSellReturnPreview();
+}
+
+function closeExchangeModal() {
+  playSound('click');
+  document.getElementById('exchangeModal').classList.remove('active');
+}
+
+function updateBuyCostPreview() {
+  const amount = parseInt(document.getElementById('buyChipsAmount').value) || 0;
+  document.getElementById('buyCostPreview').textContent = (amount * 10).toLocaleString('pt-BR');
+}
+
+function setBuyChips(amount) {
+  playSound('click');
+  const input = document.getElementById('buyChipsAmount');
+  if (amount === 'max') {
+    input.value = Math.floor(imperialCredits / 10);
+  } else {
+    input.value = amount;
+  }
+  updateBuyCostPreview();
+}
+
+function executeBuyChips() {
+  const chipsToBuy = parseInt(document.getElementById('buyChipsAmount').value) || 0;
+  if (chipsToBuy <= 0) {
+    alert("Informe uma quantidade válida de fichas.");
+    return;
+  }
+
+  const cost = chipsToBuy * 10;
+  if (cost > imperialCredits) {
+    playSound('loss');
+    alert("Créditos Imperiais insuficientes para esta conversão!");
+    return;
+  }
+
+  imperialCredits -= cost;
+  casinoChips += chipsToBuy;
+  updateDisplays();
+  playSound('chip');
+  logConsole(`CÂMBIO REALIZADO: -${cost} CI -> +${chipsToBuy} Fichas Galácticas recebidas.`, 'log-win');
+  closeExchangeModal();
+}
+
+function updateSellReturnPreview() {
+  const amount = parseInt(document.getElementById('sellChipsAmount').value) || 0;
+  document.getElementById('sellReturnPreview').textContent = (amount * 10).toLocaleString('pt-BR');
+}
+
+function setSellChips(amount) {
+  playSound('click');
+  const input = document.getElementById('sellChipsAmount');
+  if (amount === 'all') {
+    input.value = casinoChips;
+  } else {
+    input.value = Math.min(amount, casinoChips);
+  }
+  updateSellReturnPreview();
+}
+
+function executeSellChips() {
+  const chipsToSell = parseInt(document.getElementById('sellChipsAmount').value) || 0;
+  if (chipsToSell <= 0) {
+    alert("Informe uma quantidade válida de fichas para devolver.");
+    return;
+  }
+
+  if (chipsToSell > casinoChips) {
+    playSound('loss');
+    alert("Você não possui essa quantidade de fichas no saldo!");
+    return;
+  }
+
+  const revenue = chipsToSell * 10;
+  casinoChips -= chipsToSell;
+  imperialCredits += revenue;
+  updateDisplays();
+  playSound('win');
+  logConsole(`FICHAS RESGATADAS: -${chipsToSell} Fichas -> +${revenue} Créditos Imperiais adicionados.`, 'log-win');
+  closeExchangeModal();
+}
+
+// ==========================================================================
+// 5. MÓDULO ROLETA EUROPEIA COMPLETA (EM FICHAS)
+// ==========================================================================
+const ROULETTE_NUMBERS = [
+  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 
+  5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
+];
+
+const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+const BLACK_NUMBERS = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35];
+
+let activeRouletteBets = {
+  numbers: {}, colors: {}, even_odd: {}, halves: {}, dozens: {}, columns: {}
+};
+
+let isRouletteSpinning = false;
 const rCanvas = document.getElementById('rouletteCanvas');
 const rCtx = rCanvas.getContext('2d');
 let wheelAngle = 0;
 let ballAngle = 0;
-let ballRadiusProgress = 1; // 1 = borda externa, 0 = bolso do número
+let ballRadiusProgress = 1;
 
 function drawRouletteWheel() {
   const cx = rCanvas.width / 2;
@@ -207,7 +310,6 @@ function drawRouletteWheel() {
 
   rCtx.clearRect(0, 0, rCanvas.width, rCanvas.height);
 
-  // Anel Externo Metálico
   rCtx.save();
   rCtx.translate(cx, cy);
   rCtx.rotate(wheelAngle);
@@ -216,13 +318,12 @@ function drawRouletteWheel() {
     const num = ROULETTE_NUMBERS[i];
     const angle = i * arc;
 
-    // Cor do Bolso
     if (num === 0) {
-      rCtx.fillStyle = '#008a47'; // Verde
+      rCtx.fillStyle = '#008a47';
     } else if (RED_NUMBERS.includes(num)) {
-      rCtx.fillStyle = '#b01030'; // Vermelho
+      rCtx.fillStyle = '#b01030';
     } else {
-      rCtx.fillStyle = '#101622'; // Preto
+      rCtx.fillStyle = '#101622';
     }
 
     rCtx.beginPath();
@@ -234,27 +335,25 @@ function drawRouletteWheel() {
     rCtx.lineWidth = 1;
     rCtx.stroke();
 
-    // Texto do Número
     rCtx.save();
     rCtx.rotate(angle + arc / 2);
     rCtx.fillStyle = '#ffffff';
     rCtx.font = 'bold 11px Orbitron';
     rCtx.textAlign = 'right';
-    rCtx.fillText(num, radius - 12, 4);
+    rCtx.fillText(num, radius - 10, 4);
     rCtx.restore();
   }
 
   rCtx.restore();
 
-  // Desenhar Bolinha Quântica de Plasma
   if (ballRadiusProgress > 0) {
-    const bR = 60 + (radius - 75) * ballRadiusProgress;
+    const bR = 55 + (radius - 70) * ballRadiusProgress;
     const bx = cx + Math.cos(ballAngle) * bR;
     const by = cy + Math.sin(ballAngle) * bR;
 
     rCtx.save();
     rCtx.beginPath();
-    rCtx.arc(bx, by, 6, 0, Math.PI * 2);
+    rCtx.arc(bx, by, 5, 0, Math.PI * 2);
     rCtx.fillStyle = '#00f0ff';
     rCtx.shadowColor = '#00f0ff';
     rCtx.shadowBlur = 12;
@@ -263,15 +362,10 @@ function drawRouletteWheel() {
   }
 }
 
-// Inicializar Tabuleiro da Roleta
 function initRouletteBoard() {
   const grid = document.getElementById('rouletteNumbersGrid');
   grid.innerHTML = '';
 
-  // Organizar em 3 linhas:
-  // Linha 1: 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36
-  // Linha 2: 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35
-  // Linha 3: 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34
   const rows = [
     [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
     [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
@@ -309,16 +403,15 @@ function placeRouletteBet(category, target) {
   if (isRouletteSpinning) return;
   playSound('chip');
 
-  if (galacticCredits < currentSelectedChip) {
-    logConsole("Créditos Galácticos insuficientes para posicionar ficha!", "log-loss");
+  if (casinoChips < currentSelectedChip) {
+    logConsole("Fichas insuficientes! Abra a Casa de Câmbio para converter Créditos.", "log-loss");
     playSound('loss');
     return;
   }
 
-  galacticCredits -= currentSelectedChip;
-  updateCreditDisplay();
+  casinoChips -= currentSelectedChip;
+  updateDisplays();
 
-  // Registrar aposta no modelo
   let markerId = '';
   if (category === 'number') {
     activeRouletteBets.numbers[target] = (activeRouletteBets.numbers[target] || 0) + currentSelectedChip;
@@ -340,7 +433,6 @@ function placeRouletteBet(category, target) {
     markerId = `marker-col-${target}`;
   }
 
-  // Atualizar marcador visual
   const marker = document.getElementById(markerId);
   if (marker) {
     marker.classList.add('active');
@@ -349,7 +441,7 @@ function placeRouletteBet(category, target) {
   }
 
   updateRouletteTableTotal();
-  logConsole(`Aposta de ${currentSelectedChip} CG posicionada em [${category.toUpperCase()}: ${target}].`);
+  logConsole(`Aposta de ${currentSelectedChip} Ficha(s) posicionada em [${category.toUpperCase()}: ${target}].`);
 }
 
 function updateRouletteTableTotal() {
@@ -369,14 +461,11 @@ function clearRouletteBets() {
   playSound('click');
   const total = updateRouletteTableTotal();
   if (total > 0) {
-    galacticCredits += total;
-    updateCreditDisplay();
+    casinoChips += total;
+    updateDisplays();
   }
 
-  activeRouletteBets = {
-    numbers: {}, colors: {}, even_odd: {}, halves: {}, dozens: {}, columns: {}
-  };
-
+  activeRouletteBets = { numbers: {}, colors: {}, even_odd: {}, halves: {}, dozens: {}, columns: {} };
   document.querySelectorAll('.chip-marker').forEach(m => {
     m.classList.remove('active');
     m.textContent = '';
@@ -399,25 +488,21 @@ function spinRouletteWheel() {
   document.getElementById('rouletteCenterNumber').textContent = '...';
   document.getElementById('rouletteCenterType').textContent = 'DESACELERANDO';
 
-  // Escolhe número vencedor
   const winningNumber = ROULETTE_NUMBERS[Math.floor(Math.random() * ROULETTE_NUMBERS.length)];
   const winningIndex = ROULETTE_NUMBERS.indexOf(winningNumber);
   const arc = (Math.PI * 2) / ROULETTE_NUMBERS.length;
 
-  // Ângulo final onde o número ficará alinhado
   const targetWheelAngle = Math.PI * 8 + (Math.PI * 1.5 - winningIndex * arc - arc / 2);
   const startWheelAngle = wheelAngle % (Math.PI * 2);
   const totalWheelSpin = targetWheelAngle - startWheelAngle;
 
   let startTime = null;
-  const duration = 5000; // 5 segundos de giro suave
+  const duration = 5000;
 
   function animateRoulette(timestamp) {
     if (!startTime) startTime = timestamp;
     const elapsed = timestamp - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    
-    // Easing cúbico suave
     const easeOut = 1 - Math.pow(1 - progress, 3);
 
     wheelAngle = startWheelAngle + totalWheelSpin * easeOut;
@@ -425,7 +510,6 @@ function spinRouletteWheel() {
     ballRadiusProgress = 1 - Math.pow(progress, 2) * 0.45;
 
     if (Math.random() < 0.2) playSound('spinTick');
-
     drawRouletteWheel();
 
     if (progress < 1) {
@@ -449,60 +533,50 @@ function finalizeRouletteSpin(winningNum) {
   document.getElementById('rouletteCenterNumber').textContent = winningNum;
   document.getElementById('rouletteCenterType').textContent = numColor.toUpperCase();
 
-  // Adicionar ao Histórico
   addRouletteHistory(winningNum, numColor);
 
-  // Calcular Pagamentos
-  let totalWon = 0;
+  let totalWonChips = 0;
 
-  // 1. Números Plenos (36x)
   if (activeRouletteBets.numbers[winningNum]) {
-    totalWon += activeRouletteBets.numbers[winningNum] * 36;
+    totalWonChips += activeRouletteBets.numbers[winningNum] * 36;
   }
 
   if (winningNum !== 0) {
-    // 2. Cores (2x)
     if (activeRouletteBets.colors[numColor]) {
-      totalWon += activeRouletteBets.colors[numColor] * 2;
+      totalWonChips += activeRouletteBets.colors[numColor] * 2;
     }
-    // 3. Par / Ímpar (2x)
     const isEven = (winningNum % 2 === 0);
     if (isEven && activeRouletteBets.even_odd['even']) {
-      totalWon += activeRouletteBets.even_odd['even'] * 2;
+      totalWonChips += activeRouletteBets.even_odd['even'] * 2;
     } else if (!isEven && activeRouletteBets.even_odd['odd']) {
-      totalWon += activeRouletteBets.even_odd['odd'] * 2;
+      totalWonChips += activeRouletteBets.even_odd['odd'] * 2;
     }
-    // 4. Metades 1-18 / 19-36 (2x)
     if (winningNum <= 18 && activeRouletteBets.halves[1]) {
-      totalWon += activeRouletteBets.halves[1] * 2;
+      totalWonChips += activeRouletteBets.halves[1] * 2;
     } else if (winningNum >= 19 && activeRouletteBets.halves[2]) {
-      totalWon += activeRouletteBets.halves[2] * 2;
+      totalWonChips += activeRouletteBets.halves[2] * 2;
     }
-    // 5. Dúzias (3x)
     const dozen = Math.ceil(winningNum / 12);
     if (activeRouletteBets.dozens[dozen]) {
-      totalWon += activeRouletteBets.dozens[dozen] * 3;
+      totalWonChips += activeRouletteBets.dozens[dozen] * 3;
     }
-    // 6. Colunas (3x)
     let col = winningNum % 3;
     if (col === 0) col = 3;
     if (activeRouletteBets.columns[col]) {
-      totalWon += activeRouletteBets.columns[col] * 3;
+      totalWonChips += activeRouletteBets.columns[col] * 3;
     }
   }
 
-  // Notificar e Atualizar
-  if (totalWon > 0) {
-    galacticCredits += totalWon;
-    updateCreditDisplay();
+  if (totalWonChips > 0) {
+    casinoChips += totalWonChips;
+    updateDisplays();
     playSound('win');
-    logConsole(`VITÓRIA NA ROLETA! Número [${winningNum} - ${numColor.toUpperCase()}]. Prêmio: +${totalWon} CG!`, "log-win");
+    logConsole(`VITÓRIA NA ROLETA! Setor [${winningNum} - ${numColor.toUpperCase()}]. Ganhou +${totalWonChips} Fichas!`, "log-win");
   } else {
     playSound('loss');
-    logConsole(`Número sorteado: [${winningNum} - ${numColor.toUpperCase()}]. Nenhuma aposta vencedora nesta rodada.`, "log-loss");
+    logConsole(`Setor [${winningNum} - ${numColor.toUpperCase()}]. Nenhuma aposta vencedora.`, "log-loss");
   }
 
-  // Limpar marcadores após rodada
   activeRouletteBets = { numbers: {}, colors: {}, even_odd: {}, halves: {}, dozens: {}, columns: {} };
   document.querySelectorAll('.chip-marker').forEach(m => {
     m.classList.remove('active');
@@ -517,14 +591,251 @@ function addRouletteHistory(num, color) {
   chip.className = `hist-badge hist-${color}`;
   chip.textContent = num;
   container.prepend(chip);
-
   if (container.children.length > 8) {
     container.removeChild(container.lastChild);
   }
 }
 
 // ==========================================================================
-// 5. MÓDULO SLOTS MATRIX (CAÇA-NÍQUEL)
+// 6. MÓDULO HOLO-BLACKJACK 21
+// ==========================================================================
+const CARD_SUITS = [
+  { name: 'kyber', symbol: '♦', isRed: true },
+  { name: 'plasma', symbol: '♥', isRed: true },
+  { name: 'beskar', symbol: '♠', isRed: false },
+  { name: 'coaxium', symbol: '♣', isRed: false }
+];
+
+const CARD_RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
+let bjDeck = [];
+let bjPlayerHand = [];
+let bjDealerHand = [];
+let bjCurrentBet = 10;
+let bjGameActive = false;
+
+function buildNewDeck() {
+  bjDeck = [];
+  for (let s of CARD_SUITS) {
+    for (let r of CARD_RANKS) {
+      let val = parseInt(r);
+      if (['J', 'Q', 'K'].includes(r)) val = 10;
+      if (r === 'A') val = 11;
+      bjDeck.push({ rank: r, suit: s, value: val });
+    }
+  }
+  // Embaralhar Fisher-Yates
+  for (let i = bjDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [bjDeck[i], bjDeck[j]] = [bjDeck[j], bjDeck[i]];
+  }
+}
+
+function getHandScore(hand) {
+  let score = 0;
+  let aces = 0;
+  for (let card of hand) {
+    score += card.value;
+    if (card.rank === 'A') aces++;
+  }
+  while (score > 21 && aces > 0) {
+    score -= 10;
+    aces--;
+  }
+  return score;
+}
+
+function adjustBjBet(delta) {
+  if (bjGameActive) return;
+  playSound('click');
+  const input = document.getElementById('bjBetInput');
+  let val = parseInt(input.value) + delta;
+  if (val < 1) val = 1;
+  if (val > casinoChips) val = Math.max(1, casinoChips);
+  input.value = val;
+}
+
+function setBjBetMax() {
+  if (bjGameActive) return;
+  playSound('chip');
+  document.getElementById('bjBetInput').value = Math.max(1, casinoChips);
+}
+
+function renderBjCard(card, isHidden = false) {
+  const div = document.createElement('div');
+  div.className = `holo-card ${card.suit.isRed ? 'red-suit' : ''} ${isHidden ? 'card-hidden' : ''}`;
+  div.innerHTML = `
+    <div class="card-top"><span class="card-val">${card.rank}</span></div>
+    <div class="card-symbol">${card.suit.symbol}</div>
+    <div class="card-bottom"><span class="card-val">${card.rank}</span></div>
+  `;
+  return div;
+}
+
+function startBlackjackHand() {
+  if (bjGameActive) return;
+  const bet = parseInt(document.getElementById('bjBetInput').value) || 0;
+
+  if (bet <= 0 || bet > casinoChips) {
+    playSound('loss');
+    logConsole("Saldo em fichas insuficiente para esta rodada de Blackjack!", "log-loss");
+    return;
+  }
+
+  casinoChips -= bet;
+  bjCurrentBet = bet;
+  updateDisplays();
+
+  buildNewDeck();
+  bjPlayerHand = [bjDeck.pop(), bjDeck.pop()];
+  bjDealerHand = [bjDeck.pop(), bjDeck.pop()];
+  bjGameActive = true;
+
+  playSound('card');
+
+  // Interface
+  document.getElementById('bjBetControls').style.display = 'none';
+  document.getElementById('bjPlayActions').style.display = 'flex';
+  document.getElementById('bjStatusBadge').textContent = `MÃO EM ANDAMENTO (APOSTA: ${bjCurrentBet} FICHAS)`;
+  document.getElementById('btnBjDouble').disabled = (casinoChips < bjCurrentBet);
+
+  renderBjTable(true);
+
+  // Checar Blackjack natural imediato
+  const pScore = getHandScore(bjPlayerHand);
+  const dScore = getHandScore(bjDealerHand);
+
+  if (pScore === 21) {
+    setTimeout(() => {
+      finishBlackjackRound();
+    }, 800);
+  }
+}
+
+function renderBjTable(hideDealerSecondCard = false) {
+  const pContainer = document.getElementById('playerCards');
+  const dContainer = document.getElementById('dealerCards');
+  pContainer.innerHTML = '';
+  dContainer.innerHTML = '';
+
+  bjPlayerHand.forEach(card => pContainer.appendChild(renderBjCard(card)));
+
+  bjDealerHand.forEach((card, idx) => {
+    const isHidden = (idx === 1 && hideDealerSecondCard);
+    dContainer.appendChild(renderBjCard(card, isHidden));
+  });
+
+  const pScore = getHandScore(bjPlayerHand);
+  document.getElementById('playerScore').textContent = `PONTOS: ${pScore}`;
+
+  if (hideDealerSecondCard) {
+    document.getElementById('dealerScore').textContent = `PONTOS: ${bjDealerHand[0].value} + ?`;
+  } else {
+    document.getElementById('dealerScore').textContent = `PONTOS: ${getHandScore(bjDealerHand)}`;
+  }
+}
+
+function bjPlayerHit() {
+  if (!bjGameActive) return;
+  playSound('card');
+  bjPlayerHand.push(bjDeck.pop());
+  document.getElementById('btnBjDouble').disabled = true;
+
+  renderBjTable(true);
+  const pScore = getHandScore(bjPlayerHand);
+
+  if (pScore > 21) {
+    finishBlackjackRound();
+  }
+}
+
+function bjPlayerStand() {
+  if (!bjGameActive) return;
+  playSound('click');
+  finishBlackjackRound();
+}
+
+function bjPlayerDouble() {
+  if (!bjGameActive || casinoChips < bjCurrentBet) return;
+  casinoChips -= bjCurrentBet;
+  bjCurrentBet *= 2;
+  updateDisplays();
+
+  playSound('chip');
+  playSound('card');
+  bjPlayerHand.push(bjDeck.pop());
+  renderBjTable(true);
+
+  finishBlackjackRound();
+}
+
+function finishBlackjackRound() {
+  bjGameActive = false;
+
+  // Revela mão do crupiê e compra até 17+
+  let dScore = getHandScore(bjDealerHand);
+  const pScore = getHandScore(bjPlayerHand);
+
+  if (pScore <= 21) {
+    while (dScore < 17) {
+      bjDealerHand.push(bjDeck.pop());
+      dScore = getHandScore(bjDealerHand);
+    }
+  }
+
+  renderBjTable(false);
+
+  // Decisão de Resultado
+  let prize = 0;
+  let statusText = '';
+
+  const isPlayerBJ = (bjPlayerHand.length === 2 && pScore === 21);
+  const isDealerBJ = (bjDealerHand.length === 2 && dScore === 21);
+
+  if (pScore > 21) {
+    statusText = `ESTOUROU! Você somou ${pScore}. Perda de ${bjCurrentBet} Fichas.`;
+    playSound('loss');
+    logConsole(statusText, 'log-loss');
+  } else if (isPlayerBJ && !isDealerBJ) {
+    prize = Math.floor(bjCurrentBet * 2.5); // 3:2 payout
+    casinoChips += prize;
+    statusText = `BLACKJACK NATURAL! Pagamento 3:2 -> Ganhou +${prize} Fichas!`;
+    playSound('win');
+    logConsole(statusText, 'log-win');
+  } else if (dScore > 21) {
+    prize = bjCurrentBet * 2;
+    casinoChips += prize;
+    statusText = `CRUPIÊ ESTOUROU (${dScore})! Vitória -> Ganhou +${prize} Fichas!`;
+    playSound('win');
+    logConsole(statusText, 'log-win');
+  } else if (pScore > dScore) {
+    prize = bjCurrentBet * 2;
+    casinoChips += prize;
+    statusText = `VITÓRIA TÁTICA! ${pScore} contra ${dScore} do Crupiê -> +${prize} Fichas!`;
+    playSound('win');
+    logConsole(statusText, 'log-win');
+  } else if (pScore === dScore) {
+    prize = bjCurrentBet; // Empate (Push)
+    casinoChips += prize;
+    statusText = `EMPATE (PUSH)! Ambos somaram ${pScore}. Fichas devolvidas.`;
+    playSound('chip');
+    logConsole(statusText, 'log-info');
+  } else {
+    statusText = `CRUPIÊ VENCEU com ${dScore} contra seus ${pScore}. -${bjCurrentBet} Fichas.`;
+    playSound('loss');
+    logConsole(statusText, 'log-loss');
+  }
+
+  updateDisplays();
+  document.getElementById('bjStatusBadge').textContent = statusText;
+
+  // Restaurar controles de aposta
+  document.getElementById('bjBetControls').style.display = 'flex';
+  document.getElementById('bjPlayActions').style.display = 'none';
+}
+
+// ==========================================================================
+// 7. MÓDULO SLOTS MATRIX (EM FICHAS)
 // ==========================================================================
 const SLOT_SYMBOLS = ['⚔️', '💎', '🪐', '🚀', '⚡', '👾'];
 let isSlotSpinning = false;
@@ -533,7 +844,6 @@ function buildSlotReels() {
   for (let c = 0; c < 3; c++) {
     const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
     strip.innerHTML = '';
-    // Monta 20 símbolos para o efeito de rolagem contínua
     for (let i = 0; i < 20; i++) {
       const sym = SLOT_SYMBOLS[i % SLOT_SYMBOLS.length];
       const div = document.createElement('div');
@@ -548,28 +858,28 @@ function adjustSlotBet(delta) {
   playSound('click');
   const input = document.getElementById('slotBetInput');
   let val = parseInt(input.value) + delta;
-  if (val < 10) val = 10;
-  if (val > galacticCredits) val = galacticCredits;
+  if (val < 1) val = 1;
+  if (val > casinoChips) val = Math.max(1, casinoChips);
   input.value = val;
 }
 
 function setSlotBetMax() {
   playSound('chip');
-  document.getElementById('slotBetInput').value = Math.max(10, galacticCredits);
+  document.getElementById('slotBetInput').value = Math.max(1, casinoChips);
 }
 
 function spinSlotMachine() {
   if (isSlotSpinning) return;
   const bet = parseInt(document.getElementById('slotBetInput').value);
 
-  if (bet > galacticCredits || bet <= 0) {
-    logConsole("Créditos insuficientes para acionar as bobinas de Coaxium!", "log-loss");
+  if (bet > casinoChips || bet <= 0) {
+    logConsole("Fichas insuficientes para acionar as bobinas de Coaxium!", "log-loss");
     playSound('loss');
     return;
   }
 
-  galacticCredits -= bet;
-  updateCreditDisplay();
+  casinoChips -= bet;
+  updateDisplays();
   isSlotSpinning = true;
   document.getElementById('btnSpinSlot').disabled = true;
 
@@ -590,7 +900,6 @@ function spinSlotMachine() {
     isSlotSpinning = false;
     document.getElementById('btnSpinSlot').disabled = false;
 
-    // Verificar prêmios
     const [s1, s2, s3] = results;
     if (s1 === s2 && s2 === s3) {
       let mult = 10;
@@ -601,22 +910,21 @@ function spinSlotMachine() {
       else if (s1 === '⚡') mult = 5;
 
       const prize = bet * mult;
-      galacticCredits += prize;
-      updateCreditDisplay();
+      casinoChips += prize;
+      updateDisplays();
       playSound('win');
-      logConsole(`HIPER-ALINHAMENTO TRIPLO [${s1} ${s2} ${s3}]! Ganhou +${prize} CG (x${mult})!`, "log-win");
+      logConsole(`HIPER-ALINHAMENTO TRIPLO [${s1} ${s2} ${s3}]! Ganhou +${prize} Fichas (x${mult})!`, "log-win");
     } else if (s1 === s2 || s2 === s3 || s1 === s3) {
       const prize = bet * 2;
-      galacticCredits += prize;
-      updateCreditDisplay();
+      casinoChips += prize;
+      updateDisplays();
       playSound('win');
-      logConsole(`Duplicata detectada [${s1} ${s2} ${s3}]. Retorno: +${prize} CG.`, "log-win");
+      logConsole(`Duplicata detectada [${s1} ${s2} ${s3}]. Retorno: +${prize} Fichas.`, "log-win");
     } else {
       playSound('loss');
-      logConsole(`Sem alinhamento de Coaxium [${s1} ${s2} ${s3}]. -${bet} CG drenados.`, "log-loss");
+      logConsole(`Sem alinhamento de Coaxium [${s1} ${s2} ${s3}]. -${bet} Fichas.`, "log-loss");
     }
 
-    // Reset da esteira suave
     setTimeout(() => {
       for (let c = 0; c < 3; c++) {
         const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
@@ -629,7 +937,7 @@ function spinSlotMachine() {
 }
 
 // ==========================================================================
-// 6. MÓDULO DADOS SABACC 3D
+// 8. MÓDULO DADOS SABACC 3D (EM FICHAS)
 // ==========================================================================
 let isSabaccRolling = false;
 
@@ -637,14 +945,14 @@ function rollSabaccDice(choice) {
   if (isSabaccRolling) return;
   const bet = parseInt(document.getElementById('sabaccBetInput').value);
 
-  if (bet > galacticCredits || bet <= 0) {
-    logConsole("Créditos Galácticos insuficientes para apostar nos dados!", "log-loss");
+  if (bet > casinoChips || bet <= 0) {
+    logConsole("Fichas insuficientes para apostar nos dados!", "log-loss");
     playSound('loss');
     return;
   }
 
-  galacticCredits -= bet;
-  updateCreditDisplay();
+  casinoChips -= bet;
+  updateDisplays();
   isSabaccRolling = true;
   playSound('spinTick');
 
@@ -652,7 +960,6 @@ function rollSabaccDice(choice) {
   const d2 = Math.floor(Math.random() * 6) + 1;
   const sum = d1 + d2;
 
-  // Rotações 3D correspondentes aos lados do dado
   const cubeRotations = {
     1: { x: 0, y: 0 },
     2: { x: -90, y: 0 },
@@ -696,13 +1003,13 @@ function rollSabaccDice(choice) {
 
     if (won) {
       const prize = Math.floor(bet * mult);
-      galacticCredits += prize;
-      updateCreditDisplay();
+      casinoChips += prize;
+      updateDisplays();
       playSound('win');
-      logConsole(`SABACC VITORIOSO! Dados [${d1}, ${d2}] -> Soma ${sum}. Prêmio: +${prize} CG (x${mult})!`, "log-win");
+      logConsole(`SABACC VITORIOSO! Dados [${d1}, ${d2}] -> Soma ${sum}. Ganhou +${prize} Fichas (x${mult})!`, "log-win");
     } else {
       playSound('loss');
-      logConsole(`Dados [${d1}, ${d2}] -> Soma ${sum}. Aposta em [${choice.toUpperCase()}] perdida. -${bet} CG.`, "log-loss");
+      logConsole(`Dados [${d1}, ${d2}] -> Soma ${sum}. Aposta perdida: -${bet} Fichas.`, "log-loss");
     }
   }, 2200);
 }
@@ -711,5 +1018,5 @@ function rollSabaccDice(choice) {
 window.addEventListener('DOMContentLoaded', () => {
   initRouletteBoard();
   buildSlotReels();
-  updateCreditDisplay();
+  updateDisplays();
 });

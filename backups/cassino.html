@@ -6,6 +6,7 @@
   <title>DATAPAD // CASSINO ORLA EXTERIOR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/x-icon" href="../img/fichas.png">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="cassino.css">
 </head>
@@ -34,27 +35,44 @@
         </button>
         <div class="signal-indicator">
           <span class="signal-dot"></span>
-          <span class="signal-text">LINK QUÂNTICO ATIVO // SETOR ORLA-7</span>
+          <span class="signal-text">LINK SEGURO // ESTAÇÃO NOVA PRIME</span>
         </div>
       </div>
 
       <div class="header-center">
         <div class="brand-badge">
-          <div class="brand-glitch" data-text="AUREBESH-PRIME">NOVA PRIME</div>
+          <div class="brand-glitch" data-text="NOVA PRIME">NOVA PRIME</div>
           <div class="brand-sub">SISTEMA INTEGRADO DE ENTRETENIMENTO & APOSTAS</div>
         </div>
       </div>
 
       <div class="header-right">
+        <button class="btn-cambio-trigger glow-pulse" onclick="openExchangeModal()" title="Casa de Câmbio Galáctica">
+          <span class="cambio-icon">&#x21C4;</span> CÂMBIO DE FICHAS
+        </button>
+
         <button class="btn-audio-toggle" id="audioToggleBtn" onclick="toggleAudio()" title="Alternar Sintetizador de Áudio">
           <span id="audioIcon">🔊</span> SOM: <span id="audioState">LIGADO</span>
         </button>
-        <div class="credit-cartridge">
-          <div class="cartridge-label">CRÉDITOS GALÁTICOS (CG)</div>
-          <div class="cartridge-display">
-            <span class="cartridge-symbol">&#x2B21;</span>
-            <span id="creditBalance" class="counter">5000</span>
-            <span class="currency-tag">CG</span>
+
+        <!-- Cartucho Duplo: Créditos Imperiais e Fichas do Cassino -->
+        <div class="dual-balance-cartridge">
+          <div class="balance-item imperial-credits">
+            <span class="b-label">CRÉDITOS IMPERIAIS (CI)</span>
+            <div class="b-value">
+              <span class="b-icon">&#x2B21;</span>
+              <span id="imperialCreditsDisplay">10.000</span>
+              <span class="b-unit">CI</span>
+            </div>
+          </div>
+          <div class="balance-divider"></div>
+          <div class="balance-item casino-chips">
+            <span class="b-label">FICHAS GALÁTICAS (FG)</span>
+            <div class="b-value">
+              <span class="b-icon chip-glow-icon">&#x25C9;</span>
+              <span id="casinoChipsDisplay">0</span>
+              <span class="b-unit">FICHAS</span>
+            </div>
           </div>
         </div>
       </div>
@@ -64,16 +82,21 @@
     <nav class="datapad-tabs">
       <button class="tab-module active" onclick="switchGame('roulette', this)">
         <span class="tab-index">01</span>
-        <span class="tab-title">ROLETA GALÁCTICA COMPLETA</span>
+        <span class="tab-title">ROLETA QUÂNTICA COMPLETA</span>
+        <span class="tab-glow"></span>
+      </button>
+      <button class="tab-module" onclick="switchGame('blackjack', this)">
+        <span class="tab-index">02</span>
+        <span class="tab-title">HOLO-BLACKJACK 21</span>
         <span class="tab-glow"></span>
       </button>
       <button class="tab-module" onclick="switchGame('slots', this)">
-        <span class="tab-index">02</span>
+        <span class="tab-index">03</span>
         <span class="tab-title">SLOT MATRIX HIPERDRIVE</span>
         <span class="tab-glow"></span>
       </button>
       <button class="tab-module" onclick="switchGame('sabacc', this)">
-        <span class="tab-index">03</span>
+        <span class="tab-index">04</span>
         <span class="tab-title">DADOS QUÂNTICOS DE SABACC</span>
         <span class="tab-glow"></span>
       </button>
@@ -87,7 +110,7 @@
       <!-- ============================================== -->
       <section id="game-roulette" class="game-section active">
         <div class="section-titlebar">
-          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE ROLETA QUÂNTICA</div>
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE ROLETA EUROPEIA // ENERGIA QUÂNTICA</div>
           <div class="history-tracker">
             <span class="history-label">ÚLTIMOS SETORES:</span>
             <div id="rouletteHistory" class="history-chips">
@@ -100,7 +123,7 @@
           <!-- Coluna Esquerda: Animação Física da Roda e Bola em Canvas -->
           <div class="roulette-wheel-box">
             <div class="wheel-outer-ring">
-              <canvas id="rouletteCanvas" width="380" height="380"></canvas>
+              <canvas id="rouletteCanvas" width="360" height="360"></canvas>
               <div class="wheel-core-hud">
                 <span class="core-label">SETORES</span>
                 <span id="rouletteCenterNumber" class="core-num">--</span>
@@ -124,14 +147,14 @@
             <div class="chip-selector-bar">
               <span class="chip-label">FICHAS DE APOSTA:</span>
               <div class="chip-options">
-                <button class="chip-btn chip-10 active" onclick="selectChip(10, this)">10</button>
+                <button class="chip-btn chip-1 active" onclick="selectChip(1, this)">1</button>
+                <button class="chip-btn chip-5" onclick="selectChip(5, this)">5</button>
+                <button class="chip-btn chip-10" onclick="selectChip(10, this)">10</button>
                 <button class="chip-btn chip-50" onclick="selectChip(50, this)">50</button>
                 <button class="chip-btn chip-100" onclick="selectChip(100, this)">100</button>
-                <button class="chip-btn chip-500" onclick="selectChip(500, this)">500</button>
-                <button class="chip-btn chip-1000" onclick="selectChip(1000, this)">1000</button>
               </div>
               <div class="current-total-bet">
-                APOSTA NA MESA: <span id="rouletteTotalBetAmount">0</span> CG
+                APOSTA NA MESA: <span id="rouletteTotalBetAmount">0</span> FICHAS
               </div>
             </div>
 
@@ -217,7 +240,75 @@
       </section>
 
       <!-- ============================================== -->
-      <!-- JOGO 2: CAÇA-NÍQUEL MATRIX HIPERDRIVE -->
+      <!-- JOGO 2: HOLO-BLACKJACK 21 (NOVO MÓDULO)        -->
+      <!-- ============================================== -->
+      <section id="game-blackjack" class="game-section">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE HOLO-BLACKJACK 21 // CRUPIÊ PROTOCOLAR-7</div>
+          <div class="bj-status-badge" id="bjStatusBadge">FAÇA SUA APOSTA EM FICHAS</div>
+        </div>
+
+        <div class="blackjack-arena">
+          <!-- Área do Crupiê / Dealer Androide -->
+          <div class="bj-hand-container dealer-zone">
+            <div class="hand-meta">
+              <span class="actor-title"><span class="bot-icon">🤖</span> CRUPIÊ PROTOCOLAR</span>
+              <span class="score-pill" id="dealerScore">PONTOS: ?</span>
+            </div>
+            <div class="cards-table" id="dealerCards">
+              <!-- Cartas renderizadas via JS -->
+            </div>
+          </div>
+
+          <!-- Divisor Holográfico -->
+          <div class="bj-table-center">
+            <div class="bj-payout-rules">BLACKJACK PAGA 3:2 // CRUPIÊ PARA NO 17 // SEGURO 2:1</div>
+          </div>
+
+          <!-- Área do Jogador -->
+          <div class="bj-hand-container player-zone">
+            <div class="hand-meta">
+              <span class="actor-title"><span class="user-icon">👤</span> SEU TERMINAL DE CARTAS</span>
+              <span class="score-pill" id="playerScore">PONTOS: 0</span>
+            </div>
+            <div class="cards-table" id="playerCards">
+              <!-- Cartas renderizadas via JS -->
+            </div>
+          </div>
+
+          <!-- Painel de Ações de Blackjack -->
+          <div class="bj-controls-panel">
+            <div class="bj-bet-adjuster" id="bjBetControls">
+              <label>APOSTA INICIAL (FICHAS):</label>
+              <div class="spin-bet-inputs">
+                <button class="btn-step" onclick="adjustBjBet(-5)">-5</button>
+                <input type="number" id="bjBetInput" value="10" min="1" step="1" readonly>
+                <button class="btn-step" onclick="adjustBjBet(5)">+5</button>
+                <button class="btn-step" onclick="adjustBjBet(25)">+25</button>
+                <button class="btn-step max-btn" onclick="setBjBetMax()">MÁX</button>
+              </div>
+              <button class="btn-cyber-primary" id="btnBjDeal" onclick="startBlackjackHand()">
+                DISTRIBUIR CARTAS
+              </button>
+            </div>
+
+            <div class="bj-play-actions" id="bjPlayActions" style="display: none;">
+              <button class="btn-cyber-action btn-hit" id="btnBjHit" onclick="bjPlayerHit()">
+                <span class="action-icon">+</span> PEDIR CARTA (HIT)
+              </button>
+              <button class="btn-cyber-action btn-stand" id="btnBjStand" onclick="bjPlayerStand()">
+                <span class="action-icon">✋</span> PARAR (STAND)
+              </button>
+              <button class="btn-cyber-action btn-double" id="btnBjDouble" onclick="bjPlayerDouble()">
+                <span class="action-icon">✖2</span> DOBRAR APOSTA
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- JOGO 3: CAÇA-NÍQUEL MATRIX HIPERDRIVE          -->
       <!-- ============================================== -->
       <section id="game-slots" class="game-section">
         <div class="section-titlebar">
@@ -247,11 +338,11 @@
 
           <div class="slot-control-deck">
             <div class="bet-adjust-group">
-              <label>VALOR POR GIRO (CG):</label>
+              <label>VALOR POR GIRO (FICHAS):</label>
               <div class="spin-bet-inputs">
-                <button class="btn-step" onclick="adjustSlotBet(-25)">-25</button>
-                <input type="number" id="slotBetInput" value="50" min="10" step="10" readonly>
-                <button class="btn-step" onclick="adjustSlotBet(25)">+25</button>
+                <button class="btn-step" onclick="adjustSlotBet(-5)">-5</button>
+                <input type="number" id="slotBetInput" value="5" min="1" step="1" readonly>
+                <button class="btn-step" onclick="adjustSlotBet(5)">+5</button>
                 <button class="btn-step max-btn" onclick="setSlotBetMax()">MÁX</button>
               </div>
             </div>
@@ -265,7 +356,7 @@
       </section>
 
       <!-- ============================================== -->
-      <!-- JOGO 3: DADOS SABACC ORLA EXTERIOR -->
+      <!-- JOGO 4: DADOS SABACC ORLA EXTERIOR             -->
       <!-- ============================================== -->
       <section id="game-sabacc" class="game-section">
         <div class="section-titlebar">
@@ -313,8 +404,8 @@
 
           <div class="sabacc-bet-board">
             <div class="bet-adjust-group">
-              <label>VALOR DA APOSTA (CG):</label>
-              <input type="number" id="sabaccBetInput" value="100" min="20" step="20">
+              <label>VALOR DA APOSTA (FICHAS):</label>
+              <input type="number" id="sabaccBetInput" value="10" min="1" step="1">
             </div>
 
             <div class="sabacc-choice-grid">
@@ -351,12 +442,95 @@
         </div>
         <div class="console-stream" id="consoleStream">
           <div class="log-line sys-init">> [DATAPAD BOOT]: Inicialização de sub-rotinas criptográficas concluída.</div>
-          <div class="log-line sys-info">> [BANCO GALÁCTICO]: Saldo inicial de 5.000 Créditos Galácticos carregado.</div>
-          <div class="log-line sys-ready">> [PRONTO]: Selecione um setor e posicione suas fichas.</div>
+          <div class="log-line sys-info">> [CÂMBIO]: Taxa atual fixada em: 10 Créditos Imperiais = 1 Ficha Galáctica.</div>
+          <div class="log-line sys-ready">> [SISTEMA]: Converta seus Créditos Imperiais em Fichas para jogar no Cassino.</div>
         </div>
       </div>
     </footer>
 
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: CASA DE CÂMBIO & CONVERSÃO DE FICHAS     -->
+  <!-- ============================================== -->
+  <div class="cambio-modal-backdrop" id="exchangeModal">
+    <div class="cambio-modal-window">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="modal-symbol">&#x21C4;</span> TERMINAL DE CÂMBIO GALÁCTICO
+        </div>
+        <button class="btn-modal-close" onclick="closeExchangeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="rate-badge">
+          <span>TAXA OFICIAL:</span>
+          <strong>1 FICHA (FG) = 10 CRÉDITOS IMPERIAIS (CI)</strong>
+        </div>
+
+        <div class="exchange-grid">
+          <!-- Coluna 1: Comprar Fichas (CI -> FG) -->
+          <div class="exchange-card">
+            <h3>COMPRAR FICHAS DE JOGO</h3>
+            <p class="card-desc">Converta seus Créditos Imperiais em Fichas para apostar nos módulos do cassino.</p>
+            
+            <div class="exchange-input-group">
+              <label>Quantidade de Fichas desejadas:</label>
+              <div class="exchange-field">
+                <input type="number" id="buyChipsAmount" value="50" min="1" step="1" oninput="updateBuyCostPreview()">
+                <span class="unit-tag">FG</span>
+              </div>
+              <div class="cost-preview">
+                Custo total: <strong id="buyCostPreview">500</strong> CI
+              </div>
+            </div>
+
+            <div class="quick-chip-buttons">
+              <button onclick="setBuyChips(10)">+10 FG</button>
+              <button onclick="setBuyChips(50)">+50 FG</button>
+              <button onclick="setBuyChips(100)">+100 FG</button>
+              <button onclick="setBuyChips('max')">MÁXIMO</button>
+            </div>
+
+            <button class="btn-cyber-primary btn-modal-action" onclick="executeBuyChips()">
+              CONVERTER CI EM FICHAS
+            </button>
+          </div>
+
+          <!-- Coluna 2: Resgatar Créditos (FG -> CI) -->
+          <div class="exchange-card">
+            <h3>DEVOLVER FICHAS (RESGATE)</h3>
+            <p class="card-desc">Converta suas fichas e ganhos de volta em Créditos Imperiais seguros antes de sair.</p>
+            
+            <div class="exchange-input-group">
+              <label>Quantidade de Fichas para devolver:</label>
+              <div class="exchange-field">
+                <input type="number" id="sellChipsAmount" value="0" min="1" step="1" oninput="updateSellReturnPreview()">
+                <span class="unit-tag">FG</span>
+              </div>
+              <div class="cost-preview">
+                Retorno estimado: <strong id="sellReturnPreview">0</strong> CI
+              </div>
+            </div>
+
+            <div class="quick-chip-buttons">
+              <button onclick="setSellChips(10)">10 FG</button>
+              <button onclick="setSellChips(50)">50 FG</button>
+              <button onclick="setSellChips(100)">100 FG</button>
+              <button onclick="setSellChips('all')">DEVOLVER TUDO</button>
+            </div>
+
+            <button class="btn-cyber-danger btn-modal-action" onclick="executeSellChips()">
+              RESGATAR EM CRÉDITOS IMPERIAIS
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-footer-note">
+          * Você pode manter suas fichas na memória do Datapad para futuras rodadas ou resgatá-las a qualquer momento.
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="cassino.js"></script>

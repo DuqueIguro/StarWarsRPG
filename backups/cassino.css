@@ -84,7 +84,7 @@ body {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 1320px;
+  max-width: 1360px;
   background: var(--chassis-body);
   border: 2px solid var(--chassis-border);
   box-shadow: 
@@ -119,7 +119,7 @@ body {
 .hardware-bolt.bottom-right { bottom: 8px; right: 8px; }
 
 /* ==========================================================================
-   HEADER DO DATAPAD
+   HEADER DO DATAPAD & SALDO DUPLO (CI / FICHAS)
    ========================================================================== */
 .datapad-header {
   display: flex;
@@ -130,12 +130,13 @@ body {
   border-radius: 6px;
   padding: 10px 18px;
   box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
+  gap: 12px;
 }
 
 .header-left, .header-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
 .btn-terminal-nav {
@@ -143,10 +144,10 @@ body {
   border: 1px solid var(--neon-cyan);
   color: var(--neon-cyan);
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 1.5px;
-  padding: 8px 14px;
+  padding: 8px 12px;
   cursor: pointer;
   border-radius: 3px;
   display: flex;
@@ -159,16 +160,14 @@ body {
   color: #000;
   box-shadow: 0 0 15px var(--neon-cyan-glow);
 }
-.hud-bracket {
-  opacity: 0.6;
-}
+.hud-bracket { opacity: 0.6; }
 
 .signal-indicator {
   display: flex;
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: #6088a8;
 }
 .signal-dot {
@@ -189,66 +188,107 @@ body {
 }
 .brand-glitch {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 900;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   color: #fff;
   text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
 }
 .brand-sub {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   letter-spacing: 2px;
   color: #6c91b5;
 }
 
+/* Botão de Câmbio */
+.btn-cambio-trigger {
+  background: rgba(255, 170, 0, 0.15);
+  border: 1px solid var(--neon-amber);
+  color: var(--neon-amber);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+.btn-cambio-trigger:hover {
+  background: var(--neon-amber);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon-amber-glow);
+}
+
 .btn-audio-toggle {
   background: transparent;
-  border: 1px solid rgba(255, 170, 0, 0.4);
-  color: var(--neon-amber);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #8da2be;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  padding: 6px 10px;
+  font-size: 0.72rem;
+  padding: 6px 8px;
   border-radius: 3px;
   cursor: pointer;
   transition: 0.2s;
 }
 .btn-audio-toggle:hover {
-  background: rgba(255, 170, 0, 0.15);
-  border-color: var(--neon-amber);
+  border-color: #fff;
+  color: #fff;
 }
 
-.credit-cartridge {
-  background: #020409;
-  border: 1px solid rgba(255, 215, 0, 0.4);
-  border-radius: 4px;
-  padding: 4px 12px;
-  text-align: right;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
-}
-.cartridge-label {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: #8da2be;
-  letter-spacing: 1px;
-}
-.cartridge-display {
+/* Cartucho Duplo: CI e FG */
+.dual-balance-cartridge {
   display: flex;
   align-items: center;
-  gap: 6px;
+  background: #020409;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 6px;
+  padding: 4px 12px;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.9);
+  gap: 12px;
+}
+.balance-item {
+  display: flex;
+  flex-direction: column;
+}
+.b-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: #728ea9;
+  letter-spacing: 1px;
+}
+.b-value {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 800;
+  line-height: 1.2;
+}
+.imperial-credits .b-value {
+  color: #88bbff;
+  text-shadow: 0 0 8px rgba(0, 150, 255, 0.4);
+}
+.casino-chips .b-value {
   color: #ffd700;
-  text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
-.cartridge-symbol {
-  font-size: 0.9rem;
-  color: #ffaa00;
+.b-unit {
+  font-size: 0.65rem;
+  opacity: 0.7;
 }
-.currency-tag {
-  font-size: 0.7rem;
-  color: #a88d22;
+.chip-glow-icon {
+  color: var(--neon-cyan);
+}
+.balance-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(0, 240, 255, 0.2);
 }
 
 /* ==========================================================================
@@ -256,23 +296,23 @@ body {
    ========================================================================== */
 .datapad-tabs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
 }
 .tab-module {
   position: relative;
   background: rgba(10, 20, 36, 0.8);
   border: 1px solid rgba(0, 240, 255, 0.2);
   color: #85a5cc;
-  padding: 10px 14px;
+  padding: 10px 12px;
   font-family: var(--font-display);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   border-radius: 4px;
   transition: all 0.25s ease;
   overflow: hidden;
@@ -280,8 +320,8 @@ body {
 .tab-module .tab-index {
   font-family: var(--font-mono);
   color: var(--neon-cyan);
-  font-size: 0.75rem;
-  padding: 2px 5px;
+  font-size: 0.72rem;
+  padding: 2px 4px;
   background: rgba(0, 240, 255, 0.1);
   border-radius: 2px;
 }
@@ -341,7 +381,7 @@ body {
 }
 .title-text {
   font-family: var(--font-display);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--neon-cyan);
@@ -394,16 +434,15 @@ body {
 .hist-zero { background: #008a47; border-color: var(--neon-green); }
 
 /* ==========================================================================
-   ROLETA COMPLETA (RODA + MESA EUROPEIA)
+   1. ROLETA COMPLETA (RODA + MESA EUROPEIA)
    ========================================================================== */
 .roulette-layout {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 20px;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
   align-items: start;
 }
 
-/* Roda Quântica e Canvas */
 .roulette-wheel-box {
   display: flex;
   flex-direction: column;
@@ -411,12 +450,12 @@ body {
   background: rgba(8, 14, 26, 0.7);
   border: 1px solid rgba(0, 240, 255, 0.2);
   border-radius: 8px;
-  padding: 14px;
+  padding: 12px;
 }
 .wheel-outer-ring {
   position: relative;
-  width: 340px;
-  height: 340px;
+  width: 330px;
+  height: 330px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -427,8 +466,8 @@ body {
 }
 .wheel-core-hud {
   position: absolute;
-  width: 90px;
-  height: 90px;
+  width: 85px;
+  height: 85px;
   background: radial-gradient(circle, #091322 60%, #03060a 100%);
   border: 2px solid var(--neon-cyan);
   border-radius: 50%;
@@ -447,14 +486,14 @@ body {
 }
 .core-num {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: #fff;
   line-height: 1;
 }
 .core-sub {
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: 0.52rem;
   color: var(--neon-amber);
 }
 
@@ -465,7 +504,6 @@ body {
   margin-top: 14px;
 }
 
-/* Botões Estilo Cyber */
 .btn-cyber-primary {
   position: relative;
   flex: 1;
@@ -473,7 +511,7 @@ body {
   border: 1px solid var(--neon-cyan);
   color: #fff;
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 1.5px;
   padding: 12px 14px;
@@ -512,9 +550,7 @@ body {
   box-shadow: 0 0 15px var(--neon-red-glow);
 }
 
-/* ==========================================================================
-   TABULEIRO DE APOSTAS DA ROLETA (MESA INTERATIVA)
-   ========================================================================== */
+/* Tabuleiro Roleta */
 .roulette-table-box {
   background: rgba(5, 12, 24, 0.85);
   border: 1px solid rgba(0, 240, 255, 0.25);
@@ -525,7 +561,6 @@ body {
   gap: 10px;
 }
 
-/* Seletor de Fichas */
 .chip-selector-bar {
   display: flex;
   align-items: center;
@@ -545,8 +580,8 @@ body {
   gap: 8px;
 }
 .chip-btn {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   font-family: var(--font-display);
   font-size: 0.72rem;
@@ -558,15 +593,13 @@ body {
   justify-content: center;
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.chip-10 { background: #0066aa; border-color: #33aaff; color: #fff; }
-.chip-50 { background: #aa5500; border-color: #ffaa33; color: #fff; }
-.chip-100 { background: #880022; border-color: #ff3366; color: #fff; }
-.chip-500 { background: #4a0e78; border-color: #aa44ff; color: #fff; }
-.chip-1000 { background: #8a7300; border-color: #ffd700; color: #fff; }
+.chip-1 { background: #0066aa; border-color: #33aaff; color: #fff; }
+.chip-5 { background: #aa5500; border-color: #ffaa33; color: #fff; }
+.chip-10 { background: #880022; border-color: #ff3366; color: #fff; }
+.chip-50 { background: #4a0e78; border-color: #aa44ff; color: #fff; }
+.chip-100 { background: #8a7300; border-color: #ffd700; color: #fff; }
 
-.chip-btn:hover {
-  transform: translateY(-3px) scale(1.08);
-}
+.chip-btn:hover { transform: translateY(-3px) scale(1.08); }
 .chip-btn.active {
   transform: translateY(-4px) scale(1.15);
   box-shadow: 0 0 15px currentColor;
@@ -578,7 +611,6 @@ body {
   color: var(--neon-amber);
 }
 
-/* Mesa de Feltro Holográfica */
 .betting-felt {
   display: grid;
   grid-template-columns: 50px 1fr 50px;
@@ -606,10 +638,7 @@ body {
   border-color: var(--neon-cyan);
 }
 
-/* Spot do Zero */
-.grid-zero-col {
-  display: flex;
-}
+.grid-zero-col { display: flex; }
 .spot-zero {
   width: 100%;
   height: 100%;
@@ -621,7 +650,6 @@ body {
   border-radius: 4px 0 0 4px;
 }
 
-/* Grid de 36 Números (Layout padrão de Roleta: 3 linhas x 12 colunas) */
 .grid-numbers-table {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -638,19 +666,14 @@ body {
   border-color: rgba(255, 26, 75, 0.4);
   color: #ffb8c7;
 }
-.num-cell.red:hover {
-  background: rgba(255, 26, 75, 0.6);
-}
+.num-cell.red:hover { background: rgba(255, 26, 75, 0.6); }
 .num-cell.black {
   background: rgba(16, 24, 38, 0.85);
   border-color: rgba(80, 110, 150, 0.4);
   color: #c0d8f0;
 }
-.num-cell.black:hover {
-  background: rgba(40, 60, 90, 0.8);
-}
+.num-cell.black:hover { background: rgba(40, 60, 90, 0.8); }
 
-/* Colunas 2:1 */
 .grid-column-bets {
   display: grid;
   grid-template-rows: repeat(3, 44px);
@@ -662,7 +685,6 @@ body {
   color: var(--neon-cyan);
 }
 
-/* Apostas Externas: Dúzias e Simples */
 .outside-bets-dozens {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -689,38 +711,27 @@ body {
   flex-direction: column;
   gap: 4px;
 }
-.spot-red {
-  background: rgba(176, 16, 48, 0.35);
-  border-color: var(--neon-red);
-}
-.spot-black {
-  background: rgba(10, 16, 26, 0.8);
-  border-color: #4a6385;
-}
-.color-badge {
-  width: 14px;
-  height: 6px;
-  border-radius: 2px;
-}
+.spot-red { background: rgba(176, 16, 48, 0.35); border-color: var(--neon-red); }
+.spot-black { background: rgba(10, 16, 26, 0.8); border-color: #4a6385; }
+.color-badge { width: 14px; height: 6px; border-radius: 2px; }
 .red-badge { background: var(--neon-red); box-shadow: 0 0 6px var(--neon-red); }
 .black-badge { background: #000; border: 1px solid #666; }
 
-/* Marcadores de Ficha posicionados em cima das apostas */
 .chip-marker {
   display: none;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  min-width: 24px;
-  height: 24px;
+  min-width: 22px;
+  height: 22px;
   padding: 0 4px;
   background: #ffd700;
   color: #000;
   font-family: var(--font-display);
   font-size: 0.65rem;
   font-weight: 900;
-  border-radius: 12px;
+  border-radius: 11px;
   border: 1px solid #fff;
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
   align-items: center;
@@ -738,7 +749,206 @@ body {
 }
 
 /* ==========================================================================
-   SLOTS MATRIX (CAÇA-NÍQUEL)
+   2. HOLO-BLACKJACK 21 (NOVO JOGO)
+   ========================================================================== */
+.bj-status-badge {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--neon-amber);
+  background: rgba(255, 170, 0, 0.1);
+  border: 1px solid rgba(255, 170, 0, 0.3);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+.blackjack-arena {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(6, 12, 22, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.bj-hand-container {
+  background: rgba(3, 8, 16, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 6px;
+  padding: 12px 16px;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hand-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.actor-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.score-pill {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background: rgba(0, 240, 255, 0.15);
+  color: var(--neon-cyan);
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.cards-table {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Cartas Holográficas Sci-Fi */
+.holo-card {
+  width: 70px;
+  height: 98px;
+  background: rgba(10, 20, 38, 0.95);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3), inset 0 0 10px rgba(0, 240, 255, 0.15);
+  position: relative;
+  animation: cardSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes cardSlideIn {
+  from { transform: translateY(-30px) scale(0.7); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.holo-card.red-suit {
+  border-color: var(--neon-red);
+  box-shadow: 0 0 15px rgba(255, 26, 75, 0.3), inset 0 0 10px rgba(255, 26, 75, 0.15);
+}
+.holo-card.red-suit .card-val, .holo-card.red-suit .card-symbol {
+  color: var(--neon-red);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+}
+.card-symbol {
+  font-size: 1.5rem;
+  align-self: center;
+  color: var(--neon-cyan);
+}
+.card-bottom {
+  display: flex;
+  justify-content: flex-end;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+}
+
+.holo-card.card-hidden {
+  background: repeating-linear-gradient(
+    45deg,
+    #05101f,
+    #05101f 8px,
+    #0a223f 8px,
+    #0a223f 16px
+  );
+  border-color: #3b5f88;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+.holo-card.card-hidden .card-top, 
+.holo-card.card-hidden .card-symbol, 
+.holo-card.card-hidden .card-bottom {
+  display: none;
+}
+
+.bj-table-center {
+  text-align: center;
+  padding: 4px;
+}
+.bj-payout-rules {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #6387a8;
+  letter-spacing: 1.5px;
+}
+
+.bj-controls-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(3, 7, 14, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.bj-bet-adjuster {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bj-bet-adjuster label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #799fc4;
+}
+
+.bj-play-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cyber-action {
+  background: rgba(10, 20, 36, 0.9);
+  border: 1px solid var(--neon-cyan);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 12px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+.btn-cyber-action:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon-cyan);
+}
+.btn-hit { border-color: var(--neon-green); color: var(--neon-green); }
+.btn-hit:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 15px var(--neon-green); }
+
+.btn-stand { border-color: var(--neon-red); color: var(--neon-red); }
+.btn-stand:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 15px var(--neon-red); }
+
+.btn-double { border-color: var(--neon-amber); color: var(--neon-amber); }
+.btn-double:hover { background: var(--neon-amber); color: #000; box-shadow: 0 0 15px var(--neon-amber); }
+
+/* ==========================================================================
+   3. SLOTS MATRIX (CAÇA-NÍQUEL)
    ========================================================================== */
 .slot-payouts-preview {
   display: flex;
@@ -844,7 +1054,7 @@ body {
   font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 800;
-  width: 90px;
+  width: 80px;
   text-align: center;
   border-radius: 3px;
   outline: none;
@@ -875,7 +1085,7 @@ body {
 }
 
 /* ==========================================================================
-   DADOS SABACC 3D
+   4. DADOS SABACC 3D
    ========================================================================== */
 .sabacc-arena {
   display: flex;
@@ -1001,18 +1211,10 @@ body {
   font-size: 0.72rem;
   color: var(--neon-cyan);
 }
-.gold-choice {
-  border-color: rgba(255, 170, 0, 0.4);
-}
-.gold-choice .choice-mult {
-  color: var(--neon-amber);
-}
-.double-choice {
-  border-color: rgba(189, 0, 255, 0.4);
-}
-.double-choice .choice-mult {
-  color: var(--neon-purple);
-}
+.gold-choice { border-color: rgba(255, 170, 0, 0.4); }
+.gold-choice .choice-mult { color: var(--neon-amber); }
+.double-choice { border-color: rgba(189, 0, 255, 0.4); }
+.double-choice .choice-mult { color: var(--neon-purple); }
 
 /* ==========================================================================
    FOOTER: CONSOLE LOG E TELEMETRIA
@@ -1064,18 +1266,215 @@ body {
   gap: 4px;
   font-size: 0.75rem;
 }
-.log-line {
-  line-height: 1.3;
-}
+.log-line { line-height: 1.3; }
 .log-win { color: var(--neon-green); font-weight: bold; text-shadow: 0 0 5px rgba(0, 255, 136, 0.4); }
 .log-loss { color: var(--neon-red); }
 .log-info { color: var(--neon-cyan); }
 .log-warn { color: var(--neon-amber); }
 
+/* ==========================================================================
+   MODAL DE CÂMBIO (COMPRA E DEVOLUÇÃO DE FICHAS)
+   ========================================================================== */
+.cambio-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 4, 10, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.cambio-modal-backdrop.active {
+  display: flex;
+  animation: fadeInModal 0.25s ease-out;
+}
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.cambio-modal-window {
+  background: #09101c;
+  border: 2px solid var(--neon-cyan);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 820px;
+  box-shadow: 0 0 50px rgba(0, 240, 255, 0.3), inset 0 0 30px rgba(0, 0, 0, 0.95);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(14, 25, 45, 0.95);
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--neon-cyan);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-symbol {
+  color: var(--neon-amber);
+}
+.btn-modal-close {
+  background: transparent;
+  border: none;
+  color: #799fc4;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.btn-modal-close:hover { color: #fff; }
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rate-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 170, 0, 0.1);
+  border: 1px dashed var(--neon-amber);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: #ffcc66;
+}
+
+.exchange-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.exchange-card {
+  background: rgba(3, 7, 15, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.exchange-card h3 {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  color: #fff;
+}
+.card-desc {
+  font-size: 0.8rem;
+  color: #8da2be;
+  min-height: 38px;
+}
+
+.exchange-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.exchange-input-group label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #6385a5;
+}
+
+.exchange-field {
+  display: flex;
+  align-items: center;
+  background: #000;
+  border: 1px solid var(--neon-cyan);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.exchange-field input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #ffd700;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  outline: none;
+}
+.unit-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--neon-cyan);
+  padding: 0 10px;
+  background: rgba(0, 240, 255, 0.1);
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.cost-preview {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: #a0c2e2;
+}
+.cost-preview strong {
+  color: #ffd700;
+}
+
+.quick-chip-buttons {
+  display: flex;
+  gap: 6px;
+}
+.quick-chip-buttons button {
+  flex: 1;
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #c9e1ff;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 6px 0;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: 0.2s;
+}
+.quick-chip-buttons button:hover {
+  background: var(--neon-cyan);
+  color: #000;
+}
+
+.btn-modal-action {
+  margin-top: 6px;
+  padding: 10px;
+}
+
+.modal-footer-note {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #557b9e;
+}
+
 /* Responsividade Básica */
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
   .roulette-layout {
     grid-template-columns: 1fr;
     justify-items: center;
+  }
+  .exchange-grid {
+    grid-template-columns: 1fr;
+  }
+  .datapad-tabs {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
