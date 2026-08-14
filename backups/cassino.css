@@ -1,0 +1,855 @@
+/* ==========================================================================
+       DATAPAD SYSTEM STYLING & CORE VARIABLES
+       ========================================================================== */
+:root {
+    --cyan-glow: #00f3ff;
+    --cyan-dim: rgba(0, 243, 255, 0.15);
+    --pink-glow: #ff0055;
+    --amber-glow: #ffaa00;
+    --green-glow: #00ff66;
+    --purple-glow: #b026ff;
+    --bg-dark: #030712;
+    --panel-bg: rgba(6, 15, 30, 0.85);
+    --panel-border: rgba(0, 243, 255, 0.35);
+    --font-title: 'Orbitron', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+    --font-body: 'Rajdhani', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: #cbebff;
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 10px;
+}
+
+/* Canvas de Fundo (Hiperespaço / Grid Matrix) */
+#spaceCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Efeito CRT / Scanlines Overlay */
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.35) 50%);
+    background-size: 100% 4px;
+    z-index: 99;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Vignette de Borda Holográfica */
+.vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 100px rgba(0, 243, 255, 0.15);
+    z-index: 98;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+       ESTRUTURA DO DATAPAD CHASSI
+       ========================================================================== */
+.datapad-frame {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 1380px;
+    height: 92vh;
+    max-height: 900px;
+    background: rgba(8, 16, 28, 0.92);
+    border: 2px solid var(--panel-border);
+    border-radius: 20px;
+    box-shadow:
+        0 0 30px rgba(0, 243, 255, 0.2),
+        inset 0 0 25px rgba(0, 243, 255, 0.05);
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    clip-path: polygon(0 20px, 20px 0,
+            calc(100% - 20px) 0, 100% 20px,
+            100% calc(100% - 20px), calc(100% - 20px) 100%,
+            20px 100%, 0 calc(100% - 20px));
+}
+
+/* Cantoneiras Industriais do Datapad */
+.datapad-corner {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--cyan-glow);
+    pointer-events: none;
+    z-index: 20;
+}
+
+.corner-tl {
+    top: 6px;
+    left: 6px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.corner-tr {
+    top: 6px;
+    right: 6px;
+    border-left: none;
+    border-bottom: none;
+}
+
+.corner-bl {
+    bottom: 6px;
+    left: 6px;
+    border-right: none;
+    border-top: none;
+}
+
+.corner-br {
+    bottom: 6px;
+    right: 6px;
+    border-left: none;
+    border-top: none;
+}
+
+/* ==========================================================================
+       HEADER & BARRA DE STATUS SISTÊMICA
+       ========================================================================== */
+.datapad-header {
+    background: rgba(2, 8, 18, 0.95);
+    border-bottom: 2px solid var(--panel-border);
+    padding: 12px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.nav-back-btn {
+    background: linear-gradient(135deg, rgba(255, 0, 85, 0.2), rgba(255, 0, 85, 0.05));
+    border: 1px solid var(--pink-glow);
+    color: var(--pink-glow);
+    padding: 8px 18px;
+    font-family: var(--font-title);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.nav-back-btn:hover {
+    background: var(--pink-glow);
+    color: #fff;
+    box-shadow: 0 0 15px var(--pink-glow);
+}
+
+.brand-title {
+    text-align: center;
+}
+
+.brand-title h1 {
+    font-family: var(--font-title);
+    font-size: 1.4rem;
+    color: #fff;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.brand-title span {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyan-glow);
+    letter-spacing: 2px;
+}
+
+/* Status do Datapad (Sinal, Bateria, Áudio) */
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: #8bb3d6;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green-glow);
+    box-shadow: 0 0 8px var(--green-glow);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+}
+
+.audio-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--cyan-glow);
+    color: var(--cyan-glow);
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.audio-toggle-btn:hover {
+    background: var(--cyan-dim);
+}
+
+/* ==========================================================================
+       BARRA DE RECURSOS (CRÉDITOS & RANKING GALÁCTICO)
+       ========================================================================== */
+.resource-bar {
+    background: rgba(4, 12, 24, 0.8);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    padding: 10px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.credit-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.credit-icon {
+    width: 42px;
+    height: 42px;
+    border: 2px solid var(--amber-glow);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--amber-glow);
+    font-size: 1.2rem;
+    box-shadow: 0 0 12px rgba(255, 170, 0, 0.4);
+    background: rgba(255, 170, 0, 0.1);
+}
+
+.credit-val-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.credit-lbl {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: #729bbb;
+    letter-spacing: 1px;
+}
+
+.credit-amount {
+    font-family: var(--font-title);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--amber-glow);
+    text-shadow: 0 0 10px rgba(255, 170, 0, 0.6);
+}
+
+/* Rank e Experiência */
+.rank-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 280px;
+}
+
+.rank-header {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+.rank-name {
+    color: var(--cyan-glow);
+    font-weight: bold;
+}
+
+.rank-xp-text {
+    color: #8bb3d6;
+}
+
+.xp-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.xp-bar-fill {
+    height: 100%;
+    width: 35%;
+    background: linear-gradient(90deg, var(--cyan-glow), var(--purple-glow));
+    box-shadow: 0 0 10px var(--cyan-glow);
+    transition: width 0.5s ease;
+}
+
+/* Ticker da Bolsa Galáctica */
+.ticker-bar {
+    display: flex;
+    gap: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #6388a8;
+    border-left: 2px solid var(--panel-border);
+    padding-left: 20px;
+}
+
+.ticker-item {
+    display: flex;
+    gap: 6px;
+}
+
+.ticker-up {
+    color: var(--green-glow);
+}
+
+.ticker-down {
+    color: var(--pink-glow);
+}
+
+/* ==========================================================================
+       LAYOUT DE CONTEÚDO PRINCIPAL (PAINEL TRIPLO)
+       ========================================================================== */
+.datapad-body {
+    display: grid;
+    grid-template-columns: 280px 1fr 300px;
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ESQUERDA: NAVEGAÇÃO DE SETORES & ESTATÍSTICAS */
+.side-panel-left {
+    background: rgba(3, 10, 20, 0.7);
+    border-right: 1px solid var(--panel-border);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.section-lbl {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyan-glow);
+    letter-spacing: 2px;
+    border-bottom: 1px dashed var(--panel-border);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.sector-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sector-btn {
+    background: rgba(10, 24, 45, 0.6);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    color: #92b7d8;
+    padding: 12px 15px;
+    font-family: var(--font-title);
+    font-size: 0.8rem;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.25s ease;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.sector-btn i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.sector-btn:hover,
+.sector-btn.active {
+    background: rgba(0, 243, 255, 0.15);
+    border-color: var(--cyan-glow);
+    color: #fff;
+    box-shadow: inset 0 0 12px rgba(0, 243, 255, 0.3), 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+.stats-card {
+    background: rgba(2, 8, 16, 0.8);
+    border: 1px solid rgba(0, 243, 255, 0.15);
+    padding: 12px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    color: #8baece;
+}
+
+.stat-val {
+    color: var(--cyan-glow);
+    font-weight: bold;
+}
+
+/* CENTRO: ÁREA DE JOGOS & ESTÁGIO HOLOGRÁFICO */
+.game-stage {
+    background: radial-gradient(circle at center, rgba(0, 243, 255, 0.05) 0%, transparent 70%);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-y: auto;
+}
+
+.game-view {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    animation: fadeIn 0.4s ease;
+}
+
+.game-view.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* --------------------------------------------------------------------------
+       JOGO 1: CAÇA-NÍQUEL HIPERDRIVE
+       -------------------------------------------------------------------------- */
+.slot-frame {
+    background: rgba(2, 9, 20, 0.9);
+    border: 2px solid var(--cyan-glow);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    position: relative;
+}
+
+.slot-reels-container {
+    display: flex;
+    gap: 15px;
+    background: #01040a;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--panel-border);
+    box-shadow: inset 0 0 20px #000;
+}
+
+.reel-window {
+    width: 110px;
+    height: 120px;
+    background: rgba(10, 20, 35, 0.9);
+    border: 1px solid var(--cyan-glow);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.4);
+}
+
+.reel-window.blur {
+    filter: blur(4px);
+}
+
+/* --------------------------------------------------------------------------
+       JOGO 2: ROLETA QUÂNTICA DE PLASMA
+       -------------------------------------------------------------------------- */
+.roulette-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.wheel-outer {
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    border: 4px dashed var(--cyan-glow);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+    transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -15px;
+    font-size: 1.5rem;
+    color: var(--amber-glow);
+    z-index: 5;
+    text-shadow: 0 0 10px var(--amber-glow);
+}
+
+.wheel-center-core {
+    width: 90px;
+    height: 90px;
+    background: #020712;
+    border: 2px solid var(--cyan-glow);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    color: #fff;
+    box-shadow: 0 0 15px var(--cyan-glow);
+}
+
+/* --------------------------------------------------------------------------
+       JOGO 3: DADOS SABACC HOLOGRÁFICOS
+       -------------------------------------------------------------------------- */
+.dice-stage {
+    display: flex;
+    gap: 30px;
+    margin: 20px 0;
+    perspective: 600px;
+}
+
+.holo-die {
+    width: 90px;
+    height: 90px;
+    background: rgba(0, 243, 255, 0.08);
+    border: 2px solid var(--cyan-glow);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-title);
+    font-size: 2.5rem;
+    color: var(--cyan-glow);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+    transition: transform 0.6s ease;
+}
+
+.holo-die.rolling {
+    animation: diceSpin 0.5s infinite linear;
+}
+
+@keyframes diceSpin {
+    0% {
+        transform: rotateX(0deg) rotateY(0deg);
+    }
+
+    100% {
+        transform: rotateX(360deg) rotateY(360deg);
+    }
+}
+
+/* --------------------------------------------------------------------------
+       CONTROLES DE APOSTA UNIVERSAIS
+       -------------------------------------------------------------------------- */
+.bet-panel {
+    background: rgba(3, 12, 24, 0.85);
+    border: 1px solid var(--panel-border);
+    padding: 15px 25px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.bet-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bet-input-group label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: #8cb4d8;
+}
+
+.bet-input {
+    background: #010610;
+    border: 1px solid var(--cyan-glow);
+    color: var(--amber-glow);
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    padding: 8px 12px;
+    width: 110px;
+    text-align: center;
+    border-radius: 4px;
+    outline: none;
+}
+
+.quick-bets {
+    display: flex;
+    gap: 6px;
+}
+
+.q-btn {
+    background: rgba(0, 243, 255, 0.1);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    color: var(--cyan-glow);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.q-btn:hover {
+    background: var(--cyan-glow);
+    color: #000;
+}
+
+.action-btn {
+    background: linear-gradient(135deg, var(--cyan-glow), #0088cc);
+    border: none;
+    color: #000;
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.95rem;
+    padding: 12px 30px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+}
+
+.action-btn:hover {
+    background: #fff;
+    box-shadow: 0 0 25px var(--cyan-glow);
+    transform: translateY(-2px);
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-choice {
+    background: rgba(5, 18, 35, 0.8);
+    border: 1px solid var(--panel-border);
+    color: #fff;
+    font-family: var(--font-title);
+    font-size: 0.75rem;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-choice.red:hover {
+    background: var(--pink-glow);
+    border-color: var(--pink-glow);
+}
+
+.btn-choice.blue:hover {
+    background: #0066ff;
+    border-color: #0066ff;
+}
+
+.btn-choice.gold:hover {
+    background: var(--amber-glow);
+    color: #000;
+    border-color: var(--amber-glow);
+}
+
+/* DIREITA: TERMINAL DE TELEMETRIA E LOGS */
+.side-panel-right {
+    background: rgba(3, 10, 20, 0.7);
+    border-left: 1px solid var(--panel-border);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.terminal-log-box {
+    flex-grow: 1;
+    background: #01050e;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    max-height: 380px;
+}
+
+.log-line {
+    line-height: 1.3;
+}
+
+.log-sys {
+    color: #589ecf;
+}
+
+.log-win {
+    color: var(--green-glow);
+    font-weight: bold;
+}
+
+.log-loss {
+    color: var(--pink-glow);
+}
+
+/* Conquistas Rápidas */
+.achieve-box {
+    background: rgba(2, 8, 16, 0.8);
+    border: 1px solid rgba(0, 243, 255, 0.15);
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.achieve-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75rem;
+    margin-top: 6px;
+}
+
+.achieve-icon {
+    color: var(--amber-glow);
+    font-size: 1rem;
+}
+
+/* Shake Effect para Grandes Vitórias */
+.shake {
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    20% {
+        transform: translate(-8px, 5px);
+    }
+
+    40% {
+        transform: translate(8px, -5px);
+    }
+
+    60% {
+        transform: translate(-5px, 3px);
+    }
+
+    80% {
+        transform: translate(5px, -3px);
+    }
+}
+
+/* Responsividade */
+@media (max-width: 1100px) {
+    .datapad-body {
+        grid-template-columns: 220px 1fr;
+    }
+
+    .side-panel-right {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .datapad-body {
+        grid-template-columns: 1fr;
+    }
+
+    .side-panel-left {
+        display: none;
+    }
+}

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cassino Nova Prime | Orla Exterior</title>
+  <link rel="stylesheet" href="cassino.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Background Space Canvas -->
+  <canvas id="spaceCanvas"></canvas>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <!-- CHASSI PRINCIPAL DO DATAPAD -->
+  <div class="datapad-frame" id="datapadMain">
+    <div class="datapad-corner corner-tl"></div>
+    <div class="datapad-corner corner-tr"></div>
+    <div class="datapad-corner corner-bl"></div>
+    <div class="datapad-corner corner-br"></div>
+
+    <!-- Header / Sistema -->
+    <header class="datapad-header">
+      <button class="nav-back-btn" onclick="exitTerminal()">
+        <i class="fa-solid fa-chevron-left"></i> TERMINAL DA NAVE
+      </button>
+
+      <div class="brand-title">
+        <h1>CANTO BIGHT</h1>
+        <span>TERMINAL DE APOSTAS DA ORLA EXTERIOR // v4.09</span>
+      </div>
+
+      <div class="system-status">
+        <div class="status-item">
+          <div class="status-pulse"></div>
+          <span>ENCRIPTADO</span>
+        </div>
+        <button class="audio-toggle-btn" id="audioToggleBtn" onclick="toggleAudio()" title="Alternar Sintetizador de Áudio">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Barra de Recursos e Câmbio -->
+    <div class="resource-bar">
+      <div class="credit-box">
+        <div class="credit-icon"><i class="fa-solid fa-coins"></i></div>
+        <div class="credit-val-group">
+          <span class="credit-lbl">SALDO EM CRÉDITOS GALÁTICOS</span>
+          <span class="credit-amount" id="creditDisplay">2,500</span>
+        </div>
+      </div>
+
+      <div class="rank-box">
+        <div class="rank-header">
+          <span class="rank-name" id="rankTitle">CONTRABANDISTA</span>
+          <span class="rank-xp-text" id="xpText">XP 350/1000</span>
+        </div>
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" id="xpFill"></div>
+        </div>
+      </div>
+
+      <div class="ticker-bar">
+        <div class="ticker-item">BESKAR: <span class="ticker-up">▲ 1,420 CG</span></div>
+        <div class="ticker-item">KYBER: <span class="ticker-down">▼ 890 CG</span></div>
+        <div class="ticker-item">COAXIUM: <span class="ticker-up">▲ 3,100 CG</span></div>
+      </div>
+    </div>
+
+    <!-- Corpo Principal do Datapad -->
+    <div class="datapad-body">
+      
+      <!-- Painel Esquerdo: Menu de Setores -->
+      <aside class="side-panel-left">
+        <div class="section-lbl">SETORES DE JOGO</div>
+        <nav class="sector-menu">
+          <button class="sector-btn active" onclick="switchSector('slots', this)">
+            <i class="fa-solid fa-atom"></i> CAÇA-NÍQUEL HIPER
+          </button>
+          <button class="sector-btn" onclick="switchSector('roulette', this)">
+            <i class="fa-solid fa-compact-disc"></i> ROLETA QUÂNTICA
+          </button>
+          <button class="sector-btn" onclick="switchSector('dice', this)">
+            <i class="fa-solid fa-dice-d6"></i> DADOS SABACC
+          </button>
+        </nav>
+
+        <div class="section-lbl">TELEMETRIA PESSOAL</div>
+        <div class="stats-card">
+          <div class="stat-row"><span>Apostas Feitas:</span><span class="stat-val" id="statBets">0</span></div>
+          <div class="stat-row"><span>Maior Lucro:</span><span class="stat-val" id="statMaxWin">0 CG</span></div>
+          <div class="stat-row"><span>Taxa de Vitória:</span><span class="stat-val" id="statWinRate">0%</span></div>
+        </div>
+      </aside>
+
+      <!-- Palco Central de Jogos -->
+      <main class="game-stage">
+        
+        <!-- JOGO 1: SLOTS HIPERDRIVE -->
+        <section id="sector-slots" class="game-view active">
+          <div class="slot-frame">
+            <h2 style="font-family: var(--font-title); font-size: 1.1rem; color: var(--cyan-glow);">SLOTS DE HIPERESPAÇO</h2>
+            
+            <div class="slot-reels-container">
+              <div class="reel-window" id="reel1">🚀</div>
+              <div class="reel-window" id="reel2">⚔️</div>
+              <div class="reel-window" id="reel3">🪐</div>
+            </div>
+
+            <div class="bet-panel">
+              <div class="bet-input-group">
+                <label>APOSTA:</label>
+                <input type="number" id="slotBet" class="bet-input" value="100" min="50" step="50">
+              </div>
+              <div class="quick-bets">
+                <button class="q-btn" onclick="setBet('slotBet', 50)">50</button>
+                <button class="q-btn" onclick="setBet('slotBet', 250)">250</button>
+                <button class="q-btn" onclick="setBet('slotBet', 500)">500</button>
+              </div>
+              <button class="action-btn" onclick="playSlots()">ATIVAR SALTO</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- JOGO 2: ROLETA QUÂNTICA -->
+        <section id="sector-roulette" class="game-view">
+          <div class="roulette-stage">
+            <h2 style="font-family: var(--font-title); font-size: 1.1rem; color: var(--cyan-glow);">ROLETA DE PLASMA QUÂNTICO</h2>
+            
+            <div style="position: relative;">
+              <span class="wheel-pointer">▼</span>
+              <div class="wheel-outer" id="rouletteWheel">
+                <div class="wheel-center-core" id="rouletteResult">--</div>
+              </div>
+            </div>
+
+            <div class="bet-panel">
+              <div class="bet-input-group">
+                <label>APOSTA:</label>
+                <input type="number" id="rouletteBet" class="bet-input" value="100" min="50" step="50">
+              </div>
+              <div class="btn-group">
+                <button class="btn-choice red" onclick="playRoulette('red')">VERMELHO (KYBER 2x)</button>
+                <button class="btn-choice blue" onclick="playRoulette('blue')">AZUL (PLASMA 2x)</button>
+                <button class="btn-choice gold" onclick="playRoulette('gold')">OURO (BESKAR 10x)</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- JOGO 3: DADOS SABACC -->
+        <section id="sector-dice" class="game-view">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <h2 style="font-family: var(--font-title); font-size: 1.1rem; color: var(--cyan-glow);">DADOS DA ORLA EXTERIOR</h2>
+            
+            <div class="dice-stage">
+              <div class="holo-die" id="die1">1</div>
+              <div class="holo-die" id="die2">1</div>
+            </div>
+
+            <div class="bet-panel">
+              <div class="bet-input-group">
+                <label>APOSTA:</label>
+                <input type="number" id="diceBet" class="bet-input" value="100" min="50" step="50">
+              </div>
+              <div class="btn-group">
+                <button class="btn-choice" onclick="playDice('low')">BAIXO (2-6) [2x]</button>
+                <button class="btn-choice" onclick="playDice('high')">ALTO (8-12) [2x]</button>
+                <button class="btn-choice gold" onclick="playDice('seven')">SABACC-7 [5x]</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Painel Direito: Terminal de Logs & Conquistas -->
+      <aside class="side-panel-right">
+        <div class="section-lbl">LOGS DO DATAPAD</div>
+        <div class="terminal-log-box" id="logTerminal">
+          <div class="log-line log-sys">> Sistema inicializado. Terminal id: DP-9902-X</div>
+          <div class="log-line log-sys">> Conexão estabelecida com a Cantina de Canto Bight.</div>
+        </div>
+
+        <div class="section-lbl">DISTINÇÕES</div>
+        <div class="achieve-box">
+          <div class="achieve-item">
+            <i class="fa-solid fa-trophy achieve-icon"></i>
+            <div>
+              <strong style="color: #fff;">Alta Blindagem</strong>
+              <p style="color: #7a9cc0; font-size: 0.68rem;">Alcance 5,000 Créditos Galácticos</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <script src="cassino.js"></script>
+</body>
+</html>
