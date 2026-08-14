@@ -3,200 +3,360 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cassino Nova Prime | Orla Exterior</title>
+  <title>DATAPAD // CASSINO ORLA EXTERIOR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="cassino.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body>
-  <!-- Background Space Canvas -->
+<body class="crt-filter">
+  <!-- Canvas de Fundo (Hiperespaço / Partículas) -->
   <canvas id="spaceCanvas"></canvas>
-  <div class="scanlines"></div>
-  <div class="vignette"></div>
+  <div class="scanline-overlay"></div>
+  <div class="vignette-overlay"></div>
 
-  <!-- CHASSI PRINCIPAL DO DATAPAD -->
-  <div class="datapad-frame" id="datapadMain">
-    <div class="datapad-corner corner-tl"></div>
-    <div class="datapad-corner corner-tr"></div>
-    <div class="datapad-corner corner-bl"></div>
-    <div class="datapad-corner corner-br"></div>
+  <!-- Carcaça do Datapad -->
+  <div class="datapad-chassis">
+    
+    <!-- Parafusos / Detalhes de Hardware do Datapad -->
+    <div class="hardware-bolt top-left"></div>
+    <div class="hardware-bolt top-right"></div>
+    <div class="hardware-bolt bottom-left"></div>
+    <div class="hardware-bolt bottom-right"></div>
 
-    <!-- Header / Sistema -->
+    <!-- Header do Datapad -->
     <header class="datapad-header">
-      <button class="nav-back-btn" onclick="exitTerminal()">
-        <i class="fa-solid fa-chevron-left"></i> TERMINAL DA NAVE
-      </button>
-
-      <div class="brand-title">
-        <h1>CANTO BIGHT</h1>
-        <span>TERMINAL DE APOSTAS DA ORLA EXTERIOR // v4.09</span>
+      <div class="header-left">
+        <button class="btn-terminal-nav" onclick="voltarInicio()" title="Voltar ao Terminal Central">
+          <span class="hud-bracket">[</span>
+          <span class="nav-icon">&#9664;</span> TERMINAL PRINCIPAL
+          <span class="hud-bracket">]</span>
+        </button>
+        <div class="signal-indicator">
+          <span class="signal-dot"></span>
+          <span class="signal-text">LINK QUÂNTICO ATIVO // SETOR ORLA-7</span>
+        </div>
       </div>
 
-      <div class="system-status">
-        <div class="status-item">
-          <div class="status-pulse"></div>
-          <span>ENCRIPTADO</span>
+      <div class="header-center">
+        <div class="brand-badge">
+          <div class="brand-glitch" data-text="AUREBESH-PRIME">NOVA PRIME</div>
+          <div class="brand-sub">SISTEMA INTEGRADO DE ENTRETENIMENTO & APOSTAS</div>
         </div>
-        <button class="audio-toggle-btn" id="audioToggleBtn" onclick="toggleAudio()" title="Alternar Sintetizador de Áudio">
-          <i class="fa-solid fa-volume-high"></i>
+      </div>
+
+      <div class="header-right">
+        <button class="btn-audio-toggle" id="audioToggleBtn" onclick="toggleAudio()" title="Alternar Sintetizador de Áudio">
+          <span id="audioIcon">🔊</span> SOM: <span id="audioState">LIGADO</span>
         </button>
+        <div class="credit-cartridge">
+          <div class="cartridge-label">CRÉDITOS GALÁTICOS (CG)</div>
+          <div class="cartridge-display">
+            <span class="cartridge-symbol">&#x2B21;</span>
+            <span id="creditBalance" class="counter">5000</span>
+            <span class="currency-tag">CG</span>
+          </div>
+        </div>
       </div>
     </header>
 
-    <!-- Barra de Recursos e Câmbio -->
-    <div class="resource-bar">
-      <div class="credit-box">
-        <div class="credit-icon"><i class="fa-solid fa-coins"></i></div>
-        <div class="credit-val-group">
-          <span class="credit-lbl">SALDO EM CRÉDITOS GALÁTICOS</span>
-          <span class="credit-amount" id="creditDisplay">2,500</span>
-        </div>
-      </div>
+    <!-- Barra de Navegação de Módulos (Jogos) -->
+    <nav class="datapad-tabs">
+      <button class="tab-module active" onclick="switchGame('roulette', this)">
+        <span class="tab-index">01</span>
+        <span class="tab-title">ROLETA GALÁCTICA COMPLETA</span>
+        <span class="tab-glow"></span>
+      </button>
+      <button class="tab-module" onclick="switchGame('slots', this)">
+        <span class="tab-index">02</span>
+        <span class="tab-title">SLOT MATRIX HIPERDRIVE</span>
+        <span class="tab-glow"></span>
+      </button>
+      <button class="tab-module" onclick="switchGame('sabacc', this)">
+        <span class="tab-index">03</span>
+        <span class="tab-title">DADOS QUÂNTICOS DE SABACC</span>
+        <span class="tab-glow"></span>
+      </button>
+    </nav>
 
-      <div class="rank-box">
-        <div class="rank-header">
-          <span class="rank-name" id="rankTitle">CONTRABANDISTA</span>
-          <span class="rank-xp-text" id="xpText">XP 350/1000</span>
-        </div>
-        <div class="xp-bar-bg">
-          <div class="xp-bar-fill" id="xpFill"></div>
-        </div>
-      </div>
-
-      <div class="ticker-bar">
-        <div class="ticker-item">BESKAR: <span class="ticker-up">▲ 1,420 CG</span></div>
-        <div class="ticker-item">KYBER: <span class="ticker-down">▼ 890 CG</span></div>
-        <div class="ticker-item">COAXIUM: <span class="ticker-up">▲ 3,100 CG</span></div>
-      </div>
-    </div>
-
-    <!-- Corpo Principal do Datapad -->
-    <div class="datapad-body">
+    <!-- Display Principal de Jogos -->
+    <main class="datapad-screen">
       
-      <!-- Painel Esquerdo: Menu de Setores -->
-      <aside class="side-panel-left">
-        <div class="section-lbl">SETORES DE JOGO</div>
-        <nav class="sector-menu">
-          <button class="sector-btn active" onclick="switchSector('slots', this)">
-            <i class="fa-solid fa-atom"></i> CAÇA-NÍQUEL HIPER
-          </button>
-          <button class="sector-btn" onclick="switchSector('roulette', this)">
-            <i class="fa-solid fa-compact-disc"></i> ROLETA QUÂNTICA
-          </button>
-          <button class="sector-btn" onclick="switchSector('dice', this)">
-            <i class="fa-solid fa-dice-d6"></i> DADOS SABACC
-          </button>
-        </nav>
-
-        <div class="section-lbl">TELEMETRIA PESSOAL</div>
-        <div class="stats-card">
-          <div class="stat-row"><span>Apostas Feitas:</span><span class="stat-val" id="statBets">0</span></div>
-          <div class="stat-row"><span>Maior Lucro:</span><span class="stat-val" id="statMaxWin">0 CG</span></div>
-          <div class="stat-row"><span>Taxa de Vitória:</span><span class="stat-val" id="statWinRate">0%</span></div>
-        </div>
-      </aside>
-
-      <!-- Palco Central de Jogos -->
-      <main class="game-stage">
-        
-        <!-- JOGO 1: SLOTS HIPERDRIVE -->
-        <section id="sector-slots" class="game-view active">
-          <div class="slot-frame">
-            <h2 style="font-family: var(--font-title); font-size: 1.1rem; color: var(--cyan-glow);">SLOTS DE HIPERESPAÇO</h2>
-            
-            <div class="slot-reels-container">
-              <div class="reel-window" id="reel1">🚀</div>
-              <div class="reel-window" id="reel2">⚔️</div>
-              <div class="reel-window" id="reel3">🪐</div>
-            </div>
-
-            <div class="bet-panel">
-              <div class="bet-input-group">
-                <label>APOSTA:</label>
-                <input type="number" id="slotBet" class="bet-input" value="100" min="50" step="50">
-              </div>
-              <div class="quick-bets">
-                <button class="q-btn" onclick="setBet('slotBet', 50)">50</button>
-                <button class="q-btn" onclick="setBet('slotBet', 250)">250</button>
-                <button class="q-btn" onclick="setBet('slotBet', 500)">500</button>
-              </div>
-              <button class="action-btn" onclick="playSlots()">ATIVAR SALTO</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- JOGO 2: ROLETA QUÂNTICA -->
-        <section id="sector-roulette" class="game-view">
-          <div class="roulette-stage">
-            <h2 style="font-family: var(--font-title); font-size: 1.1rem; color: var(--cyan-glow);">ROLETA DE PLASMA QUÂNTICO</h2>
-            
-            <div style="position: relative;">
-              <span class="wheel-pointer">▼</span>
-              <div class="wheel-outer" id="rouletteWheel">
-                <div class="wheel-center-core" id="rouletteResult">--</div>
-              </div>
-            </div>
-
-            <div class="bet-panel">
-              <div class="bet-input-group">
-                <label>APOSTA:</label>
-                <input type="number" id="rouletteBet" class="bet-input" value="100" min="50" step="50">
-              </div>
-              <div class="btn-group">
-                <button class="btn-choice red" onclick="playRoulette('red')">VERMELHO (KYBER 2x)</button>
-                <button class="btn-choice blue" onclick="playRoulette('blue')">AZUL (PLASMA 2x)</button>
-                <button class="btn-choice gold" onclick="playRoulette('gold')">OURO (BESKAR 10x)</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- JOGO 3: DADOS SABACC -->
-        <section id="sector-dice" class="game-view">
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-            <h2 style="font-family: var(--font-title); font-size: 1.1rem; color: var(--cyan-glow);">DADOS DA ORLA EXTERIOR</h2>
-            
-            <div class="dice-stage">
-              <div class="holo-die" id="die1">1</div>
-              <div class="holo-die" id="die2">1</div>
-            </div>
-
-            <div class="bet-panel">
-              <div class="bet-input-group">
-                <label>APOSTA:</label>
-                <input type="number" id="diceBet" class="bet-input" value="100" min="50" step="50">
-              </div>
-              <div class="btn-group">
-                <button class="btn-choice" onclick="playDice('low')">BAIXO (2-6) [2x]</button>
-                <button class="btn-choice" onclick="playDice('high')">ALTO (8-12) [2x]</button>
-                <button class="btn-choice gold" onclick="playDice('seven')">SABACC-7 [5x]</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      </main>
-
-      <!-- Painel Direito: Terminal de Logs & Conquistas -->
-      <aside class="side-panel-right">
-        <div class="section-lbl">LOGS DO DATAPAD</div>
-        <div class="terminal-log-box" id="logTerminal">
-          <div class="log-line log-sys">> Sistema inicializado. Terminal id: DP-9902-X</div>
-          <div class="log-line log-sys">> Conexão estabelecida com a Cantina de Canto Bight.</div>
-        </div>
-
-        <div class="section-lbl">DISTINÇÕES</div>
-        <div class="achieve-box">
-          <div class="achieve-item">
-            <i class="fa-solid fa-trophy achieve-icon"></i>
-            <div>
-              <strong style="color: #fff;">Alta Blindagem</strong>
-              <p style="color: #7a9cc0; font-size: 0.68rem;">Alcance 5,000 Créditos Galácticos</p>
+      <!-- ============================================== -->
+      <!-- JOGO 1: ROLETA COMPLETA DE CASSINO PROFISSIONAL -->
+      <!-- ============================================== -->
+      <section id="game-roulette" class="game-section active">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE ROLETA QUÂNTICA</div>
+          <div class="history-tracker">
+            <span class="history-label">ÚLTIMOS SETORES:</span>
+            <div id="rouletteHistory" class="history-chips">
+              <!-- Histórico via JS -->
             </div>
           </div>
         </div>
-      </aside>
 
-    </div>
+        <div class="roulette-layout">
+          <!-- Coluna Esquerda: Animação Física da Roda e Bola em Canvas -->
+          <div class="roulette-wheel-box">
+            <div class="wheel-outer-ring">
+              <canvas id="rouletteCanvas" width="380" height="380"></canvas>
+              <div class="wheel-core-hud">
+                <span class="core-label">SETORES</span>
+                <span id="rouletteCenterNumber" class="core-num">--</span>
+                <span id="rouletteCenterType" class="core-sub">AGUARDANDO</span>
+              </div>
+            </div>
+            <div class="spin-action-panel">
+              <button class="btn-cyber-primary" id="btnSpinRoulette" onclick="spinRouletteWheel()">
+                <span class="btn-text">GIRAR ROLETA QUÂNTICA</span>
+                <span class="btn-shine"></span>
+              </button>
+              <button class="btn-cyber-danger" onclick="clearRouletteBets()">
+                LIMPAR MESA
+              </button>
+            </div>
+          </div>
+
+          <!-- Coluna Direita: Mesa de Apostas Completa (Grid Europeu 0-36, Cores, Dúzias, Colunas, etc.) -->
+          <div class="roulette-table-box">
+            <!-- Seletor de Fichas -->
+            <div class="chip-selector-bar">
+              <span class="chip-label">FICHAS DE APOSTA:</span>
+              <div class="chip-options">
+                <button class="chip-btn chip-10 active" onclick="selectChip(10, this)">10</button>
+                <button class="chip-btn chip-50" onclick="selectChip(50, this)">50</button>
+                <button class="chip-btn chip-100" onclick="selectChip(100, this)">100</button>
+                <button class="chip-btn chip-500" onclick="selectChip(500, this)">500</button>
+                <button class="chip-btn chip-1000" onclick="selectChip(1000, this)">1000</button>
+              </div>
+              <div class="current-total-bet">
+                APOSTA NA MESA: <span id="rouletteTotalBetAmount">0</span> CG
+              </div>
+            </div>
+
+            <!-- Tabuleiro Interativo -->
+            <div class="betting-felt">
+              <!-- Linha Superior / Zero -->
+              <div class="grid-zero-col">
+                <button class="bet-spot spot-zero" data-bet="0" onclick="placeRouletteBet('number', 0)">
+                  <span class="spot-num">0</span>
+                  <span class="chip-marker" id="marker-num-0"></span>
+                </button>
+              </div>
+
+              <!-- Grid dos 36 Números (12 colunas x 3 linhas) -->
+              <div class="grid-numbers-table" id="rouletteNumbersGrid">
+                <!-- Gerado e estruturado via CSS / JS para 1 a 36 -->
+              </div>
+
+              <!-- Coluna 2:1 (Fim das Linhas) -->
+              <div class="grid-column-bets">
+                <button class="bet-spot spot-side" data-bet="col3" onclick="placeRouletteBet('col', 3)">
+                  <span class="spot-txt">2:1</span>
+                  <span class="chip-marker" id="marker-col-3"></span>
+                </button>
+                <button class="bet-spot spot-side" data-bet="col2" onclick="placeRouletteBet('col', 2)">
+                  <span class="spot-txt">2:1</span>
+                  <span class="chip-marker" id="marker-col-2"></span>
+                </button>
+                <button class="bet-spot spot-side" data-bet="col1" onclick="placeRouletteBet('col', 1)">
+                  <span class="spot-txt">2:1</span>
+                  <span class="chip-marker" id="marker-col-1"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Apostas Externas: Dúzias -->
+            <div class="outside-bets-dozens">
+              <button class="bet-spot spot-dozen" onclick="placeRouletteBet('dozen', 1)">
+                <span>1ª DÚZIA (1-12) [3x]</span>
+                <span class="chip-marker" id="marker-dozen-1"></span>
+              </button>
+              <button class="bet-spot spot-dozen" onclick="placeRouletteBet('dozen', 2)">
+                <span>2ª DÚZIA (13-24) [3x]</span>
+                <span class="chip-marker" id="marker-dozen-2"></span>
+              </button>
+              <button class="bet-spot spot-dozen" onclick="placeRouletteBet('dozen', 3)">
+                <span>3ª DÚZIA (25-36) [3x]</span>
+                <span class="chip-marker" id="marker-dozen-3"></span>
+              </button>
+            </div>
+
+            <!-- Apostas Externas: 1-18, Par, Vermelho, Preto, Ímpar, 19-36 -->
+            <div class="outside-bets-simple">
+              <button class="bet-spot spot-simple" onclick="placeRouletteBet('half', 1)">
+                <span>1 A 18</span>
+                <span class="chip-marker" id="marker-half-1"></span>
+              </button>
+              <button class="bet-spot spot-simple" onclick="placeRouletteBet('even_odd', 'even')">
+                <span>PAR</span>
+                <span class="chip-marker" id="marker-even"></span>
+              </button>
+              <button class="bet-spot spot-simple spot-red" onclick="placeRouletteBet('color', 'red')">
+                <span class="color-badge red-badge"></span>
+                <span>VERMELHO (KYBER)</span>
+                <span class="chip-marker" id="marker-color-red"></span>
+              </button>
+              <button class="bet-spot spot-simple spot-black" onclick="placeRouletteBet('color', 'black')">
+                <span class="color-badge black-badge"></span>
+                <span>PRETO (BESKAR)</span>
+                <span class="chip-marker" id="marker-color-black"></span>
+              </button>
+              <button class="bet-spot spot-simple" onclick="placeRouletteBet('even_odd', 'odd')">
+                <span>ÍMPAR</span>
+                <span class="chip-marker" id="marker-odd"></span>
+              </button>
+              <button class="bet-spot spot-simple" onclick="placeRouletteBet('half', 2)">
+                <span>19 A 36</span>
+                <span class="chip-marker" id="marker-half-2"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- JOGO 2: CAÇA-NÍQUEL MATRIX HIPERDRIVE -->
+      <!-- ============================================== -->
+      <section id="game-slots" class="game-section">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> ALINHAMENTO DE BOBINAS DE COAXIUM // SLOTS 3x3</div>
+          <div class="slot-payouts-preview">
+            <span>⚔️ 3x = 50x</span>
+            <span>💎 3x = 25x</span>
+            <span>🪐 3x = 15x</span>
+            <span>🚀 3x = 10x</span>
+            <span>⚡ 3x = 5x</span>
+          </div>
+        </div>
+
+        <div class="slots-frame">
+          <div class="slot-viewport">
+            <div class="slot-column" id="slotCol0">
+              <div class="slot-reel-strip"></div>
+            </div>
+            <div class="slot-column" id="slotCol1">
+              <div class="slot-reel-strip"></div>
+            </div>
+            <div class="slot-column" id="slotCol2">
+              <div class="slot-reel-strip"></div>
+            </div>
+            <div class="slot-laser-line"></div>
+          </div>
+
+          <div class="slot-control-deck">
+            <div class="bet-adjust-group">
+              <label>VALOR POR GIRO (CG):</label>
+              <div class="spin-bet-inputs">
+                <button class="btn-step" onclick="adjustSlotBet(-25)">-25</button>
+                <input type="number" id="slotBetInput" value="50" min="10" step="10" readonly>
+                <button class="btn-step" onclick="adjustSlotBet(25)">+25</button>
+                <button class="btn-step max-btn" onclick="setSlotBetMax()">MÁX</button>
+              </div>
+            </div>
+
+            <button class="btn-cyber-primary btn-spin-slot" id="btnSpinSlot" onclick="spinSlotMachine()">
+              <span class="btn-text">IGNIÇÃO HIPERDRIVE</span>
+              <span class="btn-shine"></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- JOGO 3: DADOS SABACC ORLA EXTERIOR -->
+      <!-- ============================================== -->
+      <section id="game-sabacc" class="game-section">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> DADOS HOLOGRÁFICOS DE PROBABILIDADE // SABACC</div>
+        </div>
+
+        <div class="sabacc-arena">
+          <div class="hologram-dice-pod">
+            <div class="cube-scene">
+              <div class="dice-3d" id="cube1">
+                <div class="cube-face front">1</div>
+                <div class="cube-face back">6</div>
+                <div class="cube-face right">3</div>
+                <div class="cube-face left">4</div>
+                <div class="cube-face top">2</div>
+                <div class="cube-face bottom">5</div>
+              </div>
+            </div>
+            <div class="cube-scene">
+              <div class="dice-3d" id="cube2">
+                <div class="cube-face front">1</div>
+                <div class="cube-face back">6</div>
+                <div class="cube-face right">3</div>
+                <div class="cube-face left">4</div>
+                <div class="cube-face top">2</div>
+                <div class="cube-face bottom">5</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dice-results-hud">
+            <div class="hud-item">
+              <span class="label">DADO ALFA:</span>
+              <span id="sabaccDie1Val" class="val">-</span>
+            </div>
+            <div class="hud-item highlight">
+              <span class="label">SOMA TOTAL:</span>
+              <span id="sabaccSumVal" class="val">-</span>
+            </div>
+            <div class="hud-item">
+              <span class="label">DADO BETA:</span>
+              <span id="sabaccDie2Val" class="val">-</span>
+            </div>
+          </div>
+
+          <div class="sabacc-bet-board">
+            <div class="bet-adjust-group">
+              <label>VALOR DA APOSTA (CG):</label>
+              <input type="number" id="sabaccBetInput" value="100" min="20" step="20">
+            </div>
+
+            <div class="sabacc-choice-grid">
+              <button class="btn-sabacc-choice" onclick="rollSabaccDice('low')">
+                <span class="choice-title">SUB-ÓRBITA (2 a 6)</span>
+                <span class="choice-mult">PAGA 2.0x</span>
+              </button>
+              <button class="btn-sabacc-choice gold-choice" onclick="rollSabaccDice('seven')">
+                <span class="choice-title">PULSO SETE (SOMA 7)</span>
+                <span class="choice-mult">PAGA 4.5x</span>
+              </button>
+              <button class="btn-sabacc-choice" onclick="rollSabaccDice('high')">
+                <span class="choice-title">HIPER-ÓRBITA (8 a 12)</span>
+                <span class="choice-mult">PAGA 2.0x</span>
+              </button>
+              <button class="btn-sabacc-choice double-choice" onclick="rollSabaccDice('double')">
+                <span class="choice-title">PAR DE CLONES (DADOS IGUAIS)</span>
+                <span class="choice-mult">PAGA 5.5x</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Terminal de Logs / Telemetria Inferior -->
+    <footer class="datapad-footer">
+      <div class="console-box">
+        <div class="console-header">
+          <span class="pulse-icon"></span>
+          <span>CONSOLE DE TELEMETRIA & TRANSAÇÕES QUÂNTICAS</span>
+          <button class="btn-clear-log" onclick="clearConsoleLog()">LIMPAR BUFFER</button>
+        </div>
+        <div class="console-stream" id="consoleStream">
+          <div class="log-line sys-init">> [DATAPAD BOOT]: Inicialização de sub-rotinas criptográficas concluída.</div>
+          <div class="log-line sys-info">> [BANCO GALÁCTICO]: Saldo inicial de 5.000 Créditos Galácticos carregado.</div>
+          <div class="log-line sys-ready">> [PRONTO]: Selecione um setor e posicione suas fichas.</div>
+        </div>
+      </div>
+    </footer>
+
   </div>
 
   <script src="cassino.js"></script>

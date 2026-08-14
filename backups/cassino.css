@@ -1,855 +1,1081 @@
 /* ==========================================================================
-       DATAPAD SYSTEM STYLING & CORE VARIABLES
-       ========================================================================== */
+   DATAPAD CASINO - ESTILO SCI-FI COMPLETO
+   ========================================================================== */
+
 :root {
-    --cyan-glow: #00f3ff;
-    --cyan-dim: rgba(0, 243, 255, 0.15);
-    --pink-glow: #ff0055;
-    --amber-glow: #ffaa00;
-    --green-glow: #00ff66;
-    --purple-glow: #b026ff;
-    --bg-dark: #030712;
-    --panel-bg: rgba(6, 15, 30, 0.85);
-    --panel-border: rgba(0, 243, 255, 0.35);
-    --font-title: 'Orbitron', sans-serif;
-    --font-mono: 'Share Tech Mono', monospace;
-    --font-body: 'Rajdhani', sans-serif;
+  --bg-deep-space: #03050a;
+  --chassis-body: #0a0e17;
+  --chassis-border: #16263d;
+  --screen-bg: #040914;
+  --neon-cyan: #00f0ff;
+  --neon-cyan-glow: rgba(0, 240, 255, 0.4);
+  --neon-amber: #ffaa00;
+  --neon-amber-glow: rgba(255, 170, 0, 0.4);
+  --neon-red: #ff1a4b;
+  --neon-red-glow: rgba(255, 26, 75, 0.5);
+  --neon-green: #00ff88;
+  --neon-green-glow: rgba(0, 255, 136, 0.4);
+  --neon-purple: #bd00ff;
+  --felt-green: #0b221d;
+  --font-display: 'Orbitron', -apple-system, sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-ui: 'Rajdhani', sans-serif;
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
 }
 
 body {
-    background-color: var(--bg-dark);
-    color: #cbebff;
-    font-family: var(--font-body);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    padding: 10px;
+  background-color: var(--bg-deep-space);
+  color: #c9e1ff;
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  padding: 15px;
 }
 
-/* Canvas de Fundo (Hiperespaço / Grid Matrix) */
+/* Canvas de Fundo */
 #spaceCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
-    pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
 }
 
-/* Efeito CRT / Scanlines Overlay */
-.scanlines {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%,
-            rgba(0, 0, 0, 0.35) 50%);
-    background-size: 100% 4px;
-    z-index: 99;
-    pointer-events: none;
-    opacity: 0.7;
+/* Efeito CRT e Vinheta */
+.scanline-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  z-index: 99;
+  pointer-events: none;
+  opacity: 0.6;
 }
 
-/* Vignette de Borda Holográfica */
-.vignette {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    box-shadow: inset 0 0 100px rgba(0, 243, 255, 0.15);
-    z-index: 98;
-    pointer-events: none;
-}
-
-/* ==========================================================================
-       ESTRUTURA DO DATAPAD CHASSI
-       ========================================================================== */
-.datapad-frame {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 1380px;
-    height: 92vh;
-    max-height: 900px;
-    background: rgba(8, 16, 28, 0.92);
-    border: 2px solid var(--panel-border);
-    border-radius: 20px;
-    box-shadow:
-        0 0 30px rgba(0, 243, 255, 0.2),
-        inset 0 0 25px rgba(0, 243, 255, 0.05);
-    backdrop-filter: blur(12px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    clip-path: polygon(0 20px, 20px 0,
-            calc(100% - 20px) 0, 100% 20px,
-            100% calc(100% - 20px), calc(100% - 20px) 100%,
-            20px 100%, 0 calc(100% - 20px));
-}
-
-/* Cantoneiras Industriais do Datapad */
-.datapad-corner {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--cyan-glow);
-    pointer-events: none;
-    z-index: 20;
-}
-
-.corner-tl {
-    top: 6px;
-    left: 6px;
-    border-right: none;
-    border-bottom: none;
-}
-
-.corner-tr {
-    top: 6px;
-    right: 6px;
-    border-left: none;
-    border-bottom: none;
-}
-
-.corner-bl {
-    bottom: 6px;
-    left: 6px;
-    border-right: none;
-    border-top: none;
-}
-
-.corner-br {
-    bottom: 6px;
-    right: 6px;
-    border-left: none;
-    border-top: none;
+.vignette-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.85);
+  z-index: 98;
+  pointer-events: none;
 }
 
 /* ==========================================================================
-       HEADER & BARRA DE STATUS SISTÊMICA
-       ========================================================================== */
+   CHASSIS DO DATAPAD
+   ========================================================================== */
+.datapad-chassis {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1320px;
+  background: var(--chassis-body);
+  border: 2px solid var(--chassis-border);
+  box-shadow: 
+    0 0 30px rgba(0, 240, 255, 0.15),
+    inset 0 0 40px rgba(0, 0, 0, 0.9);
+  border-radius: 12px;
+  padding: 16px;
+  clip-path: polygon(
+    20px 0%, calc(100% - 20px) 0%,
+    100% 20px, 100% calc(100% - 20px),
+    calc(100% - 20px) 100%, 20px 100%,
+    0% calc(100% - 20px), 0% 20px
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Parafusos nos cantos */
+.hardware-bolt {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #253347;
+  border-radius: 50%;
+  border: 1px solid #3c5270;
+  box-shadow: inset 0 1px 2px #000;
+}
+.hardware-bolt.top-left { top: 8px; left: 8px; }
+.hardware-bolt.top-right { top: 8px; right: 8px; }
+.hardware-bolt.bottom-left { bottom: 8px; left: 8px; }
+.hardware-bolt.bottom-right { bottom: 8px; right: 8px; }
+
+/* ==========================================================================
+   HEADER DO DATAPAD
+   ========================================================================== */
 .datapad-header {
-    background: rgba(2, 8, 18, 0.95);
-    border-bottom: 2px solid var(--panel-border);
-    padding: 12px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(5, 11, 22, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 6px;
+  padding: 10px 18px;
+  box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
 }
 
-.nav-back-btn {
-    background: linear-gradient(135deg, rgba(255, 0, 85, 0.2), rgba(255, 0, 85, 0.05));
-    border: 1px solid var(--pink-glow);
-    color: var(--pink-glow);
-    padding: 8px 18px;
-    font-family: var(--font-title);
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.3s ease;
-    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-.nav-back-btn:hover {
-    background: var(--pink-glow);
-    color: #fff;
-    box-shadow: 0 0 15px var(--pink-glow);
+.btn-terminal-nav {
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+.btn-terminal-nav:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon-cyan-glow);
+}
+.hud-bracket {
+  opacity: 0.6;
 }
 
-.brand-title {
-    text-align: center;
+.signal-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #6088a8;
+}
+.signal-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--neon-green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--neon-green);
+  animation: pulse-green 1.8s infinite ease-in-out;
+}
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
 }
 
-.brand-title h1 {
-    font-family: var(--font-title);
-    font-size: 1.4rem;
-    color: #fff;
-    letter-spacing: 4px;
-    text-shadow: 0 0 10px var(--cyan-glow);
+.brand-badge {
+  text-align: center;
+}
+.brand-glitch {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+}
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  color: #6c91b5;
 }
 
-.brand-title span {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--cyan-glow);
-    letter-spacing: 2px;
+.btn-audio-toggle {
+  background: transparent;
+  border: 1px solid rgba(255, 170, 0, 0.4);
+  color: var(--neon-amber);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-audio-toggle:hover {
+  background: rgba(255, 170, 0, 0.15);
+  border-color: var(--neon-amber);
 }
 
-/* Status do Datapad (Sinal, Bateria, Áudio) */
-.system-status {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: #8bb3d6;
+.credit-cartridge {
+  background: #020409;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 4px;
+  padding: 4px 12px;
+  text-align: right;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
 }
-
-.status-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.cartridge-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: #8da2be;
+  letter-spacing: 1px;
 }
-
-.status-pulse {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--green-glow);
-    box-shadow: 0 0 8px var(--green-glow);
-    animation: pulse 2s infinite;
+.cartridge-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffd700;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
 }
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: 0.3;
-        transform: scale(0.8);
-    }
+.cartridge-symbol {
+  font-size: 0.9rem;
+  color: #ffaa00;
 }
-
-.audio-toggle-btn {
-    background: transparent;
-    border: 1px solid var(--cyan-glow);
-    color: var(--cyan-glow);
-    width: 34px;
-    height: 34px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
-}
-
-.audio-toggle-btn:hover {
-    background: var(--cyan-dim);
-}
-
-/* ==========================================================================
-       BARRA DE RECURSOS (CRÉDITOS & RANKING GALÁCTICO)
-       ========================================================================== */
-.resource-bar {
-    background: rgba(4, 12, 24, 0.8);
-    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-    padding: 10px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.credit-box {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.credit-icon {
-    width: 42px;
-    height: 42px;
-    border: 2px solid var(--amber-glow);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--amber-glow);
-    font-size: 1.2rem;
-    box-shadow: 0 0 12px rgba(255, 170, 0, 0.4);
-    background: rgba(255, 170, 0, 0.1);
-}
-
-.credit-val-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.credit-lbl {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: #729bbb;
-    letter-spacing: 1px;
-}
-
-.credit-amount {
-    font-family: var(--font-title);
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: var(--amber-glow);
-    text-shadow: 0 0 10px rgba(255, 170, 0, 0.6);
-}
-
-/* Rank e Experiência */
-.rank-box {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 280px;
-}
-
-.rank-header {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-}
-
-.rank-name {
-    color: var(--cyan-glow);
-    font-weight: bold;
-}
-
-.rank-xp-text {
-    color: #8bb3d6;
-}
-
-.xp-bar-bg {
-    width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--panel-border);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.xp-bar-fill {
-    height: 100%;
-    width: 35%;
-    background: linear-gradient(90deg, var(--cyan-glow), var(--purple-glow));
-    box-shadow: 0 0 10px var(--cyan-glow);
-    transition: width 0.5s ease;
-}
-
-/* Ticker da Bolsa Galáctica */
-.ticker-bar {
-    display: flex;
-    gap: 20px;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: #6388a8;
-    border-left: 2px solid var(--panel-border);
-    padding-left: 20px;
-}
-
-.ticker-item {
-    display: flex;
-    gap: 6px;
-}
-
-.ticker-up {
-    color: var(--green-glow);
-}
-
-.ticker-down {
-    color: var(--pink-glow);
+.currency-tag {
+  font-size: 0.7rem;
+  color: #a88d22;
 }
 
 /* ==========================================================================
-       LAYOUT DE CONTEÚDO PRINCIPAL (PAINEL TRIPLO)
-       ========================================================================== */
-.datapad-body {
-    display: grid;
-    grid-template-columns: 280px 1fr 300px;
-    flex-grow: 1;
-    overflow: hidden;
-    position: relative;
+   TABS DE NAVEGAÇÃO ENTRE JOGOS
+   ========================================================================== */
+.datapad-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.tab-module {
+  position: relative;
+  background: rgba(10, 20, 36, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  color: #85a5cc;
+  padding: 10px 14px;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 4px;
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+.tab-module .tab-index {
+  font-family: var(--font-mono);
+  color: var(--neon-cyan);
+  font-size: 0.75rem;
+  padding: 2px 5px;
+  background: rgba(0, 240, 255, 0.1);
+  border-radius: 2px;
+}
+.tab-module:hover {
+  background: rgba(0, 240, 255, 0.12);
+  color: #fff;
+  border-color: var(--neon-cyan);
+}
+.tab-module.active {
+  background: rgba(0, 240, 255, 0.18);
+  color: #ffffff;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.25), inset 0 0 10px rgba(0, 240, 255, 0.2);
+}
+.tab-module.active .tab-glow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 10px var(--neon-cyan);
 }
 
-/* ESQUERDA: NAVEGAÇÃO DE SETORES & ESTATÍSTICAS */
-.side-panel-left {
-    background: rgba(3, 10, 20, 0.7);
-    border-right: 1px solid var(--panel-border);
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* ==========================================================================
+   TELA PRINCIPAL DO DATAPAD (MAIN DISPLAY)
+   ========================================================================== */
+.datapad-screen {
+  background: var(--screen-bg);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 6px;
+  padding: 16px;
+  min-height: 520px;
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.95);
+  position: relative;
 }
 
-.section-lbl {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--cyan-glow);
-    letter-spacing: 2px;
-    border-bottom: 1px dashed var(--panel-border);
-    padding-bottom: 5px;
-    margin-bottom: 10px;
+.game-section {
+  display: none;
+  animation: fadeInModule 0.35s ease-out forwards;
+}
+.game-section.active {
+  display: block;
+}
+@keyframes fadeInModule {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.sector-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.section-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px dashed rgba(0, 240, 255, 0.25);
+}
+.title-text {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--neon-cyan);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.neon-bullet {
+  font-size: 0.7rem;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan);
 }
 
-.sector-btn {
-    background: rgba(10, 24, 45, 0.6);
-    border: 1px solid rgba(0, 243, 255, 0.2);
-    color: #92b7d8;
-    padding: 12px 15px;
-    font-family: var(--font-title);
-    font-size: 0.8rem;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.25s ease;
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+/* Histórico de Roleta */
+.history-tracker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.history-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #6b8caa;
+}
+.history-chips {
+  display: flex;
+  gap: 5px;
+}
+.hist-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+.hist-red { background: #b01030; border-color: var(--neon-red); }
+.hist-black { background: #121822; border-color: #4a6385; }
+.hist-zero { background: #008a47; border-color: var(--neon-green); }
+
+/* ==========================================================================
+   ROLETA COMPLETA (RODA + MESA EUROPEIA)
+   ========================================================================== */
+.roulette-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
-.sector-btn i {
-    font-size: 1rem;
-    width: 20px;
-    text-align: center;
+/* Roda Quântica e Canvas */
+.roulette-wheel-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(8, 14, 26, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 8px;
+  padding: 14px;
+}
+.wheel-outer-ring {
+  position: relative;
+  width: 340px;
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#rouletteCanvas {
+  border-radius: 50%;
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.2), inset 0 0 20px #000;
+}
+.wheel-core-hud {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  background: radial-gradient(circle, #091322 60%, #03060a 100%);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4), inset 0 0 10px #000;
+  pointer-events: none;
+}
+.core-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: #6385a5;
+  letter-spacing: 1px;
+}
+.core-num {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+.core-sub {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--neon-amber);
 }
 
-.sector-btn:hover,
-.sector-btn.active {
-    background: rgba(0, 243, 255, 0.15);
-    border-color: var(--cyan-glow);
-    color: #fff;
-    box-shadow: inset 0 0 12px rgba(0, 243, 255, 0.3), 0 0 10px rgba(0, 243, 255, 0.2);
+.spin-action-panel {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 14px;
 }
 
-.stats-card {
-    background: rgba(2, 8, 16, 0.8);
-    border: 1px solid rgba(0, 243, 255, 0.15);
-    padding: 12px;
-    border-radius: 6px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
+/* Botões Estilo Cyber */
+.btn-cyber-primary {
+  position: relative;
+  flex: 1;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 100, 255, 0.3));
+  border: 1px solid var(--neon-cyan);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 12px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+}
+.btn-cyber-primary:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 25px var(--neon-cyan);
+}
+.btn-cyber-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
-.stat-row {
-    display: flex;
-    justify-content: space-between;
-    color: #8baece;
+.btn-cyber-danger {
+  background: rgba(255, 26, 75, 0.1);
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-cyber-danger:hover {
+  background: var(--neon-red);
+  color: #fff;
+  box-shadow: 0 0 15px var(--neon-red-glow);
 }
 
-.stat-val {
-    color: var(--cyan-glow);
-    font-weight: bold;
+/* ==========================================================================
+   TABULEIRO DE APOSTAS DA ROLETA (MESA INTERATIVA)
+   ========================================================================== */
+.roulette-table-box {
+  background: rgba(5, 12, 24, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* CENTRO: ÁREA DE JOGOS & ESTÁGIO HOLOGRÁFICO */
-.game-stage {
-    background: radial-gradient(circle at center, rgba(0, 243, 255, 0.05) 0%, transparent 70%);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow-y: auto;
+/* Seletor de Fichas */
+.chip-selector-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(2, 6, 12, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.chip-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #799bbb;
+}
+.chip-options {
+  display: flex;
+  gap: 8px;
+}
+.chip-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  border: 2px dashed #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.chip-10 { background: #0066aa; border-color: #33aaff; color: #fff; }
+.chip-50 { background: #aa5500; border-color: #ffaa33; color: #fff; }
+.chip-100 { background: #880022; border-color: #ff3366; color: #fff; }
+.chip-500 { background: #4a0e78; border-color: #aa44ff; color: #fff; }
+.chip-1000 { background: #8a7300; border-color: #ffd700; color: #fff; }
+
+.chip-btn:hover {
+  transform: translateY(-3px) scale(1.08);
+}
+.chip-btn.active {
+  transform: translateY(-4px) scale(1.15);
+  box-shadow: 0 0 15px currentColor;
+  border-style: solid;
+}
+.current-total-bet {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--neon-amber);
 }
 
-.game-view {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    animation: fadeIn 0.4s ease;
+/* Mesa de Feltro Holográfica */
+.betting-felt {
+  display: grid;
+  grid-template-columns: 50px 1fr 50px;
+  gap: 4px;
+  background: rgba(3, 8, 16, 0.95);
+  padding: 6px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 6px;
 }
 
-.game-view.active {
-    display: flex;
+.bet-spot {
+  position: relative;
+  background: rgba(14, 26, 44, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+}
+.bet-spot:hover {
+  background: rgba(0, 240, 255, 0.25);
+  border-color: var(--neon-cyan);
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+/* Spot do Zero */
+.grid-zero-col {
+  display: flex;
+}
+.spot-zero {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 138, 71, 0.35);
+  border-color: var(--neon-green);
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--neon-green);
+  border-radius: 4px 0 0 4px;
 }
 
-/* --------------------------------------------------------------------------
-       JOGO 1: CAÇA-NÍQUEL HIPERDRIVE
-       -------------------------------------------------------------------------- */
-.slot-frame {
-    background: rgba(2, 9, 20, 0.9);
-    border: 2px solid var(--cyan-glow);
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-    position: relative;
+/* Grid de 36 Números (Layout padrão de Roleta: 3 linhas x 12 colunas) */
+.grid-numbers-table {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(3, 44px);
+  gap: 3px;
+}
+.num-cell {
+  font-size: 0.88rem;
+  font-weight: 800;
+  border-radius: 2px;
+}
+.num-cell.red {
+  background: rgba(176, 16, 48, 0.4);
+  border-color: rgba(255, 26, 75, 0.4);
+  color: #ffb8c7;
+}
+.num-cell.red:hover {
+  background: rgba(255, 26, 75, 0.6);
+}
+.num-cell.black {
+  background: rgba(16, 24, 38, 0.85);
+  border-color: rgba(80, 110, 150, 0.4);
+  color: #c0d8f0;
+}
+.num-cell.black:hover {
+  background: rgba(40, 60, 90, 0.8);
 }
 
-.slot-reels-container {
-    display: flex;
-    gap: 15px;
-    background: #01040a;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid var(--panel-border);
-    box-shadow: inset 0 0 20px #000;
+/* Colunas 2:1 */
+.grid-column-bets {
+  display: grid;
+  grid-template-rows: repeat(3, 44px);
+  gap: 3px;
+}
+.spot-side {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--neon-cyan);
 }
 
-.reel-window {
-    width: 110px;
-    height: 120px;
-    background: rgba(10, 20, 35, 0.9);
-    border: 1px solid var(--cyan-glow);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3.5rem;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.4);
+/* Apostas Externas: Dúzias e Simples */
+.outside-bets-dozens {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.spot-dozen {
+  padding: 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #a8d0f5;
 }
 
-.reel-window.blur {
-    filter: blur(4px);
+.outside-bets-simple {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+.spot-simple {
+  padding: 10px 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.spot-red {
+  background: rgba(176, 16, 48, 0.35);
+  border-color: var(--neon-red);
+}
+.spot-black {
+  background: rgba(10, 16, 26, 0.8);
+  border-color: #4a6385;
+}
+.color-badge {
+  width: 14px;
+  height: 6px;
+  border-radius: 2px;
+}
+.red-badge { background: var(--neon-red); box-shadow: 0 0 6px var(--neon-red); }
+.black-badge { background: #000; border: 1px solid #666; }
+
+/* Marcadores de Ficha posicionados em cima das apostas */
+.chip-marker {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  background: #ffd700;
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 900;
+  border-radius: 12px;
+  border: 1px solid #fff;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+.chip-marker.active {
+  display: flex;
+  animation: dropChip 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes dropChip {
+  from { transform: translate(-50%, -90%) scale(1.4); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
-/* --------------------------------------------------------------------------
-       JOGO 2: ROLETA QUÂNTICA DE PLASMA
-       -------------------------------------------------------------------------- */
-.roulette-stage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+/* ==========================================================================
+   SLOTS MATRIX (CAÇA-NÍQUEL)
+   ========================================================================== */
+.slot-payouts-preview {
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--neon-amber);
 }
 
-.wheel-outer {
-    width: 240px;
-    height: 240px;
-    border-radius: 50%;
-    border: 4px dashed var(--cyan-glow);
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
-    transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
+.slots-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.wheel-pointer {
-    position: absolute;
-    top: -15px;
-    font-size: 1.5rem;
-    color: var(--amber-glow);
-    z-index: 5;
-    text-shadow: 0 0 10px var(--amber-glow);
+.slot-viewport {
+  position: relative;
+  display: flex;
+  gap: 15px;
+  background: #02050b;
+  border: 2px solid var(--neon-cyan);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.95);
+  overflow: hidden;
 }
 
-.wheel-center-core {
-    width: 90px;
-    height: 90px;
-    background: #020712;
-    border: 2px solid var(--cyan-glow);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-title);
-    font-size: 1.2rem;
-    color: #fff;
-    box-shadow: 0 0 15px var(--cyan-glow);
+.slot-column {
+  width: 130px;
+  height: 150px;
+  background: rgba(10, 18, 32, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9);
 }
 
-/* --------------------------------------------------------------------------
-       JOGO 3: DADOS SABACC HOLOGRÁFICOS
-       -------------------------------------------------------------------------- */
-.dice-stage {
-    display: flex;
-    gap: 30px;
-    margin: 20px 0;
-    perspective: 600px;
+.slot-reel-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 3s cubic-bezier(0.1, 0.9, 0.2, 1);
 }
 
-.holo-die {
-    width: 90px;
-    height: 90px;
-    background: rgba(0, 243, 255, 0.08);
-    border: 2px solid var(--cyan-glow);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-title);
-    font-size: 2.5rem;
-    color: var(--cyan-glow);
-    box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-    transition: transform 0.6s ease;
+.slot-symbol-item {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
 }
 
-.holo-die.rolling {
-    animation: diceSpin 0.5s infinite linear;
+.slot-laser-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--neon-red);
+  box-shadow: 0 0 10px var(--neon-red), 0 0 20px var(--neon-red);
+  pointer-events: none;
+  opacity: 0.6;
 }
 
-@keyframes diceSpin {
-    0% {
-        transform: rotateX(0deg) rotateY(0deg);
-    }
-
-    100% {
-        transform: rotateX(360deg) rotateY(360deg);
-    }
+.slot-control-deck {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: rgba(8, 14, 26, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 8px;
+  padding: 14px;
 }
 
-/* --------------------------------------------------------------------------
-       CONTROLES DE APOSTA UNIVERSAIS
-       -------------------------------------------------------------------------- */
-.bet-panel {
-    background: rgba(3, 12, 24, 0.85);
-    border: 1px solid var(--panel-border);
-    padding: 15px 25px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 15px;
+.bet-adjust-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bet-adjust-group label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #799fc4;
 }
 
-.bet-input-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.spin-bet-inputs {
+  display: flex;
+  gap: 6px;
+}
+.spin-bet-inputs input, .sabacc-bet-board input {
+  background: #000;
+  border: 1px solid var(--neon-cyan);
+  color: #ffd700;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  width: 90px;
+  text-align: center;
+  border-radius: 3px;
+  outline: none;
+}
+.btn-step {
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: 0.2s;
+}
+.btn-step:hover {
+  background: var(--neon-cyan);
+  color: #000;
+}
+.max-btn {
+  color: var(--neon-amber);
+  border-color: var(--neon-amber);
 }
 
-.bet-input-group label {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: #8cb4d8;
+.btn-spin-slot {
+  width: 220px;
 }
 
-.bet-input {
-    background: #010610;
-    border: 1px solid var(--cyan-glow);
-    color: var(--amber-glow);
-    font-family: var(--font-title);
-    font-size: 1.1rem;
-    padding: 8px 12px;
-    width: 110px;
-    text-align: center;
-    border-radius: 4px;
-    outline: none;
+/* ==========================================================================
+   DADOS SABACC 3D
+   ========================================================================== */
+.sabacc-arena {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-.quick-bets {
-    display: flex;
-    gap: 6px;
+.hologram-dice-pod {
+  display: flex;
+  gap: 80px;
+  padding: 30px;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.08) 0%, transparent 70%);
 }
 
-.q-btn {
-    background: rgba(0, 243, 255, 0.1);
-    border: 1px solid rgba(0, 243, 255, 0.3);
-    color: var(--cyan-glow);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    padding: 6px 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: 0.2s;
+.cube-scene {
+  width: 70px;
+  height: 70px;
+  perspective: 400px;
 }
 
-.q-btn:hover {
-    background: var(--cyan-glow);
-    color: #000;
+.dice-3d {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 2.2s cubic-bezier(0.15, 0.9, 0.25, 1);
+  transform: rotateX(0deg) rotateY(0deg);
 }
 
-.action-btn {
-    background: linear-gradient(135deg, var(--cyan-glow), #0088cc);
-    border: none;
-    color: #000;
-    font-family: var(--font-title);
-    font-weight: 800;
-    font-size: 0.95rem;
-    padding: 12px 30px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+.cube-face {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  background: rgba(6, 18, 38, 0.9);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.5), 0 0 10px rgba(0, 240, 255, 0.3);
 }
 
-.action-btn:hover {
-    background: #fff;
-    box-shadow: 0 0 25px var(--cyan-glow);
-    transform: translateY(-2px);
+.cube-face.front  { transform: rotateY(  0deg) translateZ(35px); }
+.cube-face.back   { transform: rotateY(180deg) translateZ(35px); }
+.cube-face.right  { transform: rotateY( 90deg) translateZ(35px); }
+.cube-face.left   { transform: rotateY(-90deg) translateZ(35px); }
+.cube-face.top    { transform: rotateX( 90deg) translateZ(35px); }
+.cube-face.bottom { transform: rotateX(-90deg) translateZ(35px); }
+
+.dice-results-hud {
+  display: flex;
+  gap: 25px;
+  background: rgba(4, 9, 18, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 6px;
+  padding: 10px 24px;
+}
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hud-item .label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: #6385a5;
+}
+.hud-item .val {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+}
+.hud-item.highlight .val {
+  color: var(--neon-amber);
+  font-size: 1.6rem;
 }
 
-.btn-group {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+.sabacc-bet-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  max-width: 700px;
+}
+.sabacc-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+.btn-sabacc-choice {
+  background: rgba(10, 20, 36, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 6px;
+  padding: 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+.btn-sabacc-choice:hover {
+  background: rgba(0, 240, 255, 0.18);
+  border-color: var(--neon-cyan);
+  transform: translateY(-2px);
+}
+.choice-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fff;
+}
+.choice-mult {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--neon-cyan);
+}
+.gold-choice {
+  border-color: rgba(255, 170, 0, 0.4);
+}
+.gold-choice .choice-mult {
+  color: var(--neon-amber);
+}
+.double-choice {
+  border-color: rgba(189, 0, 255, 0.4);
+}
+.double-choice .choice-mult {
+  color: var(--neon-purple);
 }
 
-.btn-choice {
-    background: rgba(5, 18, 35, 0.8);
-    border: 1px solid var(--panel-border);
-    color: #fff;
-    font-family: var(--font-title);
-    font-size: 0.75rem;
-    padding: 10px 16px;
-    cursor: pointer;
-    transition: 0.2s;
+/* ==========================================================================
+   FOOTER: CONSOLE LOG E TELEMETRIA
+   ========================================================================== */
+.datapad-footer {
+  margin-top: 4px;
 }
-
-.btn-choice.red:hover {
-    background: var(--pink-glow);
-    border-color: var(--pink-glow);
+.console-box {
+  background: rgba(2, 5, 10, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9);
 }
-
-.btn-choice.blue:hover {
-    background: #0066ff;
-    border-color: #0066ff;
+.console-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.68rem;
+  color: #557b9e;
+  border-bottom: 1px dashed rgba(0, 240, 255, 0.15);
+  padding-bottom: 5px;
+  margin-bottom: 6px;
 }
-
-.btn-choice.gold:hover {
-    background: var(--amber-glow);
-    color: #000;
-    border-color: var(--amber-glow);
+.pulse-icon {
+  width: 6px;
+  height: 6px;
+  background: var(--neon-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--neon-cyan);
 }
-
-/* DIREITA: TERMINAL DE TELEMETRIA E LOGS */
-.side-panel-right {
-    background: rgba(3, 10, 20, 0.7);
-    border-left: 1px solid var(--panel-border);
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.btn-clear-log {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #4a6c8c;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  cursor: pointer;
 }
+.btn-clear-log:hover { color: #fff; }
 
-.terminal-log-box {
-    flex-grow: 1;
-    background: #01050e;
-    border: 1px solid rgba(0, 243, 255, 0.2);
-    border-radius: 6px;
-    padding: 10px;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    overflow-y: auto;
-    max-height: 380px;
+.console-stream {
+  height: 60px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+  font-size: 0.75rem;
 }
-
 .log-line {
-    line-height: 1.3;
+  line-height: 1.3;
 }
+.log-win { color: var(--neon-green); font-weight: bold; text-shadow: 0 0 5px rgba(0, 255, 136, 0.4); }
+.log-loss { color: var(--neon-red); }
+.log-info { color: var(--neon-cyan); }
+.log-warn { color: var(--neon-amber); }
 
-.log-sys {
-    color: #589ecf;
-}
-
-.log-win {
-    color: var(--green-glow);
-    font-weight: bold;
-}
-
-.log-loss {
-    color: var(--pink-glow);
-}
-
-/* Conquistas Rápidas */
-.achieve-box {
-    background: rgba(2, 8, 16, 0.8);
-    border: 1px solid rgba(0, 243, 255, 0.15);
-    padding: 10px;
-    border-radius: 6px;
-}
-
-.achieve-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.75rem;
-    margin-top: 6px;
-}
-
-.achieve-icon {
-    color: var(--amber-glow);
-    font-size: 1rem;
-}
-
-/* Shake Effect para Grandes Vitórias */
-.shake {
-    animation: shake 0.4s ease-in-out;
-}
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translate(0, 0);
-    }
-
-    20% {
-        transform: translate(-8px, 5px);
-    }
-
-    40% {
-        transform: translate(8px, -5px);
-    }
-
-    60% {
-        transform: translate(-5px, 3px);
-    }
-
-    80% {
-        transform: translate(5px, -3px);
-    }
-}
-
-/* Responsividade */
-@media (max-width: 1100px) {
-    .datapad-body {
-        grid-template-columns: 220px 1fr;
-    }
-
-    .side-panel-right {
-        display: none;
-    }
-}
-
-@media (max-width: 768px) {
-    .datapad-body {
-        grid-template-columns: 1fr;
-    }
-
-    .side-panel-left {
-        display: none;
-    }
+/* Responsividade Básica */
+@media (max-width: 1024px) {
+  .roulette-layout {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
 }
