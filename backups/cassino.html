@@ -70,7 +70,7 @@
             <span class="b-label">FICHAS GALÁTICAS (FG)</span>
             <div class="b-value">
               <span class="b-icon chip-glow-icon">&#x25C9;</span>
-              <span id="casinoChipsDisplay">0</span>
+              <span id="casinoChipsDisplay">200</span>
               <span class="b-unit">FICHAS</span>
             </div>
           </div>
@@ -82,7 +82,7 @@
     <nav class="datapad-tabs">
       <button class="tab-module active" onclick="switchGame('roulette', this)">
         <span class="tab-index">01</span>
-        <span class="tab-title">ROLETA QUÂNTICA COMPLETA</span>
+        <span class="tab-title">ROLETA QUÂNTICA</span>
         <span class="tab-glow"></span>
       </button>
       <button class="tab-module" onclick="switchGame('blackjack', this)">
@@ -90,14 +90,19 @@
         <span class="tab-title">HOLO-BLACKJACK 21</span>
         <span class="tab-glow"></span>
       </button>
-      <button class="tab-module" onclick="switchGame('slots', this)">
+      <button class="tab-module" onclick="switchGame('poker', this)">
         <span class="tab-index">03</span>
-        <span class="tab-title">SLOT MATRIX HIPERDRIVE</span>
+        <span class="tab-title">HOLO-POKER 1v1</span>
+        <span class="tab-glow"></span>
+      </button>
+      <button class="tab-module" onclick="switchGame('slots', this)">
+        <span class="tab-index">04</span>
+        <span class="tab-title">SLOT HIPERDRIVE</span>
         <span class="tab-glow"></span>
       </button>
       <button class="tab-module" onclick="switchGame('sabacc', this)">
-        <span class="tab-index">04</span>
-        <span class="tab-title">DADOS QUÂNTICOS DE SABACC</span>
+        <span class="tab-index">05</span>
+        <span class="tab-title">DADOS DE SABACC</span>
         <span class="tab-glow"></span>
       </button>
     </nav>
@@ -120,7 +125,6 @@
         </div>
 
         <div class="roulette-layout">
-          <!-- Coluna Esquerda: Animação Física da Roda e Bola em Canvas -->
           <div class="roulette-wheel-box">
             <div class="wheel-outer-ring">
               <canvas id="rouletteCanvas" width="360" height="360"></canvas>
@@ -141,9 +145,7 @@
             </div>
           </div>
 
-          <!-- Coluna Direita: Mesa de Apostas Completa (Grid Europeu 0-36, Cores, Dúzias, Colunas, etc.) -->
           <div class="roulette-table-box">
-            <!-- Seletor de Fichas -->
             <div class="chip-selector-bar">
               <span class="chip-label">FICHAS DE APOSTA:</span>
               <div class="chip-options">
@@ -158,9 +160,7 @@
               </div>
             </div>
 
-            <!-- Tabuleiro Interativo -->
             <div class="betting-felt">
-              <!-- Linha Superior / Zero -->
               <div class="grid-zero-col">
                 <button class="bet-spot spot-zero" data-bet="0" onclick="placeRouletteBet('number', 0)">
                   <span class="spot-num">0</span>
@@ -168,12 +168,8 @@
                 </button>
               </div>
 
-              <!-- Grid dos 36 Números (12 colunas x 3 linhas) -->
-              <div class="grid-numbers-table" id="rouletteNumbersGrid">
-                <!-- Gerado e estruturado via CSS / JS para 1 a 36 -->
-              </div>
+              <div class="grid-numbers-table" id="rouletteNumbersGrid"></div>
 
-              <!-- Coluna 2:1 (Fim das Linhas) -->
               <div class="grid-column-bets">
                 <button class="bet-spot spot-side" data-bet="col3" onclick="placeRouletteBet('col', 3)">
                   <span class="spot-txt">2:1</span>
@@ -190,7 +186,6 @@
               </div>
             </div>
 
-            <!-- Apostas Externas: Dúzias -->
             <div class="outside-bets-dozens">
               <button class="bet-spot spot-dozen" onclick="placeRouletteBet('dozen', 1)">
                 <span>1ª DÚZIA (1-12) [3x]</span>
@@ -206,7 +201,6 @@
               </button>
             </div>
 
-            <!-- Apostas Externas: 1-18, Par, Vermelho, Preto, Ímpar, 19-36 -->
             <div class="outside-bets-simple">
               <button class="bet-spot spot-simple" onclick="placeRouletteBet('half', 1)">
                 <span>1 A 18</span>
@@ -240,7 +234,7 @@
       </section>
 
       <!-- ============================================== -->
-      <!-- JOGO 2: HOLO-BLACKJACK 21 (NOVO MÓDULO)        -->
+      <!-- JOGO 2: HOLO-BLACKJACK 21                     -->
       <!-- ============================================== -->
       <section id="game-blackjack" class="game-section">
         <div class="section-titlebar">
@@ -249,34 +243,26 @@
         </div>
 
         <div class="blackjack-arena">
-          <!-- Área do Crupiê / Dealer Androide -->
           <div class="bj-hand-container dealer-zone">
             <div class="hand-meta">
               <span class="actor-title"><span class="bot-icon">🤖</span> CRUPIÊ PROTOCOLAR</span>
               <span class="score-pill" id="dealerScore">PONTOS: ?</span>
             </div>
-            <div class="cards-table" id="dealerCards">
-              <!-- Cartas renderizadas via JS -->
-            </div>
+            <div class="cards-table" id="dealerCards"></div>
           </div>
 
-          <!-- Divisor Holográfico -->
           <div class="bj-table-center">
             <div class="bj-payout-rules">BLACKJACK PAGA 3:2 // CRUPIÊ PARA NO 17 // SEGURO 2:1</div>
           </div>
 
-          <!-- Área do Jogador -->
           <div class="bj-hand-container player-zone">
             <div class="hand-meta">
               <span class="actor-title"><span class="user-icon">👤</span> SEU TERMINAL DE CARTAS</span>
               <span class="score-pill" id="playerScore">PONTOS: 0</span>
             </div>
-            <div class="cards-table" id="playerCards">
-              <!-- Cartas renderizadas via JS -->
-            </div>
+            <div class="cards-table" id="playerCards"></div>
           </div>
 
-          <!-- Painel de Ações de Blackjack -->
           <div class="bj-controls-panel">
             <div class="bj-bet-adjuster" id="bjBetControls">
               <label>APOSTA INICIAL (FICHAS):</label>
@@ -308,7 +294,77 @@
       </section>
 
       <!-- ============================================== -->
-      <!-- JOGO 3: CAÇA-NÍQUEL MATRIX HIPERDRIVE          -->
+      <!-- JOGO 3: HOLO-POKER 1v1 (HEADS-UP HOLD'EM)      -->
+      <!-- ============================================== -->
+      <section id="game-poker" class="game-section">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE HOLO-POKER 1v1 // HEADS-UP HOLD'EM</div>
+          <div class="poker-status-badge" id="pokerStatusBadge">DEFINA SEU ANTE INICIAL</div>
+        </div>
+
+        <div class="poker-arena">
+          <!-- Área Superior: Crupiê / Dealer -->
+          <div class="poker-zone poker-dealer-zone">
+            <div class="poker-meta">
+              <span class="actor-title"><span class="bot-icon">🤖</span> CRUPIÊ ANDROIDE</span>
+              <span class="hand-eval-tag" id="pokerDealerEval">AGUARDANDO CARTAS</span>
+            </div>
+            <div class="poker-cards-wrap" id="pokerDealerCards"></div>
+          </div>
+
+          <!-- Área Central: Cartas Comunitárias do Bordo e Pote -->
+          <div class="poker-community-zone">
+            <div class="community-header">
+              <div class="pot-display">
+                POTE TOTAL: <span id="pokerPotValue" class="pot-number">0</span> FICHAS
+              </div>
+              <span class="community-label">CARTAS COMUNITÁRIAS (BORDO)</span>
+              <div class="ante-bet-info">
+                ANTE: <span id="pokerAnteDisplay">0</span> | CALL: <span id="pokerCallDisplay">0</span>
+              </div>
+            </div>
+            <div class="community-cards-wrap" id="pokerCommunityCards"></div>
+          </div>
+
+          <!-- Área Inferior: Jogador -->
+          <div class="poker-zone poker-player-zone">
+            <div class="poker-meta">
+              <span class="actor-title"><span class="user-icon">👤</span> SUA MÃO DE PÔQUER</span>
+              <span class="hand-eval-tag player-highlight" id="pokerPlayerEval">DEFINA SUA JOGADA</span>
+            </div>
+            <div class="poker-cards-wrap" id="pokerPlayerCards"></div>
+          </div>
+
+          <!-- Controles de Aposta e Decisão de Pôquer -->
+          <div class="poker-controls-panel">
+            <div class="poker-bet-adjuster" id="pokerAnteControls">
+              <label>ANTE INICIAL (FICHAS):</label>
+              <div class="spin-bet-inputs">
+                <button class="btn-step" onclick="adjustPokerAnte(-5)">-5</button>
+                <input type="number" id="pokerAnteInput" value="10" min="1" step="1" readonly>
+                <button class="btn-step" onclick="adjustPokerAnte(5)">+5</button>
+                <button class="btn-step" onclick="adjustPokerAnte(25)">+25</button>
+                <button class="btn-step max-btn" onclick="setPokerAnteMax()">MÁX</button>
+              </div>
+              <button class="btn-cyber-primary" id="btnPokerDeal" onclick="startPokerHand()">
+                DAR CARTAS (ANTE)
+              </button>
+            </div>
+
+            <div class="poker-decision-actions" id="pokerDecisionActions" style="display: none;">
+              <button class="btn-cyber-action btn-call" id="btnPokerCall" onclick="pokerPlayerCall()">
+                <span class="action-icon">&#x2714;</span> PAGAR / CONTINUAR (<span id="callCostLabel">20</span> FICHAS)
+              </button>
+              <button class="btn-cyber-action btn-fold" id="btnPokerFold" onclick="pokerPlayerFold()">
+                <span class="action-icon">&#x2716;</span> DESISTIR (FOLD)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- JOGO 4: CAÇA-NÍQUEL MATRIX HIPERDRIVE          -->
       <!-- ============================================== -->
       <section id="game-slots" class="game-section">
         <div class="section-titlebar">
@@ -356,7 +412,7 @@
       </section>
 
       <!-- ============================================== -->
-      <!-- JOGO 4: DADOS SABACC ORLA EXTERIOR             -->
+      <!-- JOGO 5: DADOS SABACC ORLA EXTERIOR             -->
       <!-- ============================================== -->
       <section id="game-sabacc" class="game-section">
         <div class="section-titlebar">
@@ -443,16 +499,14 @@
         <div class="console-stream" id="consoleStream">
           <div class="log-line sys-init">> [DATAPAD BOOT]: Inicialização de sub-rotinas criptográficas concluída.</div>
           <div class="log-line sys-info">> [CÂMBIO]: Taxa atual fixada em: 10 Créditos Imperiais = 1 Ficha Galáctica.</div>
-          <div class="log-line sys-ready">> [SISTEMA]: Converta seus Créditos Imperiais em Fichas para jogar no Cassino.</div>
+          <div class="log-line sys-ready">> [SISTEMA]: Mesa de Pôquer 1v1 Heads-Up integrada ao Datapad.</div>
         </div>
       </div>
     </footer>
 
   </div>
 
-  <!-- ============================================== -->
-  <!-- MODAL: CASA DE CÂMBIO & CONVERSÃO DE FICHAS     -->
-  <!-- ============================================== -->
+  <!-- Modal de Câmbio -->
   <div class="cambio-modal-backdrop" id="exchangeModal">
     <div class="cambio-modal-window">
       <div class="modal-header">
@@ -469,7 +523,6 @@
         </div>
 
         <div class="exchange-grid">
-          <!-- Coluna 1: Comprar Fichas (CI -> FG) -->
           <div class="exchange-card">
             <h3>COMPRAR FICHAS DE JOGO</h3>
             <p class="card-desc">Converta seus Créditos Imperiais em Fichas para apostar nos módulos do cassino.</p>
@@ -497,7 +550,6 @@
             </button>
           </div>
 
-          <!-- Coluna 2: Resgatar Créditos (FG -> CI) -->
           <div class="exchange-card">
             <h3>DEVOLVER FICHAS (RESGATE)</h3>
             <p class="card-desc">Converta suas fichas e ganhos de volta em Créditos Imperiais seguros antes de sair.</p>

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DATAPAD CASINO - LÓGICA DE JOGOS, CÂMBIO & BLACKJACK 21
+   DATAPAD CASINO - LÓGICA DE JOGOS, CÂMBIO, BLACKJACK 21 & HOLO-POKER 1v1
    ========================================================================== */
 
 // Estado da Carteira Galáctica (1 Ficha = 10 Créditos Imperiais)
@@ -597,7 +597,7 @@ function addRouletteHistory(num, color) {
 }
 
 // ==========================================================================
-// 6. MÓDULO HOLO-BLACKJACK 21
+// 6. MOTOR DE CARTAS & BLACKJACK 21
 // ==========================================================================
 const CARD_SUITS = [
   { name: 'kyber', symbol: '♦', isRed: true },
@@ -608,28 +608,28 @@ const CARD_SUITS = [
 
 const CARD_RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
-let bjDeck = [];
-let bjPlayerHand = [];
-let bjDealerHand = [];
-let bjCurrentBet = 10;
-let bjGameActive = false;
-
-function buildNewDeck() {
-  bjDeck = [];
+function createShuffledDeck() {
+  const deck = [];
   for (let s of CARD_SUITS) {
     for (let r of CARD_RANKS) {
       let val = parseInt(r);
       if (['J', 'Q', 'K'].includes(r)) val = 10;
       if (r === 'A') val = 11;
-      bjDeck.push({ rank: r, suit: s, value: val });
+      deck.push({ rank: r, suit: s, value: val });
     }
   }
-  // Embaralhar Fisher-Yates
-  for (let i = bjDeck.length - 1; i > 0; i--) {
+  for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [bjDeck[i], bjDeck[j]] = [bjDeck[j], bjDeck[i]];
+    [deck[i], deck[j]] = [deck[j], deck[i]];
   }
+  return deck;
 }
+
+let bjDeck = [];
+let bjPlayerHand = [];
+let bjDealerHand = [];
+let bjCurrentBet = 10;
+let bjGameActive = false;
 
 function getHandScore(hand) {
   let score = 0;
@@ -686,14 +686,13 @@ function startBlackjackHand() {
   bjCurrentBet = bet;
   updateDisplays();
 
-  buildNewDeck();
+  bjDeck = createShuffledDeck();
   bjPlayerHand = [bjDeck.pop(), bjDeck.pop()];
   bjDealerHand = [bjDeck.pop(), bjDeck.pop()];
   bjGameActive = true;
 
   playSound('card');
 
-  // Interface
   document.getElementById('bjBetControls').style.display = 'none';
   document.getElementById('bjPlayActions').style.display = 'flex';
   document.getElementById('bjStatusBadge').textContent = `MÃO EM ANDAMENTO (APOSTA: ${bjCurrentBet} FICHAS)`;
@@ -701,10 +700,7 @@ function startBlackjackHand() {
 
   renderBjTable(true);
 
-  // Checar Blackjack natural imediato
   const pScore = getHandScore(bjPlayerHand);
-  const dScore = getHandScore(bjDealerHand);
-
   if (pScore === 21) {
     setTimeout(() => {
       finishBlackjackRound();
@@ -772,7 +768,6 @@ function bjPlayerDouble() {
 function finishBlackjackRound() {
   bjGameActive = false;
 
-  // Revela mão do crupiê e compra até 17+
   let dScore = getHandScore(bjDealerHand);
   const pScore = getHandScore(bjPlayerHand);
 
@@ -785,7 +780,6 @@ function finishBlackjackRound() {
 
   renderBjTable(false);
 
-  // Decisão de Resultado
   let prize = 0;
   let statusText = '';
 
@@ -797,7 +791,7 @@ function finishBlackjackRound() {
     playSound('loss');
     logConsole(statusText, 'log-loss');
   } else if (isPlayerBJ && !isDealerBJ) {
-    prize = Math.floor(bjCurrentBet * 2.5); // 3:2 payout
+    prize = Math.floor(bjCurrentBet * 2.5);
     casinoChips += prize;
     statusText = `BLACKJACK NATURAL! Pagamento 3:2 -> Ganhou +${prize} Fichas!`;
     playSound('win');
@@ -815,7 +809,7 @@ function finishBlackjackRound() {
     playSound('win');
     logConsole(statusText, 'log-win');
   } else if (pScore === dScore) {
-    prize = bjCurrentBet; // Empate (Push)
+    prize = bjCurrentBet;
     casinoChips += prize;
     statusText = `EMPATE (PUSH)! Ambos somaram ${pScore}. Fichas devolvidas.`;
     playSound('chip');
@@ -829,13 +823,284 @@ function finishBlackjackRound() {
   updateDisplays();
   document.getElementById('bjStatusBadge').textContent = statusText;
 
-  // Restaurar controles de aposta
   document.getElementById('bjBetControls').style.display = 'flex';
   document.getElementById('bjPlayActions').style.display = 'none';
 }
 
 // ==========================================================================
-// 7. MÓDULO SLOTS MATRIX (EM FICHAS)
+// 7. MÓDULO HOLO-POKER 1v1 (CASINO HOLD'EM COMPLETO)
+// ==========================================================================
+let pokerDeck = [];
+let pokerPlayerHand = [];
+let pokerDealerHand = [];
+let pokerCommunityCards = [];
+let pokerAnteBet = 10;
+let pokerCallBet = 0;
+let pokerStage = 'idle'; // 'idle', 'flop_dealt', 'finished'
+
+const RANK_VALUES_POKER = {
+  '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
+  '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
+};
+
+function adjustPokerAnte(delta) {
+  if (pokerStage !== 'idle') return;
+  playSound('click');
+  const input = document.getElementById('pokerAnteInput');
+  let val = parseInt(input.value) + delta;
+  if (val < 1) val = 1;
+  if (val * 3 > casinoChips) val = Math.max(1, Math.floor(casinoChips / 3));
+  input.value = val;
+}
+
+function setPokerAnteMax() {
+  if (pokerStage !== 'idle') return;
+  playSound('chip');
+  document.getElementById('pokerAnteInput').value = Math.max(1, Math.floor(casinoChips / 3));
+}
+
+// Avaliador de Mãos de Pôquer (Texas Hold'em 7 Cartas)
+function evaluatePokerHand(sevenCards) {
+  const cards = sevenCards.map(c => ({
+    rank: c.rank,
+    val: RANK_VALUES_POKER[c.rank],
+    suit: c.suit.name
+  }));
+
+  function get5CardCombinations(arr) {
+    const results = [];
+    function helper(start, combo) {
+      if (combo.length === 5) {
+        results.push(combo);
+        return;
+      }
+      for (let i = start; i < arr.length; i++) {
+        helper(i + 1, combo.concat([arr[i]]));
+      }
+    }
+    helper(0, []);
+    return results;
+  }
+
+  function score5Cards(hand) {
+    hand.sort((a, b) => b.val - a.val);
+
+    const isFlush = hand.every(c => c.suit === hand[0].suit);
+    
+    let isStraight = false;
+    let straightHigh = 0;
+    const uniqueVals = [...new Set(hand.map(c => c.val))];
+
+    if (uniqueVals.length === 5) {
+      if (uniqueVals[0] - uniqueVals[4] === 4) {
+        isStraight = true;
+        straightHigh = uniqueVals[0];
+      } else if (uniqueVals[0] === 14 && uniqueVals[1] === 5 && uniqueVals[2] === 4 && uniqueVals[3] === 3 && uniqueVals[4] === 2) {
+        isStraight = true;
+        straightHigh = 5;
+      }
+    }
+
+    const counts = {};
+    hand.forEach(c => counts[c.val] = (counts[c.val] || 0) + 1);
+    const countPairs = Object.entries(counts).map(([v, count]) => ({ val: parseInt(v), count }));
+    countPairs.sort((a, b) => b.count - a.count || b.val - a.val);
+
+    if (isFlush && isStraight) {
+      if (straightHigh === 14) return { rank: 9, name: 'Royal Flush', score: 9000000 + straightHigh };
+      return { rank: 8, name: 'Straight Flush', score: 8000000 + straightHigh };
+    }
+
+    if (countPairs[0].count === 4) {
+      return { rank: 7, name: 'Quadra (Four of a Kind)', score: 7000000 + countPairs[0].val * 100 + countPairs[1].val };
+    }
+
+    if (countPairs[0].count === 3 && countPairs[1].count === 2) {
+      return { rank: 6, name: 'Full House', score: 6000000 + countPairs[0].val * 100 + countPairs[1].val };
+    }
+
+    if (isFlush) {
+      const tieBreaker = hand.reduce((acc, c, idx) => acc + c.val * Math.pow(15, 4 - idx), 0);
+      return { rank: 5, name: 'Flush Galáctico', score: 5000000 + tieBreaker };
+    }
+
+    if (isStraight) {
+      return { rank: 4, name: 'Sequência (Straight)', score: 4000000 + straightHigh };
+    }
+
+    if (countPairs[0].count === 3) {
+      return { rank: 3, name: 'Trinca (3 of a Kind)', score: 3000000 + countPairs[0].val * 1000 + countPairs[1].val * 15 + countPairs[2].val };
+    }
+
+    if (countPairs[0].count === 2 && countPairs[1].count === 2) {
+      return { rank: 2, name: 'Dois Pares', score: 2000000 + countPairs[0].val * 1000 + countPairs[1].val * 50 + countPairs[2].val };
+    }
+
+    if (countPairs[0].count === 2) {
+      return { rank: 1, name: 'Um Par', score: 1000000 + countPairs[0].val * 10000 + countPairs[1].val * 200 + countPairs[2].val * 15 + countPairs[3].val };
+    }
+
+    const tieBreaker = hand.reduce((acc, c, idx) => acc + c.val * Math.pow(15, 4 - idx), 0);
+    return { rank: 0, name: `Carta Alta (${hand[0].rank})`, score: tieBreaker };
+  }
+
+  const allCombos = get5CardCombinations(cards);
+  let bestScore = { rank: -1, score: -1, name: '' };
+
+  for (let combo of allCombos) {
+    const evaluated = score5Cards(combo);
+    if (evaluated.score > bestScore.score) {
+      bestScore = evaluated;
+    }
+  }
+
+  return bestScore;
+}
+
+function startPokerHand() {
+  if (pokerStage !== 'idle') return;
+  const ante = parseInt(document.getElementById('pokerAnteInput').value) || 0;
+
+  if (ante <= 0 || ante > casinoChips) {
+    playSound('loss');
+    logConsole("Fichas insuficientes para o Ante de Pôquer!", "log-loss");
+    return;
+  }
+
+  casinoChips -= ante;
+  pokerAnteBet = ante;
+  pokerCallBet = ante * 2;
+  updateDisplays();
+
+  pokerDeck = createShuffledDeck();
+  pokerPlayerHand = [pokerDeck.pop(), pokerDeck.pop()];
+  pokerDealerHand = [pokerDeck.pop(), pokerDeck.pop()];
+  pokerCommunityCards = [pokerDeck.pop(), pokerDeck.pop(), pokerDeck.pop()];
+
+  pokerStage = 'flop_dealt';
+  playSound('card');
+
+  document.getElementById('pokerAnteDisplay').textContent = pokerAnteBet;
+  document.getElementById('pokerCallDisplay').textContent = '0';
+  document.getElementById('pokerPotValue').textContent = pokerAnteBet;
+  document.getElementById('callCostLabel').textContent = pokerCallBet;
+
+  document.getElementById('pokerAnteControls').style.display = 'none';
+  document.getElementById('pokerDecisionActions').style.display = 'flex';
+  document.getElementById('btnPokerCall').disabled = (casinoChips < pokerCallBet);
+
+  document.getElementById('pokerStatusBadge').textContent = `FLOP NA MESA! PAGUE (${pokerCallBet} FG) OU DESISTA (FOLD)`;
+  document.getElementById('pokerDealerEval').textContent = "CARTAS OCULTAS";
+
+  renderPokerTable(true);
+
+  const currentEval = evaluatePokerHand([...pokerPlayerHand, ...pokerCommunityCards]);
+  document.getElementById('pokerPlayerEval').textContent = `MÃO ATUAL: ${currentEval.name.toUpperCase()}`;
+}
+
+function renderPokerTable(hideDealer = true) {
+  const pCards = document.getElementById('pokerPlayerCards');
+  const dCards = document.getElementById('pokerDealerCards');
+  const cCards = document.getElementById('pokerCommunityCards');
+
+  pCards.innerHTML = '';
+  dCards.innerHTML = '';
+  cCards.innerHTML = '';
+
+  pokerPlayerHand.forEach(c => pCards.appendChild(renderBjCard(c)));
+  pokerDealerHand.forEach(c => dCards.appendChild(renderBjCard(c, hideDealer)));
+  pokerCommunityCards.forEach(c => cCards.appendChild(renderBjCard(c)));
+}
+
+function pokerPlayerFold() {
+  if (pokerStage !== 'flop_dealt') return;
+  playSound('loss');
+  pokerStage = 'idle';
+
+  document.getElementById('pokerStatusBadge').textContent = `VOCÊ DESISTIU! Perda do Ante de ${pokerAnteBet} Fichas.`;
+  logConsole(`PÔQUER: Você desistiu (Fold). -${pokerAnteBet} Fichas perdidas.`, 'log-loss');
+
+  document.getElementById('pokerAnteControls').style.display = 'flex';
+  document.getElementById('pokerDecisionActions').style.display = 'none';
+  document.getElementById('pokerPotValue').textContent = '0';
+  document.getElementById('pokerPlayerEval').textContent = 'DESISTIU DA RODADA';
+}
+
+function pokerPlayerCall() {
+  if (pokerStage !== 'flop_dealt') return;
+  if (casinoChips < pokerCallBet) {
+    playSound('loss');
+    logConsole("Fichas insuficientes para dar Call!", "log-loss");
+    return;
+  }
+
+  casinoChips -= pokerCallBet;
+  updateDisplays();
+
+  pokerCommunityCards.push(pokerDeck.pop(), pokerDeck.pop());
+  pokerStage = 'finished';
+
+  playSound('chip');
+  playSound('card');
+
+  const totalPot = pokerAnteBet + pokerCallBet;
+  document.getElementById('pokerCallDisplay').textContent = pokerCallBet;
+  document.getElementById('pokerPotValue').textContent = totalPot * 2;
+
+  renderPokerTable(false);
+
+  const playerResult = evaluatePokerHand([...pokerPlayerHand, ...pokerCommunityCards]);
+  const dealerResult = evaluatePokerHand([...pokerDealerHand, ...pokerCommunityCards]);
+
+  document.getElementById('pokerPlayerEval').textContent = `SUA MÃO: ${playerResult.name.toUpperCase()}`;
+  document.getElementById('pokerDealerEval').textContent = `CRUPIÊ: ${dealerResult.name.toUpperCase()}`;
+
+  const dealerQualifies = (dealerResult.rank >= 1 && dealerResult.score >= 1040000) || dealerResult.rank >= 2;
+
+  let winnings = 0;
+  let statusMsg = '';
+
+  if (playerResult.score > dealerResult.score) {
+    let anteMult = 1;
+    if (playerResult.rank === 9) anteMult = 100;
+    else if (playerResult.rank === 8) anteMult = 20;
+    else if (playerResult.rank === 7) anteMult = 10;
+    else if (playerResult.rank === 6) anteMult = 3;
+    else if (playerResult.rank === 5) anteMult = 2;
+
+    const antePay = pokerAnteBet * (1 + anteMult);
+    const callPay = dealerQualifies ? (pokerCallBet * 2) : (pokerCallBet);
+
+    winnings = antePay + callPay;
+    casinoChips += winnings;
+    updateDisplays();
+
+    playSound('win');
+    statusMsg = `VITÓRIA NO PÔQUER! ${playerResult.name} vence ${dealerResult.name}! Ganhou +${winnings} Fichas!`;
+    logConsole(statusMsg, 'log-win');
+  } else if (playerResult.score === dealerResult.score) {
+    winnings = pokerAnteBet + pokerCallBet;
+    casinoChips += winnings;
+    updateDisplays();
+
+    playSound('chip');
+    statusMsg = `EMPATE (PUSH)! Ambas as mãos iguais (${playerResult.name}). Fichas devolvidas.`;
+    logConsole(statusMsg, 'log-info');
+  } else {
+    playSound('loss');
+    statusMsg = `CRUPIÊ VENCEU com ${dealerResult.name} contra seu ${playerResult.name}. -${pokerAnteBet + pokerCallBet} Fichas.`;
+    logConsole(statusMsg, 'log-loss');
+  }
+
+  document.getElementById('pokerStatusBadge').textContent = statusMsg;
+
+  pokerStage = 'idle';
+  document.getElementById('pokerAnteControls').style.display = 'flex';
+  document.getElementById('pokerDecisionActions').style.display = 'none';
+}
+
+// ==========================================================================
+// 8. MÓDULO SLOTS MATRIX (EM FICHAS)
 // ==========================================================================
 const SLOT_SYMBOLS = ['⚔️', '💎', '🪐', '🚀', '⚡', '👾'];
 let isSlotSpinning = false;
@@ -937,7 +1202,7 @@ function spinSlotMachine() {
 }
 
 // ==========================================================================
-// 8. MÓDULO DADOS SABACC 3D (EM FICHAS)
+// 9. MÓDULO DADOS SABACC 3D (EM FICHAS)
 // ==========================================================================
 let isSabaccRolling = false;
 
