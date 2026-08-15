@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +7,12 @@
     <!-- Fontes Sci-Fi -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,500;0,700;1,400&family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,500;0,700;1,400&family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="macroDurtoc/macroDurtoc.css">
 </head>
-
 <body class="crt-active">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase.js"></script>
-    <script src="durtocGateKeeper.js"></script>
-
     <div class="crt-overlay"></div>
     <div class="scanlines"></div>
-
-    <!-- AUDIO ENGINE (Web Audio API synthesizer handled in app.js) -->
 
     <div class="terminal-container">
         <!-- TOP STATUS HEADER -->
@@ -30,22 +20,16 @@
             <div class="header-left">
                 <div class="imperial-crest">
                     <svg viewBox="0 0 100 100" class="crest-svg">
-                        <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3" fill="none" />
-                        <circle cx="50" cy="50" r="22" stroke="currentColor" stroke-width="4" fill="none" />
-                        <path d="M50 4 L50 28 M50 72 L50 96 M4 50 L28 50 M72 50 L96 50" stroke="currentColor"
-                            stroke-width="5" />
-                        <path d="M18 18 L34 34 M66 66 L82 82 M82 18 L66 34 M34 66 L18 82" stroke="currentColor"
-                            stroke-width="4" />
-                        <circle cx="50" cy="50" r="8" fill="currentColor" />
+                        <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3" fill="none"/>
+                        <circle cx="50" cy="50" r="22" stroke="currentColor" stroke-width="4" fill="none"/>
+                        <path d="M50 4 L50 28 M50 72 L50 96 M4 50 L28 50 M72 50 L96 50" stroke="currentColor" stroke-width="5"/>
+                        <path d="M18 18 L34 34 M66 66 L82 82 M82 18 L66 34 M34 66 L18 82" stroke="currentColor" stroke-width="4"/>
+                        <circle cx="50" cy="50" r="8" fill="currentColor"/>
                     </svg>
                 </div>
                 <div class="header-titles">
-                    <h1 class="glitch" data-text="DATAPAD IMPERIAL // MACRO CONTROLE">DATAPAD IMPERIAL // MACRO CONTROLE
-                    </h1>
-                    <div class="terminal-sub">USUÁRIO: <span class="text-highlight">GENERAL DUR'TOC</span> // SETOR:
-                        <span class="text-accent">LOTHAL & CORUSCANT</span> // CLASSIFICAÇÃO: <span
-                            class="badge-red">NÍVEL ALTO COMANDO</span>
-                    </div>
+                    <h1 class="glitch" data-text="DATAPAD IMPERIAL // MACRO CONTROLE">DATAPAD IMPERIAL // MACRO CONTROLE</h1>
+                    <div class="terminal-sub">USUÁRIO: <span class="text-highlight">GENERAL DUR'TOC</span> // SETOR: <span class="text-accent">LOTHAL & CORUSCANT</span> // CLASSIFICAÇÃO: <span class="badge-red">NÍVEL ALTO COMANDO</span></div>
                 </div>
             </div>
 
@@ -59,11 +43,14 @@
                     <span class="val text-gold" id="display-total-ci">0 CI</span>
                 </div>
                 <div class="stat-pill">
-                    <span class="label">TOTAL FACCREDS:</span>
+                    <span class="label">TOTAL FACCREDS (RECURSOS):</span>
                     <span class="val text-cyan" id="display-total-fc">0 FC</span>
                 </div>
-                <button class="btn-action-primary" id="btn-turn-advance"
-                    title="Processa receitas, custos de manutenção, P&D e eventos">
+                <div class="stat-pill">
+                    <span class="label">VOLUME INDUSTRIAL TOTAL:</span>
+                    <span class="val text-accent" id="display-total-tons">0 Tons</span>
+                </div>
+                <button class="btn-action-primary" id="btn-turn-advance" title="Processa receitas, custos de manutenção, P&D e eventos">
                     <span class="pulse-icon">⚡</span> GIRAR MACRO (AVANÇAR)
                 </button>
             </div>
@@ -75,7 +62,7 @@
             <button class="nav-tab" data-target="tab-installations">🏭 INSTALAÇÕES & OFICINAS</button>
             <button class="nav-tab" data-target="tab-assets">🛡️ ATIVOS & OPERAÇÕES</button>
             <button class="nav-tab" data-target="tab-rd">🔬 P&D: PROJETO TIE/d</button>
-            <button class="nav-tab" data-target="tab-market">⚖️ CÂMBIO & MERCADO</button>
+            <button class="nav-tab" data-target="tab-market">⚖️ CÂMBIO & TONELAGEM</button>
             <button class="nav-tab" data-target="tab-logs">📜 REGISTROS DO SISTEMA</button>
 
             <div class="nav-controls">
@@ -88,7 +75,7 @@
 
         <!-- MAIN TERMINAL CONTENT -->
         <main class="terminal-body">
-
+            
             <!-- ================= TAB 1: VISÃO GERAL ================= -->
             <section id="tab-overview" class="tab-pane active">
                 <div class="grid-2col">
@@ -104,7 +91,7 @@
                                 <div class="node node-root">
                                     <div class="node-badge">GENERAL ENGENHEIRO</div>
                                     <div class="node-name">DUR'TOC</div>
-                                    <div class="node-meta">Comando Tático & Engenharia Mecânica Superior</div>
+                                    <div class="node-meta">Comando Tático Militar & Engenharia Superior</div>
                                 </div>
 
                                 <div class="tree-branches">
@@ -145,8 +132,7 @@
                                                 <div class="node-title">FÁBRICA 2</div>
                                                 <div class="node-quick-stats" id="quick-fab2">CI: 0 | FC: 0</div>
                                             </div>
-                                            <div class="node node-facility highlight-node"
-                                                onclick="app.selectFacility('lab_tie')">
+                                            <div class="node node-facility highlight-node" onclick="app.selectFacility('lab_tie')">
                                                 <div class="node-tag imperial-red">P&D TIE/d</div>
                                                 <div class="node-title">LABORATÓRIO DEFENDER</div>
                                                 <div class="node-quick-stats" id="quick-lab">PROJETO: 0%</div>
@@ -158,7 +144,7 @@
                         </div>
                     </div>
 
-                    <!-- Right: Macro Quick Actions & Quick Balance -->
+                    <!-- Right: Macro Quick Actions & Rule Metrics -->
                     <div class="panel">
                         <div class="panel-header">
                             <span class="panel-title">TERMINAL DE AÇÕES DE MACRO</span>
@@ -178,8 +164,7 @@
                                         <option value="outpost">🏛️ Criar Posto Avançado</option>
                                         <option value="pass">⏭️ Passar a Vez</option>
                                     </select>
-                                    <button id="btn-execute-action" class="btn-action-secondary">CONFIGURAR &
-                                        EXECUTAR</button>
+                                    <button id="btn-execute-action" class="btn-action-secondary">EXECUTAR ORDEM</button>
                                 </div>
                             </div>
 
@@ -189,16 +174,13 @@
                             </div>
 
                             <div class="macro-rules-card">
-                                <div class="rules-header">⚡ PARÂMETROS DO MOTOR DE REGRAS</div>
+                                <div class="rules-header">⚡ PARÂMETROS DO MOTOR DE TONELAGEM & RECURSOS</div>
                                 <ul>
-                                    <li><strong>Taxa de Câmbio Base:</strong> 1 FC = 100.000 CI (Créditos Imperiais).
-                                    </li>
-                                    <li><strong>Fábricas:</strong> Geram CI batendo metas industriais e reparando
-                                        veículos/naves.</li>
-                                    <li><strong>Oficinas:</strong> Geram CI através de prestações de serviço mecânico a
-                                        terceiros.</li>
-                                    <li><strong>Giro do Macro:</strong> Subtrai mão de obra e manutenção em CI e FC de
-                                        cada instalação.</li>
+                                    <li><strong>Taxa de Conversão:</strong> 100.000 CI = 1 FC (Faccred).</li>
+                                    <li><strong>Escala de Matéria-Prima:</strong> <strong>1 FC = 100 Toneladas</strong> de peças, ligas e materiais.</li>
+                                    <li><strong>Índice de Fabricação TIE:</strong> 1 Caça TIE consome <strong>4 Toneladas</strong> de recursos.</li>
+                                    <li><strong>Rendimento Base:</strong> <strong>1 FC (100 Tons) = Produção de 25 Caças TIE</strong>.</li>
+                                    <li><strong>Reparos:</strong> 1 FC restaura 1 Ponto de Vida (HP) estrutural do ativo danificado.</li>
                                 </ul>
                             </div>
                         </div>
@@ -209,7 +191,6 @@
             <!-- ================= TAB 2: INSTALAÇÕES ================= -->
             <section id="tab-installations" class="tab-pane">
                 <div class="facilities-grid">
-                    <!-- Cards populated by JS or template -->
                     <div id="facilities-container" class="cards-container"></div>
                 </div>
             </section>
@@ -264,7 +245,7 @@
                                         <th>LOCALIZAÇÃO</th>
                                         <th>INTEGRIDADE (HP)</th>
                                         <th>MANUTENÇÃO</th>
-                                        <th>HABILIDADE / FUNÇÃO</th>
+                                        <th>EQUIV. TONELAGEM</th>
                                         <th>AÇÕES</th>
                                     </tr>
                                 </thead>
@@ -290,32 +271,22 @@
                                 <div class="wireframe-tie">
                                     <svg viewBox="0 0 200 200" class="tie-svg">
                                         <!-- Central Cockpit -->
-                                        <circle cx="100" cy="100" r="28" stroke="#00ff66" stroke-width="2"
-                                            fill="rgba(0,255,102,0.05)" />
-                                        <circle cx="100" cy="100" r="14" stroke="#00ff66" stroke-width="1.5"
-                                            fill="none" />
+                                        <circle cx="100" cy="100" r="28" stroke="#00ff66" stroke-width="2" fill="rgba(0,255,102,0.05)" />
+                                        <circle cx="100" cy="100" r="14" stroke="#00ff66" stroke-width="1.5" fill="none" />
                                         <line x1="86" y1="100" x2="114" y2="100" stroke="#00ff66" stroke-width="1" />
                                         <line x1="100" y1="86" x2="100" y2="114" stroke="#00ff66" stroke-width="1" />
                                         <!-- 3 Tri-Wings -->
-                                        <!-- Top Wing -->
                                         <line x1="100" y1="72" x2="100" y2="25" stroke="#00ff66" stroke-width="3" />
-                                        <polygon points="90,25 110,25 118,5 82,5" stroke="#00ff66" stroke-width="2"
-                                            fill="rgba(0,255,102,0.15)" />
-                                        <!-- Bottom Left Wing -->
+                                        <polygon points="90,25 110,25 118,5 82,5" stroke="#00ff66" stroke-width="2" fill="rgba(0,255,102,0.15)" />
                                         <line x1="78" y1="118" x2="35" y2="155" stroke="#00ff66" stroke-width="3" />
-                                        <polygon points="30,145 42,162 20,185 10,165" stroke="#00ff66" stroke-width="2"
-                                            fill="rgba(0,255,102,0.15)" />
-                                        <!-- Bottom Right Wing -->
+                                        <polygon points="30,145 42,162 20,185 10,165" stroke="#00ff66" stroke-width="2" fill="rgba(0,255,102,0.15)" />
                                         <line x1="122" y1="118" x2="165" y2="155" stroke="#00ff66" stroke-width="3" />
-                                        <polygon points="170,145 158,162 180,185 190,165" stroke="#00ff66"
-                                            stroke-width="2" fill="rgba(0,255,102,0.15)" />
+                                        <polygon points="170,145 158,162 180,185 190,165" stroke="#00ff66" stroke-width="2" fill="rgba(0,255,102,0.15)" />
                                     </svg>
                                 </div>
                                 <div class="schematic-info">
                                     <h4>TIE/d DEFENDER MULTI-ROLE STARFIGHTER</h4>
-                                    <p class="text-dim">Especificações do Projeto Imperial: Três asas estabilizadoras,
-                                        Gerador de Escudo Defletor Dedicado, Hiperpropulsor Integrado de Classe 2,
-                                        Canhões Tri-Laser de Alta Densidade e Lançadores de Ogivas.</p>
+                                    <p class="text-dim">Requisitos do Protótipo Dur'toc: 3 Asas com Gerador de Escudo Defletor Miniaturizado, Hiperpropulsor Integrado e Tri-Laser. Peso estimado: ~6.5 Toneladas de compósitos especiais.</p>
                                     <div class="rd-stat-row">
                                         <span>STATUS DO PROTÓTIPO:</span>
                                         <strong id="rd-status-label" class="text-cyan">FASE 1: CONCEPÇÃO</strong>
@@ -338,40 +309,35 @@
                                     <div class="ms-check">✓</div>
                                     <div class="ms-body">
                                         <div class="ms-title">1. Estrutura Tri-Wing & Reator Solar</div>
-                                        <div class="ms-desc">Estabilidade e suporte para consumo de energia triplo.
-                                        </div>
+                                        <div class="ms-desc">Estabilidade e suporte para consumo de energia triplo.</div>
                                     </div>
                                 </div>
                                 <div class="milestone-item" id="ms-2">
                                     <div class="ms-check">○</div>
                                     <div class="ms-body">
                                         <div class="ms-title">2. Miniaturização do Escudo Defletor</div>
-                                        <div class="ms-desc">Adaptação de gerador de escudo militar em caça leve.
-                                            (Custo: 10 FC)</div>
+                                        <div class="ms-desc">Adaptação de gerador de escudo militar em caça leve (Custo: 10 FC / 1.000 Tons).</div>
                                     </div>
                                 </div>
                                 <div class="milestone-item" id="ms-3">
                                     <div class="ms-check">○</div>
                                     <div class="ms-body">
                                         <div class="ms-title">3. Hiperpropulsor Compacto Classe 2</div>
-                                        <div class="ms-desc">Independência estratégica sem necessidade de Star
-                                            Destroyer. (Custo: 15 FC)</div>
+                                        <div class="ms-desc">Independência estratégica sem necessidade de Star Destroyer (Custo: 15 FC / 1.500 Tons).</div>
                                     </div>
                                 </div>
                                 <div class="milestone-item" id="ms-4">
                                     <div class="ms-check">○</div>
                                     <div class="ms-body">
                                         <div class="ms-title">4. Testes de Voo & Manobrabilidade</div>
-                                        <div class="ms-desc">Simulações de combate em Lothal contra alvos rebeldes.
-                                            (Custo: 8 FC)</div>
+                                        <div class="ms-desc">Simulações de combate em Lothal contra alvos rebeldes (Custo: 8 FC / 800 Tons).</div>
                                     </div>
                                 </div>
                                 <div class="milestone-item" id="ms-5">
                                     <div class="ms-check">○</div>
                                     <div class="ms-body">
                                         <div class="ms-title">5. Homologação da Linha de Montagem</div>
-                                        <div class="ms-desc">Aprovação Imperial e conversão das Fábricas 1 e 2. (Custo:
-                                            20 FC)</div>
+                                        <div class="ms-desc">Aprovação Imperial e conversão das Fábricas 1 e 2 para montagem seriada do TIE/d (Custo: 20 FC).</div>
                                     </div>
                                 </div>
                             </div>
@@ -386,29 +352,25 @@
                         <div class="panel-content">
                             <div class="rd-control-box">
                                 <h4>ACELERAR DESENVOLVIMENTO</h4>
-                                <p class="text-dim">Injete Créditos ou Faccreds diretamente no projeto para avançar as
-                                    fases de engenharia mecânica de Dur'toc.</p>
-
+                                <p class="text-dim">Injete Créditos ou Faccreds diretamente no projeto para avançar as fases de engenharia mecânica de Dur'toc.</p>
+                                
                                 <div class="rd-inputs">
                                     <div class="form-group">
                                         <label>Investir Créditos Imperiais (CI):</label>
                                         <div class="input-with-action">
-                                            <input type="number" id="input-rd-ci" class="terminal-input"
-                                                placeholder="Ex: 100000" step="50000" min="0">
-                                            <button id="btn-inject-ci" class="btn-action-secondary">+ INJETAR
-                                                CI</button>
+                                            <input type="number" id="input-rd-ci" class="terminal-input" placeholder="Ex: 100000" step="50000" min="0">
+                                            <button id="btn-inject-ci" class="btn-action-secondary">+ INJETAR CI</button>
                                         </div>
                                         <span class="form-hint">100.000 CI = +1 Ponto de Pesquisa</span>
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Investir Faccreds / Peças (FC):</label>
+                                        <label>Investir Faccreds (100 Tons/FC de Peças Nobres):</label>
                                         <div class="input-with-action">
-                                            <input type="number" id="input-rd-fc" class="terminal-input"
-                                                placeholder="Ex: 5" step="1" min="0">
+                                            <input type="number" id="input-rd-fc" class="terminal-input" placeholder="Ex: 5" step="1" min="0">
                                             <button id="btn-inject-fc" class="btn-action-primary">+ INJETAR FC</button>
                                         </div>
-                                        <span class="form-hint">1 FC = +1.5 Pontos de Pesquisa Direta</span>
+                                        <span class="form-hint">1 FC (100 Tons) = +1.5 Pontos de Pesquisa Direta</span>
                                     </div>
                                 </div>
 
@@ -437,14 +399,13 @@
                 <div class="grid-2col">
                     <div class="panel">
                         <div class="panel-header">
-                            <span class="panel-title">MERCADO & CONVERSÃO DE RECURSOS</span>
-                            <span class="panel-tag">TAXA OFICIAL: 100k CI = 1 FC</span>
+                            <span class="panel-title">MERCADO & CONVERSÃO DE TONELAGEM</span>
+                            <span class="panel-tag">100k CI = 1 FC = 100 TONS</span>
                         </div>
                         <div class="panel-content">
                             <div class="exchange-calculator">
-                                <h3>CONVERSÃO DIRETA DE CAPITAL</h3>
-                                <p class="text-dim">Compre peças sobressalentes e matéria-prima bruta para alimentar
-                                    suas oficinas e complexos industriais.</p>
+                                <h3>CONVERSÃO DIRETA DE MATÉRIA-PRIMA</h3>
+                                <p class="text-dim">Compre toneladas de metais brutos, condutores e durasteel para alimentar suas oficinas e fábricas.</p>
 
                                 <div class="exchange-form">
                                     <div class="form-group">
@@ -459,30 +420,32 @@
                                         <div class="radio-toggle-group">
                                             <label class="radio-label">
                                                 <input type="radio" name="exchange-type" value="buy_fc" checked>
-                                                <span>Comprar FC com CI (100.000 CI ➔ 1 FC)</span>
+                                                <span>Comprar FC com CI (100.000 CI ➔ 1 FC / 100 Tons)</span>
                                             </label>
                                             <label class="radio-label">
                                                 <input type="radio" name="exchange-type" value="sell_fc">
-                                                <span>Liquidar FC por CI (1 FC ➔ 90.000 CI)</span>
+                                                <span>Liquidar FC por CI (1 FC / 100 Tons ➔ 90.000 CI)</span>
                                             </label>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label>Quantidade de Faccreds (FC):</label>
-                                        <input type="number" id="exchange-amount-fc" class="terminal-input" value="1"
-                                            min="1" step="1">
+                                        <input type="number" id="exchange-amount-fc" class="terminal-input" value="1" min="1" step="1">
                                     </div>
 
                                     <div class="exchange-calculation-preview">
                                         <div class="calc-row">
+                                            <span>Volume de Matéria-Prima:</span>
+                                            <strong id="exchange-tons-calc" class="text-cyan">100 Toneladas (Equiv. a 25 Caças TIE)</strong>
+                                        </div>
+                                        <div class="calc-row" style="margin-top:4px;">
                                             <span>Custo / Retorno Total:</span>
                                             <strong id="exchange-total-calc" class="text-gold">100.000 CI</strong>
                                         </div>
                                     </div>
 
-                                    <button id="btn-execute-exchange" class="btn-action-primary btn-block">CONFIRMAR
-                                        TRANSAÇÃO DE CÂMBIO</button>
+                                    <button id="btn-execute-exchange" class="btn-action-primary btn-block">CONFIRMAR TRANSAÇÃO DE CÂMBIO</button>
                                 </div>
                             </div>
                         </div>
@@ -490,41 +453,32 @@
 
                     <div class="panel">
                         <div class="panel-header">
-                            <span class="panel-title">DESMANCHE & RECICLAGEM DE NAVES</span>
-                            <span class="panel-tag">OFICINAS CORUSCANT / FÁBRICAS LOTHAL</span>
+                            <span class="panel-title">DESMANCHE & RECICLAGEM DE CAÇAS / SUCATAS</span>
+                            <span class="panel-tag">RECUPERAÇÃO DE TONELAGEM</span>
                         </div>
                         <div class="panel-content">
-                            <p class="text-dim">Dur'toc pode comprar ou recolher sucatas de caças e cargueiros para
-                                desmontar e recuperar Faccreds puros.</p>
-
+                            <p class="text-dim">Desmonte caças acidentados e fuselagens avariadas para extrair toneladas de metais puros e peças prontas.</p>
+                            
                             <div class="salvage-options">
                                 <div class="salvage-card">
-                                    <div class="salvage-title">CARCAÇA DE CAÇA TIE/ln AVARIADO</div>
-                                    <div class="salvage-desc">Estrutura básica imperial resgatada de patrulhas.</div>
-                                    <div class="salvage-cost">Custo: 40.000 CI | Retorno: <strong>1 a 2 FC</strong>
-                                    </div>
-                                    <button class="btn-action-secondary btn-sm"
-                                        onclick="app.executeSalvage('tie', 40000, 1, 2)">🔧 DESMONTAR CAÇA</button>
+                                    <div class="salvage-title">ESQUADRÃO DE CAÇAS TIE/ln AVARIADOS (4 Tons cada)</div>
+                                    <div class="salvage-desc">Desmontagem de 12 caças destruídos em patrulha (48 Tons de liga).</div>
+                                    <div class="salvage-cost">Custo: 40.000 CI | Retorno: <strong>1 a 2 FC (~100 a 200 Tons)</strong></div>
+                                    <button class="btn-action-secondary btn-sm" onclick="app.executeSalvage('tie', 40000, 1, 2)">🔧 DESMONTAR CAÇAS TIE</button>
                                 </div>
 
                                 <div class="salvage-card">
-                                    <div class="salvage-title">DESTROÇOS DE CARGUEIRO CLASSE YT</div>
-                                    <div class="salvage-desc">Motores pesados, fiação blindada e placas de liga
-                                        durasteel.</div>
-                                    <div class="salvage-cost">Custo: 150.000 CI | Retorno: <strong>2 a 4 FC</strong>
-                                    </div>
-                                    <button class="btn-action-secondary btn-sm"
-                                        onclick="app.executeSalvage('yt', 150000, 2, 4)">🔧 DESMONTAR CARGUEIRO</button>
+                                    <div class="salvage-title">DESTROÇOS DE CARGUEIRO CLASSE YT (300 Tons)</div>
+                                    <div class="salvage-desc">Motores pesados de sub-luz e placas maciças de blindagem.</div>
+                                    <div class="salvage-cost">Custo: 150.000 CI | Retorno: <strong>2 a 4 FC (~200 a 400 Tons)</strong></div>
+                                    <button class="btn-action-secondary btn-sm" onclick="app.executeSalvage('yt', 150000, 2, 4)">🔧 DESMONTAR CARGUEIRO</button>
                                 </div>
 
                                 <div class="salvage-card">
-                                    <div class="salvage-title">LOTE DE SUCATA INDUSTRIAL DE LOTHAL</div>
-                                    <div class="salvage-desc">Sobras de mineração de doonium e componentes eletrônicos.
-                                    </div>
-                                    <div class="salvage-cost">Custo: 80.000 CI | Retorno: <strong>1 a 3 FC</strong>
-                                    </div>
-                                    <button class="btn-action-secondary btn-sm"
-                                        onclick="app.executeSalvage('scrap', 80000, 1, 3)">🔧 RECICLAR SUCATA</button>
+                                    <div class="salvage-title">LOTE DE MINERAÇÃO DE DOONIUM EM LOTHAL</div>
+                                    <div class="salvage-desc">Minério bruto processado para reforço de blindagem e carcaças.</div>
+                                    <div class="salvage-cost">Custo: 80.000 CI | Retorno: <strong>1 a 3 FC (~100 a 300 Tons)</strong></div>
+                                    <button class="btn-action-secondary btn-sm" onclick="app.executeSalvage('scrap', 80000, 1, 3)">🔧 REFINAR MINÉRIO</button>
                                 </div>
                             </div>
                         </div>
@@ -551,8 +505,7 @@
         <!-- FOOTER BAR -->
         <footer class="terminal-footer">
             <div class="footer-status">
-                <span class="blink">●</span> SISTEMA TÁTICO OPERACIONAL // LOTHAL COMM-NET LINK ATIVO // CRIPTOGRAFIA
-                ISB-SEC
+                <span class="blink">●</span> SISTEMA TÁTICO OPERACIONAL // LOTHAL COMM-NET LINK ATIVO // CRIPTOGRAFIA ISB-SEC
             </div>
             <div class="footer-credits">
                 AUTORIDADE: GENERAL DUR'TOC // OFICINAS CORUSCANT & DIVISÃO DE PRODUÇÃO DE LOTHAL
@@ -600,7 +553,7 @@
                     <input type="number" id="fac-edit-ci" class="terminal-input" step="10000">
                 </div>
                 <div class="form-group">
-                    <label>Estoque de Faccreds (FC):</label>
+                    <label>Estoque de Faccreds (1 FC = 100 Tons):</label>
                     <input type="number" id="fac-edit-fc" class="terminal-input" step="1">
                 </div>
                 <div class="form-group">
@@ -625,5 +578,4 @@
     <script src="macroDurtoc/audio.js"></script>
     <script src="macroDurtoc/app.js"></script>
 </body>
-
 </html>

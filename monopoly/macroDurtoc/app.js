@@ -1,5 +1,6 @@
 /**
  * CONTROLADOR PRINCIPAL DO MACRO // GENERAL DUR'TOC TERMINAL
+ * Atualizado com a métrica de tonelagem (1 FC = 100 Tons = 25 Caças TIE)
  */
 
 class MacroTerminalApp {
@@ -9,7 +10,7 @@ class MacroTerminalApp {
             facilities: JSON.parse(JSON.stringify(INITIAL_FACILITIES)),
             assets: JSON.parse(JSON.stringify(INITIAL_ASSETS)),
             catalog: JSON.parse(JSON.stringify(INITIAL_CATALOG)),
-            rdProgress: 15, // 0 to 100
+            rdProgress: 15,
             rdPoints: 15,
             logs: []
         };
@@ -21,26 +22,25 @@ class MacroTerminalApp {
         this.bindEvents();
         this.renderAll();
         this.log("SISTEMA DE CONTROLE MACRO INICIALIZADO.", "SUCCESS");
-        this.log("CONEXÃO ESTABELECIDA COM LOTHAL & CORUSCANT.", "INFO");
+        this.log("PARÂMETRO DE RECURSOS: 1 FC = 100 Toneladas (Equiv. a 25 Caças TIE / 4t cada).", "INFO");
     }
 
     loadStorage() {
-        const saved = localStorage.getItem("durtoc_macro_state");
+        const saved = localStorage.getItem("durtoc_macro_state_v2");
         if (saved) {
             try {
                 this.state = JSON.parse(saved);
-            } catch (e) {
+            } catch(e) {
                 console.error("Erro ao carregar storage:", e);
             }
         }
     }
 
     saveStorage() {
-        localStorage.setItem("durtoc_macro_state", JSON.stringify(this.state));
+        localStorage.setItem("durtoc_macro_state_v2", JSON.stringify(this.state));
     }
 
     bindEvents() {
-        // Nav tabs
         document.querySelectorAll(".nav-tab").forEach(tab => {
             tab.addEventListener("click", (e) => {
                 document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
@@ -52,12 +52,10 @@ class MacroTerminalApp {
             });
         });
 
-        // Turn Advance
         document.getElementById("btn-turn-advance").addEventListener("click", () => {
             this.advanceTurn();
         });
 
-        // Action select change
         document.getElementById("macro-action-select").addEventListener("change", () => {
             this.renderActionContextView();
             sfx.playClick();
@@ -67,20 +65,17 @@ class MacroTerminalApp {
             this.executeSelectedAction();
         });
 
-        // CRT Toggle
         document.getElementById("btn-crt-toggle").addEventListener("click", () => {
             document.body.classList.toggle("crt-active");
             sfx.playClick();
         });
 
-        // Sound Toggle
         document.getElementById("btn-sound-toggle").addEventListener("click", (e) => {
             sfx.enabled = !sfx.enabled;
             e.target.innerText = sfx.enabled ? "🔊 SFX: ON" : "🔇 SFX: OFF";
             sfx.playClick();
         });
 
-        // Save & Reset Buttons
         document.getElementById("btn-save-data").addEventListener("click", () => {
             this.saveStorage();
             this.log("ESTADO SALVO NO BANCO DE DADOS LOCAL.", "SUCCESS");
@@ -89,12 +84,11 @@ class MacroTerminalApp {
 
         document.getElementById("btn-reset-data").addEventListener("click", () => {
             if (confirm("ATENÇÃO: Deseja resetar todo o progresso do macro para os valores de fábrica?")) {
-                localStorage.removeItem("durtoc_macro_state");
+                localStorage.removeItem("durtoc_macro_state_v2");
                 location.reload();
             }
         });
 
-        // P&D Injection
         document.getElementById("btn-inject-ci").addEventListener("click", () => {
             const val = parseInt(document.getElementById("input-rd-ci").value) || 0;
             this.injectRDResource("CI", val);
@@ -105,7 +99,6 @@ class MacroTerminalApp {
             this.injectRDResource("FC", val);
         });
 
-        // Exchange
         document.getElementById("btn-execute-exchange").addEventListener("click", () => {
             this.executeExchange();
         });
@@ -118,21 +111,17 @@ class MacroTerminalApp {
             r.addEventListener("change", () => this.updateExchangePreview());
         });
 
-        // Filter Assets
         document.getElementById("filter-location").addEventListener("change", () => this.renderAssetsTable());
         document.getElementById("filter-type").addEventListener("change", () => this.renderAssetsTable());
 
-        // Catalog modal trigger
         document.getElementById("btn-open-catalog").addEventListener("click", () => {
             this.openCatalogModal();
         });
 
-        // Edit facility save
         document.getElementById("btn-save-facility-changes").addEventListener("click", () => {
             this.saveFacilityEdit();
         });
 
-        // Clear logs
         document.getElementById("btn-clear-logs").addEventListener("click", () => {
             this.state.logs = [];
             this.renderLogs();
@@ -158,9 +147,13 @@ class MacroTerminalApp {
             totalFC += f.faccreds;
         });
 
+        const totalTons = totalFC * 100;
+        const totalTiesEquiv = totalFC * 25;
+
         document.getElementById("display-turn").innerText = String(this.state.turn).padStart(2, '0');
         document.getElementById("display-total-ci").innerText = totalCI.toLocaleString('pt-BR') + " CI";
-        document.getElementById("display-total-fc").innerText = totalFC.toLocaleString('pt-BR') + " FC";
+        document.getElementById("display-total-fc").innerText = `${totalFC.toLocaleString('pt-BR')} FC`;
+        document.getElementById("display-total-tons").innerText = `${totalTons.toLocaleString('pt-BR')} Tons (${totalTiesEquiv} TIEs)`;
     }
 
     renderQuickHierarchy() {
@@ -170,10 +163,10 @@ class MacroTerminalApp {
         const fab2 = this.state.facilities.fab2;
         const lab = this.state.facilities.lab_tie;
 
-        if (mcmt1) document.getElementById("quick-mcmt1").innerText = `CI: ${mcmt1.credits.toLocaleString()} | FC: ${mcmt1.faccreds}`;
-        if (mcmt2) document.getElementById("quick-mcmt2").innerText = `CI: ${mcmt2.credits.toLocaleString()} | FC: ${mcmt2.faccreds}`;
-        if (fab1) document.getElementById("quick-fab1").innerText = `CI: ${fab1.credits.toLocaleString()} | FC: ${fab1.faccreds}`;
-        if (fab2) document.getElementById("quick-fab2").innerText = `CI: ${fab2.credits.toLocaleString()} | FC: ${fab2.faccreds}`;
+        if (mcmt1) document.getElementById("quick-mcmt1").innerText = `CI: ${mcmt1.credits.toLocaleString()} | FC: ${mcmt1.faccreds} (${mcmt1.faccreds*100}t)`;
+        if (mcmt2) document.getElementById("quick-mcmt2").innerText = `CI: ${mcmt2.credits.toLocaleString()} | FC: ${mcmt2.faccreds} (${mcmt2.faccreds*100}t)`;
+        if (fab1) document.getElementById("quick-fab1").innerText = `CI: ${fab1.credits.toLocaleString()} | FC: ${fab1.faccreds} (${fab1.faccreds*100}t)`;
+        if (fab2) document.getElementById("quick-fab2").innerText = `CI: ${fab2.credits.toLocaleString()} | FC: ${fab2.faccreds} (${fab2.faccreds*100}t)`;
         if (lab) document.getElementById("quick-lab").innerText = `PROJETO: ${this.state.rdProgress}% | FC: ${lab.faccreds}`;
     }
 
@@ -186,6 +179,8 @@ class MacroTerminalApp {
             const card = document.createElement("div");
             card.className = "fac-card";
             const netIncome = f.incomeCI - f.laborCostCI;
+            const tons = f.faccreds * 100;
+            const tieCapacity = f.faccreds * 25;
 
             card.innerHTML = `
                 <div class="fac-card-header">
@@ -203,8 +198,8 @@ class MacroTerminalApp {
                             <div class="val text-gold">${f.credits.toLocaleString('pt-BR')} CI</div>
                         </div>
                         <div class="fac-stat-box">
-                            <div class="lbl">FACCREDS (FC):</div>
-                            <div class="val text-cyan">${f.faccreds} FC</div>
+                            <div class="lbl">ESTOQUE FC (TONELAGEM):</div>
+                            <div class="val text-cyan">${f.faccreds} FC <span style="font-size:10px; color:#b8e6c4;">(${tons}t / ${tieCapacity} TIEs)</span></div>
                         </div>
                         <div class="fac-stat-box">
                             <div class="lbl">RECEITA ESTIMADA:</div>
@@ -218,7 +213,7 @@ class MacroTerminalApp {
                     <div class="fac-upkeep-list">
                         <div>⚠️ <strong>Custos por Giro:</strong></div>
                         <div>• Mão de Obra: -${f.laborCostCI.toLocaleString('pt-BR')} CI</div>
-                        <div>• Manutenção Maquinário: -${f.maintCostFC} FC</div>
+                        <div>• Manutenção Maquinário: -${f.maintCostFC} FC (${f.maintCostFC * 100} Toneladas)</div>
                     </div>
                 </div>
             `;
@@ -241,6 +236,9 @@ class MacroTerminalApp {
 
         tbody.innerHTML = filtered.map(a => {
             const hpPercent = Math.round((a.hp / a.hpMax) * 100);
+            const catalogItem = this.state.catalog.find(c => c.id === a.templateId);
+            const tonsEquiv = catalogItem ? `${catalogItem.costTons || (catalogItem.costFC * 100)} Tons` : '100 Tons';
+
             return `
                 <tr>
                     <td><span class="status-indicator online"></span> ${a.status}</td>
@@ -254,7 +252,7 @@ class MacroTerminalApp {
                         </div>
                     </td>
                     <td>-${(a.maintCI || 0).toLocaleString()} CI</td>
-                    <td><span class="text-dim">Pronto para despacho</span></td>
+                    <td><span class="text-cyan">${tonsEquiv}</span></td>
                     <td>
                         <button class="btn-tool" onclick="app.damageAsset('${a.id}', 3)" title="Simular Dano">-3 HP</button>
                         <button class="btn-tool" onclick="app.repairSpecificAsset('${a.id}')" title="Reparar com Faccreds">🔧 Reparar</button>
@@ -271,15 +269,13 @@ class MacroTerminalApp {
         document.getElementById("rd-progress-bar").style.width = `${p}%`;
         document.getElementById("rd-points-accum").innerText = `${this.state.rdPoints} / 100 PTS`;
 
-        // Label update
         const label = document.getElementById("rd-status-label");
         if (p < 25) label.innerText = "FASE 1: CONCEPÇÃO & ESTRUTURA";
         else if (p < 50) label.innerText = "FASE 2: PROTÓTIPO DE ESCUDO";
         else if (p < 75) label.innerText = "FASE 3: HIPERPROPULSÃO";
         else if (p < 100) label.innerText = "FASE 4: TESTES DE VOO EM LOTHAL";
-        else label.innerText = "FASE 5: HOMOLOGADO // PRONTO PARA PRODUÇÃO";
+        else label.innerText = "FASE 5: HOMOLOGADO // PRONTO PARA PRODUÇÃO EM SÉRIE";
 
-        // Milestone classes
         const ms1 = document.getElementById("ms-1");
         const ms2 = document.getElementById("ms-2");
         const ms3 = document.getElementById("ms-3");
@@ -296,7 +292,7 @@ class MacroTerminalApp {
     renderExchangeSelects() {
         const select = document.getElementById("exchange-source");
         select.innerHTML = Object.values(this.state.facilities).map(f => {
-            return `<option value="${f.id}">${f.name} (Saldo: ${f.credits.toLocaleString()} CI | ${f.faccreds} FC)</option>`;
+            return `<option value="${f.id}">${f.name} (Saldo: ${f.credits.toLocaleString()} CI | ${f.faccreds} FC / ${f.faccreds*100}t)</option>`;
         }).join("");
         this.updateExchangePreview();
     }
@@ -305,13 +301,19 @@ class MacroTerminalApp {
         const type = document.querySelector("input[name='exchange-type']:checked").value;
         const amountFC = parseInt(document.getElementById("exchange-amount-fc").value) || 0;
         const preview = document.getElementById("exchange-total-calc");
+        const tonsPreview = document.getElementById("exchange-tons-calc");
+
+        const tons = amountFC * 100;
+        const tieEquiv = amountFC * 25;
+
+        tonsPreview.innerText = `${tons.toLocaleString('pt-BR')} Toneladas (Equivalente a ${tieEquiv.toLocaleString('pt-BR')} Caças TIE / 4t cada)`;
 
         if (type === "buy_fc") {
             const cost = amountFC * 100000;
-            preview.innerText = `Custo: ${cost.toLocaleString('pt-BR')} CI (Ganho: +${amountFC} FC)`;
+            preview.innerText = `Custo: ${cost.toLocaleString('pt-BR')} CI (Ganho: +${amountFC} FC / +${tons} Tons)`;
         } else {
             const gain = amountFC * 90000;
-            preview.innerText = `Retorno: +${gain.toLocaleString('pt-BR')} CI (Custo: -${amountFC} FC)`;
+            preview.innerText = `Retorno: +${gain.toLocaleString('pt-BR')} CI (Custo: -${amountFC} FC / -${tons} Tons)`;
         }
     }
 
@@ -323,7 +325,7 @@ class MacroTerminalApp {
             case "attack":
                 container.innerHTML = `
                     <h4>⚔️ ATACAR ATIVO INIMIGO</h4>
-                    <p class="text-dim">Despache forças de assalto ou frotas de combate para neutralizar células ou postos inimigos em Lothal/Coruscant.</p>
+                    <p class="text-dim">Despache forças de assalto ou frotas de combate para neutralizar células ou postos rebeldes em Lothal/Coruscant.</p>
                     <div class="form-group" style="margin-top:8px;">
                         <label>Selecionar Força Atacante:</label>
                         <select id="act-attack-source" class="terminal-select">
@@ -332,21 +334,21 @@ class MacroTerminalApp {
                     </div>
                     <div class="form-group">
                         <label>Designação do Alvo Inimigo:</label>
-                        <input type="text" id="act-attack-target" class="terminal-input" placeholder="Ex: Esconderijo Rebelde em Lothal">
+                        <input type="text" id="act-attack-target" class="terminal-input" placeholder="Ex: Célula Rebelde Espectro em Lothal">
                     </div>
                 `;
                 break;
             case "buy":
                 container.innerHTML = `
                     <h4>🛒 COMPRAR ATIVO ESTRATÉGICO</h4>
-                    <p class="text-dim">Adquira novos regimentos militares, células de inteligência ou cargueiros pesados para fortalecer suas operações.</p>
+                    <p class="text-dim">Adquira novos regimentos militares, células de inteligência ou complexos industriais calculados em toneladas de suprimento.</p>
                     <button class="btn-action-primary" style="margin-top:10px;" onclick="app.openCatalogModal()">ABRIR CATÁLOGO DE ATIVOS (15 DISPONÍVEIS)</button>
                 `;
                 break;
             case "repair":
                 container.innerHTML = `
-                    <h4>🔧 REPARAR ATIVO (REGRA: 1 FC = 1 HP)</h4>
-                    <p class="text-dim">Gaste Faccreds de uma oficina ou fábrica para restaurar a integridade estrutural de veículos e tropas.</p>
+                    <h4>🔧 REPARAR ATIVO (REGRA: 1 FC / 100 TONS = 1 HP)</h4>
+                    <p class="text-dim">Gaste Faccreds de uma oficina ou fábrica para restaurar a integridade estrutural e blindagem de veículos e tropas.</p>
                     <div class="form-group" style="margin-top:8px;">
                         <label>Ativo Avariado:</label>
                         <select id="act-repair-target" class="terminal-select">
@@ -420,7 +422,7 @@ class MacroTerminalApp {
         const action = document.getElementById("macro-action-select").value;
         sfx.playSuccess();
 
-        switch (action) {
+        switch(action) {
             case "attack":
                 const target = document.getElementById("act-attack-target").value || "Alvo Desconhecido";
                 this.log(`ORDEM DE ATAQUE: Ofensiva lançada contra [${target}].`, "DANGER");
@@ -467,40 +469,34 @@ class MacroTerminalApp {
         let totalLaborTurn = 0;
         let totalMaintFCTurn = 0;
 
-        // Process each facility
         Object.values(this.state.facilities).forEach(f => {
-            // Deduct labor
             f.credits -= f.laborCostCI;
             totalLaborTurn += f.laborCostCI;
 
-            // Deduct maintenance FC
             if (f.faccreds >= f.maintCostFC) {
                 f.faccreds -= f.maintCostFC;
                 totalMaintFCTurn += f.maintCostFC;
             } else {
-                this.log(`⚠️ ALERTA CRÍTICO: ${f.name} ficou sem Faccreds para manutenção!`, "WARNING");
+                this.log(`⚠️ ALERTA CRÍTICO: ${f.name} ficou sem Faccreds/Toneladas para manutenção!`, "WARNING");
                 f.faccreds = 0;
             }
 
-            // Add Income
             f.credits += f.incomeCI;
             totalIncomeTurn += f.incomeCI;
         });
 
-        // Deduct asset CI maintenance
         let totalAssetMaint = 0;
         this.state.assets.forEach(a => {
             const cost = a.maintCI || 0;
             totalAssetMaint += cost;
-            // deduct from fab1 by default
             if (this.state.facilities.fab1) {
                 this.state.facilities.fab1.credits -= cost;
             }
         });
 
-        this.log(`=== GIRO DO MACRO // CICLO TURNO ${this.state.turn} PROCESSADO ===`, "SUCCESS");
-        this.log(`ECONOMIA: Receita Geral: +${totalIncomeTurn.toLocaleString()} CI | Salários: -${totalLaborTurn.toLocaleString()} CI | Ativos: -${totalAssetMaint.toLocaleString()} CI`, "INFO");
-        this.log(`RECURSOS: Manutenção de Fábricas/Oficinas consumiu -${totalMaintFCTurn} FC.`, "INFO");
+        this.log(`=== GIRO DO MACRO // TURNO ${this.state.turn} PROCESSADO ===`, "SUCCESS");
+        this.log(`ECONOMIA: Receita: +${totalIncomeTurn.toLocaleString()} CI | Salários: -${totalLaborTurn.toLocaleString()} CI | Ativos: -${totalAssetMaint.toLocaleString()} CI`, "INFO");
+        this.log(`MANUTENÇÃO INDUSTRIAL: Consumo de -${totalMaintFCTurn} FC (${totalMaintFCTurn * 100} Toneladas) em ligas e reparos.`, "INFO");
 
         this.saveStorage();
         this.renderAll();
@@ -528,10 +524,11 @@ class MacroTerminalApp {
                 return;
             }
             lab.faccreds -= amount;
+            const tons = amount * 100;
             const pts = Math.round(amount * 1.5);
             this.state.rdPoints += pts;
             this.state.rdProgress = Math.min(100, Math.floor(this.state.rdPoints));
-            this.log(`P&D TIE/d: Injeção de ${amount} FC (Peças Nobres) gerou +${pts} Pontos de Pesquisa!`, "SUCCESS");
+            this.log(`P&D TIE/d: Injeção de ${amount} FC (${tons} Tons de Peças Nobres) gerou +${pts} Pontos de Pesquisa!`, "SUCCESS");
         }
 
         sfx.playSuccess();
@@ -546,6 +543,7 @@ class MacroTerminalApp {
         const amountFC = parseInt(document.getElementById("exchange-amount-fc").value) || 0;
 
         if (amountFC <= 0) return;
+        const tons = amountFC * 100;
 
         if (type === "buy_fc") {
             const cost = amountFC * 100000;
@@ -556,7 +554,7 @@ class MacroTerminalApp {
             }
             fac.credits -= cost;
             fac.faccreds += amountFC;
-            this.log(`CÂMBIO REALIZADO: ${fac.name} comprou +${amountFC} FC por ${cost.toLocaleString()} CI.`, "SUCCESS");
+            this.log(`CÂMBIO REALIZADO: ${fac.name} comprou +${amountFC} FC (+${tons} Tons) por ${cost.toLocaleString()} CI.`, "SUCCESS");
         } else {
             if (fac.faccreds < amountFC) {
                 alert("Faccreds insuficientes nesta instalação para venda!");
@@ -566,7 +564,7 @@ class MacroTerminalApp {
             const gain = amountFC * 90000;
             fac.faccreds -= amountFC;
             fac.credits += gain;
-            this.log(`CÂMBIO REALIZADO: ${fac.name} liquidou -${amountFC} FC e recebeu +${gain.toLocaleString()} CI.`, "SUCCESS");
+            this.log(`CÂMBIO REALIZADO: ${fac.name} liquidou -${amountFC} FC (-${tons} Tons) e recebeu +${gain.toLocaleString()} CI.`, "SUCCESS");
         }
 
         sfx.playSuccess();
@@ -584,10 +582,11 @@ class MacroTerminalApp {
 
         fac.credits -= costCI;
         const gainedFC = Math.floor(Math.random() * (maxFC - minFC + 1)) + minFC;
+        const gainedTons = gainedFC * 100;
         fac.faccreds += gainedFC;
 
         sfx.playSuccess();
-        this.log(`DESMANCHE MECÂNICO: Dur'toc desmontou sucata (-${costCI.toLocaleString()} CI) e recuperou +${gainedFC} FC!`, "SUCCESS");
+        this.log(`DESMANCHE: Dur'toc desmontou carcaças (-${costCI.toLocaleString()} CI) e recuperou +${gainedFC} FC (+${gainedTons} Tons de liga)!`, "SUCCESS");
         this.saveStorage();
         this.renderAll();
     }
@@ -614,7 +613,7 @@ class MacroTerminalApp {
 
         const fac = this.state.facilities[asset.facilityId] || this.state.facilities.fab1;
         if (fac.faccreds < missingHP) {
-            alert(`Faccreds insuficientes em ${fac.name}! Necessário: ${missingHP} FC (1 FC = 1 HP).`);
+            alert(`Faccreds insuficientes em ${fac.name}! Necessário: ${missingHP} FC (${missingHP * 100} Tons).`);
             sfx.playWarning();
             return;
         }
@@ -622,7 +621,7 @@ class MacroTerminalApp {
         fac.faccreds -= missingHP;
         asset.hp = asset.hpMax;
         sfx.playSuccess();
-        this.log(`REPARO CONCLUÍDO: [${asset.name}] totalmente restaurado gastando ${missingHP} FC em ${fac.name}.`, "SUCCESS");
+        this.log(`REPARO CONCLUÍDO: [${asset.name}] restaurado gastando ${missingHP} FC (${missingHP * 100} Tons) em ${fac.name}.`, "SUCCESS");
         this.saveStorage();
         this.renderAll();
     }
@@ -639,11 +638,12 @@ class MacroTerminalApp {
     openCatalogModal() {
         const container = document.getElementById("catalog-items-container");
         container.innerHTML = this.state.catalog.map(item => {
+            const tons = item.costTons || (item.costFC * 100);
             return `
                 <div class="catalog-item-card">
                     <div>
                         <div class="catalog-item-name">${item.name}</div>
-                        <div class="catalog-item-cost">Custo: ${item.costFC} FC (${item.costCI.toLocaleString('pt-BR')} CI)</div>
+                        <div class="catalog-item-cost">Custo: ${item.costFC} FC / ${tons} Tons (${item.costCI.toLocaleString('pt-BR')} CI)</div>
                         <div class="catalog-item-desc">${item.desc}</div>
                     </div>
                     <button class="btn-action-primary btn-sm" onclick="app.buyCatalogItem('${item.id}')">COMPRAR ATIVO</button>
@@ -669,7 +669,6 @@ class MacroTerminalApp {
             return;
         }
 
-        // Deduct preferably in FC, else in CI
         if (fac.faccreds >= item.costFC) {
             fac.faccreds -= item.costFC;
         } else {
@@ -691,7 +690,7 @@ class MacroTerminalApp {
 
         this.state.assets.push(newAsset);
         sfx.playSuccess();
-        this.log(`NOVO ATIVO ADQUIRIDO: [${newAsset.name}] adicionado a [${fac.name}].`, "SUCCESS");
+        this.log(`NOVO ATIVO ADQUIRIDO: [${newAsset.name}] (${item.costTons || (item.costFC * 100)} Tons) alocado em [${fac.name}].`, "SUCCESS");
         this.closeCatalogModal();
         this.saveStorage();
         this.renderAll();
