@@ -4,6 +4,9 @@ StarWarsRPG
 ├─ .nojekyll
 ├─ 404.html
 ├─ backups
+│  ├─ cassino.css
+│  ├─ cassino.html
+│  ├─ cassino.js
 │  └─ holonetBackup.json
 ├─ CNAME
 ├─ data
@@ -89,6 +92,7 @@ StarWarsRPG
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
 │  ├─ error-404.ico
+│  ├─ fichas.png
 │  ├─ HNN.ico
 │  ├─ imperio.png
 │  ├─ light-saber.png
@@ -171,6 +175,13 @@ StarWarsRPG
 │  │  ├─ terminalBancario.css
 │  │  └─ terminalBancario.js
 │  └─ terminalBancario.html
+├─ monopoly
+│  ├─ macroDurtoc
+│  │  ├─ app.js
+│  │  ├─ audio.js
+│  │  ├─ data.js
+│  │  └─ macroDurtoc.css
+│  └─ macroDurtoc.html
 ├─ pages
 │  ├─ armazem.html
 │  ├─ banco.html
