@@ -4,9 +4,14 @@ StarWarsRPG
 ├─ .nojekyll
 ├─ 404.html
 ├─ backups
-│  ├─ cassino.css
-│  ├─ cassino.html
-│  ├─ cassino.js
+│  ├─ cassino
+│  │  ├─ cassino.css
+│  │  ├─ cassino.html
+│  │  └─ cassino.js
+│  ├─ dados
+│  │  ├─ dados.css
+│  │  ├─ dados.html
+│  │  └─ dados.js
 │  └─ holonetBackup.json
 ├─ CNAME
 ├─ data
@@ -112,6 +117,8 @@ StarWarsRPG
 │  │  │  ├─ DurtocDocumento.png
 │  │  │  ├─ DurtocGenDocumento.png
 │  │  │  ├─ DurtocGeneral.png
+│  │  │  ├─ DurtocIcon.jpeg
+│  │  │  ├─ DurtocIcon.png
 │  │  │  └─ DurtocMec.png
 │  │  ├─ keiranJinn.jpeg
 │  │  ├─ lihua.jpeg

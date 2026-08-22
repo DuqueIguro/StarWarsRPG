@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL TÁTICO HOLONET // ROLADOR DE DADOS</title>
+    <!-- Font Awesome CDN para ícones vetoriais modernos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts Sci-Fi -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dados.css">
+</head>
+<body class="mode-standard-theme">
+    <!-- Camadas Visuais Holográficas e CRT -->
+    <div class="hologram-scanlines"></div>
+    <div class="crt-vignette"></div>
+    <div class="cyber-grid-plane"></div>
+    <div class="ambient-glow"></div>
+
+    <div class="terminal-frame">
+        <!-- BARRA SUPERIOR DE SISTEMA TÁTICO -->
+        <header class="hud-header">
+            <div class="hud-col left">
+                <button class="hud-back-btn" onclick="goBack()" title="Retornar à Central">
+                    <i class="fa-solid fa-chevron-left"></i>
+                    <span class="btn-text">RETORNAR</span>
+                    <span class="aurebesh-sub">BACK</span>
+                </button>
+                <div class="sys-id-tag">
+                    <span class="aurebesh-font">SYS</span> // V6.00.0
+                    <div class="link-pulse"><i class="fa-solid fa-satellite-dish"></i> HOLONET ONLINE</div>
+                </div>
+            </div>
+
+            <div class="hud-col center">
+                <div class="aurebesh-header-banner">TERMINAL TACTICAL PROTOCOL</div>
+                <h1 class="hud-glitch-title" data-title="TERMINAL TÁTICO DE DADOS">TERMINAL TÁTICO DE DADOS</h1>
+                <div class="terminal-subtitle">// UNIDADE DE ANÁLISE PROBABILÍSTICA //</div>
+            </div>
+
+            <div class="hud-col right">
+                <div class="time-box">
+                    <div class="time-label"><i class="fa-regular fa-clock"></i> TEMPO PADRÃO GALÁCTICO</div>
+                    <div id="realtime-clock" class="time-display">--:--:--</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- SELETOR DE MODO TÁTICO (ABAS COM DESIGN ANGULAR) -->
+        <nav class="mode-navigator">
+            <button id="nav-btn-standard" class="nav-slice active" onclick="setRollMode('standard')">
+                <div class="slice-bracket left"></div>
+                <div class="slice-content">
+                    <span class="slice-icon"><i class="fa-solid fa-dice-d20"></i></span>
+                    <div class="slice-text">
+                        <span class="main-title">ROLAGEM PADRÃO [NUMÉRICA]</span>
+                        <span class="aurebesh-text">STANDARD FREQUENCY</span>
+                    </div>
+                </div>
+                <div class="slice-bracket right"></div>
+            </button>
+
+            <button id="nav-btn-macro" class="nav-slice" onclick="setRollMode('macro')">
+                <div class="slice-bracket left"></div>
+                <div class="slice-content">
+                    <span class="slice-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                    <div class="slice-text">
+                        <span class="main-title">ROLAGEM MACRO [SITH PROTOCOL]</span>
+                        <span class="aurebesh-text">SITH MACRO FREQUENCY</span>
+                    </div>
+                </div>
+                <div class="slice-bracket right"></div>
+            </button>
+        </nav>
+
+        <!-- ÁREA CENTRAL INTERATIVA -->
+        <main class="console-body">
+            
+            <!-- PAINEL 1: ROLAGEM NORMAL (AMARELO TÁTICO) -->
+            <section id="panel-standard" class="tactical-panel active-panel">
+                <div class="panel-layout">
+                    <!-- Seleção de Dados -->
+                    <div class="hud-box">
+                        <div class="hud-box-header">
+                            <div class="header-tag"><i class="fa-solid fa-layer-group"></i> POLIEDROS NUMÉRICOS</div>
+                            <span class="aurebesh-font">DICE ARRAY</span>
+                            <button class="hud-mini-btn" onclick="clearPool('standard')">
+                                <i class="fa-solid fa-arrows-rotate"></i> ZERAR POOL
+                            </button>
+                        </div>
+                        <div class="dice-selection-matrix">
+                            <!-- D4 a D100 -->
+                            <div class="dice-unit" data-type="d4">
+                                <div class="die-3d-glyph poly-d4">
+                                    <span class="poly-name">D4</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('standard', 'd4', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-std-d4">0</span>
+                                    <button class="step-btn" onclick="alterDie('standard', 'd4', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="dice-unit" data-type="d6">
+                                <div class="die-3d-glyph poly-d6">
+                                    <span class="poly-name">D6</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('standard', 'd6', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-std-d6">0</span>
+                                    <button class="step-btn" onclick="alterDie('standard', 'd6', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="dice-unit" data-type="d8">
+                                <div class="die-3d-glyph poly-d8">
+                                    <span class="poly-name">D8</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('standard', 'd8', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-std-d8">0</span>
+                                    <button class="step-btn" onclick="alterDie('standard', 'd8', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="dice-unit" data-type="d10">
+                                <div class="die-3d-glyph poly-d10">
+                                    <span class="poly-name">D10</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('standard', 'd10', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-std-d10">0</span>
+                                    <button class="step-btn" onclick="alterDie('standard', 'd10', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="dice-unit" data-type="d12">
+                                <div class="die-3d-glyph poly-d12">
+                                    <span class="poly-name">D12</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('standard', 'd12', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-std-d12">0</span>
+                                    <button class="step-btn" onclick="alterDie('standard', 'd12', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="dice-unit" data-type="d20">
+                                <div class="die-3d-glyph poly-d20">
+                                    <span class="poly-name">D20</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('standard', 'd20', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-std-d20">0</span>
+                                    <button class="step-btn" onclick="alterDie('standard', 'd20', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="dice-unit" data-type="d100">
+                                <div class="die-3d-glyph poly-d100">
+                                    <span class="poly-name">D100</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('standard', 'd100', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-std-d100">0</span>
+                                    <button class="step-btn" onclick="alterDie('standard', 'd100', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configurações e Modificadores Numéricos -->
+                    <div class="hud-box">
+                        <div class="hud-box-header">
+                            <div class="header-tag"><i class="fa-solid fa-sliders"></i> MATRIZ DE CALIBRAÇÃO</div>
+                            <span class="aurebesh-font">CONFIG</span>
+                        </div>
+                        <div class="config-controls">
+                            <div class="hud-field">
+                                <label><i class="fa-solid fa-chart-simple"></i> ESTILO DE CÁLCULO:</label>
+                                <select id="std-calc-mode" class="hud-select">
+                                    <option value="sum">SOMA TOTAL DOS DADOS</option>
+                                    <option value="highest">MAIOR VALOR (KEEP HIGHEST)</option>
+                                    <option value="lowest">MENOR VALOR (KEEP LOWEST)</option>
+                                    <option value="individual">RESULTADOS INDIVIDUAIS</option>
+                                </select>
+                            </div>
+
+                            <div class="hud-field">
+                                <label><i class="fa-solid fa-calculator"></i> MODIFICADOR MANUAL (+/-):</label>
+                                <div class="mod-stepper">
+                                    <button class="step-btn" onclick="adjustInput('std-mod-input', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <input type="number" id="std-mod-input" value="0" class="hud-num-input">
+                                    <button class="step-btn" onclick="adjustInput('std-mod-input', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="hud-field">
+                                <label><i class="fa-solid fa-triangle-exclamation"></i> NÍVEL DE DESVANTAGEM:</label>
+                                <div class="field-hint">Elimina os N melhores dados (em caso de eliminação total, mantém o menor).</div>
+                                <div class="mod-stepper">
+                                    <button class="step-btn" onclick="adjustInput('std-disadv-input', -1, 0)"><i class="fa-solid fa-minus"></i></button>
+                                    <input type="number" id="std-disadv-input" value="0" min="0" class="hud-num-input">
+                                    <button class="step-btn" onclick="adjustInput('std-disadv-input', 1, 0)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+
+                            <button id="btn-fire-standard" class="hud-fire-button" onclick="rollStandard()">
+                                <div class="fire-glow-anim"></div>
+                                <span class="fire-title"><i class="fa-solid fa-play"></i> INICIAR ROLAGEM PADRÃO</span>
+                                <span class="aurebesh-sub">EXECUTE ROLL</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAINEL 2: ROLAGEM MACRO (VERMELHO SITH) -->
+            <section id="panel-macro" class="tactical-panel">
+                <div class="panel-layout">
+                    <!-- Seleção de Macro Dados -->
+                    <div class="hud-box">
+                        <div class="hud-box-header">
+                            <div class="header-tag"><i class="fa-solid fa-skull"></i> ARTEFATOS MACRO SITH</div>
+                            <span class="aurebesh-font">SITH MATRIX</span>
+                            <button class="hud-mini-btn" onclick="clearPool('macro')">
+                                <i class="fa-solid fa-arrows-rotate"></i> ZERAR POOL
+                            </button>
+                        </div>
+                        <div class="dice-selection-matrix macro-tri-grid">
+                            <div class="dice-unit macro-unit" data-type="md6">
+                                <div class="die-3d-glyph macro-shape-d6">
+                                    <span class="poly-name">MACRO D6</span>
+                                    <span class="poly-sub">6 FACES</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('macro', 'md6', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-macro-md6">0</span>
+                                    <button class="step-btn" onclick="alterDie('macro', 'md6', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="dice-unit macro-unit" data-type="md10">
+                                <div class="die-3d-glyph macro-shape-d10">
+                                    <span class="poly-name">MACRO D10</span>
+                                    <span class="poly-sub">10 FACES</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('macro', 'md10', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-macro-md10">0</span>
+                                    <button class="step-btn" onclick="alterDie('macro', 'md10', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="dice-unit macro-unit" data-type="md12">
+                                <div class="die-3d-glyph macro-shape-d12">
+                                    <span class="poly-name">MACRO D12</span>
+                                    <span class="poly-sub">12 FACES</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('macro', 'md12', -1)"><i class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-macro-md12">0</span>
+                                    <button class="step-btn" onclick="alterDie('macro', 'md12', 1)"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legenda com Ícones Vetoriais -->
+                        <div class="macro-symbols-legend">
+                            <div class="legend-row"><span class="sym-box sym-success"><i class="fa-solid fa-bug"></i></span> <strong>Sucesso</strong> (Impacto/Qualidade)</div>
+                            <div class="legend-row"><span class="sym-box sym-adaptation"><i class="fa-solid fa-shield-cat"></i></span> <strong>Adaptação</strong> (Flexibilidade Estratégica)</div>
+                            <div class="legend-row"><span class="sym-box sym-pressure"><i class="fa-solid fa-fire-flame-curved"></i></span> <strong>Pressão</strong> (Gatilho de Reação)</div>
+                            <div class="legend-row"><span class="sym-box sym-empty"><i class="fa-solid fa-ban"></i></span> <strong>Vazio</strong> (Sem Efeito)</div>
+                        </div>
+                    </div>
+
+                    <!-- Parâmetros de Macro & Manutenção de Dados -->
+                    <div class="hud-box">
+                        <div class="hud-box-header">
+                            <div class="header-tag"><i class="fa-solid fa-microchip"></i> FILTROS & MODIFICADORES</div>
+                            <span class="aurebesh-font">MODIFIERS</span>
+                        </div>
+                        <div class="config-controls">
+                            <div class="hud-field">
+                                <label><i class="fa-solid fa-filter"></i> ESTILO DA ROLAGEM MACRO:</label>
+                                <select id="macro-calc-mode" class="hud-select">
+                                    <option value="sum_all">SOMA TOTAL DE SÍMBOLOS CONSOLIDADOS</option>
+                                    <option value="select_keep">MANTER DADOS (SELEÇÃO MANUAL APÓS ROLAGEM)</option>
+                                </select>
+                            </div>
+
+                            <div class="macro-mod-cluster">
+                                <div class="mod-cluster-item">
+                                    <label><i class="fa-solid fa-bug sym-icon-red"></i> SUCESSOS (+/-)</label>
+                                    <div class="mod-stepper">
+                                        <button class="step-btn" onclick="adjustInput('macro-mod-suc', -1)"><i class="fa-solid fa-minus"></i></button>
+                                        <input type="number" id="macro-mod-suc" value="0" class="hud-num-input">
+                                        <button class="step-btn" onclick="adjustInput('macro-mod-suc', 1)"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="mod-cluster-item">
+                                    <label><i class="fa-solid fa-shield-cat sym-icon-gold"></i> ADAPTAÇÕES (+/-)</label>
+                                    <div class="mod-stepper">
+                                        <button class="step-btn" onclick="adjustInput('macro-mod-adp', -1)"><i class="fa-solid fa-minus"></i></button>
+                                        <input type="number" id="macro-mod-adp" value="0" class="hud-num-input">
+                                        <button class="step-btn" onclick="adjustInput('macro-mod-adp', 1)"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="mod-cluster-item">
+                                    <label><i class="fa-solid fa-fire-flame-curved sym-icon-flame"></i> PRESSÕES (+/-)</label>
+                                    <div class="mod-stepper">
+                                        <button class="step-btn" onclick="adjustInput('macro-mod-prs', -1)"><i class="fa-solid fa-minus"></i></button>
+                                        <input type="number" id="macro-mod-prs" value="0" class="hud-num-input">
+                                        <button class="step-btn" onclick="adjustInput('macro-mod-prs', 1)"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button id="btn-fire-macro" class="hud-fire-button btn-sith-fire" onclick="rollMacro()">
+                                <div class="fire-glow-anim"></div>
+                                <span class="fire-title"><i class="fa-solid fa-bolt"></i> CONJURAR ROLAGEM SITH</span>
+                                <span class="aurebesh-sub">INVOKE MACRO</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROJEÇÃO HOLOGRÁFICA 3D & ARENA DOS DADOS -->
+            <section class="hologram-stage-container">
+                <div class="stage-top-bar">
+                    <div class="stage-title">
+                        <span class="status-pulse-beacon"></span>
+                        <span class="title-main"><i class="fa-solid fa-cube"></i> PROJEÇÃO HOLOGRÁFICA 3D</span>
+                        <span class="aurebesh-tag">HOLOPROJECTION</span>
+                    </div>
+                    <div id="telemetry-status" class="telemetry-status">SISTEMA EM ESPERA // AGUARDANDO COMANDO</div>
+                </div>
+
+                <!-- Arena onde os cubos/poliedros 3D são gerados e giram -->
+                <div id="dice-hologram-arena" class="dice-hologram-arena">
+                    <div class="idle-terminal-indicator">
+                        <i class="fa-solid fa-terminal idle-icon"></i>
+                        <span>SELECIONE A QUANTIDADE DE DADOS E DISPARE O PROTOCOLO DE ROLAGEM</span>
+                        <div class="aurebesh-sub-idle">AWAITING TACTICAL DIRECTIVE</div>
+                    </div>
+                </div>
+
+                <!-- Painel Interativo de Seleção Manual (Quando no Modo Manter Dados) -->
+                <div id="manual-selection-panel" class="manual-selection-panel hidden">
+                    <div class="selection-banner">
+                        <i class="fa-solid fa-hand-pointer"></i> SELECIONE OS DADOS QUE DESEJA <strong>MANTER</strong> (Clique nos dados acima):
+                    </div>
+                    <button class="hud-confirm-btn" onclick="confirmManualKeepSelection()">
+                        <i class="fa-solid fa-check-double"></i> CONFIRMAR SELEÇÃO E CONSOLIDAR
+                    </button>
+                </div>
+
+                <!-- Sumário Final Holográfico -->
+                <div id="tactical-summary-box" class="tactical-summary-box hidden">
+                    <!-- Inserido dinamicamente via JS -->
+                </div>
+            </section>
+
+            <!-- REGISTRO DE TELEMETRIA (LOG DO SISTEMA) -->
+            <section class="telemetry-log-module">
+                <div class="log-hud-header">
+                    <div class="log-tag"><i class="fa-solid fa-code"></i> REGISTRO DE EVENTOS HOLONET</div>
+                    <button class="hud-mini-btn" onclick="clearTelemetryLog()">LIMPAR REGISTROS</button>
+                </div>
+                <div id="telemetry-feed" class="telemetry-feed">
+                    <div class="telemetry-item sys-item">[SISTEMA] Holonet Core v6.00.0 conectado com sucesso. Protocolos prontos.</div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Script de Lógica e Renderizador 3D -->
+    <script src="dados.js"></script>
+</body>
+</html>
