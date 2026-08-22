@@ -1,8 +1,8 @@
 /* ==========================================================================
-   TERMINAL TÁTICO HOLONET V6.00.0 - JAVASCRIPT
+   TERMINAL TÁTICO HOLONET V6.00.0 - DADOS.JS
    ========================================================================== */
 
-// --- TABELAS DOS DADOS DE MACRO (FACES EXATAS CONFORME SISTEMA) ---
+// --- TABELAS EXATAS DOS DADOS DE MACRO ---
 const MACRO_DATA = {
     md6: [
         { face: 1, empty: true, s: 0, a: 0, p: 0 },
@@ -48,9 +48,9 @@ let pools = {
 
 let currentMode = 'standard';
 let isComputing = false;
-let latestMacroResults = []; // Armazenamento para seleção manual de dados
+let latestMacroResults = [];
 
-// --- RELÓGIO EM TEMPO REAL ---
+// --- 11. RELÓGIO EM TEMPO REAL ---
 function startRealtimeClock() {
     const clockEl = document.getElementById('realtime-clock');
     function update() {
@@ -64,9 +64,9 @@ function startRealtimeClock() {
     setInterval(update, 1000);
 }
 
-// --- BOTÃO DE VOLTAR ---
+// --- 3. BOTÃO DE RETORNAR ---
 function goBack() {
-    playAudio('beep');
+    playAudio('click');
     if (window.history.length > 1) {
         window.history.back();
     } else {
@@ -90,45 +90,37 @@ function playAudio(type = 'click') {
 
         if (type === 'click') {
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(650, t);
-            osc.frequency.exponentialRampToValueAtTime(320, t + 0.04);
+            osc.frequency.setValueAtTime(700, t);
+            osc.frequency.exponentialRampToValueAtTime(350, t + 0.04);
             gain.gain.setValueAtTime(0.12, t);
             gain.gain.linearRampToValueAtTime(0.01, t + 0.04);
             osc.start(t);
             osc.stop(t + 0.04);
         } else if (type === 'roll') {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(180, t);
-            osc.frequency.exponentialRampToValueAtTime(1100, t + 0.35);
-            gain.gain.setValueAtTime(0.15, t);
+            osc.frequency.setValueAtTime(220, t);
+            osc.frequency.exponentialRampToValueAtTime(1200, t + 0.35);
+            gain.gain.setValueAtTime(0.16, t);
             gain.gain.linearRampToValueAtTime(0.01, t + 0.38);
             osc.start(t);
             osc.stop(t + 0.38);
-        } else if (type === 'sith') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(110, t);
-            osc.frequency.exponentialRampToValueAtTime(450, t + 0.5);
-            gain.gain.setValueAtTime(0.22, t);
-            gain.gain.linearRampToValueAtTime(0.01, t + 0.55);
-            osc.start(t);
-            osc.stop(t + 0.55);
         } else if (type === 'done') {
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(440, t);
-            osc.frequency.setValueAtTime(660, t + 0.08);
-            osc.frequency.setValueAtTime(880, t + 0.16);
+            osc.frequency.setValueAtTime(520, t);
+            osc.frequency.setValueAtTime(780, t + 0.09);
+            osc.frequency.setValueAtTime(1040, t + 0.18);
             gain.gain.setValueAtTime(0.2, t);
-            gain.gain.linearRampToValueAtTime(0.01, t + 0.3);
+            gain.gain.linearRampToValueAtTime(0.01, t + 0.32);
             osc.start(t);
-            osc.stop(t + 0.3);
+            osc.stop(t + 0.32);
         }
     } catch (e) {
-        // Ignora silenciosamente caso o navegador restrinja áudio automático
+        // Áudio silenciado se bloqueado pelo browser
     }
 }
 
-// --- ALTERNÂNCIA DE MODO & TEMA ---
-function setRollMode(mode) {
+// --- 5 & 6. ALTERNÂNCIA DE MODO, TEMA E GRADIENTE DINÂMICO ---
+function switchTerminalMode(mode) {
     if (isComputing) return;
     currentMode = mode;
     playAudio('click');
@@ -139,19 +131,19 @@ function setRollMode(mode) {
     const panelMac = document.getElementById('panel-macro');
 
     if (mode === 'standard') {
-        document.body.className = 'mode-standard-theme';
+        document.body.className = 'theme-standard';
         navStd.classList.add('active');
         navMac.classList.remove('active');
         panelStd.classList.add('active-panel');
         panelMac.classList.remove('active-panel');
-        addTelemetryLog('[MODO] Frequência Amarela Padrão Selecionada.');
+        addTelemetryLog('[MODO] Frequência Padrão (Amarelo) Ativada.');
     } else {
-        document.body.className = 'mode-macro-theme';
+        document.body.className = 'theme-macro';
         navMac.classList.add('active');
         navStd.classList.remove('active');
         panelMac.classList.add('active-panel');
         panelStd.classList.remove('active-panel');
-        addTelemetryLog('[MODO] Protocolo Sith Escarlate Ativado.');
+        addTelemetryLog('[MODO] Frequência Macro (Vermelho) Ativada.');
     }
 }
 
@@ -194,11 +186,11 @@ function addTelemetryLog(text) {
 
 function clearTelemetryLog() {
     playAudio('click');
-    document.getElementById('telemetry-feed').innerHTML = '<div class="telemetry-item">[SISTEMA] Registro limpo.</div>';
+    document.getElementById('telemetry-feed').innerHTML = '<div class="telemetry-item">[SISTEMA] Registros limpos.</div>';
 }
 
 // ==========================================================================
-// ROLAGEM PADRÃO (AMARELA / NUMÉRICA)
+// 5. ROLAGEM PADRÃO (PROJEÇÃO HOLOGRÁFICA EXCLUSIVA)
 // ==========================================================================
 function rollStandard() {
     if (isComputing) return;
@@ -207,7 +199,7 @@ function rollStandard() {
     for (let [die, count] of Object.entries(pools.standard)) {
         const sides = parseInt(die.replace('d', ''));
         for (let i = 0; i < count; i++) {
-            diceToRoll.push({ type: die.toUpperCase(), sides: sides });
+            diceToRoll.push({ type: die.toUpperCase(), sides: sides, shapeClass: `mesh-shape-${die}` });
         }
     }
 
@@ -219,49 +211,47 @@ function rollStandard() {
     isComputing = true;
     playAudio('roll');
 
-    // 9. Zerar a quantidade de dados após o disparo da rolagem
+    // 9. Zerar pool após disparo
     clearPool('standard');
 
     const calcMode = document.getElementById('std-calc-mode').value;
     const modifier = parseInt(document.getElementById('std-mod-input').value) || 0;
     const disadvantage = parseInt(document.getElementById('std-disadv-input').value) || 0;
 
-    const arena = document.getElementById('dice-hologram-arena');
-    const telemetryStatus = document.getElementById('telemetry-status');
-    const summaryBox = document.getElementById('tactical-summary-box');
-    const manualPanel = document.getElementById('manual-selection-panel');
+    const arena = document.getElementById('std-dice-arena');
+    const telemetryStatus = document.getElementById('std-telemetry-status');
+    const summaryBox = document.getElementById('std-summary-box');
 
     summaryBox.classList.add('hidden');
-    manualPanel.classList.add('hidden');
     telemetryStatus.textContent = 'PROJETANDO VETOR DE ROTAÇÃO POLIÉDRICA 3D...';
     arena.innerHTML = '';
 
-    // Renderizar dados em animação 3D
+    // 2. Criação de Dados com formatos poliédricos reais
     let cardElements = [];
     diceToRoll.forEach(d => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'die-3d-wrapper';
-        wrapper.innerHTML = `
-            <div class="die-3d-box spinning-3d">
-                <span class="die-face-type">${d.type}</span>
-                <span class="die-face-val">?</span>
-                <span class="die-face-aurebesh aurebesh-font">POLY</span>
+        const container = document.createElement('div');
+        container.className = 'die-holo-container';
+        container.innerHTML = `
+            <div class="poly-mesh-box ${d.shapeClass} anim-spinning-3d">
+                <span class="holo-tag-top">${d.type}</span>
+                <span class="holo-val-center">?</span>
+                <span class="holo-aurebesh-sub aurebesh-font">HOLO</span>
             </div>
         `;
-        arena.appendChild(wrapper);
-        cardElements.push({ die: d, wrapper: wrapper, box: wrapper.querySelector('.die-3d-box') });
+        arena.appendChild(container);
+        cardElements.push({ die: d, container: container, box: container.querySelector('.poly-mesh-box') });
     });
 
     setTimeout(() => {
         let rolledList = [];
         cardElements.forEach(item => {
             const val = Math.floor(Math.random() * item.die.sides) + 1;
-            item.box.classList.remove('spinning-3d');
-            item.box.querySelector('.die-face-val').textContent = val;
+            item.box.classList.remove('anim-spinning-3d');
+            item.box.querySelector('.holo-val-center').textContent = val;
             rolledList.push({ type: item.die.type, value: val, box: item.box });
         });
 
-        // Aplicação da regra de Desvantagem
+        // Desvantagem: descarta os N melhores
         let activeDice = [...rolledList];
         let discCount = 0;
 
@@ -269,7 +259,6 @@ function rollStandard() {
             const sortedDesc = [...rolledList].sort((a, b) => b.value - a.value);
 
             if (disadvantage >= rolledList.length) {
-                // Elimina todos menos o menor
                 const minVal = Math.min(...rolledList.map(r => r.value));
                 let kept = false;
                 rolledList.forEach(r => {
@@ -299,7 +288,6 @@ function rollStandard() {
             }
         }
 
-        // Cálculo pelo Estilo
         let totalVal = 0;
         let styleDesc = '';
 
@@ -320,7 +308,7 @@ function rollStandard() {
             styleDesc = `Valores Individuais: [ ${totalVal} ] (Modificador: ${modifier >= 0 ? '+' : ''}${modifier})`;
         }
 
-        // Sumário
+        // Sumário Exclusivo Padrão
         summaryBox.classList.remove('hidden');
         summaryBox.innerHTML = `
             <div class="summary-headline-row">
@@ -339,11 +327,11 @@ function rollStandard() {
         addTelemetryLog(`ROLAGEM PADRÃO: <strong>${totalVal}</strong> [${styleDesc}]`);
 
         isComputing = false;
-    }, 1300);
+    }, 1350);
 }
 
 // ==========================================================================
-// ROLAGEM MACRO (VERMELHA SITH / SÍMBOLOS & SELEÇÃO MANUAL)
+// 5. ROLAGEM MACRO (PROJEÇÃO HOLOGRÁFICA EXCLUSIVA)
 // ==========================================================================
 function rollMacro() {
     if (isComputing) return;
@@ -351,7 +339,7 @@ function rollMacro() {
     let macroToRoll = [];
     for (let [die, count] of Object.entries(pools.macro)) {
         for (let i = 0; i < count; i++) {
-            macroToRoll.push({ type: die, label: die.toUpperCase() });
+            macroToRoll.push({ type: die, label: die.toUpperCase(), shapeClass: `mesh-shape-${die.replace('m', '')}` });
         }
     }
 
@@ -361,9 +349,9 @@ function rollMacro() {
     }
 
     isComputing = true;
-    playAudio('sith');
+    playAudio('roll');
 
-    // 9. Zerar a quantidade de dados após a rolagem
+    // 9. Zerar pool após disparo
     clearPool('macro');
 
     const calcMode = document.getElementById('macro-calc-mode').value;
@@ -371,29 +359,29 @@ function rollMacro() {
     const modAdp = parseInt(document.getElementById('macro-mod-adp').value) || 0;
     const modPrs = parseInt(document.getElementById('macro-mod-prs').value) || 0;
 
-    const arena = document.getElementById('dice-hologram-arena');
-    const telemetryStatus = document.getElementById('telemetry-status');
-    const summaryBox = document.getElementById('tactical-summary-box');
-    const manualPanel = document.getElementById('manual-selection-panel');
+    const arena = document.getElementById('macro-dice-arena');
+    const telemetryStatus = document.getElementById('macro-telemetry-status');
+    const summaryBox = document.getElementById('macro-summary-box');
+    const manualPanel = document.getElementById('macro-selection-panel');
 
     summaryBox.classList.add('hidden');
     manualPanel.classList.add('hidden');
-    telemetryStatus.textContent = 'CONVOCANDO ARTEFATOS SITH & PROJEÇÃO DE SÍMBOLOS...';
+    telemetryStatus.textContent = 'PROCESSANDO FLUXO HOLOGRÁFICO DE SÍMBOLOS MACRO...';
     arena.innerHTML = '';
 
     let elements = [];
     macroToRoll.forEach(m => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'die-3d-wrapper';
-        wrapper.innerHTML = `
-            <div class="die-3d-box spinning-3d">
-                <span class="die-face-type">${m.label}</span>
-                <div class="macro-symbol-grid"><i class="fa-solid fa-spinner fa-spin"></i></div>
-                <span class="die-face-aurebesh aurebesh-font">SITH</span>
+        const container = document.createElement('div');
+        container.className = 'die-holo-container';
+        container.innerHTML = `
+            <div class="poly-mesh-box ${m.shapeClass} anim-spinning-3d">
+                <span class="holo-tag-top">${m.label}</span>
+                <div class="macro-symbol-cluster"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                <span class="holo-aurebesh-sub aurebesh-font">MACRO</span>
             </div>
         `;
-        arena.appendChild(wrapper);
-        elements.push({ die: m, wrapper: wrapper, box: wrapper.querySelector('.die-3d-box'), grid: wrapper.querySelector('.macro-symbol-grid') });
+        arena.appendChild(container);
+        elements.push({ die: m, container: container, box: container.querySelector('.poly-mesh-box'), cluster: container.querySelector('.macro-symbol-cluster') });
     });
 
     setTimeout(() => {
@@ -403,20 +391,19 @@ function rollMacro() {
             const table = MACRO_DATA[item.die.type];
             const rolledFace = table[Math.floor(Math.random() * table.length)];
 
-            item.box.classList.remove('spinning-3d');
-            
-            // Construção dos ícones vetoriais
+            item.box.classList.remove('anim-spinning-3d');
+
             let icons = '';
             if (rolledFace.empty) {
-                icons = '<span class="macro-icon-face sym-empty" title="Vazio"><i class="fa-solid fa-ban"></i></span>';
+                icons = '<span class="macro-icon-item sym-empty" title="Vazio"><i class="fa-solid fa-ban"></i></span>';
             } else {
-                for (let i = 0; i < rolledFace.s; i++) icons += '<span class="macro-icon-face sym-success" title="Sucesso"><i class="fa-solid fa-bug"></i></span>';
-                for (let i = 0; i < rolledFace.a; i++) icons += '<span class="macro-icon-face sym-adaptation" title="Adaptação"><i class="fa-solid fa-shield-cat"></i></span>';
-                for (let i = 0; i < rolledFace.p; i++) icons += '<span class="macro-icon-face sym-pressure" title="Pressão"><i class="fa-solid fa-fire-flame-curved"></i></span>';
+                for (let i = 0; i < rolledFace.s; i++) icons += '<span class="macro-icon-item sym-success" title="Sucesso"><i class="fa-solid fa-bug"></i></span>';
+                for (let i = 0; i < rolledFace.a; i++) icons += '<span class="macro-icon-item sym-adaptation" title="Adaptação"><i class="fa-solid fa-shield-cat"></i></span>';
+                for (let i = 0; i < rolledFace.p; i++) icons += '<span class="macro-icon-item sym-pressure" title="Pressão"><i class="fa-solid fa-fire-flame-curved"></i></span>';
             }
 
-            item.grid.innerHTML = icons;
-            item.box.querySelector('.die-face-aurebesh').textContent = `FACE ${rolledFace.face}`;
+            item.cluster.innerHTML = icons;
+            item.box.querySelector('.holo-aurebesh-sub').textContent = `FACE ${rolledFace.face}`;
 
             const resultObj = {
                 id: idx,
@@ -426,29 +413,29 @@ function rollMacro() {
                 s: rolledFace.s,
                 a: rolledFace.a,
                 p: rolledFace.p,
-                wrapper: item.wrapper,
+                container: item.container,
                 box: item.box,
-                selectedToKeep: true // Padrão selecionado
+                selectedToKeep: true
             };
 
             latestMacroResults.push(resultObj);
         });
 
-        // 8. Seletor de Manter Dados vs Soma Total
+        // 8. Modo Manter Dados com seleção manual
         if (calcMode === 'select_keep') {
             telemetryStatus.textContent = 'AGUARDANDO SELEÇÃO MANUAL DE DADOS PARA MANTER...';
             manualPanel.classList.remove('hidden');
 
             latestMacroResults.forEach(res => {
-                res.wrapper.classList.add('selectable');
+                res.container.classList.add('selectable');
                 res.box.classList.add('manual-selected');
-                
+
                 const selTag = document.createElement('div');
                 selTag.className = 'selected-tag';
                 selTag.innerHTML = '<i class="fa-solid fa-check"></i> MANTIDO';
                 res.box.appendChild(selTag);
 
-                res.wrapper.onclick = () => {
+                res.container.onclick = () => {
                     playAudio('click');
                     res.selectedToKeep = !res.selectedToKeep;
                     if (res.selectedToKeep) {
@@ -465,23 +452,21 @@ function rollMacro() {
 
             isComputing = false;
         } else {
-            // Consolidação imediata
             consolidateMacroResults(modSuc, modAdp, modPrs, false);
             isComputing = false;
         }
 
-    }, 1300);
+    }, 1350);
 }
 
-// Confirmar seleção manual de dados mantidos
+// Confirmação de dados mantidos na seleção manual
 function confirmManualKeepSelection() {
     playAudio('done');
-    document.getElementById('manual-selection-panel').classList.add('hidden');
-    
-    // Desabilitar clique
+    document.getElementById('macro-selection-panel').classList.add('hidden');
+
     latestMacroResults.forEach(r => {
-        r.wrapper.onclick = null;
-        r.wrapper.classList.remove('selectable');
+        r.container.onclick = null;
+        r.container.classList.remove('selectable');
     });
 
     const modSuc = parseInt(document.getElementById('macro-mod-suc').value) || 0;
@@ -491,10 +476,10 @@ function confirmManualKeepSelection() {
     consolidateMacroResults(modSuc, modAdp, modPrs, true);
 }
 
-// Consolidação e Exibição do Resultado Macro
+// Consolidação e exibição de resultados de Macro
 function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
-    const summaryBox = document.getElementById('tactical-summary-box');
-    const telemetryStatus = document.getElementById('telemetry-status');
+    const summaryBox = document.getElementById('macro-summary-box');
+    const telemetryStatus = document.getElementById('macro-telemetry-status');
 
     let keptResults = isManualFiltered ? latestMacroResults.filter(r => r.selectedToKeep) : latestMacroResults;
 
@@ -511,7 +496,7 @@ function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
     summaryBox.classList.remove('hidden');
     summaryBox.innerHTML = `
         <div class="summary-headline-row">
-            <span class="headline-text"><i class="fa-solid fa-shield-halved"></i> BALANÇO DE ENERGIA SITH</span>
+            <span class="headline-text"><i class="fa-solid fa-cubes-stacked"></i> BALANÇO DE SÍMBOLOS MACRO</span>
             <span class="headline-score">${totS} SUCESSOS</span>
         </div>
         <div class="summary-breakdown">
@@ -525,7 +510,7 @@ function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
     `;
 
     playAudio('done');
-    telemetryStatus.textContent = 'PROTOCOLO SITH PROCESSADO E CONSOLIDADO';
+    telemetryStatus.textContent = 'PROTOCOLO MACRO PROCESSADO E CONSOLIDADO';
     addTelemetryLog(`ROLAGEM MACRO: Sucessos: <strong>${totS}</strong> | Adaptações: <strong>${totA}</strong> | Pressões: <strong>${totP}</strong>`);
 }
 
