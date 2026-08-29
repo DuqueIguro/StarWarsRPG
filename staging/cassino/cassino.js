@@ -58,7 +58,7 @@ async function persistirSaldoNoBanco() {
   if (!client || !activeCharacter) return;
 
   try {
-    await client
+    const { error } = await client
       .from('personagens')
       .update({
         creditos: imperialCredits,
@@ -66,8 +66,12 @@ async function persistirSaldoNoBanco() {
         updated_at: new Date().toISOString()
       })
       .eq('id', activeCharacter.id);
+
+    if (error) {
+      console.error("[CASSINO] Erro ao persistir saldo no Supabase:", error.message);
+    }
   } catch (err) {
-    console.error("Erro ao salvar saldo:", err);
+    console.error("[CASSINO] Falha de conexão ao salvar saldo:", err);
   }
 }
 

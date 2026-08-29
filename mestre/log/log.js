@@ -531,6 +531,8 @@ window.deletarLog = async function (id, tabela) {
 
 // 8. Alternância de Abas
 window.alternarAbas = function (aba) {
+    carregarPersonagens(); // Garante cards atualizados ao mudar de aba
+    
     const btnFinancas = document.getElementById('btn-tab-financas');
     const btnDados = document.getElementById('btn-tab-dados');
     const btnFrota = document.getElementById('btn-tab-frota');
@@ -647,7 +649,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dateEnd = document.getElementById('filter-date-end');
 
     if (btnRefresh) {
-        btnRefresh.addEventListener('click', () => {
+        btnRefresh.addEventListener('click', async () => {
+            await carregarPersonagens(); // Atualiza os cards com os saldos atuais
+
             const contDados = document.getElementById('conteudo-dados');
             const contFrota = document.getElementById('conteudo-frota');
             const contMcmt = document.getElementById('conteudo-mcmt');
