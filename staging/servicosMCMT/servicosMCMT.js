@@ -24,7 +24,7 @@ async function loadDatabase() {
 
         // Try dynamic import
         try {
-            const module = await import('../js/databaseInventario.js');
+            const module = await import('../../js/databaseInventario.js');
             partsDatabase = module.itemDatabase || module.default || [];
             if (partsDatabase.length) return;
         } catch (e) {

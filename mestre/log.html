@@ -287,7 +287,7 @@
                             // B) Cria o Cartão Clicável de Acesso Rápido
                             if (rosterPanel) {
                                 const card = document.createElement('a');
-                                if(p.id !== '6eef10e3-b1c0-475a-b2f6-811bc065706c' && p.id !== '2924a75f-6638-49c8-bb65-10e8ab55f134'){
+                                if (p.id !== '6eef10e3-b1c0-475a-b2f6-811bc065706c' && p.id !== '2924a75f-6638-49c8-bb65-10e8ab55f134') {
                                     card.href = `../pages/ficha.html?id=${p.id}`; // O link seguro do Gatekeeper
                                 }
                                 card.target = '_blank';
@@ -448,7 +448,7 @@
                 } else {
                     const contDados = document.getElementById('conteudo-dados');
                     const contFrota = document.getElementById('conteudo-frota');
-                    
+
                     if (contDados && !contDados.classList.contains('hidden')) {
                         carregarLogsDeDados();
                     } else if (contFrota && !contFrota.classList.contains('hidden')) {
@@ -539,7 +539,7 @@
             async function carregarLogsDeDados() {
                 const listaDados = document.getElementById('lista-logs-dados');
 
-                // Captura dos filtros (IDs CORRIGIDOS)
+                // Captura dos filtros
                 const selectChar = document.getElementById('filter-char');
                 const inputDataInicio = document.getElementById('filter-date-start');
                 const inputDataFim = document.getElementById('filter-date-end');
@@ -560,7 +560,7 @@
                     query = query.eq('personagem_id', charId);
                 }
 
-                // Datas (com fuso horário -03:00 para bater com o resto do seu sistema)
+                // Datas (com fuso horário -03:00)
                 if (dataInicio) {
                     query = query.gte('created_at', `${dataInicio}T00:00:00-03:00`);
                 }
@@ -588,20 +588,33 @@
                     const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
                     const nomeJogador = log.personagens ? log.personagens.nome : 'Desconhecido';
+                    const nomeRolagem = log.nome_rolagem || 'Teste';
 
-                    // 1. Verifica se é uma rolagem de dano
-                    const isDano = log.nome_rolagem && log.nome_rolagem.toUpperCase().startsWith('DANO');
+                    const isMacro = nomeRolagem.toLowerCase().includes('macro');
+                    const isManual = nomeRolagem.toLowerCase().includes('manual');
+                    const isDano = nomeRolagem.toUpperCase().startsWith('DANO');
 
-                    // 2. Variáveis para exibir nas colunas
+                    // Formatação da Tag / Diretriz
+                    let tagDiretriz = `<span class="text-stone-300 text-xs">${nomeRolagem}</span>`;
+                    if (isManual) {
+                        tagDiretriz = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950/60 border border-amber-500/50 text-amber-300 tracking-wider">🎲 ROLAGEM MANUAL</span>`;
+                    } else if (isMacro) {
+                        tagDiretriz = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 border border-red-500/50 text-red-300 tracking-wider">💥 ROLAGEM MACRO</span>`;
+                    }
+
+                    // Formatação das colunas
                     let displayD20 = '';
-                    let displayAjustes = '';
+                    let displayAjustes = `${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}`;
+                    let displayTotal = `<span class="text-amber-400 font-black text-xl drop-shadow-[0_0_5px_rgba(251,191,36,0.3)]">${log.resultado_final}</span>`;
 
-                    if (isDano) {
-                        // Se for dano, escurece e coloca o 'X'
+                    if (isMacro) {
+                        displayD20 = `<span class="text-red-400 font-bold text-sm" title="Sucessos Puros">${log.dado_puro} 🐞</span>`;
+                        displayAjustes = `<span class="text-xs text-stone-400">${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}</span>`;
+                        displayTotal = `<span class="text-red-400 font-black text-xl drop-shadow-[0_0_8px_rgba(255,17,58,0.5)]">${log.resultado_final} <span class="text-[10px] font-normal text-red-300">Suc</span></span>`;
+                    } else if (isDano) {
                         displayD20 = '<span class="text-stone-700 font-black text-sm">❌</span>';
                         displayAjustes = '<span class="text-stone-700 font-black text-xs">❌</span>';
                     } else {
-                        // Se for d20 normal, faz a checagem de crítico e falha crítica
                         let corDado = 'text-cyan-100 font-bold';
                         let iconeDado = '';
 
@@ -614,19 +627,122 @@
                         }
 
                         displayD20 = `<span class="${corDado}">${log.dado_puro} ${iconeDado}</span>`;
-                        displayAjustes = `${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}`;
                     }
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-stone-900/50 transition-colors border-b border-stone-800/30";
 
                     const btnDeletar = `
+            <button onclick="deletarLog(${log.id}, 'logs_dados')" class="text-red-900 hover:text-red-400 transition-colors ml-3" title="Apagar Registro">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        `;
+
+                    tr.innerHTML = `
+            <td class="p-3 text-[10px] text-stone-500 whitespace-nowrap">${dataFormatada}</td>
+            <td class="p-3 text-cyan-300 font-bold uppercase text-xs tracking-wider">${nomeJogador}</td>
+            <td class="p-3">${tagDiretriz}</td>
+            <td class="p-3 text-center text-xl">${displayD20}</td>
+            <td class="p-3 text-center text-xs text-stone-400">${displayAjustes}</td>
+            <td class="p-3 text-center">${displayTotal}</td>
+            <td class="p-3 text-[10px] text-stone-500 font-mono tracking-tighter opacity-80 flex justify-between items-center">
+                <span>${log.detalhamento || '-'}</span>
+                ${btnDeletar}
+            </td>
+        `;
+                    listaDados.appendChild(tr);
+                });
+            }
+            const listaDados = document.getElementById('lista-logs-dados');
+
+            // Captura dos filtros (IDs CORRIGIDOS)
+            const selectChar = document.getElementById('filter-char');
+            const inputDataInicio = document.getElementById('filter-date-start');
+            const inputDataFim = document.getElementById('filter-date-end');
+
+            const charId = selectChar ? selectChar.value : '';
+            const dataInicio = inputDataInicio ? inputDataInicio.value : null;
+            const dataFim = inputDataFim ? inputDataFim.value : null;
+
+            listaDados.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-cyan-500 animate-pulse">Descriptografando rolagens orbitais...</td></tr>';
+
+            let query = supabaseClient
+                .from('logs_dados')
+                .select(`*, personagens ( nome )`)
+                .order('created_at', { ascending: false });
+
+            // Aplicação dos filtros do painel
+            if (charId && charId !== '') {
+                query = query.eq('personagem_id', charId);
+            }
+
+            // Datas (com fuso horário -03:00 para bater com o resto do seu sistema)
+            if (dataInicio) {
+                query = query.gte('created_at', `${dataInicio}T00:00:00-03:00`);
+            }
+            if (dataFim) {
+                query = query.lte('created_at', `${dataFim}T23:59:59-03:00`);
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error("[ISB LOGS] Erro na rede:", error);
+                listaDados.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500 font-bold">⚠️ FALHA NA MATRIZ DE DADOS.</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                listaDados.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-stone-500">Nenhuma rolagem detectada com estes parâmetros.</td></tr>`;
+                return;
+            }
+
+            listaDados.innerHTML = '';
+
+            data.forEach(log => {
+                const dataObj = new Date(log.created_at);
+                const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                const nomeJogador = log.personagens ? log.personagens.nome : 'Desconhecido';
+
+                // 1. Verifica se é uma rolagem de dano
+                const isDano = log.nome_rolagem && log.nome_rolagem.toUpperCase().startsWith('DANO');
+
+                // 2. Variáveis para exibir nas colunas
+                let displayD20 = '';
+                let displayAjustes = '';
+
+                if (isDano) {
+                    // Se for dano, escurece e coloca o 'X'
+                    displayD20 = '<span class="text-stone-700 font-black text-sm">❌</span>';
+                    displayAjustes = '<span class="text-stone-700 font-black text-xs">❌</span>';
+                } else {
+                    // Se for d20 normal, faz a checagem de crítico e falha crítica
+                    let corDado = 'text-cyan-100 font-bold';
+                    let iconeDado = '';
+
+                    if (log.dado_puro === 20) {
+                        corDado = 'text-emerald-400 font-black drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]';
+                        iconeDado = '🌟';
+                    } else if (log.dado_puro === 1) {
+                        corDado = 'text-red-500 font-black drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]';
+                        iconeDado = '💀';
+                    }
+
+                    displayD20 = `<span class="${corDado}">${log.dado_puro} ${iconeDado}</span>`;
+                    displayAjustes = `${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-stone-900/50 transition-colors border-b border-stone-800/30";
+
+                const btnDeletar = `
                         <button onclick="deletarLog(${log.id}, 'logs_dados')" class="text-red-900 hover:text-red-400 transition-colors ml-3" title="Apagar Registro">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     `;
 
-                    tr.innerHTML = `
+                tr.innerHTML = `
                         <td class="p-3 text-[10px] text-stone-500 whitespace-nowrap">${dataFormatada}</td>
                         <td class="p-3 text-cyan-300 font-bold uppercase text-xs tracking-wider">${nomeJogador}</td>
                         <td class="p-3 text-stone-300 text-xs">${log.nome_rolagem}</td>
@@ -638,9 +754,8 @@
                             ${btnDeletar}
                         </td>
                     `;
-                    listaDados.appendChild(tr);
-                });
-            }
+                listaDados.appendChild(tr);
+            })
 
             // 3. Atualizar rolagens se o Mestre mudar os filtros (IDs CORRIGIDOS)
             const selectsDeFiltro = [

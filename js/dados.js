@@ -48,6 +48,50 @@ let currentMode = 'standard';
 let isComputing = false;
 let latestMacroResults = [];
 
+// Identificação do Usuário e Personagem Ativo
+let activeUserId = null;
+let activePersonagemId = null;
+
+async function inicializarAutenticacao() {
+    try {
+        if (typeof supabaseClient !== 'undefined') {
+            const { data: userData } = await supabaseClient.auth.getUser();
+            if (userData && userData.user) {
+                activeUserId = userData.user.id;
+                const { data: charData } = await supabaseClient
+                    .from('personagens')
+                    .select('id')
+                    .eq('user_id', activeUserId)
+                    .limit(1)
+                    .single();
+                if (charData) {
+                    activePersonagemId = charData.id;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('Sessão não autenticada ou modo visitante:', e);
+    }
+}
+
+async function registrarLogDados({ nome_rolagem, dado_puro, bonus_total, resultado_final, detalhamento }) {
+    if (!activeUserId || typeof supabaseClient === 'undefined') return;
+
+    try {
+        await supabaseClient.from('logs_dados').insert([{
+            user_id: activeUserId,
+            personagem_id: activePersonagemId,
+            nome_rolagem: nome_rolagem,
+            dado_puro: dado_puro,
+            bonus_total: bonus_total,
+            resultado_final: resultado_final,
+            detalhamento: detalhamento
+        }]);
+    } catch (err) {
+        console.error('[SUPABASE] Erro ao sincronizar rolagem:', err);
+    }
+}
+
 function startRealtimeClock() {
     const clockEl = document.getElementById('realtime-clock');
     function update() {
@@ -55,7 +99,7 @@ function startRealtimeClock() {
         const hours = String(now.getHours()).padStart(2, '0');
         const mins = String(now.getMinutes()).padStart(2, '0');
         const secs = String(now.getSeconds()).padStart(2, '0');
-        clockEl.textContent = `${hours}:${mins}:${secs} CORUSSANT`;
+        clockEl.textContent = `${hours}:${mins}:${secs} CORUSCANT`;
     }
     update();
     setInterval(update, 1000);
@@ -179,7 +223,7 @@ function clearTelemetryLog() {
     document.getElementById('telemetry-feed').innerHTML = '<div class="telemetry-item">[SISTEMA] Registros limpos.</div>';
 }
 
-// ROLAGEM PADRÃO
+// ROLAGEM PADRÃO -> Salva como "Rolagem Manual"
 function rollStandard() {
     if (isComputing) return;
 
@@ -225,7 +269,7 @@ function rollStandard() {
         cardElements.push({ die: d, card: card });
     });
 
-    setTimeout(() => {
+    setTimeout(async () => {
         let rolledList = [];
         cardElements.forEach(item => {
             const val = Math.floor(Math.random() * item.die.sides) + 1;
@@ -272,23 +316,31 @@ function rollStandard() {
 
         let totalVal = 0;
         let styleDesc = '';
+        let baseDadoPuro = 0;
 
         if (calcMode === 'sum') {
             const sumBase = activeDice.reduce((acc, c) => acc + c.value, 0);
+            baseDadoPuro = sumBase;
             totalVal = sumBase + modifier;
-            styleDesc = `Soma dos ${activeDice.length} dados ativos (${sumBase}) ${modifier >= 0 ? '+' : ''}${modifier} = ${totalVal}`;
+            styleDesc = `Soma dos ${activeDice.length} dados (${sumBase}) ${modifier >= 0 ? '+' : ''}${modifier} = ${totalVal}`;
         } else if (calcMode === 'highest') {
             const high = Math.max(...activeDice.map(r => r.value));
+            baseDadoPuro = high;
             totalVal = high + modifier;
             styleDesc = `Maior valor (${high}) ${modifier >= 0 ? '+' : ''}${modifier} = ${totalVal}`;
         } else if (calcMode === 'lowest') {
             const low = Math.min(...activeDice.map(r => r.value));
+            baseDadoPuro = low;
             totalVal = low + modifier;
             styleDesc = `Menor valor (${low}) ${modifier >= 0 ? '+' : ''}${modifier} = ${totalVal}`;
         } else {
-            totalVal = activeDice.map(r => r.value).join(', ');
-            styleDesc = `Valores Individuais: [ ${totalVal} ] (Modificador: ${modifier >= 0 ? '+' : ''}${modifier})`;
+            const vals = activeDice.map(r => r.value);
+            baseDadoPuro = vals[0] || 0;
+            totalVal = vals.reduce((a, b) => a + b, 0) + modifier;
+            styleDesc = `Valores: [ ${vals.join(', ')} ] (Mod: ${modifier >= 0 ? '+' : ''}${modifier})`;
         }
+
+        const detalhamentoStr = `Dados: [${rolledList.map(r => `${r.type}:${r.value}`).join(', ')}] | ${styleDesc}`;
 
         summaryBox.classList.remove('hidden');
         summaryBox.innerHTML = `
@@ -307,11 +359,20 @@ function rollStandard() {
         telemetryStatus.textContent = 'TELEMETRIA NUMÉRICA SINCRONIZADA';
         addTelemetryLog(`ROLAGEM PADRÃO: <strong>${totalVal}</strong> [${styleDesc}]`);
 
+        // Sincronização com o Banco Supabase
+        await registrarLogDados({
+            nome_rolagem: 'Rolagem Manual',
+            dado_puro: baseDadoPuro,
+            bonus_total: modifier,
+            resultado_final: typeof totalVal === 'number' ? totalVal : (parseInt(totalVal) || 0),
+            detalhamento: detalhamentoStr
+        });
+
         isComputing = false;
     }, 900);
 }
 
-// ROLAGEM MACRO
+// ROLAGEM MACRO -> Salva como "Rolagem Macro"
 function rollMacro() {
     if (isComputing) return;
 
@@ -448,7 +509,7 @@ function confirmManualKeepSelection() {
     consolidateMacroResults(modSuc, modAdp, modPrs, true);
 }
 
-function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
+async function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
     const summaryBox = document.getElementById('macro-summary-box');
     const telemetryStatus = document.getElementById('macro-telemetry-status');
 
@@ -458,7 +519,14 @@ function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
     let totA = modAdp;
     let totP = modPrs;
 
+    let rawS = 0;
+    let rawA = 0;
+    let rawP = 0;
+
     keptResults.forEach(r => {
+        rawS += r.s;
+        rawA += r.a;
+        rawP += r.p;
         totS += r.s;
         totA += r.a;
         totP += r.p;
@@ -483,8 +551,20 @@ function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
     playAudio('done');
     telemetryStatus.textContent = 'PROTOCOLO MACRO PROCESSADO E CONSOLIDADO';
     addTelemetryLog(`ROLAGEM MACRO: Sucessos: <strong>${totS}</strong> | Adaptações: <strong>${totA}</strong> | Pressões: <strong>${totP}</strong>`);
+
+    const detalhamentoStr = `Sucessos: ${totS} (Puros: ${rawS} ${modSuc >= 0 ? '+' : ''}${modSuc}) | Adaptações: ${totA} (Puros: ${rawA} ${modAdp >= 0 ? '+' : ''}${modAdp}) | Pressões: ${totP} (Puros: ${rawP} ${modPrs >= 0 ? '+' : ''}${modPrs}) | Dados: ${keptResults.map(r => `${r.die}:F${r.face}`).join(', ')}`;
+
+    // Sincronização com o Banco Supabase
+    await registrarLogDados({
+        nome_rolagem: 'Rolagem Macro',
+        dado_puro: rawS,
+        bonus_total: modSuc,
+        resultado_final: totS,
+        detalhamento: detalhamentoStr
+    });
 }
 
 window.addEventListener('DOMContentLoaded', () => {
     startRealtimeClock();
+    inicializarAutenticacao();
 });
