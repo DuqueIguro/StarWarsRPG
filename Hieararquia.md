@@ -4,14 +4,6 @@ StarWarsRPG
 ├─ .nojekyll
 ├─ 404.html
 ├─ backups
-│  ├─ cassino
-│  │  ├─ cassino.css
-│  │  ├─ cassino.html
-│  │  └─ cassino.js
-│  ├─ dados
-│  │  ├─ dados.css
-│  │  ├─ dados.html
-│  │  └─ dados.js
 │  ├─ holonetBackup.json
 │  └─ mapa_do_banco_de_dados.md
 ├─ CNAME
@@ -76,6 +68,8 @@ StarWarsRPG
 │  ├─ inventarioOficina.js
 │  ├─ oficina.html
 │  ├─ oficina.js
+│  ├─ servicosMCMT.html
+│  ├─ servicosMCMT.js
 │  └─ tripulantes.html
 ├─ Hieararquia.md
 ├─ img
@@ -142,6 +136,7 @@ StarWarsRPG
 ├─ js
 │  ├─ armazem.js
 │  ├─ banco.js
+│  ├─ dados.js
 │  ├─ dadosClassesFicha.js
 │  ├─ dadosRacasFicha.js
 │  ├─ dadosTamanhosFicha.js
@@ -177,6 +172,9 @@ StarWarsRPG
 │  ├─ escudo.html
 │  ├─ fichasBalanceamento.html
 │  ├─ frotaMestre.html
+│  ├─ log
+│  │  ├─ log.css
+│  │  └─ log.js
 │  ├─ log.html
 │  ├─ redirecionamentos.html
 │  ├─ terminalBancario
@@ -194,6 +192,7 @@ StarWarsRPG
 │  ├─ armazem.html
 │  ├─ banco.html
 │  ├─ comunicacao.html
+│  ├─ dados.html
 │  ├─ ficha.html
 │  ├─ frotaRebeldes.html
 │  ├─ hierarquiaGerais.html
@@ -220,14 +219,16 @@ StarWarsRPG
 │  ├─ MCMT.html
 │  └─ mestre.html
 ├─ staging
-│  ├─ servicosMCMT.css
-│  ├─ servicosMCMT.html
-│  └─ servicosMCMT.js
+│  └─ cassino
+│     ├─ cassino.css
+│     ├─ cassino.html
+│     └─ cassino.js
 ├─ styles
 │  ├─ 404.css
 │  ├─ armazem.css
 │  ├─ banco.css
 │  ├─ comunicacao.css
+│  ├─ dados.css
 │  ├─ distanciaPlanetas.css
 │  ├─ durtoc.css
 │  ├─ escudo.css
@@ -252,7 +253,8 @@ StarWarsRPG
 │  ├─ p2w.css
 │  ├─ posto.css
 │  ├─ rebeldes.css
-│  └─ selecaoRebelde.css
+│  ├─ selecaoRebelde.css
+│  └─ servicosMCMT.css
 └─ terminal
    ├─ LdIE.html
    └─ MTP.html

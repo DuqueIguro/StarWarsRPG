@@ -5,13 +5,15 @@ const AUTHORIZED_EDIT_USERS = [
 ];
 
 let canEdit = false;
-let currentMode = 'view'; // 'view' or 'edit'
+let currentMode = 'view';
 let currentWorkshop = 'MCMT1';
 let currentCategory = 'todas';
-let partsDatabase = []; 
+let partsDatabase = [];
 let workshopServices = { MCMT1: [], MCMT2: [] };
+let activeUser = null;
+let activeCharacterId = null;
+let activeCharacterName = 'Operador MCMT';
 
-// Initialize Data
 document.addEventListener("DOMContentLoaded", async () => {
     await checkUserEditPermission();
     await loadDatabase();
@@ -19,7 +21,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderServices();
 });
 
-// Verifica se o usuário autenticado tem permissão de edição
 async function checkUserEditPermission() {
     try {
         if (typeof supabaseClient === 'undefined') return;
@@ -30,7 +31,21 @@ async function checkUserEditPermission() {
             return;
         }
 
-        const userId = userData.user.id;
+        activeUser = userData.user;
+        const userId = activeUser.id;
+
+        const { data: charData } = await supabaseClient
+            .from('personagens')
+            .select('id, nome')
+            .eq('user_id', userId)
+            .limit(1)
+            .maybeSingle();
+
+        if (charData) {
+            activeCharacterId = charData.id;
+            activeCharacterName = charData.nome;
+        }
+
         if (AUTHORIZED_EDIT_USERS.includes(userId)) {
             canEdit = true;
             const toggleContainer = document.getElementById("modeToggleContainer");
@@ -46,20 +61,25 @@ async function checkUserEditPermission() {
     }
 }
 
-// Load parts database JavaScript file (js/databaseInventario.js -> itemDatabase)
+async function registrarLogAuditoria(tipoEvento, descricao) {
+    if (typeof supabaseClient === 'undefined') return;
+    try {
+        await supabaseClient.from('logs_auditoria').insert([{
+            personagem_id: activeCharacterId || null,
+            tipo_evento: tipoEvento,
+            descricao: `[${currentWorkshop}] ${descricao}`,
+            mudanca_creditos: 0
+        }]);
+    } catch (e) {
+        console.warn("Falha ao registrar log de auditoria MCMT:", e);
+    }
+}
+
 async function loadDatabase() {
     try {
         if (typeof itemDatabase !== 'undefined' && Array.isArray(itemDatabase)) {
             partsDatabase = itemDatabase;
             return;
-        }
-
-        try {
-            const module = await import('../js/databaseInventario.js');
-            partsDatabase = module.itemDatabase || module.default || [];
-            if (partsDatabase.length) return;
-        } catch (e) {
-            // Fallback to script tag injection
         }
 
         await new Promise((resolve, reject) => {
@@ -81,15 +101,11 @@ async function loadDatabase() {
     }
 }
 
-// Fetch Services from Supabase (servicos_mcmt table)
 async function fetchServicesFromDB() {
     workshopServices.MCMT1 = [];
     workshopServices.MCMT2 = [];
 
-    if (typeof supabaseClient === 'undefined') {
-        console.warn("Supabase client não encontrado. Verifique se supabase.js foi carregado.");
-        return;
-    }
+    if (typeof supabaseClient === 'undefined') return;
 
     try {
         const { data, error } = await supabaseClient
@@ -130,7 +146,6 @@ async function fetchServicesFromDB() {
     }
 }
 
-// Helper: Deduz a qualidade a partir do nome da peça
 function getQualityForPart(partName) {
     if (!partName) return '';
     const match = partsDatabase.find(p => p.name && p.name.toLowerCase() === partName.toLowerCase());
@@ -145,16 +160,14 @@ function getQualityForPart(partName) {
     return '';
 }
 
-// Switch Workshop (MCMT1 / MCMT2)
 function switchWorkshop(workshop) {
     currentWorkshop = workshop;
     document.getElementById("currentWorkshopLabel").textContent = workshop;
     renderServices();
 }
 
-// Set View / Edit Mode
 function setMode(mode) {
-    if (mode === 'edit' && !canEdit) return; // Bloqueio de segurança
+    if (mode === 'edit' && !canEdit) return;
 
     currentMode = mode;
     const viewBtn = document.getElementById("viewModeBtn");
@@ -175,7 +188,6 @@ function setMode(mode) {
     renderServices();
 }
 
-// Filter Category
 function filterCategory(cat) {
     currentCategory = cat;
     document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
@@ -185,7 +197,6 @@ function filterCategory(cat) {
     renderServices();
 }
 
-// Render Services with Search Filter
 function renderServices() {
     const container = document.getElementById("servicesContainer");
     const searchQuery = document.getElementById("searchInput").value.toLowerCase().trim();
@@ -278,7 +289,6 @@ function renderServices() {
     container.innerHTML = html;
 }
 
-// Autocomplete Logic using itemDatabase
 function onPartSearch(val) {
     const listContainer = document.getElementById("autocompleteList");
     listContainer.innerHTML = "";
@@ -336,7 +346,6 @@ function calculateTotalModal() {
     document.getElementById("modalTotalCalculated").textContent = `${total} cr`;
 }
 
-// Modal Handlers
 function openAddServiceModal() {
     if (!canEdit) return;
     document.getElementById("modalTitle").textContent = `Adicionar Novo Serviço (${currentWorkshop})`;
@@ -376,18 +385,57 @@ async function handleServiceSubmit(e) {
 
     try {
         if (serviceId) {
+            // Localiza o estado anterior do serviço antes de sobrescrever
+            const oldService = workshopServices[currentWorkshop].find(s => s.id == serviceId);
+
+            let mudancas = [];
+            if (oldService) {
+                if (oldService.name !== nome_servico) {
+                    mudancas.push(`Nome: "${oldService.name}" ➔ "${nome_servico}"`);
+                }
+                if (oldService.category !== categoria) {
+                    mudancas.push(`Categoria: "${oldService.category}" ➔ "${categoria}"`);
+                }
+                if (oldService.laborCost !== mao_de_obra) {
+                    mudancas.push(`Mão de Obra: ${oldService.laborCost} cr ➔ ${mao_de_obra} cr`);
+                }
+                const oldPeca = oldService.partName || 'Nenhuma';
+                const newPeca = peca || 'Nenhuma';
+                if (oldPeca !== newPeca) {
+                    mudancas.push(`Peça: "${oldPeca}" ➔ "${newPeca}"`);
+                }
+                if (oldService.partPrice !== preco_componentes) {
+                    mudancas.push(`Preço Peça: ${oldService.partPrice} cr ➔ ${preco_componentes} cr`);
+                }
+                const oldDesc = oldService.description || '';
+                if (oldDesc !== descricao) {
+                    mudancas.push(`Descrição: "${oldDesc || '(vazio)'}" ➔ "${descricao || '(vazio)'}"`);
+                }
+            }
+
+            const textoAuditoria = mudancas.length > 0
+                ? `Serviço "${nome_servico}" modificado | ` + mudancas.join(' | ')
+                : `Serviço "${nome_servico}" salvo sem alterações`;
+
             const { error } = await supabaseClient
                 .from('servicos_mcmt')
                 .update(payload)
                 .eq('id', serviceId);
 
             if (error) throw error;
+
+            await registrarLogAuditoria('MCMT_SERVICO_EDITAR', textoAuditoria);
         } else {
             const { error } = await supabaseClient
                 .from('servicos_mcmt')
                 .insert([payload]);
 
             if (error) throw error;
+
+            await registrarLogAuditoria(
+                'MCMT_SERVICO_CRIAR',
+                `Cadastrou novo serviço "${nome_servico}" (${categoria}). Mão de Obra: ${mao_de_obra} cr, Peça: ${peca || 'Nenhuma'} (${preco_componentes} cr)`
+            );
         }
 
         closeServiceModal();
@@ -431,7 +479,11 @@ function editService(id) {
 
 async function deleteService(id) {
     if (!canEdit) return;
-    if (!confirm("Tem certeza que deseja excluir este serviço do banco de dados?")) return;
+
+    const serv = workshopServices[currentWorkshop].find(s => s.id == id);
+    const nomeServ = serv ? serv.name : `ID #${id}`;
+
+    if (!confirm(`Tem certeza que deseja excluir o serviço "${nomeServ}" do banco de dados?`)) return;
 
     try {
         const { error } = await supabaseClient
@@ -440,6 +492,11 @@ async function deleteService(id) {
             .eq('id', id);
 
         if (error) throw error;
+
+        await registrarLogAuditoria(
+            'MCMT_SERVICO_EXCLUIR',
+            `Excluiu o serviço "${nomeServ}" da ${currentWorkshop}`
+        );
 
         await fetchServicesFromDB();
         renderServices();
