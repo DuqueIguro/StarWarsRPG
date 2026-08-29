@@ -7,7 +7,7 @@
     <title>Auditoria Imperial - Monitoramento Global</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
-    rel="stylesheet">
+        rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../img/d20.png">
     <link rel="stylesheet" href="./log/log.css">
 </head>
@@ -135,6 +135,10 @@
                 class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
                 Operações da Frota
             </button>
+            <button id="btn-tab-cassino" onclick="alternarAbas('cassino')"
+                class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
+                Cassino
+            </button>
             <button id="btn-tab-mcmt" onclick="alternarAbas('mcmt')"
                 class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
                 Serviços MCMT
@@ -211,6 +215,32 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div id="conteudo-cassino" class="hidden">
+            <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr
+                                class="bg-stone-900 border-b border-stone-800 text-yellow-400 text-xs uppercase tracking-wider">
+                                <th class="p-4 w-48">Data / Hora Local</th>
+                                <th class="p-4 w-48">Apostador (Personagem)</th>
+                                <th class="p-4 w-32">Jogo</th>
+                                <th class="p-4 w-32">Classificação</th>
+                                <th class="p-4">Detalhes da Rodada</th>
+                                <th class="p-4 text-right w-36">Delta Fichas (FG)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-cassino-body" class="text-sm divide-y divide-stone-800/50">
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-stone-500">Buscando telemetria do Cassino
+                                    Nova Prime...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

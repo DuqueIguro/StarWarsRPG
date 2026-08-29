@@ -14,7 +14,7 @@ async function carregarPersonagens() {
 
     const { data, error } = await client
         .from('personagens')
-        .select('id, nome, creditos')
+        .select('id, nome, creditos, fichas')
         .order('nome');
 
     if (!error && data) {
@@ -40,9 +40,9 @@ async function carregarPersonagens() {
                 card.className = 'bg-stone-900/40 border border-cyan-900/30 hover:border-cyan-500 hover:bg-stone-900 p-3 rounded flex flex-col justify-between transition-all cursor-pointer group shadow-sm';
                 card.innerHTML = `
                     <span class="text-xs font-bold text-stone-300 group-hover:text-cyan-300 transition-colors uppercase tracking-wider">${p.nome}</span>
-                    <div class="mt-2 pt-2 border-t border-stone-800 flex justify-between items-center">
-                        <span class="text-[9px] text-stone-500">SALDO:</span>
-                        <span class="text-[10px] text-green-400 orbitron font-bold">${p.creditos} 💳</span>
+                    <div class="mt-2 pt-2 border-t border-stone-800 flex justify-between items-center text-[10px]">
+                        <span class="text-green-400 font-bold">${p.creditos || 0} 💳</span>
+                        <span class="text-yellow-400 font-bold">${p.fichas || 0} 🪙</span>
                     </div>
                 `;
                 rosterPanel.appendChild(card);
@@ -53,7 +53,7 @@ async function carregarPersonagens() {
     }
 }
 
-// 2. Carregar Transações Financeiras (Exclui MCMT)
+// 2. Transações Financeiras (Créditos)
 async function carregarLogs() {
     const client = getSupabaseClient();
     const tbody = document.getElementById('logs-body');
@@ -70,7 +70,7 @@ async function carregarLogs() {
     let query = client
         .from('logs_auditoria')
         .select('*, personagens(nome)')
-        .not('tipo_evento', 'ilike', 'MCMT_%') // EXCLUI MODIFICAÇÕES MCMT DESTA ABA
+        .not('tipo_evento', 'ilike', 'MCMT_%')
         .order('created_at', { ascending: false })
         .limit(300);
 
@@ -89,7 +89,7 @@ async function carregarLogs() {
     }
 
     if (!logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Nenhum registro corresponde aos filtros de busca selecionados.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Nenhum registro financeiro encontrado.</td></tr>';
         return;
     }
 
@@ -133,10 +133,7 @@ async function carregarLogs() {
 
         tr.innerHTML = `
             <td class="p-4 text-stone-400 text-xs">${dataFormatada}</td>
-            <td class="p-4 font-bold text-stone-300">
-                ${nomePersonagem}
-                ${btnInspecionar}
-            </td>
+            <td class="p-4 font-bold text-stone-300">${nomePersonagem} ${btnInspecionar}</td>
             <td class="p-4 ${eventoColor} text-[10px] tracking-widest font-bold">${log.tipo_evento}</td>
             <td class="p-4 text-stone-300">${log.descricao}</td>
             <td class="p-4 text-right font-bold orbitron ${deltaColor} flex justify-end items-center">
@@ -148,7 +145,7 @@ async function carregarLogs() {
     });
 }
 
-// 3. Carregar Logs de Rolagens de Dados
+// 3. Rolagens de Dados
 async function carregarLogsDeDados() {
     const client = getSupabaseClient();
     const listaDados = document.getElementById('lista-logs-dados');
@@ -177,7 +174,6 @@ async function carregarLogsDeDados() {
     const { data, error } = await query;
 
     if (error) {
-        console.error('[ISB LOGS] Erro na rede:', error);
         listaDados.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-red-500 font-bold">⚠️ FALHA NA MATRIZ DE DADOS.</td></tr>';
         return;
     }
@@ -199,11 +195,8 @@ async function carregarLogsDeDados() {
         const isDano = nomeRolagem.toUpperCase().startsWith('DANO');
 
         let tagDiretriz = `<span class="text-stone-300 text-xs">${nomeRolagem}</span>`;
-        if (isManual) {
-            tagDiretriz = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950/60 border border-amber-500/50 text-amber-300 tracking-wider">🎲 ROLAGEM MANUAL</span>';
-        } else if (isMacro) {
-            tagDiretriz = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 border border-red-500/50 text-red-300 tracking-wider">💥 ROLAGEM MACRO</span>';
-        }
+        if (isManual) tagDiretriz = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950/60 border border-amber-500/50 text-amber-300 tracking-wider">🎲 ROLAGEM MANUAL</span>';
+        else if (isMacro) tagDiretriz = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 border border-red-500/50 text-red-300 tracking-wider">💥 ROLAGEM MACRO</span>';
 
         let displayD20 = '';
         let displayAjustes = `${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}`;
@@ -211,7 +204,6 @@ async function carregarLogsDeDados() {
 
         if (isMacro) {
             displayD20 = `<span class="text-red-400 font-bold text-sm" title="Sucessos Puros">${log.dado_puro} 🐞</span>`;
-            displayAjustes = `<span class="text-xs text-stone-400">${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}</span>`;
             displayTotal = `<span class="text-red-400 font-black text-xl drop-shadow-[0_0_8px_rgba(255,17,58,0.5)]">${log.resultado_final} <span class="text-[10px] font-normal text-red-300">Suc</span></span>`;
         } else if (isDano) {
             displayD20 = '<span class="text-stone-700 font-black text-sm">❌</span>';
@@ -219,7 +211,6 @@ async function carregarLogsDeDados() {
         } else {
             let corDado = 'text-cyan-100 font-bold';
             let iconeDado = '';
-
             if (log.dado_puro === 20) {
                 corDado = 'text-emerald-400 font-black drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]';
                 iconeDado = '🌟';
@@ -227,7 +218,6 @@ async function carregarLogsDeDados() {
                 corDado = 'text-red-500 font-black drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]';
                 iconeDado = '💀';
             }
-
             displayD20 = `<span class="${corDado}">${log.dado_puro} ${iconeDado}</span>`;
         }
 
@@ -256,7 +246,7 @@ async function carregarLogsDeDados() {
     });
 }
 
-// 4. Carregar Logs da Frota
+// 4. Operações da Frota
 async function carregarLogsTaticos() {
     const client = getSupabaseClient();
     const listaFrota = document.getElementById('lista-logs-frota');
@@ -264,7 +254,6 @@ async function carregarLogsTaticos() {
 
     const dateStart = document.getElementById('filter-date-start');
     const dateEnd = document.getElementById('filter-date-end');
-
     const dataInicio = dateStart ? dateStart.value : null;
     const dataFim = dateEnd ? dateEnd.value : null;
 
@@ -329,7 +318,7 @@ async function carregarLogsTaticos() {
     });
 }
 
-// 5. Carregar Logs de Serviços MCMT
+// 5. Serviços MCMT
 async function carregarLogsMCMT() {
     const client = getSupabaseClient();
     const tbodyMCMT = document.getElementById('logs-mcmt-body');
@@ -337,11 +326,10 @@ async function carregarLogsMCMT() {
 
     const dateStart = document.getElementById('filter-date-start');
     const dateEnd = document.getElementById('filter-date-end');
-
-    tbodyMCMT.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-amber-500 animate-pulse">Recuperando registros das oficinas MCMT...</td></tr>';
-
     const dataInicio = dateStart ? dateStart.value : null;
     const dataFim = dateEnd ? dateEnd.value : null;
+
+    tbodyMCMT.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-amber-500 animate-pulse">Recuperando registros das oficinas MCMT...</td></tr>';
 
     let query = client
         .from('logs_auditoria')
@@ -422,7 +410,98 @@ async function carregarLogsMCMT() {
     });
 }
 
-// 6. Exclusão de Logs
+// 6. Logs de Apostas do Cassino (Fichas)
+async function carregarLogsCassino() {
+    const client = getSupabaseClient();
+    const tbodyCassino = document.getElementById('logs-cassino-body');
+    if (!client || !tbodyCassino) return;
+
+    const selectChar = document.getElementById('filter-char');
+    const dateStart = document.getElementById('filter-date-start');
+    const dateEnd = document.getElementById('filter-date-end');
+    const inputBusca = document.getElementById('filter-text');
+
+    const charId = selectChar ? selectChar.value : '';
+    const dataInicio = dateStart ? dateStart.value : null;
+    const dataFim = dateEnd ? dateEnd.value : null;
+    const txt = inputBusca ? inputBusca.value.trim() : '';
+
+    tbodyCassino.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-yellow-500 animate-pulse">Rastreando telemetria das mesas de aposta...</td></tr>';
+
+    let query = client
+        .from('logs_cassino')
+        .select('*, personagens(nome)')
+        .order('created_at', { ascending: false })
+        .limit(300);
+
+    if (charId && charId !== '') query = query.eq('personagem_id', charId);
+    if (txt) query = query.ilike('descricao', `%${txt}%`);
+    if (dataInicio) query = query.gte('created_at', `${dataInicio}T00:00:00-03:00`);
+    if (dataFim) query = query.lte('created_at', `${dataFim}T23:59:59-03:00`);
+
+    const { data: logs, error } = await query;
+
+    if (error) {
+        tbodyCassino.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500 font-bold">Falha ao buscar logs do Cassino: ${error.message}</td></tr>`;
+        return;
+    }
+
+    if (!logs || logs.length === 0) {
+        tbodyCassino.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-stone-500">Nenhuma transação de fichas registrada neste período.</td></tr>';
+        return;
+    }
+
+    tbodyCassino.innerHTML = '';
+
+    logs.forEach(log => {
+        const dataObj = new Date(log.created_at);
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const nomePersonagem = log.personagens ? log.personagens.nome : 'Apostador Desconhecido';
+
+        let deltaColor = 'text-stone-500';
+        let deltaText = '0 FG';
+        if (log.delta_fichas > 0) {
+            deltaColor = 'text-emerald-400 font-bold';
+            deltaText = `+${log.delta_fichas} FG 🪙`;
+        } else if (log.delta_fichas < 0) {
+            deltaColor = 'text-rose-400 font-bold';
+            deltaText = `${log.delta_fichas} FG 🪙`;
+        }
+
+        let tagClass = 'text-cyan-400 bg-cyan-950/40 border-cyan-800/50';
+        if (log.tipo_evento.includes('VITORIA') || log.tipo_evento.includes('TRIPLO') || log.tipo_evento.includes('NATURAL')) {
+            tagClass = 'text-emerald-400 bg-emerald-950/40 border-emerald-800/50';
+        } else if (log.tipo_evento.includes('DERROTA') || log.tipo_evento.includes('ESTOUROU')) {
+            tagClass = 'text-rose-400 bg-rose-950/40 border-rose-800/50';
+        } else if (log.tipo_evento.includes('COMPRA') || log.tipo_evento.includes('RESGATE')) {
+            tagClass = 'text-yellow-400 bg-yellow-950/40 border-yellow-800/50';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-stone-900/50 transition-colors border-b border-stone-800/30';
+
+        const btnDeletar = `
+            <button onclick="deletarLog('${log.id}', 'logs_cassino')" class="text-red-900 hover:text-red-400 transition-colors ml-4 cursor-pointer" title="Apagar Registro">
+                <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        `;
+
+        tr.innerHTML = `
+            <td class="p-4 text-stone-400 text-xs whitespace-nowrap">${dataFormatada}</td>
+            <td class="p-4 font-bold text-yellow-300 text-xs uppercase tracking-wider">${nomePersonagem}</td>
+            <td class="p-4 text-cyan-300 font-mono text-xs font-bold">${log.jogo}</td>
+            <td class="p-4"><span class="px-2 py-1 text-[10px] tracking-widest font-bold rounded border ${tagClass}">${log.tipo_evento}</span></td>
+            <td class="p-4 text-stone-300 text-xs">${log.descricao}</td>
+            <td class="p-4 text-right orbitron ${deltaColor} whitespace-nowrap">
+                <span>${deltaText}</span>
+                ${btnDeletar}
+            </td>
+        `;
+        tbodyCassino.appendChild(tr);
+    });
+}
+
+// 7. Exclusão Universal de Registros
 window.deletarLog = async function (id, tabela) {
     if (!confirm('ATENÇÃO: Deseja obliterar este registro dos arquivos da ISB? Esta ação é irreversível.')) return;
 
@@ -440,30 +519,29 @@ window.deletarLog = async function (id, tabela) {
         const contDados = document.getElementById('conteudo-dados');
         const contFrota = document.getElementById('conteudo-frota');
         const contMcmt = document.getElementById('conteudo-mcmt');
+        const contCassino = document.getElementById('conteudo-cassino');
 
-        if (contDados && !contDados.classList.contains('hidden')) {
-            carregarLogsDeDados();
-        } else if (contFrota && !contFrota.classList.contains('hidden')) {
-            carregarLogsTaticos();
-        } else if (contMcmt && !contMcmt.classList.contains('hidden')) {
-            carregarLogsMCMT();
-        } else {
-            carregarLogs();
-        }
+        if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
+        else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
+        else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
+        else if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
+        else carregarLogs();
     }
 };
 
-// 7. Alternância de Abas
+// 8. Alternância de Abas
 window.alternarAbas = function (aba) {
     const btnFinancas = document.getElementById('btn-tab-financas');
     const btnDados = document.getElementById('btn-tab-dados');
     const btnFrota = document.getElementById('btn-tab-frota');
     const btnMcmt = document.getElementById('btn-tab-mcmt');
+    const btnCassino = document.getElementById('btn-tab-cassino');
 
     const contFinancas = document.getElementById('conteudo-financas');
     const contDados = document.getElementById('conteudo-dados');
     const contFrota = document.getElementById('conteudo-frota');
     const contMcmt = document.getElementById('conteudo-mcmt');
+    const contCassino = document.getElementById('conteudo-cassino');
 
     const filtroTipo = document.getElementById('filter-action');
     const filtroBusca = document.getElementById('filter-text');
@@ -474,11 +552,13 @@ window.alternarAbas = function (aba) {
     if (btnDados) btnDados.className = cssInativo;
     if (btnFrota) btnFrota.className = cssInativo;
     if (btnMcmt) btnMcmt.className = cssInativo;
+    if (btnCassino) btnCassino.className = cssInativo;
 
     if (contFinancas) contFinancas.classList.replace('block', 'hidden');
     if (contDados) contDados.classList.replace('block', 'hidden');
     if (contFrota) contFrota.classList.replace('block', 'hidden');
     if (contMcmt) contMcmt.classList.replace('block', 'hidden');
+    if (contCassino) contCassino.classList.replace('block', 'hidden');
 
     if (aba === 'financas') {
         if (btnFinancas) btnFinancas.className = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-cyan-900/40 text-cyan-400 border border-cyan-500 rounded transition-colors';
@@ -538,10 +618,24 @@ window.alternarAbas = function (aba) {
             filtroBusca.placeholder = 'Indisponível para MCMT';
         }
         carregarLogsMCMT();
+    } else if (aba === 'cassino') {
+        if (btnCassino) btnCassino.className = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-yellow-900/40 text-yellow-400 border border-yellow-500 rounded transition-colors';
+        if (contCassino) contCassino.classList.replace('hidden', 'block');
+        if (filtroTipo) {
+            filtroTipo.disabled = true;
+            filtroTipo.classList.add('opacity-30', 'cursor-not-allowed');
+            filtroTipo.value = '';
+        }
+        if (filtroBusca) {
+            filtroBusca.disabled = false;
+            filtroBusca.classList.remove('opacity-30', 'cursor-not-allowed');
+            filtroBusca.placeholder = 'Ex: Roleta, Blackjack, Poker...';
+        }
+        carregarLogsCassino();
     }
 };
 
-// 8. Inicialização e Event Listeners
+// 9. Event Listeners
 document.addEventListener('DOMContentLoaded', async () => {
     const btnRefresh = document.getElementById('btn-refresh');
     const btnSearch = document.getElementById('btn-search');
@@ -557,40 +651,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             const contDados = document.getElementById('conteudo-dados');
             const contFrota = document.getElementById('conteudo-frota');
             const contMcmt = document.getElementById('conteudo-mcmt');
+            const contCassino = document.getElementById('conteudo-cassino');
 
-            if (contDados && !contDados.classList.contains('hidden')) {
-                carregarLogsDeDados();
-            } else if (contFrota && !contFrota.classList.contains('hidden')) {
-                carregarLogsTaticos();
-            } else if (contMcmt && !contMcmt.classList.contains('hidden')) {
-                carregarLogsMCMT();
-            } else {
-                carregarLogs();
-            }
+            if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
+            else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
+            else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
+            else if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
+            else carregarLogs();
         });
     }
 
     if (btnSearch) {
         btnSearch.addEventListener('click', () => {
-            const contMcmt = document.getElementById('conteudo-mcmt');
             const contDados = document.getElementById('conteudo-dados');
             const contFrota = document.getElementById('conteudo-frota');
+            const contMcmt = document.getElementById('conteudo-mcmt');
+            const contCassino = document.getElementById('conteudo-cassino');
 
-            if (contMcmt && !contMcmt.classList.contains('hidden')) {
-                carregarLogsMCMT();
-            } else if (contDados && !contDados.classList.contains('hidden')) {
-                carregarLogsDeDados();
-            } else if (contFrota && !contFrota.classList.contains('hidden')) {
-                carregarLogsTaticos();
-            } else {
-                carregarLogs();
-            }
+            if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
+            else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
+            else if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
+            else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
+            else carregarLogs();
         });
     }
 
     if (inputBusca) {
         inputBusca.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') carregarLogs();
+            if (e.key === 'Enter') {
+                const contCassino = document.getElementById('conteudo-cassino');
+                if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
+                else carregarLogs();
+            }
         });
     }
 
@@ -612,14 +704,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const contDados = document.getElementById('conteudo-dados');
                 const contFrota = document.getElementById('conteudo-frota');
                 const contMcmt = document.getElementById('conteudo-mcmt');
+                const contCassino = document.getElementById('conteudo-cassino');
 
-                if (contDados && !contDados.classList.contains('hidden')) {
-                    carregarLogsDeDados();
-                } else if (contFrota && !contFrota.classList.contains('hidden')) {
-                    carregarLogsTaticos();
-                } else if (contMcmt && !contMcmt.classList.contains('hidden')) {
-                    carregarLogsMCMT();
-                }
+                if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
+                else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
+                else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
+                else if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
             });
         }
     });

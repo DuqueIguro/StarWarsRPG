@@ -1,16 +1,97 @@
 /* ==========================================================================
-   DATAPAD CASINO - LÓGICA DE JOGOS, CÂMBIO, BLACKJACK 21 & TEXAS HOLD'EM 1v1
+   DATAPAD CASINO - LÓGICA DE JOGOS, CÂMBIO & INTEGRAÇÃO SUPABASE
    ========================================================================== */
 
-// Estado da Carteira Galáctica (1 Ficha = 10 Créditos Imperiais)
-let imperialCredits = 10000; // Créditos Imperiais (CI)
-let casinoChips = 200;       // Fichas Galácticas (FG)
+let imperialCredits = 0;
+let casinoChips = 0;
+let activeUser = null;
+let activeCharacter = null;
 
 let audioMuted = false;
-let currentSelectedChip = 1; // 1, 5, 10, 50, 100 Fichas
+let currentSelectedChip = 1;
+
+function getSupabaseClient() {
+  return typeof supabaseClient !== 'undefined' ? supabaseClient : window.supabaseClient;
+}
+
+// 1. Inicialização de Sessão e Busca de Créditos / Fichas
+async function initCasinoSession() {
+  const client = getSupabaseClient();
+  if (!client) {
+    logConsole("Aviso: Supabase indisponível. Operando em modo offline.", "log-warn");
+    return;
+  }
+
+  try {
+    const { data: userData, error: userError } = await client.auth.getUser();
+    if (userError || !userData?.user) {
+      logConsole("Acesso anônimo: Faça login para salvar seu saldo na rede.", "log-warn");
+      return;
+    }
+
+    activeUser = userData.user;
+
+    const { data: charData, error: charError } = await client
+      .from('personagens')
+      .select('id, nome, creditos, fichas')
+      .eq('user_id', activeUser.id)
+      .limit(1)
+      .maybeSingle();
+
+    if (charData) {
+      activeCharacter = charData;
+      imperialCredits = parseInt(charData.creditos) || 0;
+      casinoChips = parseInt(charData.fichas) || 0;
+      updateDisplays();
+      logConsole(`Operador conectado: <strong>${charData.nome}</strong>. Saldo sincronizado.`, "log-win");
+    } else {
+      logConsole("Nenhum registro de personagem vinculado a este usuário.", "log-warn");
+    }
+  } catch (err) {
+    console.error("Erro ao sincronizar com Supabase:", err);
+  }
+}
+
+// Atualizar saldo no banco de dados
+async function persistirSaldoNoBanco() {
+  const client = getSupabaseClient();
+  if (!client || !activeCharacter) return;
+
+  try {
+    await client
+      .from('personagens')
+      .update({
+        creditos: imperialCredits,
+        fichas: casinoChips,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', activeCharacter.id);
+  } catch (err) {
+    console.error("Erro ao salvar saldo:", err);
+  }
+}
+
+// Registrar eventos no logs_cassino
+async function registrarLogCassino(jogo, tipoEvento, descricao, deltaFichas = 0) {
+  const client = getSupabaseClient();
+  if (!client || !activeUser) return;
+
+  try {
+    await client.from('logs_cassino').insert([{
+      user_id: activeUser.id,
+      personagem_id: activeCharacter ? activeCharacter.id : null,
+      jogo: jogo,
+      tipo_evento: tipoEvento,
+      descricao: descricao,
+      delta_fichas: deltaFichas
+    }]);
+  } catch (err) {
+    console.warn("Falha ao registrar log de cassino:", err);
+  }
+}
 
 // ==========================================================================
-// 1. TRAVA DE NAVEGAÇÃO ENTRE JOGOS EM ANDAMENTO
+// NAVEGAÇÃO & SAÍDA
 // ==========================================================================
 function isAnyGameInProgress() {
   if (isRouletteSpinning) return "a Roleta Quântica terminar de girar";
@@ -39,7 +120,7 @@ function switchGame(gameId, buttonElement) {
   logConsole(`Interface alternada para o setor: ${gameId.toUpperCase()}`);
 }
 
-function voltarInicio() {
+async function voltarInicio() {
   const ongoing = isAnyGameInProgress();
   if (ongoing) {
     playSound('loss');
@@ -51,36 +132,34 @@ function voltarInicio() {
   if (casinoChips > 0) {
     const querDevolver = confirm(`Você ainda possui ${casinoChips} Fichas Galácticas! Deseja converter tudo de volta para ${casinoChips * 10} Créditos Imperiais antes de sair?`);
     if (querDevolver) {
-      imperialCredits += casinoChips * 10;
+      const resgate = casinoChips * 10;
+      const fichasDevolvidas = casinoChips;
+      imperialCredits += resgate;
       casinoChips = 0;
       updateDisplays();
-      logConsole("Todas as fichas foram devolvidas ao cofre central.", "log-win");
-    } else {
-      logConsole("Fichas mantidas no armazenamento de memória do Datapad.", "log-info");
+      await persistirSaldoNoBanco();
+      await registrarLogCassino('CÂMBIO', 'RESGATE_TOTAL_SAIDA', `Resgatou ${fichasDevolvidas} FG por ${resgate} CI ao sair`, -fichasDevolvidas);
     }
+  } else {
+    await persistirSaldoNoBanco();
   }
-  alert("Redirecionando para o Terminal Central");
-  window.location.href = "../menu";
+
+  window.location.href = "../menu.html";
 }
 
 // ==========================================================================
-// 2. MOTOR DE ÁUDIO SINTETIZADO (Web Audio API)
+// ÁUDIO & FUNDO VISUAL
 // ==========================================================================
 let audioCtx = null;
-
 function initAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
 function playSound(type) {
   if (audioMuted) return;
   try {
     initAudio();
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain);
@@ -132,8 +211,7 @@ function playSound(type) {
         o.stop(now + i * 0.05 + 0.25);
       });
     } else if (type === 'win') {
-      const notes = [440, 554.37, 659.25, 880];
-      notes.forEach((freq, i) => {
+      [440, 554.37, 659.25, 880].forEach((freq, i) => {
         const o = audioCtx.createOscillator();
         const g = audioCtx.createGain();
         o.connect(g);
@@ -154,9 +232,7 @@ function playSound(type) {
       osc.start(now);
       osc.stop(now + 0.25);
     }
-  } catch (e) {
-    console.error("Audio error", e);
-  }
+  } catch (e) {}
 }
 
 function toggleAudio() {
@@ -166,14 +242,9 @@ function toggleAudio() {
   logConsole(`Sintetizador de áudio ${audioMuted ? 'desativado' : 'ativado'}.`, 'log-info');
 }
 
-// ==========================================================================
-// 3. FUNDO CANVAS DE HIPERESPAÇO
-// ==========================================================================
 const canvas = document.getElementById('spaceCanvas');
 const ctx = canvas.getContext('2d');
 let stars = [];
-const STAR_COUNT = 150;
-
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -181,7 +252,7 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-for (let i = 0; i < STAR_COUNT; i++) {
+for (let i = 0; i < 150; i++) {
   stars.push({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
@@ -206,9 +277,6 @@ function renderSpace() {
 }
 renderSpace();
 
-// ==========================================================================
-// 4. ATUALIZAÇÃO DE SALDOS E LOGS
-// ==========================================================================
 function updateDisplays() {
   document.getElementById('imperialCreditsDisplay').textContent = imperialCredits.toLocaleString('pt-BR');
   document.getElementById('casinoChipsDisplay').textContent = casinoChips.toLocaleString('pt-BR');
@@ -216,6 +284,7 @@ function updateDisplays() {
 
 function logConsole(msg, type = 'log-info') {
   const stream = document.getElementById('consoleStream');
+  if (!stream) return;
   const line = document.createElement('div');
   line.className = `log-line ${type}`;
   const timestamp = new Date().toLocaleTimeString('pt-BR');
@@ -229,7 +298,7 @@ function clearConsoleLog() {
 }
 
 // ==========================================================================
-// 5. CASA DE CÂMBIO
+// CÂMBIO GALÁCTICO
 // ==========================================================================
 function openExchangeModal() {
   if (isAnyGameInProgress()) {
@@ -256,15 +325,11 @@ function updateBuyCostPreview() {
 function setBuyChips(amount) {
   playSound('click');
   const input = document.getElementById('buyChipsAmount');
-  if (amount === 'max') {
-    input.value = Math.floor(imperialCredits / 10);
-  } else {
-    input.value = amount;
-  }
+  input.value = amount === 'max' ? Math.floor(imperialCredits / 10) : amount;
   updateBuyCostPreview();
 }
 
-function executeBuyChips() {
+async function executeBuyChips() {
   const chipsToBuy = parseInt(document.getElementById('buyChipsAmount').value) || 0;
   if (chipsToBuy <= 0) {
     alert("Informe uma quantidade válida de fichas.");
@@ -282,7 +347,10 @@ function executeBuyChips() {
   casinoChips += chipsToBuy;
   updateDisplays();
   playSound('chip');
-  logConsole(`CÂMBIO REALIZADO: -${cost} CI -> +${chipsToBuy} Fichas Galácticas recebidas.`, 'log-win');
+  logConsole(`CÂMBIO: -${cost} CI -> +${chipsToBuy} FG.`, 'log-win');
+
+  await persistirSaldoNoBanco();
+  await registrarLogCassino('CÂMBIO', 'COMPRA_FICHAS', `Comprou ${chipsToBuy} FG por ${cost} CI`, chipsToBuy);
   closeExchangeModal();
 }
 
@@ -294,15 +362,11 @@ function updateSellReturnPreview() {
 function setSellChips(amount) {
   playSound('click');
   const input = document.getElementById('sellChipsAmount');
-  if (amount === 'all') {
-    input.value = casinoChips;
-  } else {
-    input.value = Math.min(amount, casinoChips);
-  }
+  input.value = amount === 'all' ? casinoChips : Math.min(amount, casinoChips);
   updateSellReturnPreview();
 }
 
-function executeSellChips() {
+async function executeSellChips() {
   const chipsToSell = parseInt(document.getElementById('sellChipsAmount').value) || 0;
   if (chipsToSell <= 0) {
     alert("Informe uma quantidade válida de fichas para devolver.");
@@ -320,25 +384,23 @@ function executeSellChips() {
   imperialCredits += revenue;
   updateDisplays();
   playSound('win');
-  logConsole(`FICHAS RESGATADAS: -${chipsToSell} Fichas -> +${revenue} Créditos Imperiais adicionados.`, 'log-win');
+  logConsole(`RESGATE: -${chipsToSell} FG -> +${revenue} CI.`, 'log-win');
+
+  await persistirSaldoNoBanco();
+  await registrarLogCassino('CÂMBIO', 'RESGATE_FICHAS', `Resgatou ${chipsToSell} FG recebendo ${revenue} CI`, -chipsToSell);
   closeExchangeModal();
 }
 
 // ==========================================================================
-// 6. MÓDULO ROLETA EUROPEIA COMPLETA
+// ROLETA QUÂNTICA
 // ==========================================================================
 const ROULETTE_NUMBERS = [
   0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 
   5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
 ];
-
 const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-const BLACK_NUMBERS = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35];
 
-let activeRouletteBets = {
-  numbers: {}, colors: {}, even_odd: {}, halves: {}, dozens: {}, columns: {}
-};
-
+let activeRouletteBets = { numbers: {}, colors: {}, even_odd: {}, halves: {}, dozens: {}, columns: {} };
 let isRouletteSpinning = false;
 const rCanvas = document.getElementById('rouletteCanvas');
 const rCtx = rCanvas.getContext('2d');
@@ -350,27 +412,17 @@ function drawRouletteWheel() {
   const cx = rCanvas.width / 2;
   const cy = rCanvas.height / 2;
   const radius = cx - 8;
-  const numSegments = ROULETTE_NUMBERS.length;
-  const arc = (Math.PI * 2) / numSegments;
+  const arc = (Math.PI * 2) / ROULETTE_NUMBERS.length;
 
   rCtx.clearRect(0, 0, rCanvas.width, rCanvas.height);
-
   rCtx.save();
   rCtx.translate(cx, cy);
   rCtx.rotate(wheelAngle);
 
-  for (let i = 0; i < numSegments; i++) {
+  for (let i = 0; i < ROULETTE_NUMBERS.length; i++) {
     const num = ROULETTE_NUMBERS[i];
     const angle = i * arc;
-
-    if (num === 0) {
-      rCtx.fillStyle = '#008a47';
-    } else if (RED_NUMBERS.includes(num)) {
-      rCtx.fillStyle = '#b01030';
-    } else {
-      rCtx.fillStyle = '#101622';
-    }
-
+    rCtx.fillStyle = num === 0 ? '#008a47' : RED_NUMBERS.includes(num) ? '#b01030' : '#101622';
     rCtx.beginPath();
     rCtx.moveTo(0, 0);
     rCtx.arc(0, 0, radius, angle, angle + arc);
@@ -388,14 +440,12 @@ function drawRouletteWheel() {
     rCtx.fillText(num, radius - 10, 4);
     rCtx.restore();
   }
-
   rCtx.restore();
 
   if (ballRadiusProgress > 0) {
     const bR = 55 + (radius - 70) * ballRadiusProgress;
     const bx = cx + Math.cos(ballAngle) * bR;
     const by = cy + Math.sin(ballAngle) * bR;
-
     rCtx.save();
     rCtx.beginPath();
     rCtx.arc(bx, by, 5, 0, Math.PI * 2);
@@ -410,7 +460,6 @@ function drawRouletteWheel() {
 function initRouletteBoard() {
   const grid = document.getElementById('rouletteNumbersGrid');
   grid.innerHTML = '';
-
   const rows = [
     [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
     [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
@@ -420,20 +469,13 @@ function initRouletteBoard() {
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 12; c++) {
       const num = rows[r][c];
-      const isRed = RED_NUMBERS.includes(num);
       const btn = document.createElement('button');
-      btn.className = `bet-spot num-cell ${isRed ? 'red' : 'black'}`;
-      btn.setAttribute('data-num', num);
+      btn.className = `bet-spot num-cell ${RED_NUMBERS.includes(num) ? 'red' : 'black'}`;
       btn.onclick = () => placeRouletteBet('number', num);
-
-      btn.innerHTML = `
-        <span>${num}</span>
-        <span class="chip-marker" id="marker-num-${num}"></span>
-      `;
+      btn.innerHTML = `<span>${num}</span><span class="chip-marker" id="marker-num-${num}"></span>`;
       grid.appendChild(btn);
     }
   }
-
   drawRouletteWheel();
 }
 
@@ -447,14 +489,13 @@ function selectChip(amount, elem) {
 
 function placeRouletteBet(category, target) {
   if (isRouletteSpinning) return;
-  playSound('chip');
-
   if (casinoChips < currentSelectedChip) {
-    logConsole("Fichas insuficientes! Abra a Casa de Câmbio para converter Créditos.", "log-loss");
+    logConsole("Fichas insuficientes! Abra a Casa de Câmbio.", "log-loss");
     playSound('loss');
     return;
   }
 
+  playSound('chip');
   casinoChips -= currentSelectedChip;
   updateDisplays();
 
@@ -482,12 +523,10 @@ function placeRouletteBet(category, target) {
   const marker = document.getElementById(markerId);
   if (marker) {
     marker.classList.add('active');
-    const currentVal = parseInt(marker.textContent || '0');
-    marker.textContent = currentVal + currentSelectedChip;
+    marker.textContent = parseInt(marker.textContent || '0') + currentSelectedChip;
   }
 
   updateRouletteTableTotal();
-  logConsole(`Aposta de ${currentSelectedChip} Ficha(s) posicionada em [${category.toUpperCase()}: ${target}].`);
 }
 
 function updateRouletteTableTotal() {
@@ -510,45 +549,40 @@ function clearRouletteBets() {
     casinoChips += total;
     updateDisplays();
   }
-
   activeRouletteBets = { numbers: {}, colors: {}, even_odd: {}, halves: {}, dozens: {}, columns: {} };
   document.querySelectorAll('.chip-marker').forEach(m => {
     m.classList.remove('active');
     m.textContent = '';
   });
-
   updateRouletteTableTotal();
-  logConsole("Todas as fichas foram recolhidas da mesa.", "log-warn");
+  logConsole("Apostas da mesa recolhidas.", "log-warn");
 }
 
 function spinRouletteWheel() {
   if (isRouletteSpinning) return;
   const totalBet = updateRouletteTableTotal();
   if (totalBet === 0) {
-    logConsole("Posicione ao menos uma ficha na mesa antes de girar!", "log-warn");
+    logConsole("Posicione ao menos uma aposta na mesa!", "log-warn");
     return;
   }
 
   isRouletteSpinning = true;
   document.getElementById('btnSpinRoulette').disabled = true;
   document.getElementById('rouletteCenterNumber').textContent = '...';
-  document.getElementById('rouletteCenterType').textContent = 'DESACELERANDO';
+  document.getElementById('rouletteCenterType').textContent = 'RODANDO';
 
   const winningNumber = ROULETTE_NUMBERS[Math.floor(Math.random() * ROULETTE_NUMBERS.length)];
   const winningIndex = ROULETTE_NUMBERS.indexOf(winningNumber);
   const arc = (Math.PI * 2) / ROULETTE_NUMBERS.length;
-
   const targetWheelAngle = Math.PI * 8 + (Math.PI * 1.5 - winningIndex * arc - arc / 2);
   const startWheelAngle = wheelAngle % (Math.PI * 2);
   const totalWheelSpin = targetWheelAngle - startWheelAngle;
 
   let startTime = null;
-  const duration = 5000;
-
   function animateRoulette(timestamp) {
     if (!startTime) startTime = timestamp;
     const elapsed = timestamp - startTime;
-    const progress = Math.min(elapsed / duration, 1);
+    const progress = Math.min(elapsed / 5000, 1);
     const easeOut = 1 - Math.pow(1 - progress, 3);
 
     wheelAngle = startWheelAngle + totalWheelSpin * easeOut;
@@ -558,70 +592,57 @@ function spinRouletteWheel() {
     if (Math.random() < 0.2) playSound('spinTick');
     drawRouletteWheel();
 
-    if (progress < 1) {
-      requestAnimationFrame(animateRoulette);
-    } else {
-      finalizeRouletteSpin(winningNumber);
-    }
+    if (progress < 1) requestAnimationFrame(animateRoulette);
+    else finalizeRouletteSpin(winningNumber, totalBet);
   }
-
   requestAnimationFrame(animateRoulette);
 }
 
-function finalizeRouletteSpin(winningNum) {
+async function finalizeRouletteSpin(winningNum, totalBet) {
   isRouletteSpinning = false;
   document.getElementById('btnSpinRoulette').disabled = false;
 
-  let numColor = 'black';
-  if (winningNum === 0) numColor = 'zero';
-  else if (RED_NUMBERS.includes(winningNum)) numColor = 'red';
-
+  let numColor = winningNum === 0 ? 'zero' : RED_NUMBERS.includes(winningNum) ? 'red' : 'black';
   document.getElementById('rouletteCenterNumber').textContent = winningNum;
   document.getElementById('rouletteCenterType').textContent = numColor.toUpperCase();
 
-  addRouletteHistory(winningNum, numColor);
+  const container = document.getElementById('rouletteHistory');
+  const chip = document.createElement('div');
+  chip.className = `hist-badge hist-${numColor}`;
+  chip.textContent = winningNum;
+  container.prepend(chip);
+  if (container.children.length > 8) container.removeChild(container.lastChild);
 
   let totalWonChips = 0;
-
-  if (activeRouletteBets.numbers[winningNum]) {
-    totalWonChips += activeRouletteBets.numbers[winningNum] * 36;
-  }
-
+  if (activeRouletteBets.numbers[winningNum]) totalWonChips += activeRouletteBets.numbers[winningNum] * 36;
   if (winningNum !== 0) {
-    if (activeRouletteBets.colors[numColor]) {
-      totalWonChips += activeRouletteBets.colors[numColor] * 2;
-    }
+    if (activeRouletteBets.colors[numColor]) totalWonChips += activeRouletteBets.colors[numColor] * 2;
     const isEven = (winningNum % 2 === 0);
-    if (isEven && activeRouletteBets.even_odd['even']) {
-      totalWonChips += activeRouletteBets.even_odd['even'] * 2;
-    } else if (!isEven && activeRouletteBets.even_odd['odd']) {
-      totalWonChips += activeRouletteBets.even_odd['odd'] * 2;
-    }
-    if (winningNum <= 18 && activeRouletteBets.halves[1]) {
-      totalWonChips += activeRouletteBets.halves[1] * 2;
-    } else if (winningNum >= 19 && activeRouletteBets.halves[2]) {
-      totalWonChips += activeRouletteBets.halves[2] * 2;
-    }
+    if (isEven && activeRouletteBets.even_odd['even']) totalWonChips += activeRouletteBets.even_odd['even'] * 2;
+    else if (!isEven && activeRouletteBets.even_odd['odd']) totalWonChips += activeRouletteBets.even_odd['odd'] * 2;
+    if (winningNum <= 18 && activeRouletteBets.halves[1]) totalWonChips += activeRouletteBets.halves[1] * 2;
+    else if (winningNum >= 19 && activeRouletteBets.halves[2]) totalWonChips += activeRouletteBets.halves[2] * 2;
     const dozen = Math.ceil(winningNum / 12);
-    if (activeRouletteBets.dozens[dozen]) {
-      totalWonChips += activeRouletteBets.dozens[dozen] * 3;
-    }
-    let col = winningNum % 3;
-    if (col === 0) col = 3;
-    if (activeRouletteBets.columns[col]) {
-      totalWonChips += activeRouletteBets.columns[col] * 3;
-    }
+    if (activeRouletteBets.dozens[dozen]) totalWonChips += activeRouletteBets.dozens[dozen] * 3;
+    let col = winningNum % 3 === 0 ? 3 : winningNum % 3;
+    if (activeRouletteBets.columns[col]) totalWonChips += activeRouletteBets.columns[col] * 3;
   }
+
+  casinoChips += totalWonChips;
+  const delta = totalWonChips - totalBet;
+  updateDisplays();
 
   if (totalWonChips > 0) {
-    casinoChips += totalWonChips;
-    updateDisplays();
     playSound('win');
-    logConsole(`VITÓRIA NA ROLETA! Setor [${winningNum} - ${numColor.toUpperCase()}]. Ganhou +${totalWonChips} Fichas!`, "log-win");
+    logConsole(`ROLETA: Venceu +${totalWonChips} FG no setor [${winningNum}]!`, "log-win");
+    await registrarLogCassino('ROLETA', 'VITORIA', `Setor [${winningNum} - ${numColor}]. Apostou ${totalBet} FG e ganhou ${totalWonChips} FG`, delta);
   } else {
     playSound('loss');
-    logConsole(`Setor [${winningNum} - ${numColor.toUpperCase()}]. Nenhuma aposta vencedora.`, "log-loss");
+    logConsole(`ROLETA: Setor [${winningNum}]. Perdeu ${totalBet} FG.`, "log-loss");
+    await registrarLogCassino('ROLETA', 'DERROTA', `Setor [${winningNum} - ${numColor}]. Apostou e perdeu ${totalBet} FG`, delta);
   }
+
+  await persistirSaldoNoBanco();
 
   activeRouletteBets = { numbers: {}, colors: {}, even_odd: {}, halves: {}, dozens: {}, columns: {} };
   document.querySelectorAll('.chip-marker').forEach(m => {
@@ -631,19 +652,8 @@ function finalizeRouletteSpin(winningNum) {
   updateRouletteTableTotal();
 }
 
-function addRouletteHistory(num, color) {
-  const container = document.getElementById('rouletteHistory');
-  const chip = document.createElement('div');
-  chip.className = `hist-badge hist-${color}`;
-  chip.textContent = num;
-  container.prepend(chip);
-  if (container.children.length > 8) {
-    container.removeChild(container.lastChild);
-  }
-}
-
 // ==========================================================================
-// 7. MOTOR DE CARTAS & BLACKJACK 21
+// BLACKJACK 21
 // ==========================================================================
 const CARD_SUITS = [
   { name: 'kyber', symbol: '♦', isRed: true },
@@ -651,16 +661,13 @@ const CARD_SUITS = [
   { name: 'beskar', symbol: '♠', isRed: false },
   { name: 'coaxium', symbol: '♣', isRed: false }
 ];
-
 const CARD_RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
 function createShuffledDeck() {
   const deck = [];
   for (let s of CARD_SUITS) {
     for (let r of CARD_RANKS) {
-      let val = parseInt(r);
-      if (['J', 'Q', 'K'].includes(r)) val = 10;
-      if (r === 'A') val = 11;
+      let val = ['J', 'Q', 'K'].includes(r) ? 10 : r === 'A' ? 11 : parseInt(r);
       deck.push({ rank: r, suit: s, value: val });
     }
   }
@@ -678,11 +685,10 @@ let bjCurrentBet = 10;
 let bjGameActive = false;
 
 function getHandScore(hand) {
-  let score = 0;
-  let aces = 0;
-  for (let card of hand) {
-    score += card.value;
-    if (card.rank === 'A') aces++;
+  let score = 0, aces = 0;
+  for (let c of hand) {
+    score += c.value;
+    if (c.rank === 'A') aces++;
   }
   while (score > 21 && aces > 0) {
     score -= 10;
@@ -695,9 +701,7 @@ function adjustBjBet(delta) {
   if (bjGameActive) return;
   playSound('click');
   const input = document.getElementById('bjBetInput');
-  let val = parseInt(input.value) + delta;
-  if (val < 1) val = 1;
-  if (val > casinoChips) val = Math.max(1, casinoChips);
+  let val = Math.max(1, Math.min(casinoChips, parseInt(input.value) + delta));
   input.value = val;
 }
 
@@ -721,10 +725,9 @@ function renderBjCard(card, isHidden = false) {
 function startBlackjackHand() {
   if (bjGameActive) return;
   const bet = parseInt(document.getElementById('bjBetInput').value) || 0;
-
   if (bet <= 0 || bet > casinoChips) {
     playSound('loss');
-    logConsole("Saldo em fichas insuficiente para esta rodada de Blackjack!", "log-loss");
+    logConsole("Saldo em fichas insuficiente!", "log-loss");
     return;
   }
 
@@ -736,22 +739,15 @@ function startBlackjackHand() {
   bjPlayerHand = [bjDeck.pop(), bjDeck.pop()];
   bjDealerHand = [bjDeck.pop(), bjDeck.pop()];
   bjGameActive = true;
-
   playSound('card');
 
   document.getElementById('bjBetControls').style.display = 'none';
   document.getElementById('bjPlayActions').style.display = 'flex';
-  document.getElementById('bjStatusBadge').textContent = `MÃO EM ANDAMENTO (APOSTA: ${bjCurrentBet} FICHAS)`;
+  document.getElementById('bjStatusBadge').textContent = `MÃO EM ANDAMENTO (APOSTA: ${bjCurrentBet} FG)`;
   document.getElementById('btnBjDouble').disabled = (casinoChips < bjCurrentBet);
 
   renderBjTable(true);
-
-  const pScore = getHandScore(bjPlayerHand);
-  if (pScore === 21) {
-    setTimeout(() => {
-      finishBlackjackRound();
-    }, 800);
-  }
+  if (getHandScore(bjPlayerHand) === 21) setTimeout(finishBlackjackRound, 800);
 }
 
 function renderBjTable(hideDealerSecondCard = false) {
@@ -760,21 +756,13 @@ function renderBjTable(hideDealerSecondCard = false) {
   pContainer.innerHTML = '';
   dContainer.innerHTML = '';
 
-  bjPlayerHand.forEach(card => pContainer.appendChild(renderBjCard(card)));
+  bjPlayerHand.forEach(c => pContainer.appendChild(renderBjCard(c)));
+  bjDealerHand.forEach((c, idx) => dContainer.appendChild(renderBjCard(c, idx === 1 && hideDealerSecondCard)));
 
-  bjDealerHand.forEach((card, idx) => {
-    const isHidden = (idx === 1 && hideDealerSecondCard);
-    dContainer.appendChild(renderBjCard(card, isHidden));
-  });
-
-  const pScore = getHandScore(bjPlayerHand);
-  document.getElementById('playerScore').textContent = `PONTOS: ${pScore}`;
-
-  if (hideDealerSecondCard) {
-    document.getElementById('dealerScore').textContent = `PONTOS: ${bjDealerHand[0].value} + ?`;
-  } else {
-    document.getElementById('dealerScore').textContent = `PONTOS: ${getHandScore(bjDealerHand)}`;
-  }
+  document.getElementById('playerScore').textContent = `PONTOS: ${getHandScore(bjPlayerHand)}`;
+  document.getElementById('dealerScore').textContent = hideDealerSecondCard 
+    ? `PONTOS: ${bjDealerHand[0].value} + ?` 
+    : `PONTOS: ${getHandScore(bjDealerHand)}`;
 }
 
 function bjPlayerHit() {
@@ -782,13 +770,8 @@ function bjPlayerHit() {
   playSound('card');
   bjPlayerHand.push(bjDeck.pop());
   document.getElementById('btnBjDouble').disabled = true;
-
   renderBjTable(true);
-  const pScore = getHandScore(bjPlayerHand);
-
-  if (pScore > 21) {
-    finishBlackjackRound();
-  }
+  if (getHandScore(bjPlayerHand) > 21) finishBlackjackRound();
 }
 
 function bjPlayerStand() {
@@ -802,18 +785,14 @@ function bjPlayerDouble() {
   casinoChips -= bjCurrentBet;
   bjCurrentBet *= 2;
   updateDisplays();
-
   playSound('chip');
-  playSound('card');
   bjPlayerHand.push(bjDeck.pop());
   renderBjTable(true);
-
   finishBlackjackRound();
 }
 
-function finishBlackjackRound() {
+async function finishBlackjackRound() {
   bjGameActive = false;
-
   let dScore = getHandScore(bjDealerHand);
   const pScore = getHandScore(bjPlayerHand);
 
@@ -823,67 +802,62 @@ function finishBlackjackRound() {
       dScore = getHandScore(bjDealerHand);
     }
   }
-
   renderBjTable(false);
 
   let prize = 0;
   let statusText = '';
-
-  const isPlayerBJ = (bjPlayerHand.length === 2 && pScore === 21);
-  const isDealerBJ = (bjDealerHand.length === 2 && dScore === 21);
+  const isPlayerBJ = bjPlayerHand.length === 2 && pScore === 21;
+  const isDealerBJ = bjDealerHand.length === 2 && dScore === 21;
 
   if (pScore > 21) {
-    statusText = `ESTOUROU! Você somou ${pScore}. Perda de ${bjCurrentBet} Fichas.`;
+    statusText = `ESTOUROU! Pontos: ${pScore}. -${bjCurrentBet} FG.`;
     playSound('loss');
     logConsole(statusText, 'log-loss');
+    await registrarLogCassino('BLACKJACK', 'ESTOUROU', `Estourou com ${pScore} pontos contra ${dScore}`, -bjCurrentBet);
   } else if (isPlayerBJ && !isDealerBJ) {
     prize = Math.floor(bjCurrentBet * 2.5);
     casinoChips += prize;
-    statusText = `BLACKJACK NATURAL! Pagamento 3:2 -> Ganhou +${prize} Fichas!`;
+    statusText = `BLACKJACK NATURAL! +${prize} FG!`;
     playSound('win');
     logConsole(statusText, 'log-win');
-  } else if (dScore > 21) {
+    await registrarLogCassino('BLACKJACK', 'BLACKJACK_NATURAL', `Blackjack natural! Recebeu ${prize} FG`, prize - bjCurrentBet);
+  } else if (dScore > 21 || pScore > dScore) {
     prize = bjCurrentBet * 2;
     casinoChips += prize;
-    statusText = `CRUPIÊ ESTOUROU (${dScore})! Vitória -> Ganhou +${prize} Fichas!`;
+    statusText = `VITÓRIA! (${pScore} vs ${dScore}). +${prize} FG!`;
     playSound('win');
     logConsole(statusText, 'log-win');
-  } else if (pScore > dScore) {
-    prize = bjCurrentBet * 2;
-    casinoChips += prize;
-    statusText = `VITÓRIA TÁTICA! ${pScore} contra ${dScore} do Crupiê -> +${prize} Fichas!`;
-    playSound('win');
-    logConsole(statusText, 'log-win');
+    await registrarLogCassino('BLACKJACK', 'VITORIA', `Venceu o crupiê (${pScore} vs ${dScore}) recebendo ${prize} FG`, prize - bjCurrentBet);
   } else if (pScore === dScore) {
     prize = bjCurrentBet;
     casinoChips += prize;
-    statusText = `EMPATE (PUSH)! Ambos somaram ${pScore}. Fichas devolvidas.`;
+    statusText = `EMPATE! ${pScore} pontos. Fichas devolvidas.`;
     playSound('chip');
     logConsole(statusText, 'log-info');
+    await registrarLogCassino('BLACKJACK', 'EMPATE', `Empatou com ${pScore} pontos`, 0);
   } else {
-    statusText = `CRUPIÊ VENCEU com ${dScore} contra seus ${pScore}. -${bjCurrentBet} Fichas.`;
+    statusText = `CRUPIÊ VENCEU (${dScore} vs ${pScore}). -${bjCurrentBet} FG.`;
     playSound('loss');
     logConsole(statusText, 'log-loss');
+    await registrarLogCassino('BLACKJACK', 'DERROTA', `Derrota (${pScore} vs ${dScore})`, -bjCurrentBet);
   }
 
   updateDisplays();
-  document.getElementById('bjStatusBadge').textContent = statusText;
+  await persistirSaldoNoBanco();
 
+  document.getElementById('bjStatusBadge').textContent = statusText;
   document.getElementById('bjBetControls').style.display = 'flex';
   document.getElementById('bjPlayActions').style.display = 'none';
 }
 
 // ==========================================================================
-// 8. MÓDULO TEXAS HOLD'EM 1v1 (COM SISTEMA DE ALL-IN)
+// TEXAS HOLD'EM 1v1
 // ==========================================================================
-const RANK_VALUES_POKER = {
-  '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
-  '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
-};
+const RANK_VALUES_POKER = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
 
 let pokerState = {
   active: false,
-  phase: 'preflop', // 'preflop', 'flop', 'turn', 'river', 'showdown'
+  phase: 'preflop',
   deck: [],
   playerHand: [],
   dealerHand: [],
@@ -900,10 +874,7 @@ function adjustPokerBlind(delta) {
   if (pokerState.active) return;
   playSound('click');
   const input = document.getElementById('pokerBlindInput');
-  let val = parseInt(input.value) + delta;
-  if (val < 2) val = 2;
-  if (val > casinoChips) val = Math.max(2, casinoChips);
-  input.value = val;
+  input.value = Math.max(2, Math.min(casinoChips, parseInt(input.value) + delta));
 }
 
 function setPokerBlindMax() {
@@ -912,24 +883,13 @@ function setPokerBlindMax() {
   document.getElementById('pokerBlindInput').value = Math.max(2, casinoChips);
 }
 
-// Avaliador Universal de Mãos de Poker (Texas Hold'em 7 cartas)
 function evaluatePokerHand(allCards) {
-  const cards = allCards.map(c => ({
-    rank: c.rank,
-    val: RANK_VALUES_POKER[c.rank],
-    suit: c.suit.name
-  }));
-
+  const cards = allCards.map(c => ({ rank: c.rank, val: RANK_VALUES_POKER[c.rank], suit: c.suit.name }));
   function get5CardCombinations(arr) {
     const results = [];
     function helper(start, combo) {
-      if (combo.length === 5) {
-        results.push(combo);
-        return;
-      }
-      for (let i = start; i < arr.length; i++) {
-        helper(i + 1, combo.concat([arr[i]]));
-      }
+      if (combo.length === 5) { results.push(combo); return; }
+      for (let i = start; i < arr.length; i++) helper(i + 1, combo.concat([arr[i]]));
     }
     helper(0, []);
     return results;
@@ -937,10 +897,8 @@ function evaluatePokerHand(allCards) {
 
   function score5Cards(hand) {
     hand.sort((a, b) => b.val - a.val);
-
     const isFlush = hand.every(c => c.suit === hand[0].suit);
-    let isStraight = false;
-    let straightHigh = 0;
+    let isStraight = false, straightHigh = 0;
     const uniqueVals = [...new Set(hand.map(c => c.val))];
 
     if (uniqueVals.length === 5) {
@@ -958,65 +916,30 @@ function evaluatePokerHand(allCards) {
     const countPairs = Object.entries(counts).map(([v, count]) => ({ val: parseInt(v), count }));
     countPairs.sort((a, b) => b.count - a.count || b.val - a.val);
 
-    if (isFlush && isStraight) {
-      if (straightHigh === 14) return { rank: 9, name: 'Royal Flush', score: 9000000 + straightHigh };
-      return { rank: 8, name: 'Straight Flush', score: 8000000 + straightHigh };
-    }
+    if (isFlush && isStraight) return { rank: straightHigh === 14 ? 9 : 8, name: straightHigh === 14 ? 'Royal Flush' : 'Straight Flush', score: 8000000 + straightHigh };
+    if (countPairs[0].count === 4) return { rank: 7, name: 'Quadra', score: 7000000 + countPairs[0].val * 100 + countPairs[1].val };
+    if (countPairs[0].count === 3 && countPairs[1].count === 2) return { rank: 6, name: 'Full House', score: 6000000 + countPairs[0].val * 100 + countPairs[1].val };
+    if (isFlush) return { rank: 5, name: 'Flush', score: 5000000 + hand.reduce((a, c, i) => a + c.val * Math.pow(15, 4 - i), 0) };
+    if (isStraight) return { rank: 4, name: 'Sequência', score: 4000000 + straightHigh };
+    if (countPairs[0].count === 3) return { rank: 3, name: 'Trinca', score: 3000000 + countPairs[0].val * 1000 + countPairs[1].val * 15 + countPairs[2].val };
+    if (countPairs[0].count === 2 && countPairs[1].count === 2) return { rank: 2, name: 'Dois Pares', score: 2000000 + countPairs[0].val * 1000 + countPairs[1].val * 50 + countPairs[2].val };
+    if (countPairs[0].count === 2) return { rank: 1, name: 'Um Par', score: 1000000 + countPairs[0].val * 10000 + countPairs[1].val * 200 + countPairs[2].val * 15 + countPairs[3].val };
 
-    if (countPairs[0].count === 4) {
-      return { rank: 7, name: 'Quadra (Four of a Kind)', score: 7000000 + countPairs[0].val * 100 + countPairs[1].val };
-    }
-
-    if (countPairs[0].count === 3 && countPairs[1].count === 2) {
-      return { rank: 6, name: 'Full House', score: 6000000 + countPairs[0].val * 100 + countPairs[1].val };
-    }
-
-    if (isFlush) {
-      const tieBreaker = hand.reduce((acc, c, idx) => acc + c.val * Math.pow(15, 4 - idx), 0);
-      return { rank: 5, name: 'Flush Galáctico', score: 5000000 + tieBreaker };
-    }
-
-    if (isStraight) {
-      return { rank: 4, name: 'Sequência (Straight)', score: 4000000 + straightHigh };
-    }
-
-    if (countPairs[0].count === 3) {
-      return { rank: 3, name: 'Trinca (3 of a Kind)', score: 3000000 + countPairs[0].val * 1000 + countPairs[1].val * 15 + countPairs[2].val };
-    }
-
-    if (countPairs[0].count === 2 && countPairs[1].count === 2) {
-      return { rank: 2, name: 'Dois Pares', score: 2000000 + countPairs[0].val * 1000 + countPairs[1].val * 50 + countPairs[2].val };
-    }
-
-    if (countPairs[0].count === 2) {
-      return { rank: 1, name: 'Um Par', score: 1000000 + countPairs[0].val * 10000 + countPairs[1].val * 200 + countPairs[2].val * 15 + countPairs[3].val };
-    }
-
-    const tieBreaker = hand.reduce((acc, c, idx) => acc + c.val * Math.pow(15, 4 - idx), 0);
-    return { rank: 0, name: `Carta Alta (${hand[0].rank})`, score: tieBreaker };
+    return { rank: 0, name: `Carta Alta (${hand[0].rank})`, score: hand.reduce((a, c, i) => a + c.val * Math.pow(15, 4 - i), 0) };
   }
 
-  const allCombos = get5CardCombinations(cards);
-  let bestScore = { rank: -1, score: -1, name: '' };
-
-  for (let combo of allCombos) {
-    const evaluated = score5Cards(combo);
-    if (evaluated.score > bestScore.score) {
-      bestScore = evaluated;
-    }
-  }
-
-  return bestScore;
+  return get5CardCombinations(cards).reduce((best, combo) => {
+    const ev = score5Cards(combo);
+    return ev.score > best.score ? ev : best;
+  }, { rank: -1, score: -1, name: '' });
 }
 
-// Inicia a Mão de Hold'em
 function startHoldemHand() {
   if (pokerState.active) return;
   const blind = parseInt(document.getElementById('pokerBlindInput').value) || 10;
-
   if (blind > casinoChips || blind <= 0) {
     playSound('loss');
-    logConsole("Fichas insuficientes para os Blinds do Pôquer!", "log-loss");
+    logConsole("Fichas insuficientes!", "log-loss");
     return;
   }
 
@@ -1037,11 +960,9 @@ function startHoldemHand() {
   pokerState.minRaise = Math.max(5, blind);
 
   playSound('card');
-
   document.getElementById('pokerStartControls').style.display = 'none';
   document.getElementById('pokerTurnActions').style.display = 'flex';
   document.getElementById('pokerDealerEval').textContent = "CARTAS OCULTAS";
-  
   updatePokerHUD();
   renderPokerTable(true);
   updatePokerTurnButtons();
@@ -1058,32 +979,21 @@ function updatePokerHUD() {
   document.getElementById('pokerCallBtnAmount').textContent = toCall;
   document.getElementById('pokerAllInBtnAmount').textContent = casinoChips;
 
-  // Avalia mão atual do jogador
   const playerEvalCards = [...pokerState.playerHand, ...pokerState.communityCards];
-  if (playerEvalCards.length >= 5) {
-    const ev = evaluatePokerHand(playerEvalCards);
-    document.getElementById('pokerPlayerEval').textContent = `MÃO: ${ev.name.toUpperCase()}`;
-  } else {
-    document.getElementById('pokerPlayerEval').textContent = `MÃO: ${pokerState.playerHand[0].rank} & ${pokerState.playerHand[1].rank}`;
-  }
+  document.getElementById('pokerPlayerEval').textContent = playerEvalCards.length >= 5
+    ? `MÃO: ${evaluatePokerHand(playerEvalCards).name.toUpperCase()}`
+    : `MÃO: ${pokerState.playerHand[0].rank} & ${pokerState.playerHand[1].rank}`;
 }
 
 function updatePokerTurnButtons() {
   const toCall = pokerState.currentHighBet - pokerState.playerRoundBet;
-  
-  if (toCall === 0) {
-    document.getElementById('btnPokerCheck').style.display = 'inline-flex';
-    document.getElementById('btnPokerCall').style.display = 'none';
-  } else {
-    document.getElementById('btnPokerCheck').style.display = 'none';
-    document.getElementById('btnPokerCall').style.display = 'inline-flex';
-    document.getElementById('btnPokerCall').disabled = (casinoChips < toCall);
-  }
+  document.getElementById('btnPokerCheck').style.display = toCall === 0 ? 'inline-flex' : 'none';
+  document.getElementById('btnPokerCall').style.display = toCall === 0 ? 'none' : 'inline-flex';
+  document.getElementById('btnPokerCall').disabled = (casinoChips < toCall);
 
   const raiseInput = document.getElementById('pokerRaiseAmountInput');
   raiseInput.min = pokerState.minRaise;
   raiseInput.value = Math.max(pokerState.minRaise, toCall + pokerState.minRaise);
-
   document.getElementById('btnPokerRaise').disabled = (casinoChips <= toCall);
   document.getElementById('btnPokerAllIn').disabled = (casinoChips === 0);
 }
@@ -1092,54 +1002,42 @@ function renderPokerTable(hideDealer = true) {
   const pCards = document.getElementById('pokerPlayerCards');
   const dCards = document.getElementById('pokerDealerCards');
   const cCards = document.getElementById('pokerCommunityCards');
-
   pCards.innerHTML = '';
   dCards.innerHTML = '';
   cCards.innerHTML = '';
-
   pokerState.playerHand.forEach(c => pCards.appendChild(renderBjCard(c)));
   pokerState.dealerHand.forEach(c => dCards.appendChild(renderBjCard(c, hideDealer)));
   pokerState.communityCards.forEach(c => cCards.appendChild(renderBjCard(c)));
 }
 
-// Ações do Jogador
-function pokerActionFold() {
+async function pokerActionFold() {
   if (!pokerState.active) return;
   playSound('loss');
-  
   pokerState.active = false;
-  document.getElementById('pokerStatusBadge').textContent = `VOCÊ DESISTIU (FOLD)! Pote de ${pokerState.pot} FG recolhido pelo Crupiê.`;
-  logConsole(`PÔQUER: Você desistiu. Perda de ${pokerState.playerRoundBet} FG nesta mão.`, 'log-loss');
-
+  document.getElementById('pokerStatusBadge').textContent = `VOCÊ DESISTIU (FOLD)!`;
+  logConsole(`PÔQUER: Desistência. Perda de ${pokerState.playerRoundBet} FG.`, 'log-loss');
+  
+  await persistirSaldoNoBanco();
+  await registrarLogCassino('POKER', 'FOLD', `Desistiu da mão (Fold). Perda de ${pokerState.playerRoundBet} FG`, -pokerState.playerRoundBet);
   endPokerHandUI();
 }
 
 function pokerActionCheck() {
   if (!pokerState.active) return;
   playSound('click');
-  logConsole("PÔQUER: Você deu Mesa (Check).", "log-info");
-
   dealerTurnDecision('check');
 }
 
 function pokerActionCall() {
   if (!pokerState.active) return;
   const toCall = pokerState.currentHighBet - pokerState.playerRoundBet;
-  
-  if (casinoChips < toCall) {
-    playSound('loss');
-    logConsole("Fichas insuficientes para pagar a aposta!", "log-loss");
-    return;
-  }
+  if (casinoChips < toCall) return;
 
   casinoChips -= toCall;
   pokerState.playerRoundBet += toCall;
   pokerState.pot += toCall;
   updateDisplays();
-
   playSound('chip');
-  logConsole(`PÔQUER: Você pagou (Call) ${toCall} FG.`, "log-info");
-
   advancePokerPhase();
 }
 
@@ -1148,29 +1046,19 @@ function pokerActionRaise() {
   const raiseVal = parseInt(document.getElementById('pokerRaiseAmountInput').value) || pokerState.minRaise;
   const toCall = pokerState.currentHighBet - pokerState.playerRoundBet;
   const totalNeeded = toCall + raiseVal;
-
-  if (casinoChips < totalNeeded) {
-    playSound('loss');
-    logConsole("Fichas insuficientes para aumentar a aposta! Use All-In.", "log-loss");
-    return;
-  }
+  if (casinoChips < totalNeeded) return;
 
   casinoChips -= totalNeeded;
   pokerState.playerRoundBet += totalNeeded;
   pokerState.pot += totalNeeded;
   pokerState.currentHighBet = pokerState.playerRoundBet;
   updateDisplays();
-
   playSound('chip');
-  logConsole(`PÔQUER: Você aumentou (Raise) em +${raiseVal} FG! (Total apostado: ${pokerState.playerRoundBet} FG)`, "log-win");
-
   dealerTurnDecision('facing_raise', totalNeeded);
 }
 
-// SISTEMA DE ALL-IN DO JOGADOR
 function pokerActionAllIn() {
   if (!pokerState.active || casinoChips <= 0) return;
-  
   const allInAmount = casinoChips;
   casinoChips = 0;
   pokerState.playerRoundBet += allInAmount;
@@ -1178,33 +1066,16 @@ function pokerActionAllIn() {
   pokerState.currentHighBet = Math.max(pokerState.currentHighBet, pokerState.playerRoundBet);
   pokerState.isAllIn = true;
   updateDisplays();
-
   playSound('allin');
-  document.getElementById('pokerStatusBadge').textContent = `⚡ ALL-IN DO JOGADOR! ${allInAmount} FICHAS NO POTE!`;
-  logConsole(`⚡ ALL-IN! Você arriscou todas as suas ${allInAmount} Fichas Galácticas!`, 'log-warn');
-  
-  updatePokerHUD();
-
   dealerTurnDecision('facing_allin', allInAmount);
 }
 
-// IA do Crupiê Androide
 function dealerTurnDecision(context, raiseAmount = 0) {
   updatePokerHUD();
   const currentDealerCards = [...pokerState.dealerHand, ...pokerState.communityCards];
-  let dealerStrength = 0;
-  
-  if (currentDealerCards.length >= 5) {
-    const ev = evaluatePokerHand(currentDealerCards);
-    dealerStrength = ev.rank;
-  } else {
-    const r1 = RANK_VALUES_POKER[pokerState.dealerHand[0].rank];
-    const r2 = RANK_VALUES_POKER[pokerState.dealerHand[1].rank];
-    if (r1 === r2) dealerStrength = 2;
-    else if (r1 >= 10 || r2 >= 10) dealerStrength = 1;
-  }
+  let dealerStrength = currentDealerCards.length >= 5 ? evaluatePokerHand(currentDealerCards).rank : 0;
 
-  setTimeout(() => {
+  setTimeout(async () => {
     if (context === 'check') {
       if (dealerStrength >= 2 && Math.random() < 0.6) {
         const dBet = 10;
@@ -1212,12 +1083,10 @@ function dealerTurnDecision(context, raiseAmount = 0) {
         pokerState.pot += dBet;
         pokerState.currentHighBet = pokerState.dealerRoundBet;
         playSound('chip');
-        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ APOSTOU ${dBet} FG! PAGUE (CALL), AUMENTE OU ALL-IN.`;
-        logConsole(`CRUPIÊ: Apostou +${dBet} FG na mesa!`, 'log-warn');
+        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ APOSTOU ${dBet} FG!`;
         updatePokerHUD();
         updatePokerTurnButtons();
       } else {
-        logConsole("CRUPIÊ: Deu Mesa (Check). Avançando rodada...", "log-info");
         advancePokerPhase();
       }
     } else if (context === 'facing_raise') {
@@ -1226,67 +1095,56 @@ function dealerTurnDecision(context, raiseAmount = 0) {
         pokerState.dealerRoundBet += toCallDealer;
         pokerState.pot += toCallDealer;
         playSound('chip');
-        logConsole(`CRUPIÊ: Pagou o seu Raise (+${toCallDealer} FG).`, "log-info");
         advancePokerPhase();
       } else {
         playSound('win');
         casinoChips += pokerState.pot;
         updateDisplays();
-        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ DESISTIU (FOLD)! Você venceu o pote de ${pokerState.pot} FG!`;
-        logConsole(`PÔQUER: Crupiê desistiu! Você levou o pote de +${pokerState.pot} FG!`, 'log-win');
+        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ DESISTIU! Ganhou ${pokerState.pot} FG!`;
         pokerState.active = false;
+        await persistirSaldoNoBanco();
+        await registrarLogCassino('POKER', 'CRUPIE_FOLD', `Crupiê desistiu perante o Raise. Ganhou ${pokerState.pot} FG`, pokerState.pot - pokerState.playerRoundBet);
         endPokerHandUI();
       }
     } else if (context === 'facing_allin') {
       const toCallDealer = pokerState.currentHighBet - pokerState.dealerRoundBet;
-      
-      if (dealerStrength >= 1 || (dealerStrength === 0 && Math.random() < 0.25)) {
+      if (dealerStrength >= 1 || Math.random() < 0.3) {
         pokerState.dealerRoundBet += toCallDealer;
         pokerState.pot += toCallDealer;
         playSound('allin');
-        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ PAGOU SEU ALL-IN (+${toCallDealer} FG)! REVELANDO O BORDO...`;
-        logConsole(`⚡ CRUPIÊ: Aceitou e pagou o seu ALL-IN! Distribuindo cartas restantes...`, 'log-warn');
-        
         runAllInShowdownSequence();
       } else {
         playSound('win');
         casinoChips += pokerState.pot;
         updateDisplays();
-        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ FOLDOU DIANTE DO ALL-IN! Pote total de ${pokerState.pot} FG é seu!`;
-        logConsole(`PÔQUER: Crupiê não pagou o All-In. Você recolheu +${pokerState.pot} FG!`, 'log-win');
+        document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ FOLDOU DIANTE DO ALL-IN! Ganhou ${pokerState.pot} FG!`;
         pokerState.active = false;
+        await persistirSaldoNoBanco();
+        await registrarLogCassino('POKER', 'ALLIN_FOLD', `Crupiê desistiu do All-In. Ganhou ${pokerState.pot} FG`, pokerState.pot - pokerState.playerRoundBet);
         endPokerHandUI();
       }
     }
   }, 750);
 }
 
-// Sequência dramática de cartas quando o All-In é pago
 function runAllInShowdownSequence() {
   document.getElementById('pokerTurnActions').style.display = 'none';
-
   function revealNextCommunityCard() {
     if (pokerState.communityCards.length < 3) {
       pokerState.communityCards.push(pokerState.deck.pop(), pokerState.deck.pop(), pokerState.deck.pop());
     } else if (pokerState.communityCards.length < 5) {
       pokerState.communityCards.push(pokerState.deck.pop());
     }
-    
     playSound('card');
     renderPokerTable(true);
     updatePokerHUD();
 
-    if (pokerState.communityCards.length < 5) {
-      setTimeout(revealNextCommunityCard, 900);
-    } else {
-      setTimeout(finalizePokerShowdown, 1000);
-    }
+    if (pokerState.communityCards.length < 5) setTimeout(revealNextCommunityCard, 900);
+    else setTimeout(finalizePokerShowdown, 1000);
   }
-
   setTimeout(revealNextCommunityCard, 800);
 }
 
-// Avanço Normal de Fases
 function advancePokerPhase() {
   pokerState.playerRoundBet = 0;
   pokerState.dealerRoundBet = 0;
@@ -1295,32 +1153,26 @@ function advancePokerPhase() {
   if (pokerState.phase === 'preflop') {
     pokerState.phase = 'flop';
     pokerState.communityCards.push(pokerState.deck.pop(), pokerState.deck.pop(), pokerState.deck.pop());
-    playSound('card');
-    document.getElementById('pokerStatusBadge').textContent = "FLOP NA MESA! AVALIE SUAS CARTAS E DEFINA A APOSTA.";
   } else if (pokerState.phase === 'flop') {
     pokerState.phase = 'turn';
     pokerState.communityCards.push(pokerState.deck.pop());
-    playSound('card');
-    document.getElementById('pokerStatusBadge').textContent = "TURN NA MESA! QUARTA CARTA COMUNITÁRIA ABERTA.";
   } else if (pokerState.phase === 'turn') {
     pokerState.phase = 'river';
     pokerState.communityCards.push(pokerState.deck.pop());
-    playSound('card');
-    document.getElementById('pokerStatusBadge').textContent = "RIVER NA MESA! ÚLTIMA RODADA DE APOSTAS ANTES DO SHOWDOWN.";
   } else if (pokerState.phase === 'river') {
     finalizePokerShowdown();
     return;
   }
 
+  playSound('card');
   renderPokerTable(true);
   updatePokerHUD();
   updatePokerTurnButtons();
 }
 
-function finalizePokerShowdown() {
+async function finalizePokerShowdown() {
   pokerState.phase = 'showdown';
   pokerState.active = false;
-
   renderPokerTable(false);
 
   const playerEval = evaluatePokerHand([...pokerState.playerHand, ...pokerState.communityCards]);
@@ -1331,26 +1183,25 @@ function finalizePokerShowdown() {
 
   if (playerEval.score > dealerEval.score) {
     casinoChips += pokerState.pot;
-    updateDisplays();
     playSound('win');
-    const msg = `SHOWDOWN VITORIOSO! Seu ${playerEval.name} venceu ${dealerEval.name} do Crupiê! Ganhou o Pote de +${pokerState.pot} FG!`;
+    const msg = `SHOWDOWN VITORIOSO! (${playerEval.name}). Ganhou +${pokerState.pot} FG!`;
     document.getElementById('pokerStatusBadge').textContent = msg;
     logConsole(msg, 'log-win');
+    await registrarLogCassino('POKER', 'VITORIA_SHOWDOWN', `Venceu showdown com ${playerEval.name} vs ${dealerEval.name}`, pokerState.pot - pokerState.playerRoundBet);
   } else if (playerEval.score === dealerEval.score) {
     const split = Math.floor(pokerState.pot / 2);
     casinoChips += split;
-    updateDisplays();
     playSound('chip');
-    const msg = `EMPATE NO SHOWDOWN (${playerEval.name})! Pote dividido: +${split} FG.`;
-    document.getElementById('pokerStatusBadge').textContent = msg;
-    logConsole(msg, 'log-info');
+    document.getElementById('pokerStatusBadge').textContent = `EMPATE NO SHOWDOWN! +${split} FG.`;
+    await registrarLogCassino('POKER', 'EMPATE_SHOWDOWN', `Empate com ${playerEval.name}`, 0);
   } else {
     playSound('loss');
-    const msg = `CRUPIÊ VENCEU NO SHOWDOWN com ${dealerEval.name} contra seu ${playerEval.name}. Pote perdido.`;
-    document.getElementById('pokerStatusBadge').textContent = msg;
-    logConsole(msg, 'log-loss');
+    document.getElementById('pokerStatusBadge').textContent = `CRUPIÊ VENCEU NO SHOWDOWN (${dealerEval.name}).`;
+    await registrarLogCassino('POKER', 'DERROTA_SHOWDOWN', `Derrota no showdown (${playerEval.name} vs ${dealerEval.name})`, -pokerState.playerRoundBet);
   }
 
+  updateDisplays();
+  await persistirSaldoNoBanco();
   endPokerHandUI();
 }
 
@@ -1360,7 +1211,7 @@ function endPokerHandUI() {
 }
 
 // ==========================================================================
-// 9. MÓDULO SLOTS MATRIX (EM FICHAS)
+// SLOTS MATRIX
 // ==========================================================================
 const SLOT_SYMBOLS = ['⚔️', '💎', '🪐', '🚀', '⚡', '👾'];
 let isSlotSpinning = false;
@@ -1370,10 +1221,9 @@ function buildSlotReels() {
     const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
     strip.innerHTML = '';
     for (let i = 0; i < 20; i++) {
-      const sym = SLOT_SYMBOLS[i % SLOT_SYMBOLS.length];
       const div = document.createElement('div');
       div.className = 'slot-symbol-item';
-      div.textContent = sym;
+      div.textContent = SLOT_SYMBOLS[i % SLOT_SYMBOLS.length];
       strip.appendChild(div);
     }
   }
@@ -1383,10 +1233,7 @@ function adjustSlotBet(delta) {
   if (isSlotSpinning) return;
   playSound('click');
   const input = document.getElementById('slotBetInput');
-  let val = parseInt(input.value) + delta;
-  if (val < 1) val = 1;
-  if (val > casinoChips) val = Math.max(1, casinoChips);
-  input.value = val;
+  input.value = Math.max(1, Math.min(casinoChips, parseInt(input.value) + delta));
 }
 
 function setSlotBetMax() {
@@ -1398,9 +1245,8 @@ function setSlotBetMax() {
 function spinSlotMachine() {
   if (isSlotSpinning) return;
   const bet = parseInt(document.getElementById('slotBetInput').value);
-
   if (bet > casinoChips || bet <= 0) {
-    logConsole("Fichas insuficientes para acionar as bobinas de Coaxium!", "log-loss");
+    logConsole("Fichas insuficientes!", "log-loss");
     playSound('loss');
     return;
   }
@@ -1411,46 +1257,41 @@ function spinSlotMachine() {
   document.getElementById('btnSpinSlot').disabled = true;
 
   const results = [];
-
   for (let c = 0; c < 3; c++) {
     const targetIdx = Math.floor(Math.random() * SLOT_SYMBOLS.length);
     results.push(SLOT_SYMBOLS[targetIdx]);
-    
     const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
-    const offset = (10 + targetIdx) * 150;
-    
     strip.style.transition = `transform ${2.5 + c * 0.5}s cubic-bezier(0.1, 0.9, 0.2, 1)`;
-    strip.style.transform = `translateY(-${offset}px)`;
+    strip.style.transform = `translateY(-${(10 + targetIdx) * 150}px)`;
   }
 
-  setTimeout(() => {
+  setTimeout(async () => {
     isSlotSpinning = false;
     document.getElementById('btnSpinSlot').disabled = false;
-
     const [s1, s2, s3] = results;
-    if (s1 === s2 && s2 === s3) {
-      let mult = 10;
-      if (s1 === '⚔️') mult = 50;
-      else if (s1 === '💎') mult = 25;
-      else if (s1 === '🪐') mult = 15;
-      else if (s1 === '🚀') mult = 10;
-      else if (s1 === '⚡') mult = 5;
 
+    if (s1 === s2 && s2 === s3) {
+      let mult = s1 === '⚔️' ? 50 : s1 === '💎' ? 25 : s1 === '🪐' ? 15 : s1 === '🚀' ? 10 : 5;
       const prize = bet * mult;
       casinoChips += prize;
       updateDisplays();
       playSound('win');
-      logConsole(`HIPER-ALINHAMENTO TRIPLO [${s1} ${s2} ${s3}]! Ganhou +${prize} Fichas (x${mult})!`, "log-win");
+      logConsole(`HIPER-ALINHAMENTO [${s1} ${s2} ${s3}]! +${prize} FG (x${mult})!`, "log-win");
+      await registrarLogCassino('SLOTS', 'TRIPLO', `Alinhamento [${s1} ${s2} ${s3}] (x${mult}). Ganhou ${prize} FG`, prize - bet);
     } else if (s1 === s2 || s2 === s3 || s1 === s3) {
       const prize = bet * 2;
       casinoChips += prize;
       updateDisplays();
       playSound('win');
-      logConsole(`Duplicata detectada [${s1} ${s2} ${s3}]. Retorno: +${prize} Fichas.`, "log-win");
+      logConsole(`Par alinhado [${s1} ${s2} ${s3}]. +${prize} FG.`, "log-win");
+      await registrarLogCassino('SLOTS', 'DUPLA', `Duplicata [${s1} ${s2} ${s3}]. Ganhou ${prize} FG`, prize - bet);
     } else {
       playSound('loss');
-      logConsole(`Sem alinhamento de Coaxium [${s1} ${s2} ${s3}]. -${bet} Fichas.`, "log-loss");
+      logConsole(`Sem alinhamento [${s1} ${s2} ${s3}]. -${bet} FG.`, "log-loss");
+      await registrarLogCassino('SLOTS', 'DERROTA', `Sem alinhamento [${s1} ${s2} ${s3}]. Perdeu ${bet} FG`, -bet);
     }
+
+    await persistirSaldoNoBanco();
 
     setTimeout(() => {
       for (let c = 0; c < 3; c++) {
@@ -1459,21 +1300,19 @@ function spinSlotMachine() {
         strip.style.transform = 'translateY(0px)';
       }
     }, 1000);
-
   }, 3600);
 }
 
 // ==========================================================================
-// 10. MÓDULO DADOS SABACC 3D (EM FICHAS)
+// DADOS DE SABACC
 // ==========================================================================
 let isSabaccRolling = false;
 
 function rollSabaccDice(choice) {
   if (isSabaccRolling) return;
   const bet = parseInt(document.getElementById('sabaccBetInput').value);
-
   if (bet > casinoChips || bet <= 0) {
-    logConsole("Fichas insuficientes para apostar nos dados!", "log-loss");
+    logConsole("Fichas insuficientes!", "log-loss");
     playSound('loss');
     return;
   }
@@ -1488,62 +1327,45 @@ function rollSabaccDice(choice) {
   const sum = d1 + d2;
 
   const cubeRotations = {
-    1: { x: 0, y: 0 },
-    2: { x: -90, y: 0 },
-    3: { x: 0, y: -90 },
-    4: { x: 0, y: 90 },
-    5: { x: 90, y: 0 },
-    6: { x: 0, y: 180 }
+    1: { x: 0, y: 0 }, 2: { x: -90, y: 0 }, 3: { x: 0, y: -90 },
+    4: { x: 0, y: 90 }, 5: { x: 90, y: 0 }, 6: { x: 0, y: 180 }
   };
 
-  const rot1 = cubeRotations[d1];
-  const rot2 = cubeRotations[d2];
+  document.getElementById('cube1').style.transform = `rotateX(${cubeRotations[d1].x + 720}deg) rotateY(${cubeRotations[d1].y + 720}deg)`;
+  document.getElementById('cube2').style.transform = `rotateX(${cubeRotations[d2].x + 1080}deg) rotateY(${cubeRotations[d2].y + 1080}deg)`;
 
-  const cube1 = document.getElementById('cube1');
-  const cube2 = document.getElementById('cube2');
-
-  cube1.style.transform = `rotateX(${rot1.x + 720}deg) rotateY(${rot1.y + 720}deg)`;
-  cube2.style.transform = `rotateX(${rot2.x + 1080}deg) rotateY(${rot2.y + 1080}deg)`;
-
-  setTimeout(() => {
+  setTimeout(async () => {
     isSabaccRolling = false;
     document.getElementById('sabaccDie1Val').textContent = d1;
     document.getElementById('sabaccDie2Val').textContent = d2;
     document.getElementById('sabaccSumVal').textContent = sum;
 
-    let won = false;
-    let mult = 0;
-
-    if (choice === 'low' && sum >= 2 && sum <= 6) {
-      won = true;
-      mult = 2.0;
-    } else if (choice === 'high' && sum >= 8 && sum <= 12) {
-      won = true;
-      mult = 2.0;
-    } else if (choice === 'seven' && sum === 7) {
-      won = true;
-      mult = 4.5;
-    } else if (choice === 'double' && d1 === d2) {
-      won = true;
-      mult = 5.5;
-    }
+    let won = false, mult = 0;
+    if (choice === 'low' && sum >= 2 && sum <= 6) { won = true; mult = 2.0; }
+    else if (choice === 'high' && sum >= 8 && sum <= 12) { won = true; mult = 2.0; }
+    else if (choice === 'seven' && sum === 7) { won = true; mult = 4.5; }
+    else if (choice === 'double' && d1 === d2) { won = true; mult = 5.5; }
 
     if (won) {
       const prize = Math.floor(bet * mult);
       casinoChips += prize;
       updateDisplays();
       playSound('win');
-      logConsole(`SABACC VITORIOSO! Dados [${d1}, ${d2}] -> Soma ${sum}. Ganhou +${prize} Fichas (x${mult})!`, "log-win");
+      logConsole(`SABACC: Dados [${d1}, ${d2}] -> Soma ${sum}. Ganhou +${prize} FG!`, "log-win");
+      await registrarLogCassino('SABACC', 'VITORIA', `Aposta ${choice} ganha com dados [${d1}, ${d2}]. Recebeu ${prize} FG`, prize - bet);
     } else {
       playSound('loss');
-      logConsole(`Dados [${d1}, ${d2}] -> Soma ${sum}. Aposta perdida: -${bet} Fichas.`, "log-loss");
+      logConsole(`SABACC: Dados [${d1}, ${d2}] -> Soma ${sum}. -${bet} FG.`, "log-loss");
+      await registrarLogCassino('SABACC', 'DERROTA', `Aposta ${choice} perdida com dados [${d1}, ${d2}]`, -bet);
     }
+
+    await persistirSaldoNoBanco();
   }, 2200);
 }
 
-// Inicialização Global
-window.addEventListener('DOMContentLoaded', () => {
+// Inicialização Geral
+window.addEventListener('DOMContentLoaded', async () => {
   initRouletteBoard();
   buildSlotReels();
-  updateDisplays();
+  await initCasinoSession();
 });
