@@ -55,7 +55,7 @@ async function loadDatabase() {
         }
 
         try {
-            const module = await import('../../js/databaseInventario.js');
+            const module = await import('../js/databaseInventario.js');
             partsDatabase = module.itemDatabase || module.default || [];
             if (partsDatabase.length) return;
         } catch (e) {
@@ -64,7 +64,7 @@ async function loadDatabase() {
 
         await new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = '../../js/databaseInventario.js';
+            script.src = '../js/databaseInventario.js';
             script.onload = () => {
                 if (typeof itemDatabase !== 'undefined') {
                     partsDatabase = itemDatabase;
