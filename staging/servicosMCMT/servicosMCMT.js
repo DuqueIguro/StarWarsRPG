@@ -1,37 +1,34 @@
-// --- MCMT WORKSHOP SERVICES SCRIPT ---
+// --- MCMT WORKSHOP SERVICES SCRIPT (SUPABASE INTEGRATED) ---
 
 let currentMode = 'view'; // 'view' or 'edit'
 let currentWorkshop = 'MCMT1';
 let currentCategory = 'todas';
-let partsDatabase = []; // Populated via databaseInventario.js (itemDatabase)
+let partsDatabase = []; 
 let workshopServices = { MCMT1: [], MCMT2: [] };
 
 // Initialize Data
 document.addEventListener("DOMContentLoaded", async () => {
     await loadDatabase();
-    loadInitialServices();
+    await fetchServicesFromDB();
     renderServices();
 });
 
-// Load database JavaScript file (js/databaseInventario.js -> itemDatabase)
+// Load parts database JavaScript file (js/databaseInventario.js -> itemDatabase)
 async function loadDatabase() {
     try {
-        // Check if itemDatabase is already loaded globally via script tag
         if (typeof itemDatabase !== 'undefined' && Array.isArray(itemDatabase)) {
             partsDatabase = itemDatabase;
             return;
         }
 
-        // Try dynamic import
         try {
             const module = await import('../../js/databaseInventario.js');
             partsDatabase = module.itemDatabase || module.default || [];
             if (partsDatabase.length) return;
         } catch (e) {
-            // Ignore module import error
+            // Fallback to script tag injection
         }
 
-        // Load via script tag injection as fallback
         await new Promise((resolve, reject) => {
             const script = document.createElement('script');
             script.src = '../js/databaseInventario.js';
@@ -51,61 +48,68 @@ async function loadDatabase() {
     }
 }
 
-// Initial Mock Services for MCMT1 and MCMT2
-function loadInitialServices() {
-    workshopServices.MCMT1 = [
-        {
-            id: "s1",
-            category: "naves",
-            name: "Substituição de Bobina de Hiperespaço",
-            partId: "106",
-            partName: "Bobina de hiperespaço (Normal)",
-            quality: "Normal",
-            partPrice: 3200,
-            laborCost: 800,
-            totalPrice: 4000,
-            description: "Substituição completa da bobina de hiperespaço com alinhamento de campo."
-        },
-        {
-            id: "s2",
-            category: "droids",
-            name: "Troca e Calibragem de Processador Heurístico",
-            partId: "461",
-            partName: "Processador Heurístico (Dróide) (Normal)",
-            quality: "Normal",
-            partPrice: 4000,
-            laborCost: 1200,
-            totalPrice: 5200,
-            description: "Instalação de processador heurístico e reconfiguração de matriz de memória."
-        }
-    ];
+// Fetch Services from Supabase (servicos_mcmt table)
+async function fetchServicesFromDB() {
+    workshopServices.MCMT1 = [];
+    workshopServices.MCMT2 = [];
 
-    workshopServices.MCMT2 = [
-        {
-            id: "s3",
-            category: "naves",
-            name: "Instalação de Gerador de Escudo Defletor Redundante",
-            partId: "151",
-            partName: "Gerador de escudo defletor (Redundante) (Exc)",
-            quality: "Excelente",
-            partPrice: 60000,
-            laborCost: 10000,
-            totalPrice: 70000,
-            description: "Montagem militar com roteamento triplo de energia."
-        },
-        {
-            id: "s4",
-            category: "equipamentos",
-            name: "Manutenção Prévia em Datapad Militar",
-            partId: "10",
-            partName: "Datapad Militar Criptografado",
-            quality: "Excelente",
-            partPrice: 9000,
-            laborCost: 1500,
-            totalPrice: 10500,
-            description: "Criptografia de sistema e troca de barramento térmico."
+    if (typeof supabaseClient === 'undefined') {
+        console.warn("Supabase client não encontrado. Verifique se supabase.js foi carregado.");
+        return;
+    }
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('servicos_mcmt')
+            .select('*')
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            console.error("Erro ao buscar serviços no banco:", error.message);
+            return;
         }
-    ];
+
+        if (data) {
+            data.forEach(item => {
+                const serviceObj = {
+                    id: item.id,
+                    oficina: item.oficina || 'MCMT1',
+                    category: item.categoria || 'outros',
+                    name: item.nome_servico || '',
+                    laborCost: parseInt(item.mao_de_obra) || 0,
+                    partName: item.peca || '',
+                    partPrice: parseInt(item.preco_componentes) || 0,
+                    totalPrice: (parseInt(item.mao_de_obra) || 0) + (parseInt(item.preco_componentes) || 0),
+                    description: item.descricao || '',
+                    quality: getQualityForPart(item.peca)
+                };
+
+                const targetWorkshop = serviceObj.oficina.toUpperCase().trim();
+                if (workshopServices[targetWorkshop]) {
+                    workshopServices[targetWorkshop].push(serviceObj);
+                } else {
+                    workshopServices.MCMT1.push(serviceObj);
+                }
+            });
+        }
+    } catch (err) {
+        console.error("Falha ao comunicar com Supabase:", err);
+    }
+}
+
+// Helper: Tenta deduzir a qualidade a partir do nome da peça ou da base local
+function getQualityForPart(partName) {
+    if (!partName) return '';
+    const match = partsDatabase.find(p => p.name && p.name.toLowerCase() === partName.toLowerCase());
+    if (match && match.quality) return match.quality;
+
+    if (partName.includes('(Exc)') || partName.includes('Excelente')) return 'Excelente';
+    if (partName.includes('(Normal)')) return 'Normal';
+    if (partName.includes('(Boa)')) return 'Boa';
+    if (partName.includes('(Baixa)')) return 'Baixa';
+    if (partName.includes('(Imp)') || partName.includes('Imperial')) return 'Imperial';
+    if (partName.includes('(Lend)') || partName.includes('Lendária')) return 'Lendária';
+    return '';
 }
 
 // Switch Workshop (MCMT1 / MCMT2)
@@ -140,7 +144,9 @@ function setMode(mode) {
 function filterCategory(cat) {
     currentCategory = cat;
     document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-    event.target.classList.add("active");
+    if (event && event.target) {
+        event.target.classList.add("active");
+    }
     renderServices();
 }
 
@@ -153,10 +159,10 @@ function renderServices() {
 
     // Category filter
     if (currentCategory !== 'todas') {
-        list = list.filter(s => s.category === currentCategory);
+        list = list.filter(s => s.category.toLowerCase() === currentCategory.toLowerCase());
     }
 
-    // Text search filter across service name, part name, description, and quality
+    // Text search filter
     if (searchQuery) {
         list = list.filter(s =>
             (s.name && s.name.toLowerCase().includes(searchQuery)) ||
@@ -167,7 +173,7 @@ function renderServices() {
     }
 
     if (list.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding: 3rem; color: var(--text-dim);">Nenhum serviço encontrado com os filtros aplicados para a ${currentWorkshop}.</div>`;
+        container.innerHTML = `<div style="text-align:center; padding: 3rem; color: var(--text-dim);">Nenhum serviço registrado para a ${currentWorkshop} com os filtros atuais.</div>`;
         return;
     }
 
@@ -182,7 +188,7 @@ function renderServices() {
     let html = "";
 
     for (const [key, label] of Object.entries(categories)) {
-        const group = list.filter(s => s.category === key);
+        const group = list.filter(s => s.category.toLowerCase() === key.toLowerCase());
         if (group.length === 0) continue;
 
         html += `
@@ -221,8 +227,8 @@ function renderServices() {
           <td class="price-cell">${s.totalPrice} cr</td>
           ${currentMode === 'edit' ? `
             <td>
-              <button class="btn-mcmt" onclick="editService('${s.id}')">Editar</button>
-              <button class="btn-mcmt btn-danger" onclick="deleteService('${s.id}')">Excluir</button>
+              <button class="btn-mcmt" onclick="editService(${s.id})">Editar</button>
+              <button class="btn-mcmt btn-danger" onclick="deleteService(${s.id})">Excluir</button>
             </td>
           ` : ''}
         </tr>
@@ -239,7 +245,7 @@ function renderServices() {
     container.innerHTML = html;
 }
 
-// Autocomplete Logic using itemDatabase from databaseInventario.js
+// Autocomplete Logic using itemDatabase
 function onPartSearch(val) {
     const listContainer = document.getElementById("autocompleteList");
     listContainer.innerHTML = "";
@@ -250,7 +256,7 @@ function onPartSearch(val) {
 
     const matches = db.filter(item =>
         item.name && item.name.toLowerCase().includes(query)
-    ).slice(0, 10); // Max 10 suggestions
+    ).slice(0, 10);
 
     if (matches.length === 0) {
         const div = document.createElement("div");
@@ -299,9 +305,10 @@ function calculateTotalModal() {
 
 // Modal Handlers
 function openAddServiceModal() {
-    document.getElementById("modalTitle").textContent = "Adicionar Novo Serviço";
+    document.getElementById("modalTitle").textContent = `Adicionar Novo Serviço (${currentWorkshop})`;
     document.getElementById("serviceForm").reset();
     document.getElementById("serviceId").value = "";
+    document.getElementById("selectedPartId").value = "";
     document.getElementById("partInfoBox").classList.add("hidden");
     document.getElementById("modalTotalCalculated").textContent = "0 cr";
     document.getElementById("serviceModal").classList.add("open");
@@ -311,49 +318,56 @@ function closeServiceModal() {
     document.getElementById("serviceModal").classList.remove("open");
 }
 
-function handleServiceSubmit(e) {
+async function handleServiceSubmit(e) {
     e.preventDefault();
 
-    const id = document.getElementById("serviceId").value || 's_' + Date.now();
-    const category = document.getElementById("serviceCategory").value;
-    const name = document.getElementById("serviceName").value;
-    const partName = document.getElementById("partAutocomplete").value;
-    const partId = document.getElementById("selectedPartId").value;
+    const serviceId = document.getElementById("serviceId").value;
+    const categoria = document.getElementById("serviceCategory").value;
+    const nome_servico = document.getElementById("serviceName").value.trim();
+    const peca = document.getElementById("partAutocomplete").value.trim();
+    const preco_componentes = parseInt(document.getElementById("partCostOverride").value) || 0;
+    const mao_de_obra = parseInt(document.getElementById("laborCost").value) || 0;
+    const descricao = document.getElementById("serviceDesc").value.trim();
 
-    const quality = document.getElementById("infoPartQuality").textContent !== '-' ? document.getElementById("infoPartQuality").textContent : '';
-    const partPrice = parseFloat(document.getElementById("partCostOverride").value) || 0;
-    const laborCost = parseFloat(document.getElementById("laborCost").value) || 0;
-    const totalPrice = partPrice + laborCost;
-    const description = document.getElementById("serviceDesc").value;
-
-    const serviceData = {
-        id,
-        category,
-        name,
-        partId,
-        partName,
-        quality,
-        partPrice,
-        laborCost,
-        totalPrice,
-        description
+    const payload = {
+        oficina: currentWorkshop,
+        categoria: categoria,
+        nome_servico: nome_servico,
+        peca: peca || null,
+        preco_componentes: preco_componentes,
+        mao_de_obra: mao_de_obra,
+        descricao: descricao || null
     };
 
-    const currentList = workshopServices[currentWorkshop];
-    const existingIdx = currentList.findIndex(s => s.id === id);
+    try {
+        if (serviceId) {
+            // UPDATE
+            const { error } = await supabaseClient
+                .from('servicos_mcmt')
+                .update(payload)
+                .eq('id', serviceId);
 
-    if (existingIdx >= 0) {
-        currentList[existingIdx] = serviceData;
-    } else {
-        currentList.push(serviceData);
+            if (error) throw error;
+        } else {
+            // INSERT
+            const { error } = await supabaseClient
+                .from('servicos_mcmt')
+                .insert([payload]);
+
+            if (error) throw error;
+        }
+
+        closeServiceModal();
+        await fetchServicesFromDB();
+        renderServices();
+    } catch (err) {
+        alert("Erro ao salvar serviço no banco de dados: " + err.message);
+        console.error(err);
     }
-
-    closeServiceModal();
-    renderServices();
 }
 
 function editService(id) {
-    const service = workshopServices[currentWorkshop].find(s => s.id === id);
+    const service = workshopServices[currentWorkshop].find(s => s.id == id);
     if (!service) return;
 
     document.getElementById("modalTitle").textContent = "Editar Serviço";
@@ -361,7 +375,6 @@ function editService(id) {
     document.getElementById("serviceCategory").value = service.category;
     document.getElementById("serviceName").value = service.name;
     document.getElementById("partAutocomplete").value = service.partName || '';
-    document.getElementById("selectedPartId").value = service.partId || '';
     document.getElementById("laborCost").value = service.laborCost;
     document.getElementById("partCostOverride").value = service.partPrice;
     document.getElementById("serviceDesc").value = service.description || '';
@@ -369,8 +382,8 @@ function editService(id) {
     if (service.partName) {
         document.getElementById("infoPartName").textContent = service.partName;
         const qualBadge = document.getElementById("infoPartQuality");
-        qualBadge.textContent = service.quality;
-        qualBadge.className = `quality-badge quality-${service.quality}`;
+        qualBadge.textContent = service.quality || '-';
+        qualBadge.className = `quality-badge quality-${service.quality || 'Normal'}`;
         document.getElementById("infoPartPrice").textContent = service.partPrice;
         document.getElementById("partInfoBox").classList.remove("hidden");
     } else {
@@ -381,9 +394,21 @@ function editService(id) {
     document.getElementById("serviceModal").classList.add("open");
 }
 
-function deleteService(id) {
-    if (confirm("Tem certeza que deseja excluir este serviço?")) {
-        workshopServices[currentWorkshop] = workshopServices[currentWorkshop].filter(s => s.id !== id);
+async function deleteService(id) {
+    if (!confirm("Tem certeza que deseja excluir este serviço do banco de dados?")) return;
+
+    try {
+        const { error } = await supabaseClient
+            .from('servicos_mcmt')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        await fetchServicesFromDB();
         renderServices();
+    } catch (err) {
+        alert("Erro ao excluir serviço: " + err.message);
+        console.error(err);
     }
 }
