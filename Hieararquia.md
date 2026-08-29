@@ -12,7 +12,8 @@ StarWarsRPG
 │  │  ├─ dados.css
 │  │  ├─ dados.html
 │  │  └─ dados.js
-│  └─ holonetBackup.json
+│  ├─ holonetBackup.json
+│  └─ mapa_do_banco_de_dados.md
 ├─ CNAME
 ├─ data
 │  ├─ Aurebesh.woff

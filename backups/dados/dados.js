@@ -1,8 +1,7 @@
 /* ==========================================================================
-   TERMINAL TÁTICO HOLONET V6.00.0 - DADOS.JS
+   TERMINAL TÁTICO HOLONET V6.00.0 - DADOS.JS (SQUARE CARDS & DIGITAL ROLLS)
    ========================================================================== */
 
-// --- TABELAS EXATAS DOS DADOS DE MACRO ---
 const MACRO_DATA = {
     md6: [
         { face: 1, empty: true, s: 0, a: 0, p: 0 },
@@ -40,7 +39,6 @@ const MACRO_DATA = {
     ]
 };
 
-// --- ESTADO DO SISTEMA ---
 let pools = {
     standard: { d4: 0, d6: 0, d8: 0, d10: 0, d12: 0, d20: 0, d100: 0 },
     macro: { md6: 0, md10: 0, md12: 0 }
@@ -50,7 +48,6 @@ let currentMode = 'standard';
 let isComputing = false;
 let latestMacroResults = [];
 
-// --- 11. RELÓGIO EM TEMPO REAL ---
 function startRealtimeClock() {
     const clockEl = document.getElementById('realtime-clock');
     function update() {
@@ -58,13 +55,12 @@ function startRealtimeClock() {
         const hours = String(now.getHours()).padStart(2, '0');
         const mins = String(now.getMinutes()).padStart(2, '0');
         const secs = String(now.getSeconds()).padStart(2, '0');
-        clockEl.textContent = `${hours}:${mins}:${secs} GST`;
+        clockEl.textContent = `${hours}:${mins}:${secs} CORUSSANT`;
     }
     update();
     setInterval(update, 1000);
 }
 
-// --- 3. BOTÃO DE RETORNAR ---
 function goBack() {
     playAudio('click');
     if (window.history.length > 1) {
@@ -74,7 +70,6 @@ function goBack() {
     }
 }
 
-// --- ÁUDIO SCI-FI VIA WEB AUDIO API ---
 let audioContext = null;
 function playAudio(type = 'click') {
     try {
@@ -114,12 +109,9 @@ function playAudio(type = 'click') {
             osc.start(t);
             osc.stop(t + 0.32);
         }
-    } catch (e) {
-        // Áudio silenciado se bloqueado pelo browser
-    }
+    } catch (e) {}
 }
 
-// --- 5 & 6. ALTERNÂNCIA DE MODO, TEMA E GRADIENTE DINÂMICO ---
 function switchTerminalMode(mode) {
     if (isComputing) return;
     currentMode = mode;
@@ -147,7 +139,6 @@ function switchTerminalMode(mode) {
     }
 }
 
-// --- GESTÃO DE POOLS DE DADOS ---
 function alterDie(category, die, delta) {
     playAudio('click');
     pools[category][die] = Math.max(0, pools[category][die] + delta);
@@ -174,7 +165,6 @@ function adjustInput(id, delta, min = null) {
     inp.value = val;
 }
 
-// --- REGISTRO DE LOG ---
 function addTelemetryLog(text) {
     const feed = document.getElementById('telemetry-feed');
     const item = document.createElement('div');
@@ -189,9 +179,7 @@ function clearTelemetryLog() {
     document.getElementById('telemetry-feed').innerHTML = '<div class="telemetry-item">[SISTEMA] Registros limpos.</div>';
 }
 
-// ==========================================================================
-// 5. ROLAGEM PADRÃO (PROJEÇÃO HOLOGRÁFICA EXCLUSIVA)
-// ==========================================================================
+// ROLAGEM PADRÃO
 function rollStandard() {
     if (isComputing) return;
 
@@ -199,7 +187,7 @@ function rollStandard() {
     for (let [die, count] of Object.entries(pools.standard)) {
         const sides = parseInt(die.replace('d', ''));
         for (let i = 0; i < count; i++) {
-            diceToRoll.push({ type: die.toUpperCase(), sides: sides, shapeClass: `mesh-shape-${die}` });
+            diceToRoll.push({ type: die.toUpperCase(), sides: sides });
         }
     }
 
@@ -210,8 +198,6 @@ function rollStandard() {
 
     isComputing = true;
     playAudio('roll');
-
-    // 9. Zerar pool após disparo
     clearPool('standard');
 
     const calcMode = document.getElementById('std-calc-mode').value;
@@ -223,35 +209,31 @@ function rollStandard() {
     const summaryBox = document.getElementById('std-summary-box');
 
     summaryBox.classList.add('hidden');
-    telemetryStatus.textContent = 'PROJETANDO VETOR DE ROTAÇÃO POLIÉDRICA 3D...';
+    telemetryStatus.textContent = 'EXECUTANDO ROLAGEM DIGITAL...';
     arena.innerHTML = '';
 
-    // 2. Criação de Dados com formatos poliédricos reais
     let cardElements = [];
     diceToRoll.forEach(d => {
-        const container = document.createElement('div');
-        container.className = 'die-holo-container';
-        container.innerHTML = `
-            <div class="poly-mesh-box ${d.shapeClass} anim-spinning-3d">
-                <span class="holo-tag-top">${d.type}</span>
-                <span class="holo-val-center">?</span>
-                <span class="holo-aurebesh-sub aurebesh-font">HOLO</span>
-            </div>
+        const card = document.createElement('div');
+        card.className = 'die-square-card anim-rolling-sq';
+        card.innerHTML = `
+            <span class="die-tag-top">${d.type}</span>
+            <span class="die-val-center">?</span>
+            <span class="die-aurebesh-sub aurebesh-font">POLY</span>
         `;
-        arena.appendChild(container);
-        cardElements.push({ die: d, container: container, box: container.querySelector('.poly-mesh-box') });
+        arena.appendChild(card);
+        cardElements.push({ die: d, card: card });
     });
 
     setTimeout(() => {
         let rolledList = [];
         cardElements.forEach(item => {
             const val = Math.floor(Math.random() * item.die.sides) + 1;
-            item.box.classList.remove('anim-spinning-3d');
-            item.box.querySelector('.holo-val-center').textContent = val;
-            rolledList.push({ type: item.die.type, value: val, box: item.box });
+            item.card.classList.remove('anim-rolling-sq');
+            item.card.querySelector('.die-val-center').textContent = val;
+            rolledList.push({ type: item.die.type, value: val, card: item.card });
         });
 
-        // Desvantagem: descarta os N melhores
         let activeDice = [...rolledList];
         let discCount = 0;
 
@@ -265,25 +247,25 @@ function rollStandard() {
                     if (r.value === minVal && !kept) {
                         kept = true;
                     } else {
-                        r.box.classList.add('discarded');
+                        r.card.classList.add('discarded');
                         const tag = document.createElement('div');
                         tag.className = 'discard-tag';
                         tag.innerHTML = '<i class="fa-solid fa-xmark"></i> DESCARTADO';
-                        r.box.appendChild(tag);
+                        r.card.appendChild(tag);
                     }
                 });
-                activeDice = rolledList.filter(r => !r.box.classList.contains('discarded'));
+                activeDice = rolledList.filter(r => !r.card.classList.contains('discarded'));
                 discCount = rolledList.length - 1;
             } else {
                 const toDiscard = sortedDesc.slice(0, disadvantage);
                 toDiscard.forEach(r => {
-                    r.box.classList.add('discarded');
+                    r.card.classList.add('discarded');
                     const tag = document.createElement('div');
                     tag.className = 'discard-tag';
                     tag.innerHTML = '<i class="fa-solid fa-xmark"></i> DESCARTADO';
-                    r.box.appendChild(tag);
+                    r.card.appendChild(tag);
                 });
-                activeDice = rolledList.filter(r => !r.box.classList.contains('discarded'));
+                activeDice = rolledList.filter(r => !r.card.classList.contains('discarded'));
                 discCount = disadvantage;
             }
         }
@@ -308,7 +290,6 @@ function rollStandard() {
             styleDesc = `Valores Individuais: [ ${totalVal} ] (Modificador: ${modifier >= 0 ? '+' : ''}${modifier})`;
         }
 
-        // Sumário Exclusivo Padrão
         summaryBox.classList.remove('hidden');
         summaryBox.innerHTML = `
             <div class="summary-headline-row">
@@ -327,19 +308,17 @@ function rollStandard() {
         addTelemetryLog(`ROLAGEM PADRÃO: <strong>${totalVal}</strong> [${styleDesc}]`);
 
         isComputing = false;
-    }, 1350);
+    }, 900);
 }
 
-// ==========================================================================
-// 5. ROLAGEM MACRO (PROJEÇÃO HOLOGRÁFICA EXCLUSIVA)
-// ==========================================================================
+// ROLAGEM MACRO
 function rollMacro() {
     if (isComputing) return;
 
     let macroToRoll = [];
     for (let [die, count] of Object.entries(pools.macro)) {
         for (let i = 0; i < count; i++) {
-            macroToRoll.push({ type: die, label: die.toUpperCase(), shapeClass: `mesh-shape-${die.replace('m', '')}` });
+            macroToRoll.push({ type: die, label: die.toUpperCase() });
         }
     }
 
@@ -350,8 +329,6 @@ function rollMacro() {
 
     isComputing = true;
     playAudio('roll');
-
-    // 9. Zerar pool após disparo
     clearPool('macro');
 
     const calcMode = document.getElementById('macro-calc-mode').value;
@@ -366,22 +343,20 @@ function rollMacro() {
 
     summaryBox.classList.add('hidden');
     manualPanel.classList.add('hidden');
-    telemetryStatus.textContent = 'PROCESSANDO FLUXO HOLOGRÁFICO DE SÍMBOLOS MACRO...';
+    telemetryStatus.textContent = 'PROCESSANDO SÍMBOLOS MACRO...';
     arena.innerHTML = '';
 
     let elements = [];
     macroToRoll.forEach(m => {
-        const container = document.createElement('div');
-        container.className = 'die-holo-container';
-        container.innerHTML = `
-            <div class="poly-mesh-box ${m.shapeClass} anim-spinning-3d">
-                <span class="holo-tag-top">${m.label}</span>
-                <div class="macro-symbol-cluster"><i class="fa-solid fa-spinner fa-spin"></i></div>
-                <span class="holo-aurebesh-sub aurebesh-font">MACRO</span>
-            </div>
+        const card = document.createElement('div');
+        card.className = 'die-square-card anim-rolling-sq';
+        card.innerHTML = `
+            <span class="die-tag-top">${m.label}</span>
+            <div class="macro-symbol-cluster"><i class="fa-solid fa-spinner fa-spin"></i></div>
+            <span class="die-aurebesh-sub aurebesh-font">MACRO</span>
         `;
-        arena.appendChild(container);
-        elements.push({ die: m, container: container, box: container.querySelector('.poly-mesh-box'), cluster: container.querySelector('.macro-symbol-cluster') });
+        arena.appendChild(card);
+        elements.push({ die: m, card: card, cluster: card.querySelector('.macro-symbol-cluster') });
     });
 
     setTimeout(() => {
@@ -391,7 +366,7 @@ function rollMacro() {
             const table = MACRO_DATA[item.die.type];
             const rolledFace = table[Math.floor(Math.random() * table.length)];
 
-            item.box.classList.remove('anim-spinning-3d');
+            item.card.classList.remove('anim-rolling-sq');
 
             let icons = '';
             if (rolledFace.empty) {
@@ -403,7 +378,7 @@ function rollMacro() {
             }
 
             item.cluster.innerHTML = icons;
-            item.box.querySelector('.holo-aurebesh-sub').textContent = `FACE ${rolledFace.face}`;
+            item.card.querySelector('.die-aurebesh-sub').textContent = `FACE ${rolledFace.face}`;
 
             const resultObj = {
                 id: idx,
@@ -413,38 +388,36 @@ function rollMacro() {
                 s: rolledFace.s,
                 a: rolledFace.a,
                 p: rolledFace.p,
-                container: item.container,
-                box: item.box,
+                card: item.card,
                 selectedToKeep: true
             };
 
             latestMacroResults.push(resultObj);
         });
 
-        // 8. Modo Manter Dados com seleção manual
         if (calcMode === 'select_keep') {
             telemetryStatus.textContent = 'AGUARDANDO SELEÇÃO MANUAL DE DADOS PARA MANTER...';
             manualPanel.classList.remove('hidden');
 
             latestMacroResults.forEach(res => {
-                res.container.classList.add('selectable');
-                res.box.classList.add('manual-selected');
+                res.card.classList.add('selectable');
+                res.card.classList.add('manual-selected');
 
                 const selTag = document.createElement('div');
                 selTag.className = 'selected-tag';
                 selTag.innerHTML = '<i class="fa-solid fa-check"></i> MANTIDO';
-                res.box.appendChild(selTag);
+                res.card.appendChild(selTag);
 
-                res.container.onclick = () => {
+                res.card.onclick = () => {
                     playAudio('click');
                     res.selectedToKeep = !res.selectedToKeep;
                     if (res.selectedToKeep) {
-                        res.box.classList.add('manual-selected');
-                        res.box.classList.remove('discarded');
+                        res.card.classList.add('manual-selected');
+                        res.card.classList.remove('discarded');
                         selTag.style.display = 'block';
                     } else {
-                        res.box.classList.remove('manual-selected');
-                        res.box.classList.add('discarded');
+                        res.card.classList.remove('manual-selected');
+                        res.card.classList.add('discarded');
                         selTag.style.display = 'none';
                     }
                 };
@@ -456,17 +429,16 @@ function rollMacro() {
             isComputing = false;
         }
 
-    }, 1350);
+    }, 900);
 }
 
-// Confirmação de dados mantidos na seleção manual
 function confirmManualKeepSelection() {
     playAudio('done');
     document.getElementById('macro-selection-panel').classList.add('hidden');
 
     latestMacroResults.forEach(r => {
-        r.container.onclick = null;
-        r.container.classList.remove('selectable');
+        r.card.onclick = null;
+        r.card.classList.remove('selectable');
     });
 
     const modSuc = parseInt(document.getElementById('macro-mod-suc').value) || 0;
@@ -476,7 +448,6 @@ function confirmManualKeepSelection() {
     consolidateMacroResults(modSuc, modAdp, modPrs, true);
 }
 
-// Consolidação e exibição de resultados de Macro
 function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
     const summaryBox = document.getElementById('macro-summary-box');
     const telemetryStatus = document.getElementById('macro-telemetry-status');
@@ -514,7 +485,6 @@ function consolidateMacroResults(modSuc, modAdp, modPrs, isManualFiltered) {
     addTelemetryLog(`ROLAGEM MACRO: Sucessos: <strong>${totS}</strong> | Adaptações: <strong>${totA}</strong> | Pressões: <strong>${totP}</strong>`);
 }
 
-// Inicialização
 window.addEventListener('DOMContentLoaded', () => {
     startRealtimeClock();
 });
