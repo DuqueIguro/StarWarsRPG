@@ -283,7 +283,7 @@ h1 {
 /* ======== CONTEÚDO DOS CARDS (GRELHA DE MÓDULOS) ======== */
 .hub-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
     gap: 20px;
     margin-bottom: 25px;
 }
@@ -801,16 +801,54 @@ h1>i,
     }
 }
 
-/* ======== RESPONSIVIDADE ======== */
+/* ======== GRIDS CONFIGURADOS ======== */
+.hub-container {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+/* Força exatas 2 colunas para o 2x2 */
+.grid-2col {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* Grid de 3 colunas para a inteligência de setor */
+.grid-3col {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Card bloqueado */
+.card-locked {
+    opacity: 0.65;
+    filter: grayscale(0.2);
+}
+
+.btn-locked {
+    border-color: var(--imp-red) !important;
+    color: var(--imp-red) !important;
+    pointer-events: none;
+}
+
+/* Textos mais longos com leitura confortável */
+.card-description {
+    font-size: 0.84em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #92a0b7;
+    text-align: justify;
+}
+
+/* ======== QUEBRA RESPONSIVA ======== */
+@media (max-width: 1150px) {
+    .grid-3col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 900px) {
-    .content-wrapper {
-        flex-direction: column;
-    }
-    .sidebar {
-        flex: 0 0 auto;
-        width: 100%;
-    }
-    .hub-container {
+    .grid-2col,
+    .grid-3col {
         grid-template-columns: 1fr;
     }
 }
