@@ -13,8 +13,8 @@
 <body>
     <!-- Biblioteca oficial do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase.js"></script>
-    
+    <script src="../../js/supabase.js"></script>
+
     <!-- Aurebesh Background Watermark -->
     <div class="aurebesh-bg">MCMT WORKSHOP SERVICE SYSTEM - IMPERIAL & REBEL MECHANICAL LOGISTICS - ENGRENAGEM MESTRA
     </div>
@@ -54,7 +54,8 @@
                 </select>
             </div>
 
-            <div class="mode-toggle-container">
+            <!-- Oculto por padrão com a classe hidden -->
+            <div id="modeToggleContainer" class="mode-toggle-container hidden">
                 <span class="mode-label">MODO ATUAL:</span>
                 <button id="viewModeBtn" class="btn-mode active" onclick="setMode('view')">
                     <span class="indicator">●</span> VISUALIZAÇÃO

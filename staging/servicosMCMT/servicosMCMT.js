@@ -1,5 +1,10 @@
-// --- MCMT WORKSHOP SERVICES SCRIPT (SUPABASE INTEGRATED) ---
+const AUTHORIZED_EDIT_USERS = [
+    'f62b8a03-dbe1-45ed-aadc-68dc2fd3961c', // Dur'Toc
+    '94d1ed61-7955-40d8-a0a1-7733bd716b5d', // Dev Duque
+    'c28cf763-c1a9-4f31-b0b8-6bfe296810e2'  // Dev Eiden
+];
 
+let canEdit = false;
 let currentMode = 'view'; // 'view' or 'edit'
 let currentWorkshop = 'MCMT1';
 let currentCategory = 'todas';
@@ -8,10 +13,38 @@ let workshopServices = { MCMT1: [], MCMT2: [] };
 
 // Initialize Data
 document.addEventListener("DOMContentLoaded", async () => {
+    await checkUserEditPermission();
     await loadDatabase();
     await fetchServicesFromDB();
     renderServices();
 });
+
+// Verifica se o usuário autenticado tem permissão de edição
+async function checkUserEditPermission() {
+    try {
+        if (typeof supabaseClient === 'undefined') return;
+
+        const { data: userData, error } = await supabaseClient.auth.getUser();
+        if (error || !userData?.user) {
+            canEdit = false;
+            return;
+        }
+
+        const userId = userData.user.id;
+        if (AUTHORIZED_EDIT_USERS.includes(userId)) {
+            canEdit = true;
+            const toggleContainer = document.getElementById("modeToggleContainer");
+            if (toggleContainer) {
+                toggleContainer.classList.remove("hidden");
+            }
+        } else {
+            canEdit = false;
+        }
+    } catch (e) {
+        console.warn("Erro ao validar permissões de edição:", e);
+        canEdit = false;
+    }
+}
 
 // Load parts database JavaScript file (js/databaseInventario.js -> itemDatabase)
 async function loadDatabase() {
@@ -31,7 +64,7 @@ async function loadDatabase() {
 
         await new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = '../js/databaseInventario.js';
+            script.src = '../../js/databaseInventario.js';
             script.onload = () => {
                 if (typeof itemDatabase !== 'undefined') {
                     partsDatabase = itemDatabase;
@@ -97,7 +130,7 @@ async function fetchServicesFromDB() {
     }
 }
 
-// Helper: Tenta deduzir a qualidade a partir do nome da peça ou da base local
+// Helper: Deduz a qualidade a partir do nome da peça
 function getQualityForPart(partName) {
     if (!partName) return '';
     const match = partsDatabase.find(p => p.name && p.name.toLowerCase() === partName.toLowerCase());
@@ -121,6 +154,8 @@ function switchWorkshop(workshop) {
 
 // Set View / Edit Mode
 function setMode(mode) {
+    if (mode === 'edit' && !canEdit) return; // Bloqueio de segurança
+
     currentMode = mode;
     const viewBtn = document.getElementById("viewModeBtn");
     const editBtn = document.getElementById("editModeBtn");
@@ -128,14 +163,14 @@ function setMode(mode) {
 
     if (mode === 'edit') {
         document.body.classList.add("edit-mode-active");
-        editBtn.classList.add("active");
-        viewBtn.classList.remove("active");
-        editPanel.classList.remove("hidden");
+        if (editBtn) editBtn.classList.add("active");
+        if (viewBtn) viewBtn.classList.remove("active");
+        if (editPanel) editPanel.classList.remove("hidden");
     } else {
         document.body.classList.remove("edit-mode-active");
-        viewBtn.classList.add("active");
-        editBtn.classList.remove("active");
-        editPanel.classList.add("hidden");
+        if (viewBtn) viewBtn.classList.add("active");
+        if (editBtn) editBtn.classList.remove("active");
+        if (editPanel) editPanel.classList.add("hidden");
     }
     renderServices();
 }
@@ -157,12 +192,10 @@ function renderServices() {
 
     let list = workshopServices[currentWorkshop] || [];
 
-    // Category filter
     if (currentCategory !== 'todas') {
         list = list.filter(s => s.category.toLowerCase() === currentCategory.toLowerCase());
     }
 
-    // Text search filter
     if (searchQuery) {
         list = list.filter(s =>
             (s.name && s.name.toLowerCase().includes(searchQuery)) ||
@@ -177,7 +210,6 @@ function renderServices() {
         return;
     }
 
-    // Group by categories
     const categories = {
         naves: "Naves",
         droids: "Droids",
@@ -186,6 +218,7 @@ function renderServices() {
     };
 
     let html = "";
+    const isEditing = currentMode === 'edit' && canEdit;
 
     for (const [key, label] of Object.entries(categories)) {
         const group = list.filter(s => s.category.toLowerCase() === key.toLowerCase());
@@ -205,7 +238,7 @@ function renderServices() {
               <th>Custo Peça Base</th>
               <th>Mão de Obra</th>
               <th>Valor Total</th>
-              ${currentMode === 'edit' ? '<th>Ações</th>' : ''}
+              ${isEditing ? '<th>Ações</th>' : ''}
             </tr>
           </thead>
           <tbody>
@@ -225,7 +258,7 @@ function renderServices() {
           <td>${s.partPrice ? s.partPrice + ' cr' : '-'}</td>
           <td>${s.laborCost} cr</td>
           <td class="price-cell">${s.totalPrice} cr</td>
-          ${currentMode === 'edit' ? `
+          ${isEditing ? `
             <td>
               <button class="btn-mcmt" onclick="editService(${s.id})">Editar</button>
               <button class="btn-mcmt btn-danger" onclick="deleteService(${s.id})">Excluir</button>
@@ -305,6 +338,7 @@ function calculateTotalModal() {
 
 // Modal Handlers
 function openAddServiceModal() {
+    if (!canEdit) return;
     document.getElementById("modalTitle").textContent = `Adicionar Novo Serviço (${currentWorkshop})`;
     document.getElementById("serviceForm").reset();
     document.getElementById("serviceId").value = "";
@@ -320,6 +354,7 @@ function closeServiceModal() {
 
 async function handleServiceSubmit(e) {
     e.preventDefault();
+    if (!canEdit) return;
 
     const serviceId = document.getElementById("serviceId").value;
     const categoria = document.getElementById("serviceCategory").value;
@@ -341,7 +376,6 @@ async function handleServiceSubmit(e) {
 
     try {
         if (serviceId) {
-            // UPDATE
             const { error } = await supabaseClient
                 .from('servicos_mcmt')
                 .update(payload)
@@ -349,7 +383,6 @@ async function handleServiceSubmit(e) {
 
             if (error) throw error;
         } else {
-            // INSERT
             const { error } = await supabaseClient
                 .from('servicos_mcmt')
                 .insert([payload]);
@@ -367,6 +400,8 @@ async function handleServiceSubmit(e) {
 }
 
 function editService(id) {
+    if (!canEdit) return;
+
     const service = workshopServices[currentWorkshop].find(s => s.id == id);
     if (!service) return;
 
@@ -395,6 +430,7 @@ function editService(id) {
 }
 
 async function deleteService(id) {
+    if (!canEdit) return;
     if (!confirm("Tem certeza que deseja excluir este serviço do banco de dados?")) return;
 
     try {
