@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DATAPAD // CASSINO ORLA EXTERIOR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/x-icon" href="../img/fichas.png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="cassino.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase.js"></script>
+</head>
+
+<body class="crt-filter">
+  <!-- Canvas de Fundo (Hiperespaço / Partículas) -->
+  <canvas id="spaceCanvas"></canvas>
+  <div class="scanline-overlay"></div>
+  <div class="vignette-overlay"></div>
+
+  <!-- Carcaça do Datapad -->
+  <div class="datapad-chassis">
+
+    <!-- Detalhes de Hardware -->
+    <div class="hardware-bolt top-left"></div>
+    <div class="hardware-bolt top-right"></div>
+    <div class="hardware-bolt bottom-left"></div>
+    <div class="hardware-bolt bottom-right"></div>
+
+    <!-- Header do Datapad -->
+    <header class="datapad-header">
+      <div class="header-left">
+        <button class="btn-terminal-nav" onclick="voltarInicio()" title="Voltar ao Terminal Central">
+          <span class="hud-bracket">[</span>
+          <span class="nav-icon">&#9664;</span> TERMINAL PRINCIPAL
+          <span class="hud-bracket">]</span>
+        </button>
+        <div class="signal-indicator">
+          <span class="signal-dot"></span>
+          <span class="signal-text">LINK SEGURO // ESTAÇÃO NOVA PRIME</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="brand-badge">
+          <div class="brand-glitch" data-text="NOVA PRIME">NOVA PRIME</div>
+          <div class="brand-sub">SISTEMA INTEGRADO DE ENTRETENIMENTO & APOSTAS</div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button class="btn-cambio-trigger glow-pulse" onclick="openExchangeModal()" title="Casa de Câmbio Galáctica">
+          <span class="cambio-icon">&#x21C4;</span> CÂMBIO DE FICHAS
+        </button>
+
+        <button class="btn-audio-toggle" id="audioToggleBtn" onclick="toggleAudio()"
+          title="Alternar Sintetizador de Áudio">
+          <span id="audioIcon">🔊</span> SOM: <span id="audioState">LIGADO</span>
+        </button>
+
+        <!-- Cartucho Duplo: Créditos Imperiais e Fichas do Cassino -->
+        <div class="dual-balance-cartridge">
+          <div class="balance-item imperial-credits">
+            <span class="b-label">CRÉDITOS IMPERIAIS (CI)</span>
+            <div class="b-value">
+              <span class="b-icon">&#x2B21;</span>
+              <span id="imperialCreditsDisplay">10.000</span>
+              <span class="b-unit">CI</span>
+            </div>
+          </div>
+          <div class="balance-divider"></div>
+          <div class="balance-item casino-chips">
+            <span class="b-label">FICHAS GALÁTICAS (FG)</span>
+            <div class="b-value">
+              <span class="b-icon chip-glow-icon">&#x25C9;</span>
+              <span id="casinoChipsDisplay">200</span>
+              <span class="b-unit">FICHAS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Barra de Navegação de Módulos (Jogos) -->
+    <nav class="datapad-tabs" id="mainGameTabs">
+      <button class="tab-module active" onclick="switchGame('roulette', this)">
+        <span class="tab-index">01</span>
+        <span class="tab-title">ROLETA QUÂNTICA</span>
+        <span class="tab-glow"></span>
+      </button>
+      <button class="tab-module" onclick="switchGame('blackjack', this)">
+        <span class="tab-index">02</span>
+        <span class="tab-title">HOLO-BLACKJACK 21</span>
+        <span class="tab-glow"></span>
+      </button>
+      <button class="tab-module" onclick="switchGame('poker', this)">
+        <span class="tab-index">03</span>
+        <span class="tab-title">TEXAS HOLD'EM 1v1</span>
+        <span class="tab-glow"></span>
+      </button>
+      <button class="tab-module" onclick="switchGame('slots', this)">
+        <span class="tab-index">04</span>
+        <span class="tab-title">SLOT HIPERDRIVE</span>
+        <span class="tab-glow"></span>
+      </button>
+      <button class="tab-module" onclick="switchGame('sabacc', this)">
+        <span class="tab-index">05</span>
+        <span class="tab-title">DADOS DE SABACC</span>
+        <span class="tab-glow"></span>
+      </button>
+    </nav>
+
+    <!-- Display Principal de Jogos -->
+    <main class="datapad-screen">
+
+      <!-- ============================================== -->
+      <!-- JOGO 1: ROLETA COMPLETA DE CASSINO PROFISSIONAL -->
+      <!-- ============================================== -->
+      <section id="game-roulette" class="game-section active">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE ROLETA QUÂNTICA</div>
+          <div class="history-tracker">
+            <span class="history-label">ÚLTIMOS SETORES:</span>
+            <div id="rouletteHistory" class="history-chips"></div>
+          </div>
+        </div>
+
+        <div class="roulette-layout">
+          <div class="roulette-wheel-box">
+            <div class="wheel-outer-ring">
+              <canvas id="rouletteCanvas" width="360" height="360"></canvas>
+              <div class="wheel-core-hud">
+                <span class="core-label">SETORES</span>
+                <span id="rouletteCenterNumber" class="core-num">--</span>
+                <span id="rouletteCenterType" class="core-sub">AGUARDANDO</span>
+              </div>
+            </div>
+            <div class="spin-action-panel">
+              <button class="btn-cyber-primary" id="btnSpinRoulette" onclick="spinRouletteWheel()">
+                <span class="btn-text">GIRAR ROLETA QUÂNTICA</span>
+                <span class="btn-shine"></span>
+              </button>
+              <button class="btn-cyber-danger" onclick="clearRouletteBets()">
+                LIMPAR MESA
+              </button>
+            </div>
+          </div>
+
+          <div class="roulette-table-box">
+            <div class="chip-selector-bar">
+              <span class="chip-label">FICHAS DE APOSTA:</span>
+              <div class="chip-options">
+                <button class="chip-btn chip-1 active" onclick="selectChip(1, this)">1</button>
+                <button class="chip-btn chip-5" onclick="selectChip(5, this)">5</button>
+                <button class="chip-btn chip-10" onclick="selectChip(10, this)">10</button>
+                <button class="chip-btn chip-50" onclick="selectChip(50, this)">50</button>
+                <button class="chip-btn chip-100" onclick="selectChip(100, this)">100</button>
+              </div>
+              <div class="current-total-bet">
+                APOSTA NA MESA: <span id="rouletteTotalBetAmount">0</span> FICHAS
+              </div>
+            </div>
+
+            <div class="betting-felt">
+              <div class="grid-zero-col">
+                <button class="bet-spot spot-zero" data-bet="0" onclick="placeRouletteBet('number', 0)">
+                  <span class="spot-num">0</span>
+                  <span class="chip-marker" id="marker-num-0"></span>
+                </button>
+              </div>
+
+              <div class="grid-numbers-table" id="rouletteNumbersGrid"></div>
+
+              <div class="grid-column-bets">
+                <button class="bet-spot spot-side" data-bet="col3" onclick="placeRouletteBet('col', 3)">
+                  <span class="spot-txt">2:1</span>
+                  <span class="chip-marker" id="marker-col-3"></span>
+                </button>
+                <button class="bet-spot spot-side" data-bet="col2" onclick="placeRouletteBet('col', 2)">
+                  <span class="spot-txt">2:1</span>
+                  <span class="chip-marker" id="marker-col-2"></span>
+                </button>
+                <button class="bet-spot spot-side" data-bet="col1" onclick="placeRouletteBet('col', 1)">
+                  <span class="spot-txt">2:1</span>
+                  <span class="chip-marker" id="marker-col-1"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="outside-bets-dozens">
+              <button class="bet-spot spot-dozen" onclick="placeRouletteBet('dozen', 1)">
+                <span>1ª DÚZIA (1-12) [3x]</span>
+                <span class="chip-marker" id="marker-dozen-1"></span>
+              </button>
+              <button class="bet-spot spot-dozen" onclick="placeRouletteBet('dozen', 2)">
+                <span>2ª DÚZIA (13-24) [3x]</span>
+                <span class="chip-marker" id="marker-dozen-2"></span>
+              </button>
+              <button class="bet-spot spot-dozen" onclick="placeRouletteBet('dozen', 3)">
+                <span>3ª DÚZIA (25-36) [3x]</span>
+                <span class="chip-marker" id="marker-dozen-3"></span>
+              </button>
+            </div>
+
+            <div class="outside-bets-simple">
+              <button class="bet-spot spot-simple" onclick="placeRouletteBet('half', 1)">
+                <span>1 A 18</span>
+                <span class="chip-marker" id="marker-half-1"></span>
+              </button>
+              <button class="bet-spot spot-simple" onclick="placeRouletteBet('even_odd', 'even')">
+                <span>PAR</span>
+                <span class="chip-marker" id="marker-even"></span>
+              </button>
+              <button class="bet-spot spot-simple spot-red" onclick="placeRouletteBet('color', 'red')">
+                <span class="color-badge red-badge"></span>
+                <span>VERMELHO (KYBER)</span>
+                <span class="chip-marker" id="marker-color-red"></span>
+              </button>
+              <button class="bet-spot spot-simple spot-black" onclick="placeRouletteBet('color', 'black')">
+                <span class="color-badge black-badge"></span>
+                <span>PRETO (BESKAR)</span>
+                <span class="chip-marker" id="marker-color-black"></span>
+              </button>
+              <button class="bet-spot spot-simple" onclick="placeRouletteBet('even_odd', 'odd')">
+                <span>ÍMPAR</span>
+                <span class="chip-marker" id="marker-odd"></span>
+              </button>
+              <button class="bet-spot spot-simple" onclick="placeRouletteBet('half', 2)">
+                <span>19 A 36</span>
+                <span class="chip-marker" id="marker-half-2"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- JOGO 2: HOLO-BLACKJACK 21                     -->
+      <!-- ============================================== -->
+      <section id="game-blackjack" class="game-section">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE HOLO-BLACKJACK 21 // CRUPIÊ
+            PROTOCOLAR-7</div>
+          <div class="bj-status-badge" id="bjStatusBadge">FAÇA SUA APOSTA EM FICHAS</div>
+        </div>
+
+        <div class="blackjack-arena">
+          <div class="bj-hand-container dealer-zone">
+            <div class="hand-meta">
+              <span class="actor-title"><span class="bot-icon">🤖</span> CRUPIÊ PROTOCOLAR</span>
+              <span class="score-pill" id="dealerScore">PONTOS: ?</span>
+            </div>
+            <div class="cards-table" id="dealerCards"></div>
+          </div>
+
+          <div class="bj-table-center">
+            <div class="bj-payout-rules">BLACKJACK</div>
+          </div>
+
+          <div class="bj-hand-container player-zone">
+            <div class="hand-meta">
+              <span class="actor-title"><span class="user-icon">👤</span> SEU TERMINAL DE CARTAS</span>
+              <span class="score-pill" id="playerScore">PONTOS: 0</span>
+            </div>
+            <div class="cards-table" id="playerCards"></div>
+          </div>
+
+          <div class="bj-controls-panel">
+            <div class="bj-bet-adjuster" id="bjBetControls">
+              <label>APOSTA INICIAL (FICHAS):</label>
+              <div class="spin-bet-inputs">
+                <button class="btn-step" onclick="adjustBjBet(-5)">-5</button>
+                <input type="number" id="bjBetInput" value="10" min="1" step="1" readonly>
+                <button class="btn-step" onclick="adjustBjBet(5)">+5</button>
+                <button class="btn-step" onclick="adjustBjBet(25)">+25</button>
+                <button class="btn-step max-btn" onclick="setBjBetMax()">MÁX</button>
+              </div>
+              <button class="btn-cyber-primary" id="btnBjDeal" onclick="startBlackjackHand()">
+                DISTRIBUIR CARTAS
+              </button>
+            </div>
+
+            <div class="bj-play-actions" id="bjPlayActions" style="display: none;">
+              <button class="btn-cyber-action btn-hit" id="btnBjHit" onclick="bjPlayerHit()">
+                <span class="action-icon">+</span> PEDIR CARTA (HIT)
+              </button>
+              <button class="btn-cyber-action btn-stand" id="btnBjStand" onclick="bjPlayerStand()">
+                <span class="action-icon">✋</span> PARAR (STAND)
+              </button>
+              <button class="btn-cyber-action btn-double" id="btnBjDouble" onclick="bjPlayerDouble()">
+                <span class="action-icon">✖2</span> DOBRAR APOSTA
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- JOGO 3: TEXAS HOLD'EM 1v1 COM ALL-IN E FASES   -->
+      <!-- ============================================== -->
+      <section id="game-poker" class="game-section">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> MESA DE TEXAS HOLD'EM</div>
+          <div class="poker-status-badge" id="pokerStatusBadge">FAÇA SUA APOSTA OU BLIND INICIAL</div>
+        </div>
+
+        <div class="poker-arena">
+          <!-- Área Superior: Crupiê / Dealer -->
+          <div class="poker-zone poker-dealer-zone">
+            <div class="poker-meta">
+              <span class="actor-title"><span class="bot-icon">🤖</span> CRUPIÊ ANDROIDE</span>
+              <div class="actor-stats">
+                <span class="actor-chips-tag" id="pokerDealerBetTag">APOSTADO: 0 FG</span>
+                <span class="hand-eval-tag" id="pokerDealerEval">AGUARDANDO RODADA</span>
+              </div>
+            </div>
+            <div class="poker-cards-wrap" id="pokerDealerCards"></div>
+          </div>
+
+          <!-- Área Central: Cartas Comunitárias do Bordo (Flop, Turn, River) e Pote -->
+          <div class="poker-community-zone">
+            <div class="community-header">
+              <div class="pot-display">
+                POTE TOTAL: <span id="pokerPotValue" class="pot-number">0</span> FICHAS
+              </div>
+              <div class="round-phase-indicator" id="pokerPhaseIndicator">FASE: PRÉ-FLOP</div>
+              <div class="call-to-match">
+                VALOR PARA COBRIR: <span id="pokerToCallAmount">0</span> FG
+              </div>
+            </div>
+            <div class="community-cards-wrap" id="pokerCommunityCards"></div>
+          </div>
+
+          <!-- Área Inferior: Jogador -->
+          <div class="poker-zone poker-player-zone">
+            <div class="poker-meta">
+              <span class="actor-title"><span class="user-icon">👤</span> SUA MÃO DE PÔQUER</span>
+              <div class="actor-stats">
+                <span class="actor-chips-tag" id="pokerPlayerBetTag">APOSTADO: 0 FG</span>
+                <span class="hand-eval-tag player-highlight" id="pokerPlayerEval">SELECIONE SUA AÇÃO</span>
+              </div>
+            </div>
+            <div class="poker-cards-wrap" id="pokerPlayerCards"></div>
+          </div>
+
+          <!-- Controles de Pôquer com Check, Bet, Call, Raise, Fold e ALL-IN -->
+          <div class="poker-controls-panel">
+            <!-- Controle de Início de Partida -->
+            <div class="poker-bet-adjuster" id="pokerStartControls">
+              <label>BLIND / APOSTA INICIAL (FICHAS):</label>
+              <div class="spin-bet-inputs">
+                <button class="btn-step" onclick="adjustPokerBlind(-5)">-5</button>
+                <input type="number" id="pokerBlindInput" value="10" min="2" step="2" readonly>
+                <button class="btn-step" onclick="adjustPokerBlind(5)">+5</button>
+                <button class="btn-step" onclick="adjustPokerBlind(25)">+25</button>
+                <button class="btn-step max-btn" onclick="setPokerBlindMax()">MÁX</button>
+              </div>
+              <button class="btn-cyber-primary" id="btnPokerStart" onclick="startHoldemHand()">
+                INICIAR RODADA
+              </button>
+            </div>
+
+            <!-- Controles de Ação Por Turno -->
+            <div class="poker-turn-actions" id="pokerTurnActions" style="display: none;">
+              <button class="btn-cyber-action btn-fold" id="btnPokerFold" onclick="pokerActionFold()">
+                <span class="action-icon">&#x2716;</span> SAIR / DESISTIR (FOLD)
+              </button>
+
+              <button class="btn-cyber-action btn-check" id="btnPokerCheck" onclick="pokerActionCheck()">
+                <span class="action-icon">&#x21BB;</span> MESA (CHECK)
+              </button>
+
+              <button class="btn-cyber-action btn-call" id="btnPokerCall" onclick="pokerActionCall()">
+                <span class="action-icon">&#x2714;</span> PAGAR (<span id="pokerCallBtnAmount">0</span> FG)
+              </button>
+
+              <!-- Aumentar Aposta -->
+              <div class="raise-action-group">
+                <input type="number" id="pokerRaiseAmountInput" value="10" min="5" step="5">
+                <button class="btn-cyber-action btn-raise" id="btnPokerRaise" onclick="pokerActionRaise()">
+                  <span class="action-icon">&#x25B2;</span> AUMENTAR (RAISE)
+                </button>
+              </div>
+
+              <!-- Botão ALL-IN -->
+              <button class="btn-cyber-action btn-allin glow-red" id="btnPokerAllIn" onclick="pokerActionAllIn()">
+                <span class="action-icon">&#x26A1;</span> ALL-IN (<span id="pokerAllInBtnAmount">0</span> FG)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- JOGO 4: CAÇA-NÍQUEL MATRIX HIPERDRIVE          -->
+      <!-- ============================================== -->
+      <section id="game-slots" class="game-section">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> ALINHAMENTO DE BOBINAS DE COAXIUM // SLOTS
+            3x3</div>
+          <div class="slot-payouts-preview">
+            <span>⚔️ 3x = 50x</span>
+            <span>💎 3x = 25x</span>
+            <span>🪐 3x = 15x</span>
+            <span>🚀 3x = 10x</span>
+            <span>⚡ 3x = 5x</span>
+          </div>
+        </div>
+
+        <div class="slots-frame">
+          <div class="slot-viewport">
+            <div class="slot-column" id="slotCol0">
+              <div class="slot-reel-strip"></div>
+            </div>
+            <div class="slot-column" id="slotCol1">
+              <div class="slot-reel-strip"></div>
+            </div>
+            <div class="slot-column" id="slotCol2">
+              <div class="slot-reel-strip"></div>
+            </div>
+            <div class="slot-laser-line"></div>
+          </div>
+
+          <div class="slot-control-deck">
+            <div class="bet-adjust-group">
+              <label>VALOR POR GIRO (FICHAS):</label>
+              <div class="spin-bet-inputs">
+                <button class="btn-step" onclick="adjustSlotBet(-5)">-5</button>
+                <input type="number" id="slotBetInput" value="5" min="1" step="1" readonly>
+                <button class="btn-step" onclick="adjustSlotBet(5)">+5</button>
+                <button class="btn-step max-btn" onclick="setSlotBetMax()">MÁX</button>
+              </div>
+            </div>
+
+            <button class="btn-cyber-primary btn-spin-slot" id="btnSpinSlot" onclick="spinSlotMachine()">
+              <span class="btn-text">IGNIÇÃO HIPERDRIVE</span>
+              <span class="btn-shine"></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- JOGO 5: DADOS SABACC ORLA EXTERIOR             -->
+      <!-- ============================================== -->
+      <section id="game-sabacc" class="game-section">
+        <div class="section-titlebar">
+          <div class="title-text"><span class="neon-bullet">&#x25C6;</span> DADOS HOLOGRÁFICOS DE PROBABILIDADE //
+            SABACC</div>
+        </div>
+
+        <div class="sabacc-arena">
+          <div class="hologram-dice-pod">
+            <div class="cube-scene">
+              <div class="dice-3d" id="cube1">
+                <div class="cube-face front">1</div>
+                <div class="cube-face back">6</div>
+                <div class="cube-face right">3</div>
+                <div class="cube-face left">4</div>
+                <div class="cube-face top">2</div>
+                <div class="cube-face bottom">5</div>
+              </div>
+            </div>
+            <div class="cube-scene">
+              <div class="dice-3d" id="cube2">
+                <div class="cube-face front">1</div>
+                <div class="cube-face back">6</div>
+                <div class="cube-face right">3</div>
+                <div class="cube-face left">4</div>
+                <div class="cube-face top">2</div>
+                <div class="cube-face bottom">5</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dice-results-hud">
+            <div class="hud-item">
+              <span class="label">DADO ALFA:</span>
+              <span id="sabaccDie1Val" class="val">-</span>
+            </div>
+            <div class="hud-item highlight">
+              <span class="label">SOMA TOTAL:</span>
+              <span id="sabaccSumVal" class="val">-</span>
+            </div>
+            <div class="hud-item">
+              <span class="label">DADO BETA:</span>
+              <span id="sabaccDie2Val" class="val">-</span>
+            </div>
+          </div>
+
+          <div class="sabacc-bet-board">
+            <div class="bet-adjust-group">
+              <label>VALOR DA APOSTA (FICHAS):</label>
+              <input type="number" id="sabaccBetInput" value="10" min="1" step="1">
+            </div>
+
+            <div class="sabacc-choice-grid">
+              <button class="btn-sabacc-choice" onclick="rollSabaccDice('low')">
+                <span class="choice-title">SUB-ÓRBITA (2 a 6)</span>
+                <span class="choice-mult">PAGA 2.0x</span>
+              </button>
+              <button class="btn-sabacc-choice gold-choice" onclick="rollSabaccDice('seven')">
+                <span class="choice-title">PULSO SETE (SOMA 7)</span>
+                <span class="choice-mult">PAGA 4.5x</span>
+              </button>
+              <button class="btn-sabacc-choice" onclick="rollSabaccDice('high')">
+                <span class="choice-title">HIPER-ÓRBITA (8 a 12)</span>
+                <span class="choice-mult">PAGA 2.0x</span>
+              </button>
+              <button class="btn-sabacc-choice double-choice" onclick="rollSabaccDice('double')">
+                <span class="choice-title">PAR DE CLONES (DADOS IGUAIS)</span>
+                <span class="choice-mult">PAGA 5.5x</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Terminal de Logs / Telemetria Inferior -->
+    <footer class="datapad-footer">
+      <div class="console-box">
+        <div class="console-header">
+          <span class="pulse-icon"></span>
+          <span>CONSOLE DE TELEMETRIA & TRANSAÇÕES QUÂNTICAS</span>
+          <button class="btn-clear-log" onclick="clearConsoleLog()">LIMPAR BUFFER</button>
+        </div>
+        <div class="console-stream" id="consoleStream">
+          <div class="log-line sys-init">> [DATAPAD BOOT]: Inicialização de sub-rotinas criptográficas concluída.</div>
+          <div class="log-line sys-info">> [CÂMBIO]: Taxa atual fixada em: 10 Créditos Imperiais = 1 Ficha Galáctica.
+          </div>
+          <div class="log-line sys-ready">> [SISTEMA]: Texas Hold'em 1v1 com All-In integrado ao Datapad.</div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Modal de Câmbio -->
+  <div class="cambio-modal-backdrop" id="exchangeModal">
+    <div class="cambio-modal-window">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="modal-symbol">&#x21C4;</span> TERMINAL DE CÂMBIO GALÁCTICO
+        </div>
+        <button class="btn-modal-close" onclick="closeExchangeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="rate-badge">
+          <span>TAXA OFICIAL:</span>
+          <strong>1 FICHA (FG) = 10 CRÉDITOS IMPERIAIS (CI)</strong>
+        </div>
+
+        <div class="exchange-grid">
+          <div class="exchange-card">
+            <h3>COMPRAR FICHAS DE JOGO</h3>
+            <p class="card-desc">Converta seus Créditos Imperiais em Fichas para apostar nos módulos do cassino.</p>
+
+            <div class="exchange-input-group">
+              <label>Quantidade de Fichas desejadas:</label>
+              <div class="exchange-field">
+                <input type="number" id="buyChipsAmount" value="50" min="1" step="1" oninput="updateBuyCostPreview()">
+                <span class="unit-tag">FG</span>
+              </div>
+              <div class="cost-preview">
+                Custo total: <strong id="buyCostPreview">500</strong> CI
+              </div>
+            </div>
+
+            <div class="quick-chip-buttons">
+              <button onclick="setBuyChips(10)">+10 FG</button>
+              <button onclick="setBuyChips(50)">+50 FG</button>
+              <button onclick="setBuyChips(100)">+100 FG</button>
+              <button onclick="setBuyChips('max')">MÁXIMO</button>
+            </div>
+
+            <button class="btn-cyber-primary btn-modal-action" onclick="executeBuyChips()">
+              CONVERTER CI EM FICHAS
+            </button>
+          </div>
+
+          <div class="exchange-card">
+            <h3>DEVOLVER FICHAS (RESGATE)</h3>
+            <p class="card-desc">Converta suas fichas e ganhos de volta em Créditos Imperiais seguros antes de sair.</p>
+
+            <div class="exchange-input-group">
+              <label>Quantidade de Fichas para devolver:</label>
+              <div class="exchange-field">
+                <input type="number" id="sellChipsAmount" value="0" min="1" step="1"
+                  oninput="updateSellReturnPreview()">
+                <span class="unit-tag">FG</span>
+              </div>
+              <div class="cost-preview">
+                Retorno estimado: <strong id="sellReturnPreview">0</strong> CI
+              </div>
+            </div>
+
+            <div class="quick-chip-buttons">
+              <button onclick="setSellChips(10)">10 FG</button>
+              <button onclick="setSellChips(50)">50 FG</button>
+              <button onclick="setSellChips(100)">100 FG</button>
+              <button onclick="setSellChips('all')">DEVOLVER TUDO</button>
+            </div>
+
+            <button class="btn-cyber-danger btn-modal-action" onclick="executeSellChips()">
+              RESGATAR EM CRÉDITOS IMPERIAIS
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-footer-note">
+          * Você pode manter suas fichas na memória do Datapad para futuras rodadas ou resgatá-las a qualquer momento.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="cassino.js"></script>
+</body>
+
+</html>

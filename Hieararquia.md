@@ -4,7 +4,8 @@ StarWarsRPG
 ├─ .nojekyll
 ├─ 404.html
 ├─ backups
-│  └─ holonetBackup.json
+│  ├─ holonetBackup.json
+│  └─ mapa_do_banco_de_dados.md
 ├─ CNAME
 ├─ data
 │  ├─ Aurebesh.woff
@@ -48,6 +49,7 @@ StarWarsRPG
 │  │  ├─ OS-04-COR-001.json
 │  │  ├─ OS-04-UND-001.json
 │  │  └─ siglasLocalidade.json
+│  ├─ droids
 │  ├─ droids.html
 │  ├─ droids.js
 │  ├─ durtoc.html
@@ -66,6 +68,8 @@ StarWarsRPG
 │  ├─ inventarioOficina.js
 │  ├─ oficina.html
 │  ├─ oficina.js
+│  ├─ servicosMCMT.html
+│  ├─ servicosMCMT.js
 │  └─ tripulantes.html
 ├─ Hieararquia.md
 ├─ img
@@ -87,11 +91,8 @@ StarWarsRPG
 │  ├─ d20.png
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
-│  ├─ DurtocDocumento.png
-│  ├─ DurtocGenDocumento.png
-│  ├─ DurtocGeneral.png
-│  ├─ DurtocMec.png
 │  ├─ error-404.ico
+│  ├─ fichas.png
 │  ├─ HNN.ico
 │  ├─ imperio.png
 │  ├─ light-saber.png
@@ -107,6 +108,13 @@ StarWarsRPG
 │  ├─ p2w.png
 │  ├─ personagens
 │  │  ├─ dravos.jpeg
+│  │  ├─ durtocFotos
+│  │  │  ├─ DurtocDocumento.png
+│  │  │  ├─ DurtocGenDocumento.png
+│  │  │  ├─ DurtocGeneral.png
+│  │  │  ├─ DurtocIcon.jpeg
+│  │  │  ├─ DurtocIcon.png
+│  │  │  └─ DurtocMec.png
 │  │  ├─ keiranJinn.jpeg
 │  │  ├─ lihua.jpeg
 │  │  ├─ rapinFloo.jpeg
@@ -115,6 +123,7 @@ StarWarsRPG
 │  ├─ r2d2.ico
 │  ├─ rebelde.png
 │  ├─ sabres.ico
+│  ├─ servicos.png
 │  └─ tripulantes
 │     ├─ PreFaisca.png
 │     ├─ PreKael.png
@@ -127,6 +136,7 @@ StarWarsRPG
 ├─ js
 │  ├─ armazem.js
 │  ├─ banco.js
+│  ├─ dados.js
 │  ├─ dadosClassesFicha.js
 │  ├─ dadosRacasFicha.js
 │  ├─ dadosTamanhosFicha.js
@@ -162,12 +172,27 @@ StarWarsRPG
 │  ├─ escudo.html
 │  ├─ fichasBalanceamento.html
 │  ├─ frotaMestre.html
+│  ├─ log
+│  │  ├─ log.css
+│  │  └─ log.js
 │  ├─ log.html
-│  └─ redirecionamentos.html
+│  ├─ redirecionamentos.html
+│  ├─ terminalBancario
+│  │  ├─ terminalBancario.css
+│  │  └─ terminalBancario.js
+│  └─ terminalBancario.html
+├─ monopoly
+│  ├─ macroDurtoc
+│  │  ├─ app.js
+│  │  ├─ audio.js
+│  │  ├─ data.js
+│  │  └─ macroDurtoc.css
+│  └─ macroDurtoc.html
 ├─ pages
 │  ├─ armazem.html
 │  ├─ banco.html
 │  ├─ comunicacao.html
+│  ├─ dados.html
 │  ├─ ficha.html
 │  ├─ frotaRebeldes.html
 │  ├─ hierarquiaGerais.html
@@ -194,14 +219,16 @@ StarWarsRPG
 │  ├─ MCMT.html
 │  └─ mestre.html
 ├─ staging
-│  ├─ servicosMCMT.css
-│  ├─ servicosMCMT.html
-│  └─ servicosMCMT.js
+│  └─ cassino
+│     ├─ cassino.css
+│     ├─ cassino.html
+│     └─ cassino.js
 ├─ styles
 │  ├─ 404.css
 │  ├─ armazem.css
 │  ├─ banco.css
 │  ├─ comunicacao.css
+│  ├─ dados.css
 │  ├─ distanciaPlanetas.css
 │  ├─ durtoc.css
 │  ├─ escudo.css
@@ -226,7 +253,8 @@ StarWarsRPG
 │  ├─ p2w.css
 │  ├─ posto.css
 │  ├─ rebeldes.css
-│  └─ selecaoRebelde.css
+│  ├─ selecaoRebelde.css
+│  └─ servicosMCMT.css
 └─ terminal
    ├─ LdIE.html
    └─ MTP.html

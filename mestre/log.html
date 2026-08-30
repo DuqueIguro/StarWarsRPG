@@ -6,43 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auditoria Imperial - Monitoramento Global</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../img/d20.png">
-    <style>
-        body {
-            background-color: #050308;
-            color: #e8dcc8;
-            font-family: 'Share Tech Mono', monospace;
-        }
-
-        .orbitron {
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .log-row:hover {
-            background-color: rgba(56, 189, 248, 0.05);
-        }
-
-        /* Scrollbar customizada */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #050308;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4b5563;
-        }
-    </style>
+    <link rel="stylesheet" href="./log/log.css">
 </head>
 
 <body class="p-4 md:p-8">
@@ -93,7 +60,6 @@
                 <div class="text-xs text-stone-500">Carregando frota...</div>
             </div>
         </div>
-        </header>
 
         <!-- PAINEL DE FILTROS ISB -->
         <div
@@ -110,7 +76,6 @@
                 <select id="filter-char"
                     class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-red-500 outline-none transition">
                     <option value="">Toda a Frota</option>
-                    <!-- JS injeta os nomes aqui -->
                 </select>
             </div>
             <div>
@@ -170,34 +135,37 @@
                 class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
                 Operações da Frota
             </button>
+            <button id="btn-tab-cassino" onclick="alternarAbas('cassino')"
+                class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
+                Cassino
+            </button>
+            <button id="btn-tab-mcmt" onclick="alternarAbas('mcmt')"
+                class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
+                Serviços MCMT
+            </button>
         </div>
-
 
         <div id="conteudo-financas" class="block">
             <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
-
-                <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[800px]">
-                            <thead>
-                                <tr
-                                    class="bg-stone-900 border-b border-stone-800 text-cyan-500 text-xs uppercase tracking-wider">
-                                    <th class="p-4 w-48">Data / Hora Local</th>
-                                    <th class="p-4 w-48">Jogador (Personagem)</th>
-                                    <th class="p-4 w-32">Classificação</th>
-                                    <th class="p-4">Descrição da Transação</th>
-                                    <th class="p-4 text-right w-32">Delta Créditos</th>
-                                </tr>
-                            </thead>
-                            <tbody id="logs-body" class="text-sm divide-y divide-stone-800/50">
-                                <tr>
-                                    <td colspan="5" class="p-8 text-center text-stone-500">Buscando registros na rede
-                                        HoloNet...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr
+                                class="bg-stone-900 border-b border-stone-800 text-cyan-500 text-xs uppercase tracking-wider">
+                                <th class="p-4 w-48">Data / Hora Local</th>
+                                <th class="p-4 w-48">Jogador (Personagem)</th>
+                                <th class="p-4 w-32">Classificação</th>
+                                <th class="p-4">Descrição da Transação</th>
+                                <th class="p-4 text-right w-32">Delta Créditos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-body" class="text-sm divide-y divide-stone-800/50">
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-stone-500">Buscando registros na rede
+                                    HoloNet...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -250,520 +218,59 @@
             </div>
         </div>
 
-        <!-- Scripts do Banco e da Lógica -->
-        <script>
-            /* ARQUIVO: js/auditoria.js */
-
-            document.addEventListener('DOMContentLoaded', async () => {
-                const tbody = document.getElementById('logs-body');
-                const btnRefresh = document.getElementById('btn-refresh');
-
-                // Controles do Filtro
-                const btnSearch = document.getElementById('btn-search');
-                const btnClear = document.getElementById('btn-clear');
-                const inputBusca = document.getElementById('filter-text');
-                const selectChar = document.getElementById('filter-char');
-                const selectAcao = document.getElementById('filter-action');
-                const dateStart = document.getElementById('filter-date-start');
-                const dateEnd = document.getElementById('filter-date-end');
-
-                // 1. Carrega dinamicamente a lista de jogadores do servidor
-                async function carregarPersonagens() {
-                    const rosterPanel = document.getElementById('roster-panel');
-
-                    // Agora puxamos também os créditos para exibir na prévia ao Mestre
-                    const { data, error } = await supabaseClient.from('personagens').select('id, nome, creditos').order('nome');
-
-                    if (!error && data) {
-                        if (rosterPanel) rosterPanel.innerHTML = ''; // Limpa o "Carregando"
-
-                        data.forEach(p => {
-                            // A) Alimenta o Filtro Suspenso
-                            const opt = document.createElement('option');
-                            opt.value = p.id;
-                            opt.textContent = p.nome;
-                            selectChar.appendChild(opt);
-
-                            // B) Cria o Cartão Clicável de Acesso Rápido
-                            if (rosterPanel) {
-                                const card = document.createElement('a');
-                                if(p.id !== '6eef10e3-b1c0-475a-b2f6-811bc065706c' && p.id !== '2924a75f-6638-49c8-bb65-10e8ab55f134'){
-                                    card.href = `../pages/ficha.html?id=${p.id}`; // O link seguro do Gatekeeper
-                                }
-                                card.target = '_blank';
-                                card.className = 'bg-stone-900/40 border border-cyan-900/30 hover:border-cyan-500 hover:bg-stone-900 p-3 rounded flex flex-col justify-between transition-all cursor-pointer group shadow-sm';
-                                card.innerHTML = `
-                                    <span class="text-xs font-bold text-stone-300 group-hover:text-cyan-300 transition-colors uppercase tracking-wider">${p.nome}</span>
-                                    <div class="mt-2 pt-2 border-t border-stone-800 flex justify-between items-center">
-                                        <span class="text-[9px] text-stone-500">SALDO:</span>
-                                        <span class="text-[10px] text-green-400 orbitron font-bold">${p.creditos} 💳</span>
-                                    </div>
-                                `;
-                                rosterPanel.appendChild(card);
-                            }
-                        });
-                    } else {
-                        if (rosterPanel) rosterPanel.innerHTML = '<div class="text-red-500 text-xs">Erro ao carregar dossiês.</div>';
-                    }
-                }
-
-                // 2. Motor Central de Busca Paramétrica
-                async function carregarLogs() {
-                    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Executando varredura na rede ISB com os parâmetros fornecidos...</td></tr>';
-
-                    // Base da Query
-                    let query = supabaseClient
-                        .from('logs_auditoria')
-                        .select('*, personagens(nome)')
-                        .order('created_at', { ascending: false })
-                        .limit(300); // Aumentamos o limite para 300 resultados por busca
-
-                    // Aplicando Filtro de Texto (ex: nome de um item ou valor)
-                    const txt = inputBusca.value.trim();
-                    if (txt) {
-                        query = query.ilike('descricao', `%${txt}%`);
-                    }
-
-                    // Aplicando Filtro de Jogador
-                    if (selectChar.value) {
-                        query = query.eq('personagem_id', selectChar.value);
-                    }
-
-                    // Aplicando Filtro de Tipo de Atividade
-                    if (selectAcao.value) {
-                        query = query.ilike('tipo_evento', `%${selectAcao.value}%`);
-                    }
-
-                    // Aplicando Filtro de Datas (com injeção automática de fuso horário brasileiro -03:00)
-                    if (dateStart.value) {
-                        query = query.gte('created_at', `${dateStart.value}T00:00:00-03:00`);
-                    }
-                    if (dateEnd.value) {
-                        query = query.lte('created_at', `${dateEnd.value}T23:59:59-03:00`);
-                    }
-
-                    // Executa a Query Final no Supabase
-                    const { data: logs, error } = await query;
-
-                    if (error) {
-                        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">Falha de decriptação: ${error.message}</td></tr>`;
-                        return;
-                    }
-
-                    if (!logs || logs.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Nenhum registro corresponde aos filtros de busca selecionados.</td></tr>';
-                        return;
-                    }
-
-                    tbody.innerHTML = '';
-
-                    // Processa cada log e desenha na tabela
-                    logs.forEach(log => {
-
-                        const dataObj = new Date(log.created_at);
-                        const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-                        const nomePersonagem = log.personagens ? log.personagens.nome : 'Registro Fantasma';
-
-                        let deltaColor = 'text-stone-500';
-                        let deltaText = '0';
-                        if (log.mudanca_creditos > 0) {
-                            deltaColor = 'text-green-400';
-                            deltaText = '+' + log.mudanca_creditos;
-                        } else if (log.mudanca_creditos < 0) {
-                            deltaColor = 'text-red-400';
-                            deltaText = log.mudanca_creditos;
-                        }
-
-                        let eventoColor = 'text-cyan-400';
-                        if (log.tipo_evento.includes('DESCARTE')) eventoColor = 'text-orange-400';
-                        if (log.tipo_evento.includes('MANUAL')) eventoColor = 'text-purple-400';
-                        if (log.tipo_evento.includes('AJUSTE')) eventoColor = 'text-yellow-400';
-                        if (log.tipo_evento.includes('LEILAO') || log.tipo_evento.includes('REAIS')) eventoColor = 'text-pink-400';
-
-                        const tr = document.createElement('tr');
-                        tr.className = 'log-row transition-colors';
-
-                        // O botão Inspecionar pega o log.personagem_id e manda para a URL da ficha
-                        const btnInspecionar = `
-                            <a href="../pages/ficha.html?id=${log.personagem_id}" target="_blank" class="text-red-400 hover:text-white underline decoration-red-900/50 hover:decoration-red-400 transition ml-2 text-[10px] tracking-wider uppercase" title="Inspecionar Dossiê Completo">
-                                [INSPECIONAR]
-                            </a>
-                        `;
-
-                        const btnDeletarFinanceiro = `
-            <button onclick="deletarLog('${log.id}', 'logs_auditoria')" class="text-red-900 hover:text-red-400 transition-colors ml-4" title="Apagar Registro">
-                <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-            </button>
-        `;
-
-                        tr.innerHTML = `
-            <td class="p-4 text-stone-400 text-xs">${dataFormatada}</td>
-            <td class="p-4 font-bold text-stone-300">
-                ${nomePersonagem}
-                ${btnInspecionar}
-            </td>
-            <td class="p-4 ${eventoColor} text-[10px] tracking-widest font-bold">${log.tipo_evento}</td>
-            <td class="p-4 text-stone-300">${log.descricao}</td>
-            <td class="p-4 text-right font-bold orbitron ${deltaColor} flex justify-end items-center">
-                <span>${deltaText}</span>
-                ${btnDeletarFinanceiro}
-            </td>
-        `;
-                        tbody.appendChild(tr);
-                        tbody.appendChild(tr);
-                    });
-                }
-
-                // 3. Mapeamento de Eventos (Botões e Tecla Enter)
-                btnRefresh.addEventListener('click', carregarLogs);
-                btnSearch.addEventListener('click', carregarLogs);
-                inputBusca.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') carregarLogs();
-                });
-
-                btnClear.addEventListener('click', () => {
-                    inputBusca.value = '';
-                    selectChar.value = '';
-                    selectAcao.value = '';
-                    dateStart.value = '';
-                    dateEnd.value = '';
-                    carregarLogs();
-                });
-
-                // Inicialização da Página
-                carregarPersonagens();
-                carregarLogs();
-                window.carregarLogs = carregarLogs;
-            });
-
-            /* INÍCIO DE FUNÇÃO DE [Exclusão de Logs ISB] */
-            window.deletarLog = async function (id, tabela) {
-                if (!confirm("ATENÇÃO: Deseja obliterar este registro dos arquivos da ISB? Esta ação é irreversível.")) return;
-
-                const { error } = await supabaseClient.from(tabela).delete().eq('id', id);
-
-                if (error) {
-                    alert("Erro ao excluir registro: " + error.message);
-                } else {
-                    const contDados = document.getElementById('conteudo-dados');
-                    const contFrota = document.getElementById('conteudo-frota');
-                    
-                    if (contDados && !contDados.classList.contains('hidden')) {
-                        carregarLogsDeDados();
-                    } else if (contFrota && !contFrota.classList.contains('hidden')) {
-                        carregarLogsTaticos();
-                    } else {
-                        if (typeof carregarLogs === 'function') carregarLogs();
-                    }
-                }
-            };
-            /* FIM DE FUNÇÃO DE [Exclusão de Logs ISB] */
-
-            /* INÍCIO DO SISTEMA DE CONTROLE DE ABAS E ROLAGENS */
-
-            window.alternarAbas = function (aba) {
-                const btnFinancas = document.getElementById('btn-tab-financas');
-                const btnDados = document.getElementById('btn-tab-dados');
-                const btnFrota = document.getElementById('btn-tab-frota');
-
-                const contFinancas = document.getElementById('conteudo-financas');
-                const contDados = document.getElementById('conteudo-dados');
-                const contFrota = document.getElementById('conteudo-frota');
-
-                const filtroTipo = document.getElementById('filter-action');
-                const filtroBusca = document.getElementById('filter-text');
-
-                // Classe base inativa
-                const cssInativo = "px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors";
-
-                // Reseta tudo
-                btnFinancas.className = cssInativo;
-                btnDados.className = cssInativo;
-                btnFrota.className = cssInativo;
-                contFinancas.classList.replace('block', 'hidden');
-                contDados.classList.replace('block', 'hidden');
-                contFrota.classList.replace('block', 'hidden');
-
-                if (aba === 'financas') {
-                    btnFinancas.className = "px-4 py-2 font-bold text-sm tracking-wider uppercase bg-cyan-900/40 text-cyan-400 border border-cyan-500 rounded transition-colors";
-                    contFinancas.classList.replace('hidden', 'block');
-
-                    if (filtroTipo) {
-                        filtroTipo.disabled = false;
-                        filtroTipo.classList.remove('opacity-30', 'cursor-not-allowed');
-                    }
-                    if (filtroBusca) {
-                        filtroBusca.disabled = false;
-                        filtroBusca.classList.remove('opacity-30', 'cursor-not-allowed');
-                        filtroBusca.placeholder = "Ex: Tibanna, 4000, Blaster...";
-                    }
-                }
-                else if (aba === 'dados') {
-                    btnDados.className = "px-4 py-2 font-bold text-sm tracking-wider uppercase bg-amber-900/40 text-amber-400 border border-amber-500 rounded transition-colors";
-                    contDados.classList.replace('hidden', 'block');
-
-                    if (filtroTipo) {
-                        filtroTipo.disabled = true;
-                        filtroTipo.classList.add('opacity-30', 'cursor-not-allowed');
-                        filtroTipo.value = "";
-                    }
-                    if (filtroBusca) {
-                        filtroBusca.disabled = true;
-                        filtroBusca.classList.add('opacity-30', 'cursor-not-allowed');
-                        filtroBusca.value = "";
-                        filtroBusca.placeholder = "Indisponível para dados";
-                    }
-                    carregarLogsDeDados();
-                }
-                else if (aba === 'frota') {
-                    btnFrota.className = "px-4 py-2 font-bold text-sm tracking-wider uppercase bg-red-900/40 text-red-400 border border-red-500 rounded transition-colors";
-                    contFrota.classList.replace('hidden', 'block');
-
-                    if (filtroTipo) {
-                        filtroTipo.disabled = true;
-                        filtroTipo.classList.add('opacity-30', 'cursor-not-allowed');
-                        filtroTipo.value = "";
-                    }
-                    if (filtroBusca) {
-                        filtroBusca.disabled = true;
-                        filtroBusca.classList.add('opacity-30', 'cursor-not-allowed');
-                        filtroBusca.value = "";
-                        filtroBusca.placeholder = "Indisponível para frota";
-                    }
-                    carregarLogsTaticos();
-                }
-            };
-
-            // 2. Descriptografia dos Dados (Fetch + Render)
-            async function carregarLogsDeDados() {
-                const listaDados = document.getElementById('lista-logs-dados');
-
-                // Captura dos filtros (IDs CORRIGIDOS)
-                const selectChar = document.getElementById('filter-char');
-                const inputDataInicio = document.getElementById('filter-date-start');
-                const inputDataFim = document.getElementById('filter-date-end');
-
-                const charId = selectChar ? selectChar.value : '';
-                const dataInicio = inputDataInicio ? inputDataInicio.value : null;
-                const dataFim = inputDataFim ? inputDataFim.value : null;
-
-                listaDados.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-cyan-500 animate-pulse">Descriptografando rolagens orbitais...</td></tr>';
-
-                let query = supabaseClient
-                    .from('logs_dados')
-                    .select(`*, personagens ( nome )`)
-                    .order('created_at', { ascending: false });
-
-                // Aplicação dos filtros do painel
-                if (charId && charId !== '') {
-                    query = query.eq('personagem_id', charId);
-                }
-
-                // Datas (com fuso horário -03:00 para bater com o resto do seu sistema)
-                if (dataInicio) {
-                    query = query.gte('created_at', `${dataInicio}T00:00:00-03:00`);
-                }
-                if (dataFim) {
-                    query = query.lte('created_at', `${dataFim}T23:59:59-03:00`);
-                }
-
-                const { data, error } = await query;
-
-                if (error) {
-                    console.error("[ISB LOGS] Erro na rede:", error);
-                    listaDados.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500 font-bold">⚠️ FALHA NA MATRIZ DE DADOS.</td></tr>`;
-                    return;
-                }
-
-                if (!data || data.length === 0) {
-                    listaDados.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-stone-500">Nenhuma rolagem detectada com estes parâmetros.</td></tr>`;
-                    return;
-                }
-
-                listaDados.innerHTML = '';
-
-                data.forEach(log => {
-                    const dataObj = new Date(log.created_at);
-                    const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-                    const nomeJogador = log.personagens ? log.personagens.nome : 'Desconhecido';
-
-                    // 1. Verifica se é uma rolagem de dano
-                    const isDano = log.nome_rolagem && log.nome_rolagem.toUpperCase().startsWith('DANO');
-
-                    // 2. Variáveis para exibir nas colunas
-                    let displayD20 = '';
-                    let displayAjustes = '';
-
-                    if (isDano) {
-                        // Se for dano, escurece e coloca o 'X'
-                        displayD20 = '<span class="text-stone-700 font-black text-sm">❌</span>';
-                        displayAjustes = '<span class="text-stone-700 font-black text-xs">❌</span>';
-                    } else {
-                        // Se for d20 normal, faz a checagem de crítico e falha crítica
-                        let corDado = 'text-cyan-100 font-bold';
-                        let iconeDado = '';
-
-                        if (log.dado_puro === 20) {
-                            corDado = 'text-emerald-400 font-black drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]';
-                            iconeDado = '🌟';
-                        } else if (log.dado_puro === 1) {
-                            corDado = 'text-red-500 font-black drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]';
-                            iconeDado = '💀';
-                        }
-
-                        displayD20 = `<span class="${corDado}">${log.dado_puro} ${iconeDado}</span>`;
-                        displayAjustes = `${log.bonus_total >= 0 ? '+' : ''}${log.bonus_total}`;
-                    }
-
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-stone-900/50 transition-colors border-b border-stone-800/30";
-
-                    const btnDeletar = `
-                        <button onclick="deletarLog(${log.id}, 'logs_dados')" class="text-red-900 hover:text-red-400 transition-colors ml-3" title="Apagar Registro">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    `;
-
-                    tr.innerHTML = `
-                        <td class="p-3 text-[10px] text-stone-500 whitespace-nowrap">${dataFormatada}</td>
-                        <td class="p-3 text-cyan-300 font-bold uppercase text-xs tracking-wider">${nomeJogador}</td>
-                        <td class="p-3 text-stone-300 text-xs">${log.nome_rolagem}</td>
-                        <td class="p-3 text-center text-xl">${displayD20}</td>
-                        <td class="p-3 text-center text-xs text-stone-400">${displayAjustes}</td>
-                        <td class="p-3 text-center text-amber-400 font-black text-xl drop-shadow-[0_0_5px_rgba(251,191,36,0.3)]">${log.resultado_final}</td>
-                        <td class="p-3 text-[10px] text-stone-500 font-mono tracking-tighter opacity-80 flex justify-between items-center">
-                            <span>${log.detalhamento}</span>
-                            ${btnDeletar}
-                        </td>
-                    `;
-                    listaDados.appendChild(tr);
-                });
-            }
-
-            // 3. Atualizar rolagens se o Mestre mudar os filtros (IDs CORRIGIDOS)
-            const selectsDeFiltro = [
-                document.getElementById('filter-char'),
-                document.getElementById('filter-date-start'),
-                document.getElementById('filter-date-end')
-            ];
-
-            selectsDeFiltro.forEach(el => {
-                if (el) {
-                    el.addEventListener('change', () => {
-                        const contDados = document.getElementById('conteudo-dados');
-                        if (contDados && !contDados.classList.contains('hidden')) {
-                            carregarLogsDeDados();
-                        }
-                    });
-                }
-            });
-
-            // O Atualizar Registros manual já estava correto, mantido intacto.
-            const btnAtt = document.getElementById('btn-refresh');
-            if (btnAtt) {
-                btnAtt.addEventListener('click', () => {
-                    const contDados = document.getElementById('conteudo-dados');
-                    if (contDados && !contDados.classList.contains('hidden')) {
-                        carregarLogsDeDados();
-                    }
-                });
-            }
-            /* FIM DO SISTEMA DE ROLAGENS PARA O MESTRE */
-
-            // 4. Descriptografia dos Logs da Frota
-            async function carregarLogsTaticos() {
-                const listaFrota = document.getElementById('lista-logs-frota');
-
-                const inputDataInicio = document.getElementById('filter-date-start');
-                const inputDataFim = document.getElementById('filter-date-end');
-                const dataInicio = inputDataInicio ? inputDataInicio.value : null;
-                const dataFim = inputDataFim ? inputDataFim.value : null;
-
-                listaFrota.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500 animate-pulse">Estabelecendo link com os cruzadores...</td></tr>';
-
-                let query = supabaseClient
-                    .from('logs_taticos')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(300);
-
-                if (dataInicio) query = query.gte('created_at', `${dataInicio}T00:00:00-03:00`);
-                if (dataFim) query = query.lte('created_at', `${dataFim}T23:59:59-03:00`);
-
-                const { data, error } = await query;
-
-                if (error) {
-                    listaFrota.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">⚠️ FALHA CRÍTICA DE COMUNICAÇÃO.</td></tr>`;
-                    return;
-                }
-
-                if (!data || data.length === 0) {
-                    listaFrota.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-stone-500">Nenhum evento tático registrado neste período.</td></tr>`;
-                    return;
-                }
-
-                listaFrota.innerHTML = '';
-
-                data.forEach(log => {
-                    const dataObj = new Date(log.created_at);
-                    const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-                    let actionColor = "text-stone-300 bg-stone-800/50";
-                    if (log.acao === 'DANO') actionColor = "text-red-400 bg-red-950/40 border border-red-900/50";
-                    if (log.acao === 'REPARO') actionColor = "text-green-400 bg-green-950/40 border border-green-900/50";
-                    if (log.acao === 'MOBILIZAÇÃO') actionColor = "text-cyan-400 bg-cyan-950/40 border border-cyan-900/50";
-                    if (log.acao === 'DESTRUIÇÃO/REMOÇÃO') actionColor = "text-red-500 font-bold bg-red-900/30 border border-red-500/50";
-                    if (log.acao === 'ISB OVERRIDE') actionColor = "text-yellow-400 font-bold bg-yellow-950/40 border border-yellow-700/50";
-                    if (log.acao === 'CONTRAMEDIDAS') actionColor = "text-fuchsia-400 font-bold bg-fuchsia-950/40 border border-fuchsia-900/50";
-
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-stone-900/50 transition-colors border-b border-stone-800/30";
-
-                    const btnDeletar = `
-                        <button onclick="deletarLog('${log.id}', 'logs_taticos')" class="text-red-900 hover:text-red-400 transition-colors ml-3" title="Apagar Registro Tático">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    `;
-
-                    tr.innerHTML = `
-                        <td class="p-3 text-[10px] text-stone-500 whitespace-nowrap">${dataFormatada}</td>
-                        <td class="p-3 text-emerald-400 font-bold uppercase text-xs tracking-wider">${log.nome_jogador || 'Desconhecido'}</td>
-                        <td class="p-3 text-purple-400 font-bold text-xs">${log.faccao}</td>
-                        <td class="p-3 text-cyan-100 text-xs uppercase tracking-wider">${log.nave_nome}</td>
-                        <td class="p-3 text-center text-[10px]"><span class="px-2 py-1 rounded tracking-widest ${actionColor}">${log.acao}</span></td>
-                        <td class="p-3 text-[10px] text-stone-400 font-mono tracking-tighter opacity-90 flex justify-between items-center">
-                            <span>${log.detalhes}</span>
-                            ${btnDeletar}
-                        </td>
-                    `;
-                    listaFrota.appendChild(tr);
-                });
-            }
-
-            // Atualiza os gatilhos dos filtros de Data para puxar os logs da Frota se a aba estiver aberta
-            selectsDeFiltro.forEach(el => {
-                if (el) {
-                    el.addEventListener('change', () => {
-                        const contFrota = document.getElementById('conteudo-frota');
-                        if (contFrota && !contFrota.classList.contains('hidden')) {
-                            carregarLogsTaticos();
-                        }
-                    });
-                }
-            });
-
-            // Atualiza o botão de Refresh principal para puxar os logs da Frota
-            if (btnAtt) {
-                btnAtt.addEventListener('click', () => {
-                    const contFrota = document.getElementById('conteudo-frota');
-                    if (contFrota && !contFrota.classList.contains('hidden')) {
-                        carregarLogsTaticos();
-                    }
-                });
-            }
-        </script>
+        <div id="conteudo-cassino" class="hidden">
+            <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr
+                                class="bg-stone-900 border-b border-stone-800 text-yellow-400 text-xs uppercase tracking-wider">
+                                <th class="p-4 w-48">Data / Hora Local</th>
+                                <th class="p-4 w-48">Apostador (Personagem)</th>
+                                <th class="p-4 w-32">Jogo</th>
+                                <th class="p-4 w-32">Classificação</th>
+                                <th class="p-4">Detalhes da Rodada</th>
+                                <th class="p-4 text-right w-36">Delta Fichas (FG)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-cassino-body" class="text-sm divide-y divide-stone-800/50">
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-stone-500">Buscando telemetria do Cassino
+                                    Nova Prime...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="conteudo-mcmt" class="hidden">
+            <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr
+                                class="bg-stone-900 border-b border-stone-800 text-amber-500 text-xs uppercase tracking-wider">
+                                <th class="p-4 w-48">Data / Hora Local</th>
+                                <th class="p-4 w-48">Autor da Modificação</th>
+                                <th class="p-4 w-36">Operação</th>
+                                <th class="p-4">Histórico / Descrição da Alteração</th>
+                                <th class="p-4 text-right w-24">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-mcmt-body" class="text-sm divide-y divide-stone-800/50">
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-stone-500">Aguardando telemetria das
+                                    oficinas MCMT...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./log/log.js"></script>
 </body>
 
 </html>

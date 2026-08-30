@@ -55,7 +55,7 @@
     const msgs = [
         '> Sincronizando com a HoloNet...',
         '> Verificando assinatura biométrica...',
-        '> Conexão segura estabelecida com o servidor CORELLIAN v5.0',
+        '> Conexão segura estabelecida com o servidor CORELLIAN v6.0.4',
         '> Aguardando credenciais do usuário...'
     ];
     let mIdx = 0, cIdx = 0;
@@ -108,7 +108,7 @@ function logLine(text, cls) {
     log.scrollTop = log.scrollHeight;
     while (log.children.length > 5) log.removeChild(log.firstChild);
 }
-logLine('> Conexão estabelecida com o servidor CORELLIAN v5.0');
+logLine('> Conexão estabelecida com o servidor CORELLIAN v6.0.4');
 logLine('> Terminal pronto. Insira suas credenciais.', 'ok-log');
 
 /* ---------------- Forgot password easter egg ---------------- */

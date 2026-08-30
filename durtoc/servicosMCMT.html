@@ -6,15 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oficinas MCMT - Tabela de Serviços e Custos</title>
     <link rel="stylesheet" href="../styles/MCMT.css">
-    <link rel="stylesheet" href="servicosMCMT.css">
+    <link rel="stylesheet" href="../styles/servicosMCMT.css">
     <link rel="icon" type="image/x-icon" href="../img/servicos.png">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
 </head>
 
 <body>
-    <!-- Biblioteca oficial do Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase.js"></script>
-    
+
     <!-- Aurebesh Background Watermark -->
     <div class="aurebesh-bg">MCMT WORKSHOP SERVICE SYSTEM - IMPERIAL & REBEL MECHANICAL LOGISTICS - ENGRENAGEM MESTRA
     </div>
@@ -54,7 +55,8 @@
                 </select>
             </div>
 
-            <div class="mode-toggle-container">
+            <!-- Oculto por padrão com a classe hidden -->
+            <div id="modeToggleContainer" class="mode-toggle-container hidden">
                 <span class="mode-label">MODO ATUAL:</span>
                 <button id="viewModeBtn" class="btn-mode active" onclick="setMode('view')">
                     <span class="indicator">●</span> VISUALIZAÇÃO

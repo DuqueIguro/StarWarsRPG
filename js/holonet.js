@@ -23,12 +23,12 @@ const HNN = (() => {
   };
 
   const MERCADOS = [
-    { nome: 'COAXIUM.',  val: '4.231',  variacao: '+15.7%',  dir: 'up' },
-    { nome: 'BACTA',        val: '8.800',  variacao: '-4.2%', dir: 'down' },
-    { nome: 'KYBER CRYSTALS',   val: '1.154',  variacao: '+89.5%', dir: 'up' },
-    { nome: 'DURASTEEL',      val: '622',    variacao: '+1.1%',  dir: 'up' },
-    { nome: 'AURODIUM',val: '3.410',  variacao: '-12.4%',  dir: 'down' },
-    { nome: 'NEURANIUM',     val: '290',    variacao: '+3.6%',  dir: 'up' },
+    { nome: 'COAXIUM. (BRUTO)',  val: '4.231',  variacao: '-5.8%',  dir: 'down' },
+    { nome: 'BACTA',        val: '8.800',  variacao: '+10.0%', dir: 'up' },
+    { nome: 'GÁS TIBIANA',   val: '1.154',  variacao: '-6.2%', dir: 'down' },
+    { nome: 'DURASTEEL',      val: '622',    variacao: '-4.4%',  dir: 'down' },
+    { nome: 'DROIDS DE TRABALHO',val: '3.410',  variacao: '+8.9%',  dir: 'up' },
+    { nome: 'ESPECIARIA RYLL',     val: '290',    variacao: '-13.4%',  dir: 'down' },
   ];
 
   /* ─── Inicialização ─── */

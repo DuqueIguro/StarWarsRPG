@@ -1,31 +1,31 @@
 {
   "hnn_version": "HNN-7.4.2",
-  "ultima_atualizacao": "Dia 16, Mês 4, Ano 04 ABY",
+  "ultima_atualizacao": "Dia 22, Mês 5, Ano 04 ABY",
   "ticker": [
-    "ALERTA: Ameaça de pirataria em curso na Rota de Comércio Perlemiana",
-    "MERCADOS: Ações da Corporação Kuat em queda após escândalo de corrupção",
-    "CLIMA: Tempestade de poeira em Tatooine - visibilidade reduzida",
-    "COMUNICADO: Atenção, cidadãos de Coruscant - patrulhas do ISB em operação",
+    "ALERTA: Aumento de atividade pirata no setor de Mygeeto - Evitar rotas secundárias",
+    "MERCADOS: COAXIUM. (BRUTO) - 4.231 créditos (-5.8%)",
+    "CLIMA: Tempestade de plasma em Dantooine - Evacuação recomendada",
+    "COMUNICADO: ISB - Coronel Wullf Yularen anuncia reforço de segurança em Kashyyyk e Mon Cala",
     "PROCURADO: Contrabandista Zorba Vex - recompensa de 50.000 créditos",
-    "ESPORTES: Corrida de Pods em Malastare - inscrições abertas",
-    "AVISO: Interdição de tráfego em Brentaal IV - patrulhas do ISB em operação",
-    "IMPERIAL: Grão-Almirante Thrawn em visita oficial a Mapuzo - cobertura completa"
+    "ESPORTES: Concurso Robótico Intergaláctico em Lothal - inscrições abertas",
+    "AVISO: Naves civis em órbita de Ord Mantell devem aguardar instruções - segurança reforçada",
+    "IMPERIAL: Frota de patrulha em alerta máximo - exercícios militares em andamento"
   ],
   "transmissoes_ao_vivo": [
     {
       "canal": "HNN-ALPHA",
       "status": "AO VIVO",
-      "descricao": "Dia 16 - Turnê da Fidelidade por Lyra Tarkin, com cobertura de eventos e entrevistas com a cantora e líderes locais."
+      "descricao": "Estaleiros de Kuat - Cerimônia de lançamento da nova frota de patrulha, acompanhada de demonstrações táticas da Marinha Imperial."
     },
     {
       "canal": "HNN-BETA",
       "status": "AO VIVO",
-      "descricao": "Sessão do Senado - Debate sobre a nova Diretriz de Supervisão Direta na Orla Média"
+      "descricao": "Cúpula de Comércio em Cato Neimoidia - Representantes corporativos e oficiais debatem as novas tarifas de exportação para a Orla Exterior."
     },
     {
       "canal": "HNN-GAMA",
       "status": "GRAVADO",
-      "descricao": "Grão-Almirante Thrawn discursa sobre a recente operação de contenção ostensiva em Mapuzo"
+      "descricao": "Pronunciamento do ISB - Coronel Wullf Yularen detalha o sucesso das recentes operações de segurança e a neutralização de células subversivas no setor de Kashyyyk."
     }
   ]
 }
