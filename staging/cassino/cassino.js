@@ -750,23 +750,40 @@ function startBlackjackHand() {
   document.getElementById('bjStatusBadge').textContent = `MÃO EM ANDAMENTO (APOSTA: ${bjCurrentBet} FG)`;
   document.getElementById('btnBjDouble').disabled = (casinoChips < bjCurrentBet);
 
-  renderBjTable(true);
-  if (getHandScore(bjPlayerHand) === 21) setTimeout(finishBlackjackRound, 800);
+  renderBjTable(true); // Oculta tudo do crupiê exceto a 1ª carta
+  
+  if (getHandScore(bjPlayerHand) === 21) {
+    document.getElementById('bjPlayActions').style.display = 'none';
+    setTimeout(() => playDealerTurn(), 800);
+  }
 }
 
-function renderBjTable(hideDealerSecondCard = false) {
+// hideDealerCards = true faz com que todas as cartas, exceto a primeira (idx 0), fiquem viradas para baixo
+function renderBjTable(hideDealerCards = false) {
   const pContainer = document.getElementById('playerCards');
   const dContainer = document.getElementById('dealerCards');
   pContainer.innerHTML = '';
   dContainer.innerHTML = '';
 
   bjPlayerHand.forEach(c => pContainer.appendChild(renderBjCard(c)));
-  bjDealerHand.forEach((c, idx) => dContainer.appendChild(renderBjCard(c, idx === 1 && hideDealerSecondCard)));
+  
+  bjDealerHand.forEach((c, idx) => {
+    // Se hideDealerCards for true, qualquer carta além da primeira (índice 0) fica oculta
+    let isHidden = hideDealerCards && idx >= 1;
+    dContainer.appendChild(renderBjCard(c, isHidden));
+  });
 
-  document.getElementById('playerScore').textContent = `PONTOS: ${getHandScore(bjPlayerHand)}`;
-  document.getElementById('dealerScore').textContent = hideDealerSecondCard
-    ? `PONTOS: ${bjDealerHand[0].value} + ?`
-    : `PONTOS: ${getHandScore(bjDealerHand)}`;
+  document.getElementById('playerScore').textContent = `PONTOS: ${getHandScore(bjPlayerHand)} | CARTAS: ${bjPlayerHand.length}`;
+
+  let dScoreText = '';
+  if (hideDealerCards) {
+    // Soma visível é apenas a primeira carta
+    dScoreText = `PONTOS: ${bjDealerHand[0].value} + ? | CARTAS: ${bjDealerHand.length}`;
+  } else {
+    // Mostra pontuação completa quando revelado no final
+    dScoreText = `PONTOS: ${getHandScore(bjDealerHand)} | CARTAS: ${bjDealerHand.length}`;
+  }
+  document.getElementById('dealerScore').textContent = dScoreText;
 }
 
 function bjPlayerHit() {
@@ -774,24 +791,78 @@ function bjPlayerHit() {
   playSound('card');
   bjPlayerHand.push(bjDeck.pop());
   document.getElementById('btnBjDouble').disabled = true;
-  renderBjTable(true);
-  if (getHandScore(bjPlayerHand) > 21) finishBlackjackRound();
+  renderBjTable(true); // Continua ocultando a mão secundária do crupiê
+  
+  const pScore = getHandScore(bjPlayerHand);
+  if (pScore > 21) {
+    document.getElementById('bjPlayActions').style.display = 'none';
+    setTimeout(() => finishBlackjackRound(), 800);
+  } else if (pScore === 21) {
+    document.getElementById('bjPlayActions').style.display = 'none';
+    setTimeout(() => playDealerTurn(), 800);
+  }
 }
 
 function bjPlayerStand() {
   if (!bjGameActive) return;
   playSound('click');
-  finishBlackjackRound();
+  document.getElementById('bjPlayActions').style.display = 'none';
+  playDealerTurn();
 }
 
-function bjPlayerDouble() {
+async function bjPlayerDouble() {
   if (!bjGameActive || casinoChips < bjCurrentBet) return;
-  casinoChips -= bjCurrentBet;
-  bjCurrentBet *= 2;
+  
+  casinoChips -= bjCurrentBet; // Deduz o valor dobrado
+  bjCurrentBet *= 2; // Atualiza a aposta base
   updateDisplays();
   playSound('chip');
+  
+  document.getElementById('bjStatusBadge').textContent = `APOSTA DOBRADA PARA ${bjCurrentBet} FG!`;
+  document.getElementById('bjPlayActions').style.display = 'none'; // Bloqueia mais ações do jogador
+
+  await new Promise(r => setTimeout(r, 600));
+
+  playSound('card');
   bjPlayerHand.push(bjDeck.pop());
-  renderBjTable(true);
+  renderBjTable(true); // Atualiza com a nova carta, mantendo segredos do crupiê
+
+  if (getHandScore(bjPlayerHand) > 21) {
+    await new Promise(r => setTimeout(r, 800));
+    finishBlackjackRound(); // Vai direto pro fim se o double estourar a mão
+  } else {
+    await new Promise(r => setTimeout(r, 800));
+    playDealerTurn(); // Passa o turno para o crupiê
+  }
+}
+
+async function playDealerTurn() {
+  let pScore = getHandScore(bjPlayerHand);
+  if (pScore > 21) return; // Se jogador estourou, crupiê não precisa jogar
+
+  let dScore = getHandScore(bjDealerHand);
+  const isPlayerBJ = (bjPlayerHand.length === 2 && pScore === 21);
+
+  // Se o jogador não tem Blackjack Natural, o crupiê é obrigado a comprar até 17.
+  if (!isPlayerBJ) {
+    while (dScore < 17) {
+      await new Promise(r => setTimeout(r, 1000));
+      bjDealerHand.push(bjDeck.pop());
+      dScore = getHandScore(bjDealerHand);
+
+      playSound('card');
+      renderBjTable(true); // Continua ocultando TODAS as cartas exceto a 1ª
+      document.getElementById('bjStatusBadge').textContent = `CRUPIÊ COMPROU MAIS UMA CARTA... (${bjDealerHand.length} CARTAS NA MÃO)`;
+    }
+  }
+
+  await new Promise(r => setTimeout(r, 1000));
+  document.getElementById('bjStatusBadge').textContent = `CRUPIÊ PAROU COM ${bjDealerHand.length} CARTAS! REVELANDO...`;
+  
+  await new Promise(r => setTimeout(r, 1200));
+  renderBjTable(false); // Revela TODAS as cartas do crupiê e calcula total visivel
+
+  await new Promise(r => setTimeout(r, 500));
   finishBlackjackRound();
 }
 
@@ -800,12 +871,7 @@ async function finishBlackjackRound() {
   let dScore = getHandScore(bjDealerHand);
   const pScore = getHandScore(bjPlayerHand);
 
-  if (pScore <= 21) {
-    while (dScore < 17) {
-      bjDealerHand.push(bjDeck.pop());
-      dScore = getHandScore(bjDealerHand);
-    }
-  }
+  // Garante que tudo esteja revelado no fim da rodada
   renderBjTable(false);
 
   let prize = 0;
