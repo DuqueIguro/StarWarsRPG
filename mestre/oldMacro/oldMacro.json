@@ -1,0 +1,7 @@
+{
+  "app": "oldMacro",
+  "kind": "campaign-os",
+  "version": 1,
+  "split": true,
+  "source": "mestre/oldMacro.html"
+}

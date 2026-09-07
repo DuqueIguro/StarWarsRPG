@@ -5,7 +5,8 @@ StarWarsRPG
 ├─ 404.html
 ├─ backups
 │  ├─ holonetBackup.json
-│  └─ mapa_do_banco_de_dados.md
+│  ├─ mapa_do_banco_de_dados.md
+│  └─ sincronizacaoBranches.bash
 ├─ CNAME
 ├─ data
 │  ├─ Aurebesh.woff
@@ -176,6 +177,12 @@ StarWarsRPG
 │  │  ├─ log.css
 │  │  └─ log.js
 │  ├─ log.html
+│  ├─ oldMacro
+│  │  ├─ oldMacro.css
+│  │  ├─ oldMacro.js
+│  │  ├─ oldMacro.json
+│  │  └─ split_old_macro.py
+│  ├─ oldMacro.html
 │  ├─ redirecionamentos.html
 │  ├─ terminalBancario
 │  │  ├─ terminalBancario.css
