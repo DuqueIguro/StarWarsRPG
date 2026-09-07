@@ -118,7 +118,7 @@ function switchGame(gameId, buttonElement) {
   playSound('click');
   document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab-module').forEach(b => b.classList.remove('active'));
-  
+
   document.getElementById(`game-${gameId}`).classList.add('active');
   buttonElement.classList.add('active');
   logConsole(`Interface alternada para o setor: ${gameId.toUpperCase()}`);
@@ -236,7 +236,7 @@ function playSound(type) {
       osc.start(now);
       osc.stop(now + 0.25);
     }
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function toggleAudio() {
@@ -399,7 +399,7 @@ async function executeSellChips() {
 // ROLETA QUÂNTICA
 // ==========================================================================
 const ROULETTE_NUMBERS = [
-  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 
+  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
   5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
 ];
 const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
@@ -764,8 +764,8 @@ function renderBjTable(hideDealerSecondCard = false) {
   bjDealerHand.forEach((c, idx) => dContainer.appendChild(renderBjCard(c, idx === 1 && hideDealerSecondCard)));
 
   document.getElementById('playerScore').textContent = `PONTOS: ${getHandScore(bjPlayerHand)}`;
-  document.getElementById('dealerScore').textContent = hideDealerSecondCard 
-    ? `PONTOS: ${bjDealerHand[0].value} + ?` 
+  document.getElementById('dealerScore').textContent = hideDealerSecondCard
+    ? `PONTOS: ${bjDealerHand[0].value} + ?`
     : `PONTOS: ${getHandScore(bjDealerHand)}`;
 }
 
@@ -1020,7 +1020,7 @@ async function pokerActionFold() {
   pokerState.active = false;
   document.getElementById('pokerStatusBadge').textContent = `VOCÊ DESISTIU (FOLD)!`;
   logConsole(`PÔQUER: Desistência. Perda de ${pokerState.playerRoundBet} FG.`, 'log-loss');
-  
+
   await persistirSaldoNoBanco();
   await registrarLogCassino('POKER', 'FOLD', `Desistiu da mão (Fold). Perda de ${pokerState.playerRoundBet} FG`, -pokerState.playerRoundBet);
   endPokerHandUI();
@@ -1326,41 +1326,83 @@ function rollSabaccDice(choice) {
   isSabaccRolling = true;
   playSound('spinTick');
 
+  const isJackpot = choice === 'jackpot';
+
+  // Exibir ou ocultar os dados extras dependendo da aposta
+  document.querySelectorAll('.jackpot-die').forEach(el => {
+    el.style.display = isJackpot ? 'block' : 'none';
+  });
+
+  // Rolagem dos dados
   const d1 = Math.floor(Math.random() * 6) + 1;
   const d2 = Math.floor(Math.random() * 6) + 1;
-  const sum = d1 + d2;
+  const d3 = isJackpot ? Math.floor(Math.random() * 6) + 1 : 0;
+  const d4 = isJackpot ? Math.floor(Math.random() * 6) + 1 : 0;
+
+  const sum = d1 + d2; // A soma tradicional do painel foca apenas em 2d6
 
   const cubeRotations = {
     1: { x: 0, y: 0 }, 2: { x: -90, y: 0 }, 3: { x: 0, y: -90 },
     4: { x: 0, y: 90 }, 5: { x: 90, y: 0 }, 6: { x: 0, y: 180 }
   };
 
+  // Animação 3D
   document.getElementById('cube1').style.transform = `rotateX(${cubeRotations[d1].x + 720}deg) rotateY(${cubeRotations[d1].y + 720}deg)`;
   document.getElementById('cube2').style.transform = `rotateX(${cubeRotations[d2].x + 1080}deg) rotateY(${cubeRotations[d2].y + 1080}deg)`;
+
+  if (isJackpot) {
+    document.getElementById('cube3').style.transform = `rotateX(${cubeRotations[d3].x + 720}deg) rotateY(${cubeRotations[d3].y + 720}deg)`;
+    document.getElementById('cube4').style.transform = `rotateX(${cubeRotations[d4].x + 1080}deg) rotateY(${cubeRotations[d4].y + 1080}deg)`;
+  }
 
   setTimeout(async () => {
     isSabaccRolling = false;
     document.getElementById('sabaccDie1Val').textContent = d1;
     document.getElementById('sabaccDie2Val').textContent = d2;
-    document.getElementById('sabaccSumVal').textContent = sum;
+
+    // Altera o painel central dependendo do modo
+    if (isJackpot) {
+      document.getElementById('sabaccSumVal').textContent = `${d1}-${d2}-${d3}-${d4}`;
+    } else {
+      document.getElementById('sabaccSumVal').textContent = sum;
+    }
 
     let won = false, mult = 0;
-    if (choice === 'low' && sum >= 2 && sum <= 6) { won = true; mult = 2.0; }
-    else if (choice === 'high' && sum >= 8 && sum <= 12) { won = true; mult = 2.0; }
-    else if (choice === 'seven' && sum === 7) { won = true; mult = 4.5; }
-    else if (choice === 'double' && d1 === d2) { won = true; mult = 5.5; }
+
+    // Lógica de Pagamentos e Validação
+    if (choice === 'low' && sum >= 2 && sum <= 6) {
+      won = true; mult = 2.0;
+    }
+    else if (choice === 'high' && sum >= 8 && sum <= 12) {
+      won = true; mult = 2.0;
+    }
+    else if (choice === 'double' && d1 === d2) {
+      won = true; mult = 4.0; // Multiplicador ajustado para 4x
+    }
+    else if (choice === 'jackpot') {
+      const faces = [d1, d2, d3, d4];
+      const count1 = faces.filter(f => f === 1).length;
+      const count6 = faces.filter(f => f === 6).length;
+
+      // Checa se há EXATAMENTE dois 1s e dois 6s
+      if (count1 === 2 && count6 === 2) {
+        won = true; mult = 100.0;
+      }
+    }
 
     if (won) {
       const prize = Math.floor(bet * mult);
       casinoChips += prize;
       updateDisplays();
       playSound('win');
-      logConsole(`SABACC: Dados [${d1}, ${d2}] -> Soma ${sum}. Ganhou +${prize} FG!`, "log-win");
-      await registrarLogCassino('SABACC', 'VITORIA', `Aposta ${choice} ganha com dados [${d1}, ${d2}]. Recebeu ${prize} FG`, prize - bet);
+      const resultadoStr = isJackpot ? `[${d1}, ${d2}, ${d3}, ${d4}]` : `[${d1}, ${d2}] -> Soma ${sum}`;
+      logConsole(`SABACC: Dados ${resultadoStr}. Ganhou +${prize} FG!`, "log-win");
+      await registrarLogCassino('SABACC', 'VITORIA', `Aposta ${choice} ganha. Recebeu ${prize} FG`, prize - bet);
     } else {
       playSound('loss');
-      logConsole(`SABACC: Dados [${d1}, ${d2}] -> Soma ${sum}. -${bet} FG.`, "log-loss");
-      await registrarLogCassino('SABACC', 'DERROTA', `Aposta ${choice} perdida com dados [${d1}, ${d2}]`, -bet);
+      const resultadoStr = isJackpot ? `[${d1}, ${d2}, ${d3}, ${d4}]` : `[${d1}, ${d2}] -> Soma ${sum}`;
+      logConsole(`SABACC: Dados ${resultadoStr}. -${bet} FG.`, "log-loss");
+      await registrarLogCassino('SABACC', 'DERROTA', `Aposta ${choice} perdida.`, -bet);
     }
 
     await persistirSaldoNoBanco();

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DATAPAD // CASSINO ORLA EXTERIOR</title>
+  <title>CASSINO ORLA EXTERIOR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="icon" type="image/x-icon" href="../../img/fichas.png">
@@ -455,27 +455,20 @@
         </div>
 
         <div class="sabacc-arena">
-          <div class="hologram-dice-pod">
-            <div class="cube-scene">
-              <div class="dice-3d" id="cube1">
-                <div class="cube-face front">1</div>
-                <div class="cube-face back">6</div>
-                <div class="cube-face right">3</div>
-                <div class="cube-face left">4</div>
-                <div class="cube-face top">2</div>
-                <div class="cube-face bottom">5</div>
-              </div>
-            </div>
-            <div class="cube-scene">
-              <div class="dice-3d" id="cube2">
-                <div class="cube-face front">1</div>
-                <div class="cube-face back">6</div>
-                <div class="cube-face right">3</div>
-                <div class="cube-face left">4</div>
-                <div class="cube-face top">2</div>
-                <div class="cube-face bottom">5</div>
-              </div>
-            </div>
+          <div class="hologram-dice-pod" id="sabaccDicePod">
+            <div class="cube-scene"><div class="dice-3d" id="cube1">
+              <div class="cube-face front">1</div><div class="cube-face back">6</div><div class="cube-face right">3</div><div class="cube-face left">4</div><div class="cube-face top">2</div><div class="cube-face bottom">5</div>
+            </div></div>
+            <div class="cube-scene"><div class="dice-3d" id="cube2">
+              <div class="cube-face front">1</div><div class="cube-face back">6</div><div class="cube-face right">3</div><div class="cube-face left">4</div><div class="cube-face top">2</div><div class="cube-face bottom">5</div>
+            </div></div>
+            <!-- Dados Extras para o Jackpot -->
+            <div class="cube-scene jackpot-die" style="display: none;"><div class="dice-3d" id="cube3">
+              <div class="cube-face front">1</div><div class="cube-face back">6</div><div class="cube-face right">3</div><div class="cube-face left">4</div><div class="cube-face top">2</div><div class="cube-face bottom">5</div>
+            </div></div>
+            <div class="cube-scene jackpot-die" style="display: none;"><div class="dice-3d" id="cube4">
+              <div class="cube-face front">1</div><div class="cube-face back">6</div><div class="cube-face right">3</div><div class="cube-face left">4</div><div class="cube-face top">2</div><div class="cube-face bottom">5</div>
+            </div></div>
           </div>
 
           <div class="dice-results-hud">
@@ -504,17 +497,17 @@
                 <span class="choice-title">SUB-ÓRBITA (2 a 6)</span>
                 <span class="choice-mult">PAGA 2.0x</span>
               </button>
-              <button class="btn-sabacc-choice gold-choice" onclick="rollSabaccDice('seven')">
-                <span class="choice-title">PULSO SETE (SOMA 7)</span>
-                <span class="choice-mult">PAGA 4.5x</span>
-              </button>
               <button class="btn-sabacc-choice" onclick="rollSabaccDice('high')">
                 <span class="choice-title">HIPER-ÓRBITA (8 a 12)</span>
                 <span class="choice-mult">PAGA 2.0x</span>
               </button>
               <button class="btn-sabacc-choice double-choice" onclick="rollSabaccDice('double')">
-                <span class="choice-title">PAR DE CLONES (DADOS IGUAIS)</span>
-                <span class="choice-mult">PAGA 5.5x</span>
+                <span class="choice-title">PAR DE CLONES (DUPLAS)</span>
+                <span class="choice-mult">PAGA 4.0x</span>
+              </button>
+              <button class="btn-sabacc-choice gold-choice" onclick="rollSabaccDice('jackpot')">
+                <span class="choice-title">SUPER JACKPOT (1, 1, 6, 6)</span>
+                <span class="choice-mult">PAGA 100x</span>
               </button>
             </div>
           </div>
