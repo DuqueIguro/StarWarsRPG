@@ -1217,19 +1217,56 @@ function endPokerHandUI() {
 // ==========================================================================
 // SLOTS MATRIX
 // ==========================================================================
-const SLOT_SYMBOLS = ['⚔️', '💎', '🪐', '🚀', '⚡', '👾'];
+
+// Usamos um sistema de rolos pesados (weighted reels) para garantir que
+// os símbolos de maior pagamento apareçam com menos frequência.
+// Total: 20 posições no rolo (RTP balanceado para casa e jogador)
+const SLOT_SYMBOLS_WEIGHTED = [
+  '⚔️',                                 // 1 (50x)
+  '💎', '💎',                           // 2 (25x)
+  '🪐', '🪐', '🪐',                     // 3 (15x)
+  '🚀', '🚀', '🚀', '🚀',               // 4 (10x)
+  '⚡', '⚡', '⚡', '⚡', '⚡',              // 5 (5x)
+  '👾', '👾', '👾', '👾', '👾'          // 5 (Alien - Não faz par)
+];
+
+let slotReelsData = [[], [], []];
 let isSlotSpinning = false;
+
+function shuffleArray(array) {
+  let arr = [...array];
+  let curId = arr.length;
+  while (0 !== curId) {
+    let randId = Math.floor(Math.random() * curId);
+    curId -= 1;
+    let tmp = arr[curId];
+    arr[curId] = arr[randId];
+    arr[randId] = tmp;
+  }
+  return arr;
+}
 
 function buildSlotReels() {
   for (let c = 0; c < 3; c++) {
     const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
     strip.innerHTML = '';
-    for (let i = 0; i < 20; i++) {
+    
+    // Cada coluna recebe um rolo com os 20 simbolos embaralhados independentemente
+    let baseReel = shuffleArray(SLOT_SYMBOLS_WEIGHTED);
+    slotReelsData[c] = baseReel;
+    
+    // Repetimos o array base 4 vezes para criar um "cinto" longo para a animação do giro
+    let fullStrip = [...baseReel, ...baseReel, ...baseReel, ...baseReel];
+    
+    for (let i = 0; i < fullStrip.length; i++) {
       const div = document.createElement('div');
       div.className = 'slot-symbol-item';
-      div.textContent = SLOT_SYMBOLS[i % SLOT_SYMBOLS.length];
+      div.textContent = fullStrip[i];
       strip.appendChild(div);
     }
+    
+    // Posiciona no índice 0 inicialmente
+    strip.style.transform = `translateY(0px)`;
   }
 }
 
@@ -1261,12 +1298,20 @@ function spinSlotMachine() {
   document.getElementById('btnSpinSlot').disabled = true;
 
   const results = [];
+  const targetIndices = [];
+
   for (let c = 0; c < 3; c++) {
-    const targetIdx = Math.floor(Math.random() * SLOT_SYMBOLS.length);
-    results.push(SLOT_SYMBOLS[targetIdx]);
+    // Escolhe o índice alvo (0 a 19) no rolo base
+    const targetIdx = Math.floor(Math.random() * slotReelsData[c].length);
+    targetIndices.push(targetIdx);
+    results.push(slotReelsData[c][targetIdx]);
+    
     const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
     strip.style.transition = `transform ${2.5 + c * 0.5}s cubic-bezier(0.1, 0.9, 0.2, 1)`;
-    strip.style.transform = `translateY(-${(10 + targetIdx) * 150}px)`;
+    
+    // Rola para o 3º bloco repetido (índice 40 + targetIdx) para uma animação loooonga
+    // Isso garante a precisão exata entre o visual (frontend) e a lógica matemática (backend)
+    strip.style.transform = `translateY(-${(40 + targetIdx) * 150}px)`;
   }
 
   setTimeout(async () => {
@@ -1274,36 +1319,57 @@ function spinSlotMachine() {
     document.getElementById('btnSpinSlot').disabled = false;
     const [s1, s2, s3] = results;
 
+    let prize = 0;
+    let eventType = '';
+    let logMsg = '';
+
+    // Avaliação de Vitórias
     if (s1 === s2 && s2 === s3) {
-      let mult = s1 === '⚔️' ? 50 : s1 === '💎' ? 25 : s1 === '🪐' ? 15 : s1 === '🚀' ? 10 : 5;
-      const prize = bet * mult;
+      if (s1 === '👾') {
+        prize = 0;
+        eventType = 'DERROTA';
+        logMsg = `Invasor Alinhado [👾 👾 👾]. Sem recompensa. -${bet} FG.`;
+      } else {
+        let mult = s1 === '⚔️' ? 50 : s1 === '💎' ? 25 : s1 === '🪐' ? 15 : s1 === '🚀' ? 10 : 5;
+        prize = bet * mult;
+        eventType = 'TRIPLO';
+        logMsg = `HIPER-ALINHAMENTO [${s1} ${s2} ${s3}]! +${prize} FG (x${mult})!`;
+      }
+    } else if ((s1 === s2 && s1 !== '👾') || (s2 === s3 && s2 !== '👾') || (s1 === s3 && s1 !== '👾')) {
+      prize = bet * 2;
+      eventType = 'DUPLA';
+      logMsg = `Par idêntico de valor [${s1} ${s2} ${s3}]. +${prize} FG (x2).`;
+    } else {
+      prize = 0;
+      eventType = 'DERROTA';
+      logMsg = `Sem alinhamento de valor [${s1} ${s2} ${s3}]. -${bet} FG.`;
+    }
+
+    // Pagamento e Logs
+    if (prize > 0) {
       casinoChips += prize;
       updateDisplays();
       playSound('win');
-      logConsole(`HIPER-ALINHAMENTO [${s1} ${s2} ${s3}]! +${prize} FG (x${mult})!`, "log-win");
-      await registrarLogCassino('SLOTS', 'TRIPLO', `Alinhamento [${s1} ${s2} ${s3}] (x${mult}). Ganhou ${prize} FG`, prize - bet);
-    } else if (s1 === s2 || s2 === s3 || s1 === s3) {
-      const prize = bet * 2;
-      casinoChips += prize;
-      updateDisplays();
-      playSound('win');
-      logConsole(`Par alinhado [${s1} ${s2} ${s3}]. +${prize} FG.`, "log-win");
-      await registrarLogCassino('SLOTS', 'DUPLA', `Duplicata [${s1} ${s2} ${s3}]. Ganhou ${prize} FG`, prize - bet);
+      logConsole(logMsg, "log-win");
+      await registrarLogCassino('SLOTS', eventType, logMsg, prize - bet);
     } else {
       playSound('loss');
-      logConsole(`Sem alinhamento [${s1} ${s2} ${s3}]. -${bet} FG.`, "log-loss");
-      await registrarLogCassino('SLOTS', 'DERROTA', `Sem alinhamento [${s1} ${s2} ${s3}]. Perdeu ${bet} FG`, -bet);
+      logConsole(logMsg, "log-loss");
+      await registrarLogCassino('SLOTS', eventType, logMsg, -bet);
     }
 
     await persistirSaldoNoBanco();
 
+    // Redefine a posição visual do rolo (sem animação) para o 1º bloco (mesmo índice).
+    // Isso garante que o próximo giro parta exatamente do símbolo atual sem rolar pra trás.
     setTimeout(() => {
       for (let c = 0; c < 3; c++) {
         const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
         strip.style.transition = 'none';
-        strip.style.transform = 'translateY(0px)';
+        strip.style.transform = `translateY(-${targetIndices[c] * 150}px)`;
       }
-    }, 1000);
+    }, 800);
+
   }, 3600);
 }
 
