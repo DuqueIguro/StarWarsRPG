@@ -409,13 +409,12 @@ let isRouletteSpinning = false;
 const rCanvas = document.getElementById('rouletteCanvas');
 const rCtx = rCanvas.getContext('2d');
 let wheelAngle = 0;
-let ballAngle = 0;
-let ballRadiusProgress = 1;
+// Removida a bolinha separada, a roleta girará e o topo absoluto indicará a vitória
 
 function drawRouletteWheel() {
   const cx = rCanvas.width / 2;
   const cy = rCanvas.height / 2;
-  const radius = cx - 8;
+  const radius = cx - 12; // Diminui o raio ligeiramente para acomodar o ponteiro
   const arc = (Math.PI * 2) / ROULETTE_NUMBERS.length;
 
   rCtx.clearRect(0, 0, rCanvas.width, rCanvas.height);
@@ -445,20 +444,6 @@ function drawRouletteWheel() {
     rCtx.restore();
   }
   rCtx.restore();
-
-  if (ballRadiusProgress > 0) {
-    const bR = 55 + (radius - 70) * ballRadiusProgress;
-    const bx = cx + Math.cos(ballAngle) * bR;
-    const by = cy + Math.sin(ballAngle) * bR;
-    rCtx.save();
-    rCtx.beginPath();
-    rCtx.arc(bx, by, 5, 0, Math.PI * 2);
-    rCtx.fillStyle = '#00f0ff';
-    rCtx.shadowColor = '#00f0ff';
-    rCtx.shadowBlur = 12;
-    rCtx.fill();
-    rCtx.restore();
-  }
 }
 
 function initRouletteBoard() {
@@ -578,7 +563,13 @@ function spinRouletteWheel() {
   const winningNumber = ROULETTE_NUMBERS[Math.floor(Math.random() * ROULETTE_NUMBERS.length)];
   const winningIndex = ROULETTE_NUMBERS.indexOf(winningNumber);
   const arc = (Math.PI * 2) / ROULETTE_NUMBERS.length;
-  const targetWheelAngle = Math.PI * 8 + (Math.PI * 1.5 - winningIndex * arc - arc / 2);
+  
+  // A roleta está desenhada com 0° apontando para a direita (eixo X positivo).
+  // O ponteiro (triângulo) está fixo no topo (-90° ou 270°).
+  // Para que o winningIndex pare perfeitamente alinhado sob o ponteiro do topo:
+  // Offset necessário: O angulo da fatia + metade da fatia.
+  // Precisamos compensar os 90 graus (Math.PI / 2) de diferença entre o zero do canvas e o topo
+  const targetWheelAngle = Math.PI * 10 - (winningIndex * arc) - (arc / 2) - (Math.PI / 2);
   const startWheelAngle = wheelAngle % (Math.PI * 2);
   const totalWheelSpin = targetWheelAngle - startWheelAngle;
 
@@ -590,8 +581,6 @@ function spinRouletteWheel() {
     const easeOut = 1 - Math.pow(1 - progress, 3);
 
     wheelAngle = startWheelAngle + totalWheelSpin * easeOut;
-    ballAngle = startWheelAngle - (Math.PI * 14 * (1 - easeOut));
-    ballRadiusProgress = 1 - Math.pow(progress, 2) * 0.45;
 
     if (Math.random() < 0.2) playSound('spinTick');
     drawRouletteWheel();
