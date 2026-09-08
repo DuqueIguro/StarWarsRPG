@@ -2,43 +2,51 @@
    DATAPAD BANCÁRIO IMPERIAL - STAR WARS RPG
    =================================================== */
 
-const STORAGE_CUPONS_KEY = 'starwars_rpg_cupons';
-const STORAGE_LOGS_KEY = 'starwars_rpg_banco_logs';
-const STORAGE_LOANS_KEY = 'starwars_rpg_emprestimos';
-const STORAGE_TAXES_KEY = 'starwars_rpg_taxas';
-const STORAGE_P2W_KEY = 'starwars_rpg_p2w_sales';
-const STORAGE_BANK_BALANCE_KEY = 'starwars_rpg_banco_saldo_atual';
-
 // Taxa de conversão: R$ 1.00 = 10.000 Créditos Imperiais
 const CONVERSION_RATE_BRL_TO_CREDITS = 10000;
 
+// Estado da aplicação em memória
 let cupons = [];
 let logsTransacoes = [];
 let emprestimos = [];
 let taxas = [];
 let saldoAtualBanco = 5000000;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Obtém o cliente Supabase global inicializado no projeto
+function getSupabase() {
+  if (typeof supabaseClient !== 'undefined') return supabaseClient;
+  if (typeof supabase !== 'undefined' && supabase.from) return supabase;
+  if (window.supabase && typeof window.supabase.from === 'function') return window.supabase;
+  console.error("ERRO IMPERIAL: Cliente Supabase não encontrado.");
+  return null;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   iniciarRelogioEmTempoReal();
-  carregarDadosBancarios();
-  carregarLogsTransacoes();
-  carregarEmprestimos();
-  carregarTaxas();
-  carregarCupons();
+  await carregarTodosOsDados();
 });
+
+async function carregarTodosOsDados() {
+  await Promise.all([
+    carregarDadosBancarios(),
+    carregarLogsTransacoes(),
+    carregarEmprestimosETaxas(),
+    carregarCupons()
+  ]);
+}
 
 /**
  * Horário em tempo real galáctico
  */
 function iniciarRelogioEmTempoReal() {
   const clockElement = document.getElementById('realtime-clock');
-  
+  if (!clockElement) return;
+
   function updateClock() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
-    
     clockElement.innerText = `${hours}:${minutes}:${seconds}`;
   }
 
@@ -49,35 +57,33 @@ function iniciarRelogioEmTempoReal() {
 /**
  * 1. TESOURO IMPERIAL & HISTÓRICO DE VENDAS
  */
-function carregarDadosBancarios() {
-  const saldoSalvo = localStorage.getItem(STORAGE_BANK_BALANCE_KEY);
-  if (saldoSalvo !== null) {
-    saldoAtualBanco = parseInt(saldoSalvo);
-  } else {
-    localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
-  }
-
+async function carregarDadosBancarios() {
+  const client = getSupabase();
   let gastoCreditosPuros = 0;
   let gastoReaisPuros = 0;
 
-  const vendasSalvas = localStorage.getItem(STORAGE_P2W_KEY);
-  if (vendasSalvas) {
-    try {
-      const vendas = JSON.parse(vendasSalvas);
-      vendas.forEach(item => {
-        if (item.moeda === 'BRL') {
-          gastoReaisPuros += (item.valor || 0);
+  if (client) {
+    // Busca transações para consolidar volume transacionado
+    const { data: logs, error } = await client
+      .from('transacoes_log')
+      .select('valor_ou_quantidade, tipo_transacao, detalhes');
+
+    if (!error && logs) {
+      logs.forEach(item => {
+        const val = Number(item.valor_ou_quantidade) || 0;
+        if (item.tipo_transacao === 'COMPRA_BRL' || (item.detalhes && item.detalhes.includes('BRL'))) {
+          gastoReaisPuros += val;
         } else {
-          gastoCreditosPuros += (item.precoCreditos || item.valor || 0);
+          gastoCreditosPuros += val;
         }
       });
-    } catch(e) {
-      gastoCreditosPuros = 250000;
-      gastoReaisPuros = 150.00;
     }
-  } else {
-    gastoCreditosPuros = 250000;
-    gastoReaisPuros = 150.00;
+  }
+
+  // Se não houver transações salvas ainda, mantém uma base visual inicial
+  if (gastoCreditosPuros === 0 && gastoReaisPuros === 0) {
+    const backupSalvo = localStorage.getItem('starwars_rpg_banco_saldo_atual');
+    saldoAtualBanco = backupSalvo ? parseInt(backupSalvo) : 5000000;
   }
 
   const reaisConvertidos = gastoReaisPuros * CONVERSION_RATE_BRL_TO_CREDITS;
@@ -93,63 +99,72 @@ function carregarDadosBancarios() {
 }
 
 /**
- * 2. LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET (Com remoção)
+ * 2. LOG DE TRANSAÇÕES
  */
-function carregarLogsTransacoes() {
-  const logsSalvos = localStorage.getItem(STORAGE_LOGS_KEY);
-  if (logsSalvos) {
-    try {
-      logsTransacoes = JSON.parse(logsSalvos);
-    } catch(e) {
-      logsTransacoes = getLogsDefault();
-    }
-  } else {
-    logsTransacoes = getLogsDefault();
-    localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
+async function carregarLogsTransacoes() {
+  const client = getSupabase();
+  if (!client) return;
+
+  const { data, error } = await client
+    .from('transacoes_log')
+    .select('*')
+    .order('data_transacao', { ascending: false })
+    .limit(30);
+
+  if (error) {
+    console.error('Erro ao buscar logs:', error.message);
+    return;
   }
 
+  logsTransacoes = data || [];
   renderizarTabelaLogs();
 }
 
-function registrarLogTransacao(dados) {
-  const now = new Date();
-  const horario = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+async function registrarLogTransacao(dados) {
+  const client = getSupabase();
+  if (!client) return;
 
-  const novoLog = {
-    id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
-    horario: horario,
-    remetente: dados.remetente,
-    destinatario: dados.destinatario,
-    valor: dados.valor,
-    moeda: dados.moeda,
-    pagina: dados.pagina
+  // Fallback para UUID seguro quando a transação vem do banco/sistema
+  const defaultSystemId = '00000000-0000-0000-0000-000000000000';
+
+  const payload = {
+    tipo_transacao: dados.tipo || 'TRANSFERENCIA',
+    remetente_id: dados.remetente_id || defaultSystemId,
+    destinatario_id: dados.destinatario_id || defaultSystemId,
+    valor_ou_quantidade: Math.round(Number(dados.valor) || 0),
+    detalhes: JSON.stringify({
+      remetente_nome: dados.remetente,
+      destinatario_nome: dados.destinatario,
+      moeda: dados.moeda,
+      pagina: dados.pagina
+    }),
+    data_transacao: new Date().toISOString()
   };
 
-  logsTransacoes.unshift(novoLog);
-  if (logsTransacoes.length > 30) logsTransacoes.pop();
+  const { error } = await client.from('transacoes_log').insert([payload]);
+  if (error) console.error('Erro ao registrar log:', error.message);
 
-  localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
-  renderizarTabelaLogs();
+  await carregarLogsTransacoes();
 }
 
-function deleteLog(id) {
-  if (confirm("TERMINAL IMPERIAL: Deseja apagar este registro de log permanentemente?")) {
-    logsTransacoes = logsTransacoes.filter(log => log.id !== id);
-    localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(logsTransacoes));
-    renderizarTabelaLogs();
+async function deleteLog(id) {
+  if (!confirm("TERMINAL IMPERIAL: Deseja apagar este registro de log permanentemente?")) return;
+  
+  const client = getSupabase();
+  if (!client) return;
+
+  const { error } = await client.from('transacoes_log').delete().eq('id', id);
+  if (error) {
+    alert('ERRO AO DELETAR LOG: ' + error.message);
+    return;
   }
-}
 
-function getLogsDefault() {
-  return [
-    { id: 'l1', horario: '18:42:10', remetente: 'Darth Dravos', destinatario: 'Oficina Durtoc', valor: 15000, moeda: 'CREDITOS', pagina: 'oficina.html' },
-    { id: 'l2', horario: '17:15:33', remetente: 'Keiran Jinn', destinatario: 'Loja Imperial', valor: 45.00, moeda: 'BRL', pagina: 'p2w.html' },
-    { id: 'l3', horario: '15:02:44', remetente: 'Lihua', destinatario: 'Ren Tai Sol', valor: 5000, moeda: 'CREDITOS', pagina: 'banco.html' }
-  ];
+  await carregarLogsTransacoes();
 }
 
 function renderizarTabelaLogs() {
   const tbody = document.getElementById('logs-table-body');
+  if (!tbody) return;
   tbody.innerHTML = '';
 
   if (logsTransacoes.length === 0) {
@@ -158,56 +173,83 @@ function renderizarTabelaLogs() {
   }
 
   logsTransacoes.forEach(log => {
+    let extra = {};
+    try {
+      extra = typeof log.detalhes === 'string' ? JSON.parse(log.detalhes) : (log.detalhes || {});
+    } catch(e) {
+      extra = { detalhes: log.detalhes };
+    }
+
+    const dataObj = log.data_transacao ? new Date(log.data_transacao) : new Date();
+    const horario = dataObj.toLocaleTimeString('pt-BR');
+    const moeda = extra.moeda || 'CREDITOS';
+    const moedaFormatada = moeda === 'BRL' ? 'R$' : 'CR';
+    const valor = Number(log.valor_ou_quantidade) || 0;
+    const valorFormatado = moeda === 'BRL'
+      ? valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+      : valor.toLocaleString('pt-BR');
+
     const tr = document.createElement('tr');
-
-    const moedaFormatada = log.moeda === 'BRL' ? 'R$' : 'CR';
-    const valorFormatado = log.moeda === 'BRL' 
-      ? log.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
-      : log.valor.toLocaleString('pt-BR');
-
     tr.innerHTML = `
-      <td>${log.horario}</td>
-      <td><span class="player-transfer">${log.remetente || 'Sistema'}</span></td>
-      <td><span class="player-transfer">${log.destinatario || 'Loja Imperial'}</span></td>
+      <td>${horario}</td>
+      <td><span class="player-transfer">${extra.remetente_nome || 'Terminal Imperial'}</span></td>
+      <td><span class="player-transfer">${extra.destinatario_nome || 'Banco'}</span></td>
       <td><strong>${valorFormatado}</strong></td>
       <td>${moedaFormatada}</td>
-      <td><span class="page-tag">${log.pagina}</span></td>
+      <td><span class="page-tag">${extra.pagina || 'terminalBancario.html'}</span></td>
       <td>
         <button class="btn-icon del" onclick="deleteLog('${log.id}')" title="Apagar Log">🗑️</button>
       </td>
     `;
-
     tbody.appendChild(tr);
   });
 }
 
 /**
- * 3. EMPRÉSTIMOS IMPERIAIS
+ * 3 & 4. EMPRÉSTIMOS, TAXAS E DÍVIDAS
  */
-function carregarEmprestimos() {
-  const empSalvos = localStorage.getItem(STORAGE_LOANS_KEY);
-  if (empSalvos) {
-    try {
-      emprestimos = JSON.parse(empSalvos);
-    } catch(e) {
-      emprestimos = [];
-    }
-  } else {
-    emprestimos = [];
+async function carregarEmprestimosETaxas() {
+  const client = getSupabase();
+  if (!client) return;
+
+  const { data, error } = await client
+    .from('dividas_emprestimos')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Erro ao carregar dívidas/empréstimos:', error.message);
+    return;
   }
 
+  emprestimos = (data || []).filter(item => item.categoria === 'EMPRESTIMO' && item.status === 'PENDENTE');
+  taxas = (data || []).filter(item => item.categoria === 'TAXA_IMPOSTO' && item.status !== 'REVOGADO');
+
   renderizarTabelaEmprestimos();
+  renderizarTabelaTaxas();
 }
 
-function salvarEmprestimosStorage() {
-  localStorage.setItem(STORAGE_LOANS_KEY, JSON.stringify(emprestimos));
+// Auxiliar para localizar personagem por nome aproximado
+async function buscarPersonagemPorNome(nome) {
+  const client = getSupabase();
+  if (!client || !nome) return null;
+
+  const { data } = await client
+    .from('personagens')
+    .select('id, nome')
+    .ilike('nome', `%${nome.trim()}%`)
+    .limit(1);
+
+  return (data && data.length > 0) ? data[0] : null;
 }
 
-function handleCreateLoan(event) {
+async function handleCreateLoan(event) {
   event.preventDefault();
+  const client = getSupabase();
+  if (!client) return;
 
   const player = document.getElementById('loan-player').value.trim();
-  const amount = parseInt(document.getElementById('loan-amount').value);
+  const amount = parseInt(document.getElementById('loan-amount').value, 10);
   const interest = parseFloat(document.getElementById('loan-interest').value);
   const notes = document.getElementById('loan-notes').value.trim();
 
@@ -217,33 +259,42 @@ function handleCreateLoan(event) {
   }
 
   const totalToPay = Math.round(amount + (amount * (interest / 100)));
+  const personagem = await buscarPersonagemPorNome(player);
 
-  const newLoan = {
-    id: Date.now().toString(),
-    player: player,
-    amount: amount,
-    interest: interest,
-    totalToPay: totalToPay,
-    notes: notes || 'Nenhuma'
+  const payload = {
+    categoria: 'EMPRESTIMO',
+    titulo: `Empréstimo: ${player}`,
+    alvo_descricao: player,
+    personagem_id: personagem ? personagem.id : null,
+    valor_original: amount,
+    taxa_juros: interest,
+    valor_total: totalToPay,
+    frequencia: 'UNICA',
+    status: 'PENDENTE',
+    observacoes: notes || null
   };
 
-  emprestimos.push(newLoan);
-  
-  saldoAtualBanco -= amount;
-  localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
+  const { error } = await client.from('dividas_emprestimos').insert([payload]);
+  if (error) {
+    alert('ERRO AO CRIAR EMPRÉSTIMO: ' + error.message);
+    return;
+  }
 
-  registrarLogTransacao({
+  saldoAtualBanco -= amount;
+  localStorage.setItem('starwars_rpg_banco_saldo_atual', saldoAtualBanco.toString());
+
+  await registrarLogTransacao({
     remetente: 'Banco Imperial',
     destinatario: player,
+    destinatario_id: personagem ? personagem.id : null,
     valor: amount,
     moeda: 'CREDITOS',
-    pagina: 'mestre/terminalBancario.html'
+    tipo: 'EMPRESTIMO',
+    pagina: 'terminalBancario.html'
   });
 
-  salvarEmprestimosStorage();
+  await carregarEmprestimosETaxas();
   carregarDadosBancarios();
-  renderizarTabelaEmprestimos();
-
   document.getElementById('loan-form').reset();
 }
 
@@ -251,8 +302,8 @@ function renderizarTabelaEmprestimos() {
   const grid = document.getElementById('loans-grid');
   const cardList = document.getElementById('loans-card-list');
   const tbody = document.getElementById('loans-table-body');
+  if (!grid || !cardList || !tbody) return;
 
-  // REGRA DE COLUNAS DINÂMICAS: Sem empréstimos = 1 coluna. Com empréstimos = 2 colunas.
   if (emprestimos.length === 0) {
     grid.className = 'dynamic-grid single-col';
     cardList.style.display = 'none';
@@ -265,85 +316,86 @@ function renderizarTabelaEmprestimos() {
 
   emprestimos.forEach(loan => {
     const tr = document.createElement('tr');
-
     tr.innerHTML = `
-      <td><span class="player-transfer">${loan.player}</span></td>
-      <td>${loan.amount.toLocaleString('pt-BR')} CR</td>
-      <td>${loan.interest}%</td>
-      <td><strong style="color: var(--neon-blue);">${loan.totalToPay.toLocaleString('pt-BR')} CR</strong></td>
+      <td><span class="player-transfer">${loan.alvo_descricao}</span></td>
+      <td>${Number(loan.valor_original).toLocaleString('pt-BR')} CR</td>
+      <td>${loan.taxa_juros}%</td>
+      <td><strong style="color: var(--neon-blue);">${Number(loan.valor_total).toLocaleString('pt-BR')} CR</strong></td>
       <td>
         <button class="btn-icon" onclick="quitarEmprestimo('${loan.id}')" title="Marcar Pago">QUITAR</button>
       </td>
     `;
-
     tbody.appendChild(tr);
   });
 }
 
-function quitarEmprestimo(id) {
+async function quitarEmprestimo(id) {
   const loan = emprestimos.find(l => l.id === id);
-  if (loan && confirm(`TERMINAL IMPERIAL: Confirmar a quitação do empréstimo de ${loan.player}?`)) {
-    saldoAtualBanco += loan.totalToPay;
-    localStorage.setItem(STORAGE_BANK_BALANCE_KEY, saldoAtualBanco.toString());
+  if (!loan) return;
 
-    registrarLogTransacao({
-      remetente: loan.player,
-      destinatario: 'Banco Imperial',
-      valor: loan.totalToPay,
-      moeda: 'CREDITOS',
-      pagina: 'mestre/terminalBancario.html'
-    });
+  if (!confirm(`TERMINAL IMPERIAL: Confirmar a quitação do empréstimo de ${loan.alvo_descricao}?`)) return;
 
-    emprestimos = emprestimos.filter(l => l.id !== id);
-    salvarEmprestimosStorage();
-    carregarDadosBancarios();
-    renderizarTabelaEmprestimos();
-  }
-}
+  const client = getSupabase();
+  if (!client) return;
 
-/**
- * 4. TAXAS, IMPOSTOS E DÍVIDAS (Apenas Créditos Imperiais)
- */
-function carregarTaxas() {
-  const taxasSalvas = localStorage.getItem(STORAGE_TAXES_KEY);
-  if (taxasSalvas) {
-    try {
-      taxas = JSON.parse(taxasSalvas);
-    } catch(e) {
-      taxas = [];
-    }
-  } else {
-    taxas = [];
+  const { error } = await client
+    .from('dividas_emprestimos')
+    .update({ status: 'QUITADO', updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) {
+    alert('ERRO AO QUITAR EMPRÉSTIMO: ' + error.message);
+    return;
   }
 
-  renderizarTabelaTaxas();
+  saldoAtualBanco += Number(loan.valor_total);
+  localStorage.setItem('starwars_rpg_banco_saldo_atual', saldoAtualBanco.toString());
+
+  await registrarLogTransacao({
+    remetente: loan.alvo_descricao,
+    remetente_id: loan.personagem_id,
+    destinatario: 'Banco Imperial',
+    valor: loan.valor_total,
+    moeda: 'CREDITOS',
+    tipo: 'QUITACAO_EMPRESTIMO',
+    pagina: 'terminalBancario.html'
+  });
+
+  await carregarEmprestimosETaxas();
+  carregarDadosBancarios();
 }
 
-function salvarTaxasStorage() {
-  localStorage.setItem(STORAGE_TAXES_KEY, JSON.stringify(taxas));
-}
-
-function handleCreateTax(event) {
+async function handleCreateTax(event) {
   event.preventDefault();
+  const client = getSupabase();
+  if (!client) return;
 
   const name = document.getElementById('tax-name').value.trim();
   const target = document.getElementById('tax-target').value.trim();
-  const value = parseInt(document.getElementById('tax-value').value);
+  const value = parseInt(document.getElementById('tax-value').value, 10);
   const type = document.getElementById('tax-type').value;
 
-  const newTax = {
-    id: Date.now().toString(),
-    name: name,
-    target: target,
-    value: value,
-    type: type,
-    active: true
+  const personagem = await buscarPersonagemPorNome(target);
+
+  const payload = {
+    categoria: 'TAXA_IMPOSTO',
+    titulo: name,
+    alvo_descricao: target,
+    personagem_id: personagem ? personagem.id : null,
+    valor_original: value,
+    taxa_juros: 0,
+    valor_total: value,
+    frequencia: type,
+    status: 'PENDENTE'
   };
 
-  taxas.push(newTax);
-  salvarTaxasStorage();
-  renderizarTabelaTaxas();
+  const { error } = await client.from('dividas_emprestimos').insert([payload]);
+  if (error) {
+    alert('ERRO AO REGISTRAR TAXA: ' + error.message);
+    return;
+  }
 
+  await carregarEmprestimosETaxas();
   document.getElementById('tax-form').reset();
 }
 
@@ -351,8 +403,8 @@ function renderizarTabelaTaxas() {
   const grid = document.getElementById('taxes-grid');
   const cardList = document.getElementById('taxes-card-list');
   const tbody = document.getElementById('taxes-table-body');
+  if (!grid || !cardList || !tbody) return;
 
-  // REGRA DE COLUNAS DINÂMICAS: Sem taxas = 1 coluna. Com taxas = 2 colunas.
   if (taxas.length === 0) {
     grid.className = 'dynamic-grid single-col';
     cardList.style.display = 'none';
@@ -364,73 +416,99 @@ function renderizarTabelaTaxas() {
   tbody.innerHTML = '';
 
   taxas.forEach(tax => {
+    const isAtiva = tax.status === 'PENDENTE';
+    const statusClass = isAtiva ? 'badge-active' : 'badge-inactive';
+    const statusText = isAtiva ? 'VIGENTE' : 'SUSPENSA';
+
     const tr = document.createElement('tr');
-
-    const statusClass = tax.active ? 'badge-active' : 'badge-inactive';
-    const statusText = tax.active ? 'VIGENTE' : 'SUSPENSA';
-
     tr.innerHTML = `
-      <td><strong>${tax.name}</strong></td>
-      <td><span class="player-transfer">${tax.target}</span></td>
-      <td>${tax.value.toLocaleString('pt-BR')} CR</td>
-      <td>${tax.type}</td>
+      <td><strong>${tax.titulo}</strong></td>
+      <td><span class="player-transfer">${tax.alvo_descricao}</span></td>
+      <td>${Number(tax.valor_total).toLocaleString('pt-BR')} CR</td>
+      <td>${tax.frequencia}</td>
       <td><span class="badge ${statusClass}">${statusText}</span></td>
       <td>
         <div class="action-grid">
           <button class="btn-icon" onclick="toggleTaxStatus('${tax.id}')">
-            ${tax.active ? 'SUSPENDER' : 'ATIVAR'}
+            ${isAtiva ? 'SUSPENDER' : 'ATIVAR'}
           </button>
           <button class="btn-icon del" onclick="deleteTax('${tax.id}')">REVOGAR</button>
         </div>
       </td>
     `;
-
     tbody.appendChild(tr);
   });
 }
 
-function toggleTaxStatus(id) {
+async function toggleTaxStatus(id) {
   const tax = taxas.find(t => t.id === id);
-  if (tax) {
-    tax.active = !tax.active;
-    salvarTaxasStorage();
-    renderizarTabelaTaxas();
+  if (!tax) return;
+
+  const novoStatus = tax.status === 'PENDENTE' ? 'SUSPENSO' : 'PENDENTE';
+  const client = getSupabase();
+  if (!client) return;
+
+  const { error } = await client
+    .from('dividas_emprestimos')
+    .update({ status: novoStatus, updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) {
+    alert('ERRO AO ALTERAR STATUS DA TAXA: ' + error.message);
+    return;
   }
+
+  await carregarEmprestimosETaxas();
 }
 
-function deleteTax(id) {
+async function deleteTax(id) {
   const tax = taxas.find(t => t.id === id);
-  if (tax && confirm(`DECRETO IMPERIAL: Revogar a taxa [${tax.name}]?`)) {
-    taxas = taxas.filter(t => t.id !== id);
-    salvarTaxasStorage();
-    renderizarTabelaTaxas();
+  if (!tax) return;
+
+  if (!confirm(`DECRETO IMPERIAL: Revogar a taxa [${tax.titulo}]?`)) return;
+
+  const client = getSupabase();
+  if (!client) return;
+
+  // Marca como REVOGADO
+  const { error } = await client
+    .from('dividas_emprestimos')
+    .update({ status: 'REVOGADO', updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) {
+    alert('ERRO AO REVOGAR TAXA: ' + error.message);
+    return;
   }
+
+  await carregarEmprestimosETaxas();
 }
 
 /**
  * 5. CUPONS DE DESCONTO
  */
-function carregarCupons() {
-  const cuponsSalvos = localStorage.getItem(STORAGE_CUPONS_KEY);
-  if (cuponsSalvos) {
-    try {
-      cupons = JSON.parse(cuponsSalvos);
-    } catch(e) {
-      cupons = [];
-    }
-  } else {
-    cupons = [];
+async function carregarCupons() {
+  const client = getSupabase();
+  if (!client) return;
+
+  const { data, error } = await client
+    .from('cupons')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Erro ao buscar cupons:', error.message);
+    return;
   }
 
+  cupons = data || [];
   renderizarTabelaCupons();
 }
 
-function salvarCuponsStorage() {
-  localStorage.setItem(STORAGE_CUPONS_KEY, JSON.stringify(cupons));
-}
-
-function handleCreateCoupon(event) {
+async function handleCreateCoupon(event) {
   event.preventDefault();
+  const client = getSupabase();
+  if (!client) return;
 
   const codeInput = document.getElementById('coupon-code').value.trim().toUpperCase();
   const currencyType = document.getElementById('currency-type').value;
@@ -438,26 +516,27 @@ function handleCreateCoupon(event) {
   const discountValue = parseFloat(document.getElementById('discount-value').value);
   const usageLimitInput = document.getElementById('usage-limit').value;
 
-  if (cupons.some(c => c.code === codeInput)) {
-    alert('ERRO HOLONET: Já existe um cupom ativo com esse código!');
+  const payload = {
+    codigo: codeInput,
+    moeda: currencyType,
+    tipo_desconto: discountType,
+    valor_desconto: discountValue,
+    limite_usos: usageLimitInput ? parseInt(usageLimitInput, 10) : null,
+    vezes_usado: 0,
+    is_ativo: true
+  };
+
+  const { error } = await client.from('cupons').insert([payload]);
+  if (error) {
+    if (error.code === '23505') {
+      alert('ERRO HOLONET: Já existe um cupom com esse código!');
+    } else {
+      alert('ERRO AO CRIAR CUPOM: ' + error.message);
+    }
     return;
   }
 
-  const newCoupon = {
-    id: Date.now().toString(),
-    code: codeInput,
-    currency: currencyType,
-    discountType: discountType,
-    discountValue: discountValue,
-    usageLimit: usageLimitInput ? parseInt(usageLimitInput) : null,
-    usageCount: 0,
-    active: true
-  };
-
-  cupons.push(newCoupon);
-  salvarCuponsStorage();
-  renderizarTabelaCupons();
-
+  await carregarCupons();
   document.getElementById('coupon-form').reset();
 }
 
@@ -465,8 +544,8 @@ function renderizarTabelaCupons() {
   const grid = document.getElementById('coupons-grid');
   const cardList = document.getElementById('coupons-card-list');
   const tbody = document.getElementById('coupons-table-body');
+  if (!grid || !cardList || !tbody) return;
 
-  // REGRA DE COLUNAS DINÂMICAS: Sem cupons = 1 coluna. Com cupons = 2 colunas.
   if (cupons.length === 0) {
     grid.className = 'dynamic-grid single-col';
     cardList.style.display = 'none';
@@ -481,21 +560,21 @@ function renderizarTabelaCupons() {
     const tr = document.createElement('tr');
 
     let currencyText = 'AMBAS';
-    if (coupon.currency === 'CREDITOS') currencyText = 'CRÉDITOS (CR)';
-    if (coupon.currency === 'BRL') currencyText = 'REAIS (R$)';
+    if (coupon.moeda === 'CREDITOS') currencyText = 'CRÉDITOS (CR)';
+    if (coupon.moeda === 'BRL') currencyText = 'REAIS (R$)';
 
-    const discountText = coupon.discountType === 'PERCENTAGE'
-      ? `${coupon.discountValue}%`
-      : `${coupon.discountValue} ${coupon.currency === 'BRL' ? 'R$' : 'CR'}`;
+    const discountText = coupon.tipo_desconto === 'PERCENTAGE'
+      ? `${coupon.valor_desconto}%`
+      : `${Number(coupon.valor_desconto).toLocaleString('pt-BR')} ${coupon.moeda === 'BRL' ? 'R$' : 'CR'}`;
 
-    const limitText = coupon.usageLimit ? coupon.usageLimit : '∞';
-    const usagesDisplay = `${coupon.usageCount} / ${limitText}`;
+    const limitText = coupon.limite_usos !== null ? coupon.limite_usos : '∞';
+    const usagesDisplay = `${coupon.vezes_usado} / ${limitText}`;
 
-    const statusClass = coupon.active ? 'badge-active' : 'badge-inactive';
-    const statusText = coupon.active ? 'ONLINE' : 'OFFLINE';
+    const statusClass = coupon.is_ativo ? 'badge-active' : 'badge-inactive';
+    const statusText = coupon.is_ativo ? 'ONLINE' : 'OFFLINE';
 
     tr.innerHTML = `
-      <td><span class="code-tag">${coupon.code}</span></td>
+      <td><span class="code-tag">${coupon.codigo}</span></td>
       <td>${discountText}</td>
       <td>${currencyText}</td>
       <td><strong>${usagesDisplay}</strong></td>
@@ -504,33 +583,52 @@ function renderizarTabelaCupons() {
         <div class="action-grid">
           <button class="btn-icon" onclick="openEditModal('${coupon.id}')" title="Editar">EDITAR</button>
           <button class="btn-icon" onclick="toggleCouponStatus('${coupon.id}')" title="Ativar/Desativar">
-            ${coupon.active ? 'DESATIVAR' : 'ATIVAR'}
+            ${coupon.is_ativo ? 'DESATIVAR' : 'ATIVAR'}
           </button>
           <button class="btn-icon del" onclick="deleteCoupon('${coupon.id}')" title="Remover">EXPURGAR</button>
         </div>
       </td>
     `;
-
     tbody.appendChild(tr);
   });
 }
 
-function toggleCouponStatus(id) {
+async function toggleCouponStatus(id) {
   const coupon = cupons.find(c => c.id === id);
-  if (coupon) {
-    coupon.active = !coupon.active;
-    salvarCuponsStorage();
-    renderizarTabelaCupons();
+  if (!coupon) return;
+
+  const client = getSupabase();
+  if (!client) return;
+
+  const { error } = await client
+    .from('cupons')
+    .update({ is_ativo: !coupon.is_ativo, updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) {
+    alert('ERRO AO ALTERAR STATUS DO CUPOM: ' + error.message);
+    return;
   }
+
+  await carregarCupons();
 }
 
-function deleteCoupon(id) {
+async function deleteCoupon(id) {
   const coupon = cupons.find(c => c.id === id);
-  if (coupon && confirm(`TERMINAL IMPERIAL: Apagar o cupom [${coupon.code}] da HoloNet?`)) {
-    cupons = cupons.filter(c => c.id !== id);
-    salvarCuponsStorage();
-    renderizarTabelaCupons();
+  if (!coupon) return;
+
+  if (!confirm(`TERMINAL IMPERIAL: Apagar o cupom [${coupon.codigo}] da HoloNet?`)) return;
+
+  const client = getSupabase();
+  if (!client) return;
+
+  const { error } = await client.from('cupons').delete().eq('id', id);
+  if (error) {
+    alert('ERRO AO REMOVER CUPOM: ' + error.message);
+    return;
   }
+
+  await carregarCupons();
 }
 
 function openEditModal(id) {
@@ -538,11 +636,11 @@ function openEditModal(id) {
   if (!coupon) return;
 
   document.getElementById('edit-coupon-id').value = coupon.id;
-  document.getElementById('edit-coupon-code').value = coupon.code;
-  document.getElementById('edit-currency-type').value = coupon.currency;
-  document.getElementById('edit-discount-type').value = coupon.discountType;
-  document.getElementById('edit-discount-value').value = coupon.discountValue;
-  document.getElementById('edit-usage-limit').value = coupon.usageLimit || '';
+  document.getElementById('edit-coupon-code').value = coupon.codigo;
+  document.getElementById('edit-currency-type').value = coupon.moeda;
+  document.getElementById('edit-discount-type').value = coupon.tipo_desconto;
+  document.getElementById('edit-discount-value').value = coupon.valor_desconto;
+  document.getElementById('edit-usage-limit').value = coupon.limite_usos || '';
 
   document.getElementById('edit-modal').classList.add('active');
 }
@@ -551,22 +649,29 @@ function closeEditModal() {
   document.getElementById('edit-modal').classList.remove('active');
 }
 
-function handleSaveEditCoupon(event) {
+async function handleSaveEditCoupon(event) {
   event.preventDefault();
 
   const id = document.getElementById('edit-coupon-id').value;
-  const coupon = cupons.find(c => c.id === id);
+  const client = getSupabase();
+  if (!client) return;
 
-  if (coupon) {
-    coupon.currency = document.getElementById('edit-currency-type').value;
-    coupon.discountType = document.getElementById('edit-discount-type').value;
-    coupon.discountValue = parseFloat(document.getElementById('discount-value').value) || coupon.discountValue;
-    
-    const limitValue = document.getElementById('edit-usage-limit').value;
-    coupon.usageLimit = limitValue ? parseInt(limitValue) : null;
+  const limitValue = document.getElementById('edit-usage-limit').value;
 
-    salvarCuponsStorage();
-    renderizarTabelaCupons();
-    closeEditModal();
+  const payload = {
+    moeda: document.getElementById('edit-currency-type').value,
+    tipo_desconto: document.getElementById('edit-discount-type').value,
+    valor_desconto: parseFloat(document.getElementById('edit-discount-value').value),
+    limite_usos: limitValue ? parseInt(limitValue, 10) : null,
+    updated_at: new Date().toISOString()
+  };
+
+  const { error } = await client.from('cupons').update(payload).eq('id', id);
+  if (error) {
+    alert('ERRO AO ATUALIZAR CUPOM: ' + error.message);
+    return;
   }
+
+  closeEditModal();
+  await carregarCupons();
 }

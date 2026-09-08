@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,11 @@
   <link rel="stylesheet" href="terminalBancario/terminalBancario.css">
   <link rel="icon" href="../img/imperio.png" type="image/png">
 </head>
+
 <body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/isb_gatekeeper.js"></script>
 
   <!-- Overlay de Efeitos Especiais Sci-Fi -->
   <div class="datapad-grid-bg"></div>
@@ -39,7 +44,7 @@
         <span class="status-dot"></span>
         <span class="sys-text">ISB FINANCIAL TERMINAL :: ACESSO NÍVEL 5 [MUUNILINST-NODE-RED]</span>
       </div>
-      
+
       <div class="header-main">
         <div class="aurebesh-sub">TERMINAL BANCARIO IMPERIAL</div>
         <h1 class="glitch-title">TERMINAL BANCÁRIO IMPERIAL</h1>
@@ -205,7 +210,8 @@
 
           <div class="input-hud-group">
             <label for="tax-target">ATRIBUIR A / ALVO(S)</label>
-            <input type="text" id="tax-target" placeholder="Ex: Todos os Jogadores, Han Solo, Esquadrão Rebelde" required>
+            <input type="text" id="tax-target" placeholder="Ex: Todos os Jogadores, Han Solo, Esquadrão Rebelde"
+              required>
           </div>
 
           <div class="input-hud-row">
@@ -346,7 +352,7 @@
 
       <form id="edit-coupon-form" onsubmit="handleSaveEditCoupon(event)">
         <input type="hidden" id="edit-coupon-id">
-        
+
         <div class="input-hud-group">
           <label>CÓDIGO ALVO</label>
           <input type="text" id="edit-coupon-code" readonly class="input-disabled">
@@ -391,4 +397,5 @@
 
   <script src="terminalBancario/terminalBancario.js"></script>
 </body>
+
 </html>
