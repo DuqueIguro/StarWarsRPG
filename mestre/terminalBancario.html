@@ -139,8 +139,10 @@
 
         <form id="loan-form" onsubmit="handleCreateLoan(event)">
           <div class="input-hud-group">
-            <label for="loan-player">NOME DO JOGADOR / ALVO</label>
-            <input type="text" id="loan-player" placeholder="Ex: Han Solo, Caçador de Recompensas" required>
+            <label for="loan-player">SELECIONAR JOGADOR / PERSONAGEM</label>
+            <select id="loan-player" required>
+              <option value="">CARREGANDO REGISTROS IMPERIAIS...</option>
+            </select>
           </div>
 
           <div class="input-hud-row">
@@ -209,9 +211,10 @@
           </div>
 
           <div class="input-hud-group">
-            <label for="tax-target">ATRIBUIR A / ALVO(S)</label>
-            <input type="text" id="tax-target" placeholder="Ex: Todos os Jogadores, Han Solo, Esquadrão Rebelde"
-              required>
+            <label for="tax-target">ATRIBUIR A / ALVO</label>
+            <select id="tax-target" required>
+              <option value="">CARREGANDO REGISTROS IMPERIAIS...</option>
+            </select>
           </div>
 
           <div class="input-hud-row">
