@@ -246,7 +246,101 @@ async function carregarLogsDeDados() {
     });
 }
 
-// 4. Operações da Frota
+// 4. Log Bancário (Novo: Empréstimos, Quitações, Cupons, Taxas)
+async function carregarLogsBancario() {
+    const client = getSupabaseClient();
+    const tbody = document.getElementById('logs-bancario-body');
+    if (!client || !tbody) return;
+
+    const selectChar = document.getElementById('filter-char');
+    const inputBusca = document.getElementById('filter-text');
+    const dateStart = document.getElementById('filter-date-start');
+    const dateEnd = document.getElementById('filter-date-end');
+
+    const charId = selectChar ? selectChar.value : '';
+    const txt = inputBusca ? inputBusca.value.trim() : '';
+    const dataInicio = dateStart ? dateStart.value : null;
+    const dataFim = dateEnd ? dateEnd.value : null;
+
+    tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-rose-500 animate-pulse">Consultando registros do Terminal Bancário...</td></tr>';
+
+    let query = client
+        .from('log_bancario')
+        .select('*, personagens(nome)')
+        .order('created_at', { ascending: false })
+        .limit(250);
+
+    if (charId) query = query.eq('personagem_id', charId);
+    if (txt) query = query.ilike('descricao', `%${txt}%`);
+    if (dataInicio) query = query.gte('created_at', `${dataInicio}T00:00:00-03:00`);
+    if (dataFim) query = query.lte('created_at', `${dataFim}T23:59:59-03:00`);
+
+    const { data: logs, error } = await query;
+
+    if (error) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500 font-bold">Falha ao buscar logs bancários: ${error.message}</td></tr>`;
+        return;
+    }
+
+    if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-stone-500">Nenhum registro bancário localizado.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+
+    logs.forEach(log => {
+        const dataObj = new Date(log.created_at);
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const nomePersonagem = log.personagens ? log.personagens.nome : 'ISB / Sistema Imperial';
+
+        let tagColor = 'text-cyan-400 bg-cyan-950/40 border-cyan-800/50';
+        let labelTipo = log.tipo_evento;
+
+        if (log.tipo_evento.includes('EMPRESTIMO')) {
+            tagColor = 'text-amber-400 bg-amber-950/40 border-amber-800/50';
+            labelTipo = 'EMPRÉSTIMO';
+        } else if (log.tipo_evento.includes('QUITACAO')) {
+            tagColor = 'text-emerald-400 bg-emerald-950/40 border-emerald-800/50';
+            labelTipo = 'QUITAÇÃO';
+        } else if (log.tipo_evento.includes('TAXA') || log.tipo_evento.includes('DECRETO')) {
+            tagColor = 'text-purple-400 bg-purple-950/40 border-purple-800/50';
+            labelTipo = 'TAXA / IMPOSTO';
+        } else if (log.tipo_evento.includes('CUPOM')) {
+            tagColor = 'text-sky-400 bg-sky-950/40 border-sky-800/50';
+            labelTipo = 'CUPOM';
+        } else if (log.tipo_evento.includes('REVOGACAO') || log.tipo_evento.includes('EXPURGO')) {
+            tagColor = 'text-rose-500 bg-rose-950/40 border-rose-800/50';
+            labelTipo = 'REVOGAÇÃO';
+        }
+
+        let deltaCreditos = '<span class="text-stone-500">—</span>';
+        if (log.valor_creditos !== null && log.valor_creditos !== undefined) {
+            deltaCreditos = `<span class="text-amber-400 font-bold">${Number(log.valor_creditos).toLocaleString('pt-BR')} CR</span>`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-stone-900/50 transition-colors border-b border-stone-800/30';
+
+        const btnDeletar = `
+            <button onclick="deletarLog('${log.id}', 'log_bancario')" class="text-red-900 hover:text-red-400 transition-colors cursor-pointer" title="Apagar Registro">
+                <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        `;
+
+        tr.innerHTML = `
+            <td class="p-4 text-stone-400 text-xs whitespace-nowrap">${dataFormatada}</td>
+            <td class="p-4 font-bold text-stone-300 text-xs uppercase tracking-wider whitespace-nowrap">${nomePersonagem}</td>
+            <td class="p-4 whitespace-nowrap"><span class="px-2 py-1 text-[10px] tracking-widest font-bold rounded border ${tagColor}">${labelTipo}</span></td>
+            <td class="p-4 text-stone-300 text-xs">${log.descricao}</td>
+            <td class="p-4 text-right orbitron whitespace-nowrap">${deltaCreditos}</td>
+            <td class="p-4 text-right">${btnDeletar}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// 5. Operações da Frota
 async function carregarLogsTaticos() {
     const client = getSupabaseClient();
     const listaFrota = document.getElementById('lista-logs-frota');
@@ -299,7 +393,7 @@ async function carregarLogsTaticos() {
 
         const btnDeletar = `
             <button onclick="deletarLog('${log.id}', 'logs_taticos')" class="text-red-900 hover:text-red-400 transition-colors ml-3 cursor-pointer" title="Apagar Registro Tático">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <svg class="w-4 h-4 fill-none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
         `;
 
@@ -318,7 +412,7 @@ async function carregarLogsTaticos() {
     });
 }
 
-// 5. Serviços MCMT
+// 6. Serviços MCMT
 async function carregarLogsMCMT() {
     const client = getSupabaseClient();
     const tbodyMCMT = document.getElementById('logs-mcmt-body');
@@ -410,7 +504,7 @@ async function carregarLogsMCMT() {
     });
 }
 
-// 6. Logs de Apostas do Cassino (Fichas)
+// 7. Logs de Apostas do Cassino (Fichas)
 async function carregarLogsCassino() {
     const client = getSupabaseClient();
     const tbodyCassino = document.getElementById('logs-cassino-body');
@@ -501,7 +595,7 @@ async function carregarLogsCassino() {
     });
 }
 
-// 7. Exclusão Universal de Registros
+// 8. Exclusão Universal de Registros
 window.deletarLog = async function (id, tabela) {
     if (!confirm('ATENÇÃO: Deseja obliterar este registro dos arquivos da ISB? Esta ação é irreversível.')) return;
 
@@ -517,11 +611,13 @@ window.deletarLog = async function (id, tabela) {
         alert('Erro ao excluir registro: ' + error.message);
     } else {
         const contDados = document.getElementById('conteudo-dados');
+        const contBancario = document.getElementById('conteudo-bancario');
         const contFrota = document.getElementById('conteudo-frota');
         const contMcmt = document.getElementById('conteudo-mcmt');
         const contCassino = document.getElementById('conteudo-cassino');
 
         if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
+        else if (contBancario && !contBancario.classList.contains('hidden')) carregarLogsBancario();
         else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
         else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
         else if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
@@ -529,18 +625,20 @@ window.deletarLog = async function (id, tabela) {
     }
 };
 
-// 8. Alternância de Abas
+// 9. Alternância de Abas (Com Suporte a Bancário)
 window.alternarAbas = function (aba) {
-    carregarPersonagens(); // Garante cards atualizados ao mudar de aba
+    carregarPersonagens();
     
     const btnFinancas = document.getElementById('btn-tab-financas');
     const btnDados = document.getElementById('btn-tab-dados');
+    const btnBancario = document.getElementById('btn-tab-bancario');
     const btnFrota = document.getElementById('btn-tab-frota');
     const btnMcmt = document.getElementById('btn-tab-mcmt');
     const btnCassino = document.getElementById('btn-tab-cassino');
 
     const contFinancas = document.getElementById('conteudo-financas');
     const contDados = document.getElementById('conteudo-dados');
+    const contBancario = document.getElementById('conteudo-bancario');
     const contFrota = document.getElementById('conteudo-frota');
     const contMcmt = document.getElementById('conteudo-mcmt');
     const contCassino = document.getElementById('conteudo-cassino');
@@ -550,17 +648,8 @@ window.alternarAbas = function (aba) {
 
     const cssInativo = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors';
 
-    if (btnFinancas) btnFinancas.className = cssInativo;
-    if (btnDados) btnDados.className = cssInativo;
-    if (btnFrota) btnFrota.className = cssInativo;
-    if (btnMcmt) btnMcmt.className = cssInativo;
-    if (btnCassino) btnCassino.className = cssInativo;
-
-    if (contFinancas) contFinancas.classList.replace('block', 'hidden');
-    if (contDados) contDados.classList.replace('block', 'hidden');
-    if (contFrota) contFrota.classList.replace('block', 'hidden');
-    if (contMcmt) contMcmt.classList.replace('block', 'hidden');
-    if (contCassino) contCassino.classList.replace('block', 'hidden');
+    [btnFinancas, btnDados, btnBancario, btnFrota, btnMcmt, btnCassino].forEach(btn => { if (btn) btn.className = cssInativo; });
+    [contFinancas, contDados, contBancario, contFrota, contMcmt, contCassino].forEach(cont => { if (cont) cont.classList.replace('block', 'hidden'); });
 
     if (aba === 'financas') {
         if (btnFinancas) btnFinancas.className = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-cyan-900/40 text-cyan-400 border border-cyan-500 rounded transition-colors';
@@ -590,6 +679,20 @@ window.alternarAbas = function (aba) {
             filtroBusca.placeholder = 'Indisponível para dados';
         }
         carregarLogsDeDados();
+    } else if (aba === 'bancario') {
+        if (btnBancario) btnBancario.className = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-rose-900/40 text-rose-400 border border-rose-500 rounded transition-colors';
+        if (contBancario) contBancario.classList.replace('hidden', 'block');
+        if (filtroTipo) {
+            filtroTipo.disabled = true;
+            filtroTipo.classList.add('opacity-30', 'cursor-not-allowed');
+            filtroTipo.value = '';
+        }
+        if (filtroBusca) {
+            filtroBusca.disabled = false;
+            filtroBusca.classList.remove('opacity-30', 'cursor-not-allowed');
+            filtroBusca.placeholder = 'Ex: Empréstimo, Cupom, Taxa, Quitação...';
+        }
+        carregarLogsBancario();
     } else if (aba === 'frota') {
         if (btnFrota) btnFrota.className = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-red-900/40 text-red-400 border border-red-500 rounded transition-colors';
         if (contFrota) contFrota.classList.replace('hidden', 'block');
@@ -637,7 +740,7 @@ window.alternarAbas = function (aba) {
     }
 };
 
-// 9. Event Listeners
+// 10. Event Listeners Globais
 document.addEventListener('DOMContentLoaded', async () => {
     const btnRefresh = document.getElementById('btn-refresh');
     const btnSearch = document.getElementById('btn-search');
@@ -650,14 +753,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnRefresh) {
         btnRefresh.addEventListener('click', async () => {
-            await carregarPersonagens(); // Atualiza os cards com os saldos atuais
+            await carregarPersonagens();
 
             const contDados = document.getElementById('conteudo-dados');
+            const contBancario = document.getElementById('conteudo-bancario');
             const contFrota = document.getElementById('conteudo-frota');
             const contMcmt = document.getElementById('conteudo-mcmt');
             const contCassino = document.getElementById('conteudo-cassino');
 
             if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
+            else if (contBancario && !contBancario.classList.contains('hidden')) carregarLogsBancario();
             else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
             else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
             else if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
@@ -668,12 +773,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnSearch) {
         btnSearch.addEventListener('click', () => {
             const contDados = document.getElementById('conteudo-dados');
+            const contBancario = document.getElementById('conteudo-bancario');
             const contFrota = document.getElementById('conteudo-frota');
             const contMcmt = document.getElementById('conteudo-mcmt');
             const contCassino = document.getElementById('conteudo-cassino');
 
             if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
             else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
+            else if (contBancario && !contBancario.classList.contains('hidden')) carregarLogsBancario();
             else if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
             else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
             else carregarLogs();
@@ -684,7 +791,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         inputBusca.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const contCassino = document.getElementById('conteudo-cassino');
+                const contBancario = document.getElementById('conteudo-bancario');
+
                 if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
+                else if (contBancario && !contBancario.classList.contains('hidden')) carregarLogsBancario();
                 else carregarLogs();
             }
         });
@@ -697,7 +807,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (selectAcao) selectAcao.value = '';
             if (dateStart) dateStart.value = '';
             if (dateEnd) dateEnd.value = '';
-            carregarLogs();
+
+            const contDados = document.getElementById('conteudo-dados');
+            const contBancario = document.getElementById('conteudo-bancario');
+            const contFrota = document.getElementById('conteudo-frota');
+            const contMcmt = document.getElementById('conteudo-mcmt');
+            const contCassino = document.getElementById('conteudo-cassino');
+
+            if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
+            else if (contBancario && !contBancario.classList.contains('hidden')) carregarLogsBancario();
+            else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
+            else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
+            else if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
+            else carregarLogs();
         });
     }
 
@@ -706,14 +828,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (el) {
             el.addEventListener('change', () => {
                 const contDados = document.getElementById('conteudo-dados');
+                const contBancario = document.getElementById('conteudo-bancario');
                 const contFrota = document.getElementById('conteudo-frota');
                 const contMcmt = document.getElementById('conteudo-mcmt');
                 const contCassino = document.getElementById('conteudo-cassino');
 
                 if (contDados && !contDados.classList.contains('hidden')) carregarLogsDeDados();
+                else if (contBancario && !contBancario.classList.contains('hidden')) carregarLogsBancario();
                 else if (contFrota && !contFrota.classList.contains('hidden')) carregarLogsTaticos();
                 else if (contMcmt && !contMcmt.classList.contains('hidden')) carregarLogsMCMT();
                 else if (contCassino && !contCassino.classList.contains('hidden')) carregarLogsCassino();
+                else carregarLogs();
             });
         }
     });

@@ -5,7 +5,6 @@
 const CONVERSION_RATE_BRL_TO_CREDITS = 10000;
 
 let cupons = [];
-let logsTransacoes = [];
 let emprestimos = [];
 let taxas = [];
 let personagensCache = [];
@@ -15,7 +14,7 @@ function getSupabase() {
   if (typeof supabaseClient !== 'undefined') return supabaseClient;
   if (typeof supabase !== 'undefined' && supabase.from) return supabase;
   if (window.supabase && typeof window.supabase.from === 'function') return window.supabase;
-  console.error("ERRO IMPERIAL: Cliente Supabase não encontrado.");
+  console.error("ERRO IMPERIAL: Supabase não identificado.");
   return null;
 }
 
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function carregarTodosOsDados() {
   await Promise.all([
     carregarDadosBancarios(),
-    carregarLogsAuditoria(),
     carregarEmprestimosETaxas(),
     carregarCupons()
   ]);
@@ -47,121 +45,37 @@ function iniciarRelogioEmTempoReal() {
 }
 
 /**
- * 1. LOGS DE AUDITORIA & REGISTRO UNIVERSAL
+ * REGISTRO UNIVERSAL DE AUDITORIA BANCÁRIA
  */
-async function registrarAuditoriaBancaria({ acao, remetente, destinatario, valor = 0, moeda = 'CREDITOS', detalhes = '' }) {
+async function registrarLogBancario({ tipo_evento, descricao, valor_creditos = null, personagem_id = null, dados_adicionais = {} }) {
   const client = getSupabase();
   if (!client) return;
 
-  const defaultId = '00000000-0000-0000-0000-000000000000';
+  const { data: { user } } = await client.auth.getUser();
+
   const payload = {
-    tipo_transacao: acao,
-    remetente_id: defaultId,
-    destinatario_id: defaultId,
-    valor_ou_quantidade: Math.round(valor),
-    detalhes: JSON.stringify({
-      origem: remetente || 'Terminal Imperial',
-      destino: destinatario || 'Banco Imperial',
-      moeda: moeda,
-      pagina: 'terminalBancario.html',
-      descricao: detalhes
-    }),
-    data_transacao: new Date().toISOString()
+    user_id: user ? user.id : null,
+    personagem_id: personagem_id || null,
+    tipo_evento: tipo_evento,
+    descricao: descricao,
+    valor_creditos: valor_creditos !== null ? Math.round(Number(valor_creditos)) : null,
+    dados_adicionais: dados_adicionais
   };
 
-  await client.from('transacoes_log').insert([payload]);
-  await carregarLogsAuditoria();
-}
-
-async function carregarLogsAuditoria() {
-  const client = getSupabase();
-  if (!client) return;
-
-  const { data, error } = await client
-    .from('transacoes_log')
-    .select('*')
-    .order('data_transacao', { ascending: false })
-    .limit(40);
-
-  if (error) {
-    console.error('Erro ao buscar logs:', error.message);
-    return;
-  }
-
-  logsTransacoes = data || [];
-  renderizarTabelaLogs();
-}
-
-function renderizarTabelaLogs() {
-  const tbody = document.getElementById('logs-table-body');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-
-  if (logsTransacoes.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--neon-blue);">[ NENHUMA AUDITORIA REGISTRADA RECENTEMENTE ]</td></tr>`;
-    return;
-  }
-
-  logsTransacoes.forEach(log => {
-    let extra = {};
-    try {
-      extra = typeof log.detalhes === 'string' ? JSON.parse(log.detalhes) : (log.detalhes || {});
-    } catch(e) {
-      extra = { descricao: log.detalhes };
-    }
-
-    const dataObj = log.data_transacao ? new Date(log.data_transacao) : new Date();
-    const horario = dataObj.toLocaleTimeString('pt-BR');
-    const moeda = extra.moeda || 'CREDITOS';
-    const moedaFormatada = moeda === 'BRL' ? 'R$' : 'CR';
-    const valor = Number(log.valor_ou_quantidade) || 0;
-    const valorFormatado = moeda === 'BRL'
-      ? valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
-      : valor.toLocaleString('pt-BR');
-
-    const acaoFormatada = extra.descricao ? `${log.tipo_transacao} (${extra.descricao})` : log.tipo_transacao;
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${horario}</td>
-      <td><span class="player-transfer">${extra.origem || 'Sistema'}</span></td>
-      <td><span class="player-transfer">${extra.destino || 'Terminal'}</span></td>
-      <td><strong>${valorFormatado}</strong></td>
-      <td>${moedaFormatada}</td>
-      <td><span class="page-tag">${acaoFormatada}</span></td>
-      <td>
-        <button class="btn-icon del" onclick="deleteLog('${log.id}')" title="Apagar Registro">🗑️</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-async function deleteLog(id) {
-  if (!confirm("TERMINAL IMPERIAL: Deseja apagar este registro permanentemente?")) return;
-  const client = getSupabase();
-  if (!client) return;
-
-  const { error } = await client.from('transacoes_log').delete().eq('id', id);
-  if (error) {
-    alert('ERRO: ' + error.message);
-    return;
-  }
-  await carregarLogsAuditoria();
+  const { error } = await client.from('log_bancario').insert([payload]);
+  if (error) console.error('Erro ao gravar log_bancario:', error.message);
 }
 
 /**
- * 2. DROPDOWN DE USUÁRIOS / PERSONAGENS COM FILTROS ESPECÍFICOS
+ * 1. DROPDOWN DE USUÁRIOS COM FILTRAGEM
  */
 async function carregarUsuariosCadastrados() {
   const client = getSupabase();
   if (!client) return;
 
-  // 1. Identificar usuário logado
   const { data: { user } } = await client.auth.getUser();
-  const currentUserId = user ? user.id : null;
+  const currentUserId = user ? user.id.toLowerCase() : null;
 
-  // UUIDs de Controle
   const DEV_USER_IDS = [
     'c28cf763-c1a9-4f31-b0b8-6bfe296810e2', // Eiden
     '94d1ed61-7955-40d8-a0a1-7733bd716b5d'  // Duque
@@ -171,29 +85,22 @@ async function carregarUsuariosCadastrados() {
 
   const isCurrentUserDev = DEV_USER_IDS.includes(currentUserId);
 
-  // 2. Busca todos os personagens
   const { data, error } = await client
     .from('personagens')
     .select('id, user_id, nome, creditos')
     .order('nome', { ascending: true });
 
-  if (error || !data) {
-    console.error('Falha ao listar personagens:', error);
-    return;
-  }
+  if (error || !data) return;
 
-  // 3. Aplicação dos filtros solicitados
   const personagensFiltrados = data.filter(personagem => {
     const pId = (personagem.id || '').toLowerCase();
     const pUserId = (personagem.user_id || '').toLowerCase();
     const pNome = (personagem.nome || '').toUpperCase();
 
-    // Regra 1: Ocultar personagem do Mestre
-    if (pId === MESTRE_USER_ID || pUserId === MESTRE_USER_ID) {
-      return false;
-    }
+    // Filtra Mestre
+    if (pId === MESTRE_USER_ID || pUserId === MESTRE_USER_ID) return false;
 
-    // Regra 2: Ocultar apenas MCMT1 e MCMT2, mantendo o personagem principal com mesmo UUID
+    // Filtra instâncias secundárias de MCMT mantendo o principal
     const isMcmtShared = (pId === MCMT_SHARED_ID || pUserId === MCMT_SHARED_ID);
     if (isMcmtShared) {
       if (pNome.includes('MCMT1') || pNome.includes('MCMT2') || pNome.includes('MCMT 1') || pNome.includes('MCMT 2') || pNome === 'MCMT') {
@@ -201,11 +108,9 @@ async function carregarUsuariosCadastrados() {
       }
     }
 
-    // Regra 3: Personagens dos devs só aparecem se o usuário logado for um dos devs
-    const isDevCharacter = DEV_USER_IDS.includes(pId) || DEV_USER_IDS.includes(pUserId);
-    if (isDevCharacter && !isCurrentUserDev) {
-      return false;
-    }
+    // Devs só aparecem se o usuário autenticado for Dev
+    const isDev = DEV_USER_IDS.includes(pId) || DEV_USER_IDS.includes(pUserId);
+    if (isDev && !isCurrentUserDev) return false;
 
     return true;
   });
@@ -228,7 +133,7 @@ async function carregarUsuariosCadastrados() {
 }
 
 /**
- * 3. TESOURO IMPERIAL & HISTÓRICO
+ * 2. SALDO E HISTÓRICO
  */
 async function carregarDadosBancarios() {
   const client = getSupabase();
@@ -237,15 +142,14 @@ async function carregarDadosBancarios() {
 
   if (client) {
     const { data: logs } = await client
-      .from('transacoes_log')
-      .select('valor_ou_quantidade, detalhes, tipo_transacao');
+      .from('log_bancario')
+      .select('valor_creditos, dados_adicionais, tipo_evento');
 
     if (logs) {
-      logs.forEach(item => {
-        const val = Number(item.valor_ou_quantidade) || 0;
-        let extra = {};
-        try { extra = JSON.parse(item.detalhes); } catch(e) {}
-        if (extra.moeda === 'BRL' || item.tipo_transacao === 'COMPRA_BRL') {
+      logs.forEach(l => {
+        const val = Number(l.valor_creditos) || 0;
+        const moeda = l.dados_adicionais?.moeda || 'CREDITOS';
+        if (moeda === 'BRL') {
           gastoReaisPuros += val;
         } else {
           gastoCreditosPuros += val;
@@ -264,7 +168,7 @@ async function carregarDadosBancarios() {
 }
 
 /**
- * 4. GESTÃO DE EMPRÉSTIMOS
+ * 3. EMPRÉSTIMOS
  */
 async function handleCreateLoan(event) {
   event.preventDefault();
@@ -279,12 +183,12 @@ async function handleCreateLoan(event) {
   const notes = document.getElementById('loan-notes').value.trim();
 
   if (!personagemId) {
-    alert('Selecione um jogador na lista.');
+    alert('Selecione um jogador.');
     return;
   }
 
   if (amount > saldoAtualBanco) {
-    alert('Saldo insuficiente no Tesouro Imperial!');
+    alert('Saldo insuficiente no Tesouro!');
     return;
   }
 
@@ -311,13 +215,13 @@ async function handleCreateLoan(event) {
   }
 
   saldoAtualBanco -= amount;
-  await registrarAuditoriaBancaria({
-    acao: 'CRIAR_EMPRESTIMO',
-    remetente: 'Banco Imperial',
-    destinatario: playerName,
-    valor: amount,
-    moeda: 'CREDITOS',
-    detalhes: `Juros: ${interest}% | A pagar: ${totalToPay} CR`
+
+  await registrarLogBancario({
+    tipo_evento: 'CONCESSAO_EMPRESTIMO',
+    descricao: `Empréstimo concedido a ${playerName}. Principal: ${amount} CR com ${interest}% de juros. Total: ${totalToPay} CR.`,
+    valor_creditos: amount,
+    personagem_id: personagemId,
+    dados_adicionais: { juros: interest, total_a_pagar: totalToPay, garantia: notes }
   });
 
   await carregarEmprestimosETaxas();
@@ -327,29 +231,27 @@ async function handleCreateLoan(event) {
 
 async function quitarEmprestimo(id) {
   const loan = emprestimos.find(l => l.id === id);
-  if (!loan || !confirm(`Confirmar quitação total do empréstimo de ${loan.alvo_descricao}?`)) return;
+  if (!loan || !confirm(`Confirmar quitação do empréstimo de ${loan.alvo_descricao}? O registro será removido da lista de dívidas ativas.`)) return;
 
   const client = getSupabase();
   if (!client) return;
 
-  const { error } = await client
-    .from('dividas_emprestimos')
-    .update({ status: 'QUITADO', ciclos_pagos: 1, updated_at: new Date().toISOString() })
-    .eq('id', id);
-
+  // Remoção permanente da tabela de dívidas
+  const { error } = await client.from('dividas_emprestimos').delete().eq('id', id);
   if (error) {
     alert('Falha ao quitar empréstimo: ' + error.message);
     return;
   }
 
   saldoAtualBanco += Number(loan.valor_total);
-  await registrarAuditoriaBancaria({
-    acao: 'QUITAR_EMPRESTIMO',
-    remetente: loan.alvo_descricao,
-    destinatario: 'Banco Imperial',
-    valor: loan.valor_total,
-    moeda: 'CREDITOS',
-    detalhes: 'Quitação Integral Concluída'
+
+  // Registro de quitação de dívida
+  await registrarLogBancario({
+    tipo_evento: 'QUITACAO_DIVIDA',
+    descricao: `Empréstimo quitado integralmente por ${loan.alvo_descricao}. Dívida liquidada e removida do registro ativo.`,
+    valor_creditos: loan.valor_total,
+    personagem_id: loan.personagem_id,
+    dados_adicionais: { valor_original: loan.valor_original, juros: loan.taxa_juros, id_removido: id }
   });
 
   await carregarEmprestimosETaxas();
@@ -388,7 +290,7 @@ function renderizarTabelaEmprestimos() {
 }
 
 /**
- * 5. GESTÃO DE TAXAS, IMPOSTOS E CICLOS RECORRENTES
+ * 4. TAXAS E IMPOSTOS
  */
 async function handleCreateTax(event) {
   event.preventDefault();
@@ -403,7 +305,7 @@ async function handleCreateTax(event) {
   const type = document.getElementById('tax-type').value;
 
   if (!alvoId) {
-    alert('Selecione um alvo válido.');
+    alert('Selecione um alvo.');
     return;
   }
 
@@ -422,17 +324,16 @@ async function handleCreateTax(event) {
   }]);
 
   if (error) {
-    alert('Erro ao criar taxa: ' + error.message);
+    alert('Erro ao registrar taxa: ' + error.message);
     return;
   }
 
-  await registrarAuditoriaBancaria({
-    acao: 'DECRETAR_TAXA',
-    remetente: 'Governo Imperial',
-    destinatario: targetName,
-    valor: value,
-    moeda: 'CREDITOS',
-    detalhes: `Tipo: ${type} | Título: ${name}`
+  await registrarLogBancario({
+    tipo_evento: 'DECRETO_TAXA',
+    descricao: `Taxa decretada para ${targetName}: ${name}. Valor: ${value} CR (${type}).`,
+    valor_creditos: value,
+    personagem_id: alvoId === 'ALL' ? null : alvoId,
+    dados_adicionais: { titulo: name, frequencia: type }
   });
 
   await carregarEmprestimosETaxas();
@@ -447,38 +348,60 @@ async function alterarCicloTaxa(id, delta) {
   if (!client) return;
 
   let novosCiclos = (tax.ciclos_totais || 1) + delta;
-  if (novosCiclos < (tax.ciclos_pagos || 0)) novosCiclos = tax.ciclos_pagos || 0;
   if (novosCiclos < 1) novosCiclos = 1;
 
   const novoValorTotal = Number(tax.valor_original) * novosCiclos;
-  const pendentes = novosCiclos - (tax.ciclos_pagos || 0);
-  const novoStatus = pendentes <= 0 ? 'QUITADO' : 'PENDENTE';
 
   const { error } = await client
     .from('dividas_emprestimos')
     .update({
       ciclos_totais: novosCiclos,
       valor_total: novoValorTotal,
-      status: novoStatus,
       updated_at: new Date().toISOString()
     })
     .eq('id', id);
 
   if (error) {
-    alert('Erro ao alterar ciclo: ' + error.message);
+    alert('Erro ao atualizar ciclos: ' + error.message);
     return;
   }
 
-  await registrarAuditoriaBancaria({
-    acao: 'AJUSTE_CICLOS_TAXA',
-    remetente: 'Terminal Imperial',
-    destinatario: tax.alvo_descricao,
-    valor: tax.valor_original,
-    moeda: 'CREDITOS',
-    detalhes: `Ciclos: ${novosCiclos} | Saldo devedor: ${novoValorTotal} CR`
+  await registrarLogBancario({
+    tipo_evento: 'AJUSTE_CICLO_TAXA',
+    descricao: `Ciclos de cobrança ajustados para a taxa [${tax.titulo}] (${tax.alvo_descricao}). Ciclos totais: ${novosCiclos}. Débito recalculado: ${novoValorTotal} CR.`,
+    valor_creditos: novoValorTotal,
+    personagem_id: tax.personagem_id,
+    dados_adicionais: { variacao_ciclo: delta, ciclos_totais: novosCiclos }
   });
 
   await carregarEmprestimosETaxas();
+}
+
+async function quitarTaxa(id) {
+  const tax = taxas.find(t => t.id === id);
+  if (!tax || !confirm(`Confirmar pagamento e quitação da taxa [${tax.titulo}] de ${tax.alvo_descricao}? Ela será removida da lista.`)) return;
+
+  const client = getSupabase();
+  if (!client) return;
+
+  const { error } = await client.from('dividas_emprestimos').delete().eq('id', id);
+  if (error) {
+    alert('Erro ao quitar taxa: ' + error.message);
+    return;
+  }
+
+  saldoAtualBanco += Number(tax.valor_total);
+
+  await registrarLogBancario({
+    tipo_evento: 'QUITACAO_DIVIDA',
+    descricao: `Taxa imperial [${tax.titulo}] quitada por ${tax.alvo_descricao}. Dívida liquidada e removida do registro ativo.`,
+    valor_creditos: tax.valor_total,
+    personagem_id: tax.personagem_id,
+    dados_adicionais: { titulo: tax.titulo, tipo: 'TAXA_IMPOSTO', ciclos: tax.ciclos_totais }
+  });
+
+  await carregarEmprestimosETaxas();
+  carregarDadosBancarios();
 }
 
 async function toggleTaxStatus(id) {
@@ -494,17 +417,14 @@ async function toggleTaxStatus(id) {
     .update({ status: novoStatus, updated_at: new Date().toISOString() })
     .eq('id', id);
 
-  if (error) {
-    alert('Erro ao alterar status da taxa: ' + error.message);
-    return;
-  }
+  if (error) return;
 
-  await registrarAuditoriaBancaria({
-    acao: novoStatus === 'SUSPENSO' ? 'SUSPENDER_TAXA' : 'ATIVAR_TAXA',
-    remetente: 'Terminal Imperial',
-    destinatario: tax.alvo_descricao,
-    valor: 0,
-    detalhes: `Taxa [${tax.titulo}] agora está ${novoStatus}`
+  await registrarLogBancario({
+    tipo_evento: novoStatus === 'SUSPENSO' ? 'SUSPENSAO_TAXA' : 'REATIVACAO_TAXA',
+    descricao: `Status da taxa [${tax.titulo}] (${tax.alvo_descricao}) alterado para ${novoStatus}.`,
+    valor_creditos: tax.valor_total,
+    personagem_id: tax.personagem_id,
+    dados_adicionais: { novo_status: novoStatus }
   });
 
   await carregarEmprestimosETaxas();
@@ -512,27 +432,20 @@ async function toggleTaxStatus(id) {
 
 async function deleteTax(id) {
   const tax = taxas.find(t => t.id === id);
-  if (!tax || !confirm(`Revogar permanentemente a taxa [${tax.titulo}]?`)) return;
+  if (!tax || !confirm(`Revogar e expurgar a taxa [${tax.titulo}]?`)) return;
 
   const client = getSupabase();
   if (!client) return;
 
-  const { error } = await client
-    .from('dividas_emprestimos')
-    .update({ status: 'REVOGADO', updated_at: new Date().toISOString() })
-    .eq('id', id);
+  const { error } = await client.from('dividas_emprestimos').delete().eq('id', id);
+  if (error) return;
 
-  if (error) {
-    alert('Erro ao revogar taxa: ' + error.message);
-    return;
-  }
-
-  await registrarAuditoriaBancaria({
-    acao: 'REVOGAR_TAXA',
-    remetente: 'Terminal Imperial',
-    destinatario: tax.alvo_descricao,
-    valor: 0,
-    detalhes: `Taxa revogada: ${tax.titulo}`
+  await registrarLogBancario({
+    tipo_evento: 'REVOGACAO_TAXA',
+    descricao: `Taxa [${tax.titulo}] revogada permanentemente por decreto do ISB.`,
+    valor_creditos: 0,
+    personagem_id: tax.personagem_id,
+    dados_adicionais: { id_revogado: id }
   });
 
   await carregarEmprestimosETaxas();
@@ -547,8 +460,8 @@ async function carregarEmprestimosETaxas() {
     .select('*')
     .order('created_at', { ascending: false });
 
-  emprestimos = (data || []).filter(item => item.categoria === 'EMPRESTIMO' && item.status === 'PENDENTE');
-  taxas = (data || []).filter(item => item.categoria === 'TAXA_IMPOSTO' && item.status !== 'REVOGADO');
+  emprestimos = (data || []).filter(item => item.categoria === 'EMPRESTIMO');
+  taxas = (data || []).filter(item => item.categoria === 'TAXA_IMPOSTO');
 
   renderizarTabelaEmprestimos();
   renderizarTabelaTaxas();
@@ -594,6 +507,7 @@ function renderizarTabelaTaxas() {
       <td><span class="badge ${statusClass}">${statusText}</span></td>
       <td>
         <div class="action-grid">
+          <button class="btn-icon" onclick="quitarTaxa('${tax.id}')" title="Quitar">QUITAR</button>
           <button class="btn-icon" onclick="toggleTaxStatus('${tax.id}')">
             ${isAtiva ? 'SUSPENDER' : 'ATIVAR'}
           </button>
@@ -606,7 +520,7 @@ function renderizarTabelaTaxas() {
 }
 
 /**
- * 6. GESTÃO DE CUPONS
+ * 5. CUPONS DE DESCONTO
  */
 async function carregarCupons() {
   const client = getSupabase();
@@ -639,17 +553,15 @@ async function handleCreateCoupon(event) {
   }]);
 
   if (error) {
-    alert(error.code === '23505' ? 'Cupom já cadastrado com esse código!' : error.message);
+    alert(error.code === '23505' ? 'Cupom já existente!' : error.message);
     return;
   }
 
-  await registrarAuditoriaBancaria({
-    acao: 'GERAR_CUPOM',
-    remetente: 'Terminal Imperial',
-    destinatario: 'HoloNet Pública',
-    valor: discountValue,
-    moeda: currency,
-    detalhes: `Cupom ${code} gerado`
+  await registrarLogBancario({
+    tipo_evento: 'CRIACAO_CUPOM',
+    descricao: `Cupom [${code}] criado com sucesso. Tipo: ${discountType}, Valor: ${discountValue} (${currency}).`,
+    valor_creditos: currency === 'CREDITOS' ? discountValue : null,
+    dados_adicionais: { codigo: code, moeda: currency, tipo: discountType, valor: discountValue }
   });
 
   await carregarCupons();
@@ -663,19 +575,18 @@ async function toggleCouponStatus(id) {
   const client = getSupabase();
   if (!client) return;
 
+  const novoStatus = !coupon.is_ativo;
   const { error } = await client
     .from('cupons')
-    .update({ is_ativo: !coupon.is_ativo, updated_at: new Date().toISOString() })
+    .update({ is_ativo: novoStatus, updated_at: new Date().toISOString() })
     .eq('id', id);
 
   if (error) return;
 
-  await registrarAuditoriaBancaria({
-    acao: !coupon.is_ativo ? 'ATIVAR_CUPOM' : 'DESATIVAR_CUPOM',
-    remetente: 'Terminal Imperial',
-    destinatario: 'HoloNet',
-    valor: 0,
-    detalhes: `Status do cupom ${coupon.codigo} alterado`
+  await registrarLogBancario({
+    tipo_evento: novoStatus ? 'ATIVACAO_CUPOM' : 'DESATIVACAO_CUPOM',
+    descricao: `Status do cupom [${coupon.codigo}] alterado para ${novoStatus ? 'ATIVO' : 'INATIVO'}.`,
+    dados_adicionais: { codigo: coupon.codigo, is_ativo: novoStatus }
   });
 
   await carregarCupons();
@@ -691,12 +602,10 @@ async function deleteCoupon(id) {
   const { error } = await client.from('cupons').delete().eq('id', id);
   if (error) return;
 
-  await registrarAuditoriaBancaria({
-    acao: 'EXPURGAR_CUPOM',
-    remetente: 'Terminal Imperial',
-    destinatario: 'HoloNet',
-    valor: 0,
-    detalhes: `Cupom removido: ${coupon.codigo}`
+  await registrarLogBancario({
+    tipo_evento: 'EXPURGO_CUPOM',
+    descricao: `Cupom de desconto [${coupon.codigo}] foi removido permanentemente da HoloNet.`,
+    dados_adicionais: { codigo: coupon.codigo, id_deletado: id }
   });
 
   await carregarCupons();
@@ -777,17 +686,14 @@ async function handleSaveEditCoupon(event) {
 
   const { error } = await client.from('cupons').update(payload).eq('id', id);
   if (error) {
-    alert('Erro ao atualizar: ' + error.message);
+    alert('Erro ao atualizar cupom: ' + error.message);
     return;
   }
 
-  await registrarAuditoriaBancaria({
-    acao: 'EDITAR_CUPOM',
-    remetente: 'Terminal Imperial',
-    destinatario: 'HoloNet',
-    valor: payload.valor_desconto,
-    moeda: payload.moeda,
-    detalhes: 'Parâmetros atualizados via Datapad'
+  await registrarLogBancario({
+    tipo_evento: 'EDICAO_CUPOM',
+    descricao: `Parâmetros do cupom id [${id}] foram atualizados.`,
+    dados_adicionais: payload
   });
 
   closeEditModal();

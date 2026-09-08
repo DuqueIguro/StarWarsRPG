@@ -100,37 +100,8 @@
       </div>
     </section>
 
-    <!-- 2. LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET -->
-    <section class="hud-card log-card">
-      <div class="card-title">
-        <span class="hud-icon">📡</span>
-        <h3>LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET</h3>
-        <span class="aurebesh-mini">TRANSACTIONS MONITOR</span>
-      </div>
-
-      <div class="hud-table-wrapper">
-        <table class="hud-table log-table">
-          <thead>
-            <tr>
-              <th>HORÁRIO</th>
-              <th>ORIGEM / REMETENTE</th>
-              <th>DESTINO / DESTINATÁRIO</th>
-              <th>VALOR GASTO</th>
-              <th>MOEDA</th>
-              <th>PÁGINA DO SITE</th>
-              <th>AÇÃO</th>
-            </tr>
-          </thead>
-          <tbody id="logs-table-body">
-            <!-- Renderizado via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- 3. ÁREA DE EMPRÉSTIMOS (Grid Adaptativa) -->
+    <!-- 2. ÁREA DE EMPRÉSTIMOS -->
     <div id="loans-grid" class="dynamic-grid single-col">
-      <!-- Coluna 1: Formulário -->
       <section class="hud-card loan-form-card">
         <div class="card-title">
           <span class="hud-icon">🏦</span>
@@ -168,7 +139,6 @@
         </form>
       </section>
 
-      <!-- Coluna 2: Empréstimos Imperiais Ativos (Condicional) -->
       <section id="loans-card-list" class="hud-card loans-list-card" style="display: none;">
         <div class="card-title">
           <span class="hud-icon">⚖</span>
@@ -187,17 +157,14 @@
                 <th>AÇÕES</th>
               </tr>
             </thead>
-            <tbody id="loans-table-body">
-              <!-- Renderizado via JS -->
-            </tbody>
+            <tbody id="loans-table-body"></tbody>
           </table>
         </div>
       </section>
     </div>
 
-    <!-- 4. ÁREA DE TAXAS, IMPOSTOS E DÍVIDAS (Grid Adaptativa) -->
+    <!-- 3. ÁREA DE TAXAS, IMPOSTOS E DÍVIDAS -->
     <div id="taxes-grid" class="dynamic-grid single-col">
-      <!-- Coluna 1: Formulário de Criação -->
       <section class="hud-card tax-form-card">
         <div class="card-title">
           <span class="hud-icon">📜</span>
@@ -238,7 +205,6 @@
         </form>
       </section>
 
-      <!-- Coluna 2: Tabela de Taxas Registradas (Condicional) -->
       <section id="taxes-card-list" class="hud-card taxes-list-card" style="display: none;">
         <div class="card-title">
           <span class="hud-icon">📑</span>
@@ -258,17 +224,14 @@
                 <th>AÇÕES</th>
               </tr>
             </thead>
-            <tbody id="taxes-table-body">
-              <!-- Renderizado via JS -->
-            </tbody>
+            <tbody id="taxes-table-body"></tbody>
           </table>
         </div>
       </section>
     </div>
 
-    <!-- 5. ÁREA DE CUPONS DE DESCONTO (Grid Adaptativa) -->
+    <!-- 4. ÁREA DE CUPONS DE DESCONTO -->
     <div id="coupons-grid" class="dynamic-grid single-col">
-      <!-- Coluna 1: Formulário de Criação -->
       <section class="hud-card create-card">
         <div class="card-title">
           <span class="hud-icon">✚</span>
@@ -316,7 +279,6 @@
         </form>
       </section>
 
-      <!-- Coluna 2: Cupons Registrados & Estatísticas (Condicional) -->
       <section id="coupons-card-list" class="hud-card list-card" style="display: none;">
         <div class="card-title">
           <span class="hud-icon">☰</span>
@@ -335,9 +297,7 @@
                 <th>AÇÕES</th>
               </tr>
             </thead>
-            <tbody id="coupons-table-body">
-              <!-- Renderizado via JS -->
-            </tbody>
+            <tbody id="coupons-table-body"></tbody>
           </table>
         </div>
       </section>
@@ -345,7 +305,7 @@
 
   </div>
 
-  <!-- Modal Holográfico para Edição de Cupom -->
+  <!-- Modal de Edição de Cupom -->
   <div id="edit-modal" class="hud-modal">
     <div class="modal-card hud-card">
       <div class="card-title">
