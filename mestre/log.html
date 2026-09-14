@@ -131,6 +131,10 @@
                 class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
                 Rolagens de Dados
             </button>
+            <button id="btn-tab-bancario" onclick="alternarAbas('bancario')"
+                class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
+                Terminal Bancário
+            </button>
             <button id="btn-tab-frota" onclick="alternarAbas('frota')"
                 class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
                 Operações da Frota
@@ -191,6 +195,32 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div id="conteudo-bancario" class="hidden">
+            <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[850px]">
+                        <thead>
+                            <tr class="bg-stone-900 border-b border-stone-800 text-rose-500 text-xs uppercase tracking-wider">
+                                <th class="p-4 w-48">Data / Hora Local</th>
+                                <th class="p-4 w-48">Alvo / Personagem</th>
+                                <th class="p-4 w-36">Operação Bancária</th>
+                                <th class="p-4">Descrição do Evento</th>
+                                <th class="p-4 text-right w-36">Impacto (CR)</th>
+                                <th class="p-4 text-right w-20">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-bancario-body" class="text-sm divide-y divide-stone-800/50">
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-rose-500 animate-pulse">
+                                    Conectando aos registros do Terminal Bancário Imperial...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DATAPAD // CASSINO ORLA EXTERIOR</title>
+  <title>CASSINO ORLA EXTERIOR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="icon" type="image/x-icon" href="../img/fichas.png">
+  <link rel="icon" type="image/x-icon" href="../../img/fichas.png">
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="cassino.css">
+  <link rel="stylesheet" href="cassino/cassino.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../../js/supabase.js"></script>
@@ -134,6 +134,9 @@
           <div class="roulette-wheel-box">
             <div class="wheel-outer-ring">
               <canvas id="rouletteCanvas" width="360" height="360"></canvas>
+              <!-- Nova Seta Indicadora -->
+              <div class="wheel-pointer" style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 15px solid var(--neon-cyan); filter: drop-shadow(0 0 5px var(--neon-cyan)); z-index: 10;"></div>
+              
               <div class="wheel-core-hud">
                 <span class="core-label">SETORES</span>
                 <span id="rouletteCenterNumber" class="core-num">--</span>
@@ -253,7 +256,7 @@
           <div class="bj-hand-container dealer-zone">
             <div class="hand-meta">
               <span class="actor-title"><span class="bot-icon">🤖</span> CRUPIÊ PROTOCOLAR</span>
-              <span class="score-pill" id="dealerScore">PONTOS: ?</span>
+              <span class="score-pill" id="dealerScore">PONTOS: ? | CARTAS: 0</span>
             </div>
             <div class="cards-table" id="dealerCards"></div>
           </div>
@@ -265,7 +268,7 @@
           <div class="bj-hand-container player-zone">
             <div class="hand-meta">
               <span class="actor-title"><span class="user-icon">👤</span> SEU TERMINAL DE CARTAS</span>
-              <span class="score-pill" id="playerScore">PONTOS: 0</span>
+              <span class="score-pill" id="playerScore">PONTOS: 0 | CARTAS: 0</span>
             </div>
             <div class="cards-table" id="playerCards"></div>
           </div>
@@ -404,11 +407,12 @@
           <div class="title-text"><span class="neon-bullet">&#x25C6;</span> ALINHAMENTO DE BOBINAS DE COAXIUM // SLOTS
             3x3</div>
           <div class="slot-payouts-preview">
-            <span>⚔️ 3x = 50x</span>
-            <span>💎 3x = 25x</span>
-            <span>🪐 3x = 15x</span>
-            <span>🚀 3x = 10x</span>
-            <span>⚡ 3x = 5x</span>
+            <span>⚔️ 3 Slots = 50x</span>
+            <span>💎 3 Slots = 25x</span>
+            <span>🪐 3 Slots = 15x</span>
+            <span>🚀 3 Slots = 10x</span>
+            <span>⚡ 3 Slots = 5x</span>
+            <span style="color: #6385a5; font-size: 0.65rem;">(Par idêntico = 2x, exceto 👾)</span>
           </div>
         </div>
 
@@ -455,27 +459,20 @@
         </div>
 
         <div class="sabacc-arena">
-          <div class="hologram-dice-pod">
-            <div class="cube-scene">
-              <div class="dice-3d" id="cube1">
-                <div class="cube-face front">1</div>
-                <div class="cube-face back">6</div>
-                <div class="cube-face right">3</div>
-                <div class="cube-face left">4</div>
-                <div class="cube-face top">2</div>
-                <div class="cube-face bottom">5</div>
-              </div>
-            </div>
-            <div class="cube-scene">
-              <div class="dice-3d" id="cube2">
-                <div class="cube-face front">1</div>
-                <div class="cube-face back">6</div>
-                <div class="cube-face right">3</div>
-                <div class="cube-face left">4</div>
-                <div class="cube-face top">2</div>
-                <div class="cube-face bottom">5</div>
-              </div>
-            </div>
+          <div class="hologram-dice-pod" id="sabaccDicePod">
+            <div class="cube-scene"><div class="dice-3d" id="cube1">
+              <div class="cube-face front">1</div><div class="cube-face back">6</div><div class="cube-face right">3</div><div class="cube-face left">4</div><div class="cube-face top">2</div><div class="cube-face bottom">5</div>
+            </div></div>
+            <div class="cube-scene"><div class="dice-3d" id="cube2">
+              <div class="cube-face front">1</div><div class="cube-face back">6</div><div class="cube-face right">3</div><div class="cube-face left">4</div><div class="cube-face top">2</div><div class="cube-face bottom">5</div>
+            </div></div>
+            <!-- Dados Extras para o Jackpot -->
+            <div class="cube-scene jackpot-die" style="display: none;"><div class="dice-3d" id="cube3">
+              <div class="cube-face front">1</div><div class="cube-face back">6</div><div class="cube-face right">3</div><div class="cube-face left">4</div><div class="cube-face top">2</div><div class="cube-face bottom">5</div>
+            </div></div>
+            <div class="cube-scene jackpot-die" style="display: none;"><div class="dice-3d" id="cube4">
+              <div class="cube-face front">1</div><div class="cube-face back">6</div><div class="cube-face right">3</div><div class="cube-face left">4</div><div class="cube-face top">2</div><div class="cube-face bottom">5</div>
+            </div></div>
           </div>
 
           <div class="dice-results-hud">
@@ -504,17 +501,17 @@
                 <span class="choice-title">SUB-ÓRBITA (2 a 6)</span>
                 <span class="choice-mult">PAGA 2.0x</span>
               </button>
-              <button class="btn-sabacc-choice gold-choice" onclick="rollSabaccDice('seven')">
-                <span class="choice-title">PULSO SETE (SOMA 7)</span>
-                <span class="choice-mult">PAGA 4.5x</span>
-              </button>
               <button class="btn-sabacc-choice" onclick="rollSabaccDice('high')">
                 <span class="choice-title">HIPER-ÓRBITA (8 a 12)</span>
                 <span class="choice-mult">PAGA 2.0x</span>
               </button>
               <button class="btn-sabacc-choice double-choice" onclick="rollSabaccDice('double')">
-                <span class="choice-title">PAR DE CLONES (DADOS IGUAIS)</span>
-                <span class="choice-mult">PAGA 5.5x</span>
+                <span class="choice-title">PAR DE CLONES (DUPLAS)</span>
+                <span class="choice-mult">PAGA 4.0x</span>
+              </button>
+              <button class="btn-sabacc-choice gold-choice" onclick="rollSabaccDice('jackpot')">
+                <span class="choice-title">SUPER JACKPOT (1, 1, 6, 6)</span>
+                <span class="choice-mult">PAGA 100x</span>
               </button>
             </div>
           </div>
@@ -622,7 +619,7 @@
     </div>
   </div>
 
-  <script src="cassino.js"></script>
+  <script src="cassino/cassino.js"></script>
 </body>
 
 </html>

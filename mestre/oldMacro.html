@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Galactic Ledger — Campaign OS</title>
+<link rel="stylesheet" href="./oldMacro/oldMacro.css">
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div id="toast"></div>
+<button id="fab" onclick="irPara('comercio')" title="⚡ Calculadora">⚡</button>
+
+<!-- ══ TOPBAR ══ -->
+<div id="topbar">
+  <div id="topbar-inner">
+    <div class="brand">
+      <div class="brand-logo">⚙️</div>
+      <div>
+        <div class="brand-name">GALACTIC LEDGER</div>
+        <div class="brand-sub">CAMPAIGN OPERATING SYSTEM</div>
+      </div>
+    </div>
+    <nav id="main-nav">
+      <button class="tab-btn on"  onclick="irPara('painel',this)">🏠 PAINEL</button>
+      <button class="tab-btn"     onclick="irPara('macro',this)">🌌 MACRO</button>
+      <button class="tab-btn"     onclick="irPara('combate',this)">⚔️ COMBATE</button>
+      <button class="tab-btn"     onclick="irPara('comercio',this)">📦 COMÉRCIO</button>
+      <button class="tab-btn"     onclick="irPara('criador',this)">✨ CRIADOR</button>
+      <button class="tab-btn"     onclick="irPara('economia',this)">💹 ECONOMIA</button>
+      <button class="tab-btn"     onclick="irPara('gm',this)">🛡️ MESTRE</button>
+      <button class="tab-btn"     onclick="irPara('ajuda',this)">❓ AJUDA</button>
+      <button class="tab-btn"     onclick="irPara('legislacao',this)">🏛️ LEGISLAÇÃO</button>
+      <button class="tab-btn"     onclick="irPara('empresas',this)">🏢 EMPRESAS</button>
+    </nav>
+    <div class="topbar-right">
+      <div class="holo-pill"><div class="blink"></div><span id="turn-label">CAMPANHA ATIVA</span></div>
+      <button id="btn-save" onclick="abrirSalvarCarregar()" style="font-family:var(--font-body);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border:1px solid var(--gold);border-radius:20px;cursor:pointer;color:var(--gold);background:rgba(240,180,41,0.08);transition:var(--tr)">💾 SALVAR/CARREGAR</button>
+      <button id="btn-tema" onclick="alternarTema()">🔴 IMPERIAL</button>
+    </div>
+  </div>
+</div>
+
+<!-- Botão colapsar/expandir -->
+<div id="nav-toggle">
+  <button id="nav-toggle-btn" onclick="toggleNav()">
+    <span style="color:var(--holo-dim);font-size:11px">━━</span>
+    <span style="font-size:9px;letter-spacing:2px">MENU</span>
+    <i class="nav-arrow" id="nav-arrow">▲</i>
+  </button>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="app">
+<div id="main">
+
+  <!-- ── PAINEL ── -->
+  <div id="aba-painel">
+    <div class="g4 mb16" id="stats-topo"></div>
+    <div style="background:rgba(240,180,41,0.06);border:1px solid rgba(240,180,41,0.3);border-radius:var(--r2);padding:14px 20px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:0 0 20px rgba(240,180,41,0.05)">
+      <div>
+        <div style="font-family:var(--font-hud);font-size:10px;color:var(--gold);letter-spacing:3px">💱 CONVERSÃO RÁPIDA — CRÉDITOS → FACCREDS</div>
+        <div style="font-size:10px;color:var(--gold-dim);margin-top:3px">100.000 ₹ = 1 FacCred &nbsp;•&nbsp; Clique num planeta para gerenciar</div>
+      </div>
+      <div class="flex gap8">
+        <button class="btn btn-holo btn-sm" onclick="irPara('comercio')">⚡ CALCULADORA</button>
+        <button class="btn btn-gold btn-sm" onclick="abrirCriar('planeta')">✨ NOVO PLANETA</button>
+      </div>
+    </div>
+    <div class="sec-hdr"><div class="sec-title">Planetas do Setor</div></div>
+    <div class="g2 mb16" id="planetas-grid"></div>
+    <div class="hcard"><div class="ctitle">Últimas Transações</div><div id="log-preview"></div></div>
+  </div>
+
+  <!-- ── MACRO ── -->
+  <div id="aba-macro" class="hidden">
+    <div class="g2" style="align-items:start">
+      <div>
+        <div class="hcard gold mb16">
+          <div class="ctitle">🎡 Iniciativa de Facção</div>
+          <div style="font-size:11px;color:var(--holo-dim);margin-bottom:14px">Role 1dX (X = nº de facções). A sorteada age primeiro e circula em ordem.</div>
+          <div class="flex gap8 mb12" style="flex-wrap:wrap">
+            <button class="btn btn-gold btn-sm" onclick="rolarInicMacro()">🎲 ROLAR INICIATIVA</button>
+            <button class="btn btn-ghost btn-sm" onclick="passarVezMacro()">▶ PASSAR VEZ</button>
+            <button class="btn btn-ghost btn-sm" onclick="resetarMacro()">↺ REINICIAR</button>
+          </div>
+          <div id="macro-wheel"></div>
+        </div>
+        <div class="hcard mb16" style="border-color:rgba(240,180,41,0.35);background:linear-gradient(150deg, rgba(45,28,8,0.92), rgba(22,13,4,0.96))">
+          <div class="ctitle" style="color:var(--gold)">◇ MERCADOS GALÁCTICOS</div>
+          <div style="font-size:9px;color:rgba(240,180,41,0.55);margin-bottom:8px">Somente leitura aqui — quem gira o mercado agora é a aba 🏢 EMPRESAS (rotação Curta ou Longa)</div>
+          <div id="macro-mercado-list"></div>
+          <div id="macro-mercado-footer" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(240,180,41,0.15);font-family:var(--font-mono);font-size:9px;color:rgba(240,180,41,0.45)"></div>
+        </div>
+        <div class="hcard">
+          <div class="ctitle">📡 HoloNet News — Notas do Turno</div>
+          <div style="font-size:10px;color:var(--holo-dim);margin-bottom:8px">Anote os resultados para ler como jornal galáctico na próxima sessão</div>
+          <textarea id="holonet-box" style="font-family:var(--font-mono);font-size:11px;color:var(--gold);min-height:110px;background:rgba(0,15,30,0.8);border-color:rgba(240,180,41,0.2)" placeholder="Ex: ISB bloqueou rota de Kessel... Rebeldes sabotaram fábrica em Lothal..."></textarea>
+          <div class="flex gap8 mt8">
+            <button class="btn btn-ghost btn-sm" onclick="salvarHolonet()">💾 SALVAR</button>
+            <button class="btn btn-ghost btn-sm" onclick="limparHolonet()">🗑️ LIMPAR</button>
+          </div>
+        </div>
+      </div>
+      <div id="macro-fac-list"></div>
+    </div>
+  </div>
+
+  <!-- ── COMBATE ── -->
+  <div id="aba-combate" class="hidden">
+    <div class="combat-bar">
+      <div class="round-badge">RODADA <span id="round-num">1</span></div>
+      <button class="btn btn-holo btn-sm" onclick="abrirAddComb()">➕ ADICIONAR</button>
+      <button class="btn btn-gold btn-sm" onclick="rolarTodasInit()">🎲 ROLAR TODAS</button>
+      <button class="btn btn-holo btn-sm" onclick="nextTurn()">▶ PRÓXIMA VEZ</button>
+      <button class="btn btn-ghost btn-sm" onclick="addSurpresa()">💥 SURPRESA</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetCombate()">↺ NOVO COMBATE</button>
+      <div style="flex:1"></div>
+      <div id="cur-turn" style="font-family:var(--font-mono);font-size:10px;color:var(--gold)">—</div>
+    </div>
+    <div style="font-size:10px;color:var(--holo-dim);margin-bottom:12px">Clique no HP para editar • ⏸ Adiar • 🎯 Preparar • 👁 Furtivo • ☠ Eliminar</div>
+    <div class="comb-list" id="comb-list"></div>
+    <div id="comb-empty" class="hcard" style="text-align:center;padding:50px">
+      <div style="font-size:40px;margin-bottom:14px;filter:drop-shadow(0 0 20px rgba(0,212,255,0.3))">⚔️</div>
+      <div style="font-size:13px;color:var(--holo-dim)">Nenhum combatente. Clique em <strong style="color:var(--holo-primary)">➕ Adicionar</strong> para iniciar.</div>
+    </div>
+  </div>
+
+  <!-- ── COMÉRCIO ── -->
+  <div id="aba-comercio" class="hidden">
+    <div class="g2" style="align-items:start">
+      <div class="hcard">
+        <div class="ctitle">⚡ Calculadora — Motor 3d6</div>
+        <div class="flex gap8 mb8">
+          <button id="btn-venda"  class="btn btn-solid fw" onclick="setModo('venda')">🔼 VENDA</button>
+          <button id="btn-compra" class="btn btn-holo fw"  onclick="setModo('compra')">🔽 COMPRA</button>
+        </div>
+        <label>Planeta</label><select id="calc-planeta" onchange="autoFric()"></select>
+        <label>Mercadoria</label><select id="calc-item" onchange="autoPreco()"></select>
+        <div class="g4 mt8">
+          <div><label>Expertise</label><input type="number" id="c-exp"  value="3" min="1" max="10"></div>
+          <div><label>Fricção</label>  <input type="number" id="c-fric" value="3" min="1" max="5"></div>
+          <div><label>Mod. Item</label><input type="number" id="c-mod"  value="0" min="-2" max="2"></div>
+          <div><label>Qtd (t)</label>  <input type="number" id="c-qtd"  value="1" min="1"></div>
+        </div>
+        <label>Preço Base (₹/ton)</label>
+        <input type="number" id="c-preco" value="50000">
+        <div class="div"></div>
+        <button class="btn btn-solid fw" onclick="rolarCalc()">🎲 ROLAR 3d6</button>
+        <div class="dice-row">
+          <div class="die" id="d1">–</div>
+          <div class="die" id="d2">–</div>
+          <div class="die" id="d3">–</div>
+          <div class="score-txt" id="score-txt"></div>
+        </div>
+        <div id="price-box" class="hidden">
+          <div class="mult-grid" id="mult-grid"></div>
+          <div class="price-final">
+            <div style="font-size:9px;letter-spacing:4px;color:var(--holo-dim)">PREÇO FINAL</div>
+            <div class="price-val" id="price-val"></div>
+          </div>
+          <button class="btn btn-green fw mt12" onclick="confirmarTrade()">✅ CONFIRMAR TRANSAÇÃO</button>
+        </div>
+      </div>
+      <div>
+        <div class="hcard mb12">
+          <div class="ctitle">📊 Tabela de Multiplicadores</div>
+          <div class="mult-grid" id="ref-grid"></div>
+        </div>
+        <div class="hcard">
+          <div class="ctitle">🛒 Catálogo de Mercadorias</div>
+          <div id="cat-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CRIADOR ── -->
+  <div id="aba-criador" class="hidden">
+    <div class="g2 mb16">
+      <div class="hcard" style="cursor:pointer" onclick="abrirCriar('planeta')">
+        <div style="font-size:32px;margin-bottom:12px;filter:drop-shadow(0 0 16px rgba(0,212,255,0.4))">🌍</div>
+        <div style="font-family:var(--font-hud);font-size:11px;color:var(--holo-primary);margin-bottom:8px;letter-spacing:2px">CRIAR PLANETA</div>
+        <div style="font-size:11px;color:var(--holo-dim);line-height:1.6">Tipo econômico, fricção, modificadores e facção controladora.</div>
+        <button class="btn btn-holo btn-sm mt12">✨ CRIAR AGORA</button>
+      </div>
+      <div class="hcard" style="cursor:pointer" onclick="abrirCriar('faccao')">
+        <div style="font-size:32px;margin-bottom:12px;filter:drop-shadow(0 0 16px rgba(240,180,41,0.4))">🏴</div>
+        <div style="font-family:var(--font-hud);font-size:11px;color:var(--gold);margin-bottom:8px;letter-spacing:2px">CRIAR FACÇÃO</div>
+        <div style="font-size:11px;color:var(--holo-dim);line-height:1.6">Força política com atributos SWN, FacCreds e ativos.</div>
+        <button class="btn btn-gold btn-sm mt12">✨ CRIAR AGORA</button>
+      </div>
+      <div class="hcard" style="cursor:pointer" onclick="abrirCriar('subfaccao')">
+        <div style="font-size:32px;margin-bottom:12px;filter:drop-shadow(0 0 16px rgba(168,85,247,0.4))">⭐</div>
+        <div style="font-family:var(--font-hud);font-size:11px;color:var(--purple);margin-bottom:8px;letter-spacing:2px">CRIAR SUB-FACÇÃO</div>
+        <div style="font-size:11px;color:var(--holo-dim);line-height:1.6">Divisões internas: ISB, células rebeldes, clãs.</div>
+        <button class="btn btn-sm mt12" style="border:1px solid var(--purple);color:var(--purple);background:rgba(168,85,247,0.1);border-radius:24px;padding:6px 14px;font-size:9px;font-family:var(--font-body);letter-spacing:2px;text-transform:uppercase;cursor:pointer">✨ CRIAR AGORA</button>
+      </div>
+      <div class="hcard" style="cursor:pointer" onclick="abrirCriar('setor')">
+        <div style="font-size:32px;margin-bottom:12px;filter:drop-shadow(0 0 16px rgba(0,255,136,0.3))">🗺️</div>
+        <div style="font-family:var(--font-hud);font-size:11px;color:var(--green);margin-bottom:8px;letter-spacing:2px">CRIAR SETOR</div>
+        <div style="font-size:11px;color:var(--holo-dim);line-height:1.6">Região espacial com fricção base e facção dominante.</div>
+        <button class="btn btn-green btn-sm mt12">✨ CRIAR AGORA</button>
+      </div>
+    </div>
+    <div class="hcard"><div class="ctitle">📊 Estado da Galáxia</div><div class="g2" id="criador-resumo"></div></div>
+  </div>
+
+  <!-- ── GM ── -->
+  <div id="aba-gm" class="hidden">
+    <div class="gm-wrap">
+      <div class="gm-lbl">🛡️ PAINEL DO MESTRE — CONTROLE TOTAL</div>
+      <div style="font-size:11px;color:var(--holo-dim);line-height:1.6">Edite, delete ou modifique qualquer elemento da campanha sem restrições. O Mestre tem controle absoluto.</div>
+    </div>
+
+    <!-- TABS GM -->
+    <div style="display:flex;gap:4px;margin-bottom:18px;background:rgba(0,15,35,0.6);border:1px solid var(--holo-border);border-radius:30px;padding:4px;width:fit-content">
+      <button class="tab-btn on" id="gm-tab-planetas"  onclick="gmAba('planetas',this)">🌍 Planetas</button>
+      <button class="tab-btn"   id="gm-tab-faccoes"   onclick="gmAba('faccoes',this)">🏴 Facções</button>
+      <button class="tab-btn"   id="gm-tab-financas"  onclick="gmAba('financas',this)">💸 Finanças</button>
+      <button class="tab-btn"   id="gm-tab-notas"     onclick="gmAba('notas',this)">📝 Notas</button>
+    </div>
+
+    <!-- PLANETAS -->
+    <div id="gm-sec-planetas">
+      <div class="sec-hdr">
+        <div class="sec-title">Editar Planetas</div>
+        <button class="btn btn-holo btn-sm" onclick="abrirCriar('planeta')">✨ NOVO PLANETA</button>
+      </div>
+      <div id="gm-planetas-list"></div>
+    </div>
+
+    <!-- FACÇÕES -->
+    <div id="gm-sec-faccoes" class="hidden">
+      <div class="sec-hdr">
+        <div class="sec-title">Editar Facções</div>
+        <button class="btn btn-holo btn-sm" onclick="abrirCriar('faccao')">✨ NOVA FACÇÃO</button>
+      </div>
+      <div id="gm-faccoes-list"></div>
+    </div>
+
+    <!-- FINANÇAS -->
+    <div id="gm-sec-financas" class="hidden">
+      <div class="g2">
+        <div class="hcard purple">
+          <div class="ctitle">💸 Transferência de Créditos</div>
+          <label>De</label><select id="gm-de"></select>
+          <label>Para</label><select id="gm-para"></select>
+          <label>Valor (₹)</label><input type="number" id="gm-val" placeholder="Ex: 500000">
+          <button class="btn btn-holo btn-sm mt12 fw" onclick="gmTransferir()">TRANSFERIR</button>
+        </div>
+        <div class="hcard purple">
+          <div class="ctitle">⭐ Ajustar FacCreds</div>
+          <label>Facção</label><select id="gm-fac"></select>
+          <label>Quantidade (+/-)</label><input type="number" id="gm-fc-val" placeholder="Ex: +5 ou -3">
+          <button class="btn btn-gold btn-sm mt12 fw" onclick="gmAjustarFC()">AJUSTAR FACCREDS</button>
+          <label style="margin-top:14px">Setar valor absoluto</label>
+          <input type="number" id="gm-fc-abs" placeholder="Ex: 20">
+          <button class="btn btn-ghost btn-sm mt8 fw" onclick="gmSetarFC()">SETAR VALOR FIXO</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTAS -->
+    <div id="gm-sec-notas" class="hidden">
+      <div class="hcard purple">
+        <div class="ctitle">📝 Notas do Mestre (Privado)</div>
+        <textarea id="gm-notas" style="min-height:200px" placeholder="Segredos das facções, próximos eventos, planos da campanha..."></textarea>
+        <button class="btn btn-ghost btn-sm mt8" onclick="salvarNotasGM()">💾 SALVAR NOTAS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ECONOMIA ── -->
+  <div id="aba-economia" class="hidden">
+
+    <!-- DADO DO MÊS -->
+    <div id="dado-mes-banner" style="background:linear-gradient(135deg,rgba(240,180,41,0.12),rgba(0,30,60,0.8));border:1px solid rgba(240,180,41,0.4);border-radius:8px;padding:18px 24px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;box-shadow:0 0 30px rgba(240,180,41,0.08)">
+      <div>
+        <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:12px;font-weight:900;color:#f0b429;letter-spacing:4px;text-transform:uppercase">📅 DADO DO MÊS GALÁCTICO</div>
+        <div style="font-size:11px;color:#7a5c10;margin-top:4px">Avança 1 mês: atualiza mercados, processa contratos, paga manutenção, rende fábricas</div>
+        <div style="font-size:9px;color:#a37a1f;margin-top:2px">⚡ Também é disparado automaticamente pela aba 🏢 EMPRESAS (rotação Curta ou Longa) — este botão aqui é só um atalho manual do Mestre.</div>
+        <div style="font-size:10px;color:#7a5c10;margin-top:2px">Ano atual: <span id="ano-atual" style="color:#f0b429;font-weight:700">19 ABY — Mês 1</span></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div id="dado-mes-display" style="width:64px;height:64px;background:rgba(0,20,44,0.9);border:2px solid #f0b429;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#f0b429;font-family:'Courier New',monospace;box-shadow:0 0 20px rgba(240,180,41,0.2)">—</div>
+        <button class="btn btn-gold" onclick="rolarDadoMes()" style="padding:12px 24px;font-size:12px;font-weight:900;letter-spacing:2px">🎲 ROLAR MÊS</button>
+      </div>
+    </div>
+
+    <!-- RESUMO ECONÔMICO LADO A LADO -->
+    <div id="eco-resumo-topo" class="g4 mb16"></div>
+
+    <!-- TABS DE ECONOMIA -->
+    <div style="display:flex;gap:4px;margin-bottom:16px;background:rgba(0,15,35,0.6);border:1px solid #003366;border-radius:30px;padding:4px;width:fit-content;flex-wrap:wrap">
+      <button class="tab-btn on" id="eco-tab-mercado"   onclick="ecoAba('mercado',this)">📈 MERCADOS</button>
+      <button class="tab-btn"   id="eco-tab-fabricas"  onclick="ecoAba('fabricas',this)">🏭 FÁBRICAS</button>
+      <button class="tab-btn"   id="eco-tab-projetos"  onclick="ecoAba('projetos',this)">🔬 P&D</button>
+      <button class="tab-btn"   id="eco-tab-contratos" onclick="ecoAba('contratos',this)">📋 CONTRATOS</button>
+      <button class="tab-btn"   id="eco-tab-transacoes" onclick="ecoAba('transacoes',this)">💸 TRANSAÇÕES</button>
+    </div>
+
+    <!-- MERCADOS -->
+    <div id="eco-sec-mercado">
+      <div class="sec-hdr">
+        <div class="sec-title">Preços de Mercado Galáctico</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-holo btn-sm" onclick="fluctuarMercado()">📊 FLUTUAR PREÇOS</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetMercado()">↺ RESETAR</button>
+        </div>
+      </div>
+      <div id="mercado-list"></div>
+    </div>
+
+    <!-- FÁBRICAS -->
+    <div id="eco-sec-fabricas" class="hidden">
+      <div class="sec-hdr">
+        <div class="sec-title">Instalações Industriais</div>
+        <button class="btn btn-holo btn-sm" onclick="abrirNovaFabrica()">🏭 NOVA FÁBRICA</button>
+      </div>
+      <div id="fabricas-list"></div>
+    </div>
+
+    <!-- P&D -->
+    <div id="eco-sec-projetos" class="hidden">
+      <div class="sec-hdr">
+        <div class="sec-title">Pesquisa & Desenvolvimento</div>
+        <button class="btn btn-holo btn-sm" onclick="abrirNovoProjeto()">🔬 NOVO PROJETO</button>
+      </div>
+      <div id="projetos-list"></div>
+    </div>
+
+    <!-- CONTRATOS -->
+    <div id="eco-sec-contratos" class="hidden">
+      <div class="sec-hdr">
+        <div class="sec-title">Contratos de Financiamento & Metas</div>
+        <button class="btn btn-holo btn-sm" onclick="abrirNovoContrato()">📋 NOVO CONTRATO</button>
+      </div>
+      <div style="font-size:11px;color:#006688;margin-bottom:14px">Financie projetos em planetas com metas. Se a meta não for atingida no prazo, os recursos são perdidos.</div>
+      <div id="contratos-list"></div>
+    </div>
+
+    <!-- TRANSAÇÕES -->
+    <div id="eco-sec-transacoes" class="hidden">
+      <div class="sec-hdr">
+        <div class="sec-title">Histórico de Transações Econômicas</div>
+        <button class="btn btn-ghost btn-sm" onclick="E.ecoLog=[];renderEco()">🗑️ LIMPAR</button>
+      </div>
+      <div id="eco-log-list"></div>
+    </div>
+
+  </div>
+
+  <!-- ── AJUDA ── -->
+  <div id="aba-ajuda" class="hidden"></div>
+
+  <!-- ── LEGISLAÇÃO (Holonet, integrado) ── -->
+  <div id="aba-legislacao" class="hidden" style="height:80vh;min-height:520px">
+    <iframe id="frame-legislacao" style="width:100%;height:100%;border:1px solid var(--holo-border);border-radius:var(--r2);background:#02040a"></iframe>
+  </div>
+
+  <!-- ── EMPRESAS (Registro de Comércio, integrado) ── -->
+  <div id="aba-empresas" class="hidden" style="height:80vh;min-height:520px">
+    <iframe id="frame-empresas" style="width:100%;height:100%;border:1px solid var(--holo-border);border-radius:var(--r2);background:#04060c"></iframe>
+  </div>
+
+</div><!-- #main -->
+</div><!-- #app -->
+
+<!-- MODAIS -->
+<div class="overlay hidden" id="ov-planeta">  <div class="modal wide"  id="mp-box"></div></div>
+<div class="overlay hidden" id="ov-criar">    <div class="modal wide"  id="mc-box"></div></div>
+<div class="overlay hidden" id="ov-comb">     <div class="modal"       id="mcomb-box"></div></div>
+<div class="overlay hidden" id="ov-editplaneta"><div class="modal wide" id="mep-box"></div></div>
+<div class="overlay hidden" id="ov-addativo">  <div class="modal"      id="maa-box"></div></div>
+<div class="overlay hidden" id="ov-save">      <div class="modal wide" id="msave-box"></div></div>
+<input type="file" id="input-importar-json" accept=".json,application/json" style="display:none" onchange="processarArquivoImportado(event)">
+<script src="./oldMacro/oldMacro.js"></script>
+</body>
+</html>

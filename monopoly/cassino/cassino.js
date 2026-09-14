@@ -118,7 +118,7 @@ function switchGame(gameId, buttonElement) {
   playSound('click');
   document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab-module').forEach(b => b.classList.remove('active'));
-  
+
   document.getElementById(`game-${gameId}`).classList.add('active');
   buttonElement.classList.add('active');
   logConsole(`Interface alternada para o setor: ${gameId.toUpperCase()}`);
@@ -236,7 +236,7 @@ function playSound(type) {
       osc.start(now);
       osc.stop(now + 0.25);
     }
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function toggleAudio() {
@@ -399,7 +399,7 @@ async function executeSellChips() {
 // ROLETA QUÂNTICA
 // ==========================================================================
 const ROULETTE_NUMBERS = [
-  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 
+  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
   5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
 ];
 const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
@@ -409,13 +409,12 @@ let isRouletteSpinning = false;
 const rCanvas = document.getElementById('rouletteCanvas');
 const rCtx = rCanvas.getContext('2d');
 let wheelAngle = 0;
-let ballAngle = 0;
-let ballRadiusProgress = 1;
+// Removida a bolinha separada, a roleta girará e o topo absoluto indicará a vitória
 
 function drawRouletteWheel() {
   const cx = rCanvas.width / 2;
   const cy = rCanvas.height / 2;
-  const radius = cx - 8;
+  const radius = cx - 12; // Diminui o raio ligeiramente para acomodar o ponteiro
   const arc = (Math.PI * 2) / ROULETTE_NUMBERS.length;
 
   rCtx.clearRect(0, 0, rCanvas.width, rCanvas.height);
@@ -445,20 +444,6 @@ function drawRouletteWheel() {
     rCtx.restore();
   }
   rCtx.restore();
-
-  if (ballRadiusProgress > 0) {
-    const bR = 55 + (radius - 70) * ballRadiusProgress;
-    const bx = cx + Math.cos(ballAngle) * bR;
-    const by = cy + Math.sin(ballAngle) * bR;
-    rCtx.save();
-    rCtx.beginPath();
-    rCtx.arc(bx, by, 5, 0, Math.PI * 2);
-    rCtx.fillStyle = '#00f0ff';
-    rCtx.shadowColor = '#00f0ff';
-    rCtx.shadowBlur = 12;
-    rCtx.fill();
-    rCtx.restore();
-  }
 }
 
 function initRouletteBoard() {
@@ -578,7 +563,13 @@ function spinRouletteWheel() {
   const winningNumber = ROULETTE_NUMBERS[Math.floor(Math.random() * ROULETTE_NUMBERS.length)];
   const winningIndex = ROULETTE_NUMBERS.indexOf(winningNumber);
   const arc = (Math.PI * 2) / ROULETTE_NUMBERS.length;
-  const targetWheelAngle = Math.PI * 8 + (Math.PI * 1.5 - winningIndex * arc - arc / 2);
+  
+  // A roleta está desenhada com 0° apontando para a direita (eixo X positivo).
+  // O ponteiro (triângulo) está fixo no topo (-90° ou 270°).
+  // Para que o winningIndex pare perfeitamente alinhado sob o ponteiro do topo:
+  // Offset necessário: O angulo da fatia + metade da fatia.
+  // Precisamos compensar os 90 graus (Math.PI / 2) de diferença entre o zero do canvas e o topo
+  const targetWheelAngle = Math.PI * 10 - (winningIndex * arc) - (arc / 2) - (Math.PI / 2);
   const startWheelAngle = wheelAngle % (Math.PI * 2);
   const totalWheelSpin = targetWheelAngle - startWheelAngle;
 
@@ -590,8 +581,6 @@ function spinRouletteWheel() {
     const easeOut = 1 - Math.pow(1 - progress, 3);
 
     wheelAngle = startWheelAngle + totalWheelSpin * easeOut;
-    ballAngle = startWheelAngle - (Math.PI * 14 * (1 - easeOut));
-    ballRadiusProgress = 1 - Math.pow(progress, 2) * 0.45;
 
     if (Math.random() < 0.2) playSound('spinTick');
     drawRouletteWheel();
@@ -750,23 +739,40 @@ function startBlackjackHand() {
   document.getElementById('bjStatusBadge').textContent = `MÃO EM ANDAMENTO (APOSTA: ${bjCurrentBet} FG)`;
   document.getElementById('btnBjDouble').disabled = (casinoChips < bjCurrentBet);
 
-  renderBjTable(true);
-  if (getHandScore(bjPlayerHand) === 21) setTimeout(finishBlackjackRound, 800);
+  renderBjTable(true); // Oculta tudo do crupiê exceto a 1ª carta
+  
+  if (getHandScore(bjPlayerHand) === 21) {
+    document.getElementById('bjPlayActions').style.display = 'none';
+    setTimeout(() => playDealerTurn(), 800);
+  }
 }
 
-function renderBjTable(hideDealerSecondCard = false) {
+// hideDealerCards = true faz com que todas as cartas, exceto a primeira (idx 0), fiquem viradas para baixo
+function renderBjTable(hideDealerCards = false) {
   const pContainer = document.getElementById('playerCards');
   const dContainer = document.getElementById('dealerCards');
   pContainer.innerHTML = '';
   dContainer.innerHTML = '';
 
   bjPlayerHand.forEach(c => pContainer.appendChild(renderBjCard(c)));
-  bjDealerHand.forEach((c, idx) => dContainer.appendChild(renderBjCard(c, idx === 1 && hideDealerSecondCard)));
+  
+  bjDealerHand.forEach((c, idx) => {
+    // Se hideDealerCards for true, qualquer carta além da primeira (índice 0) fica oculta
+    let isHidden = hideDealerCards && idx >= 1;
+    dContainer.appendChild(renderBjCard(c, isHidden));
+  });
 
-  document.getElementById('playerScore').textContent = `PONTOS: ${getHandScore(bjPlayerHand)}`;
-  document.getElementById('dealerScore').textContent = hideDealerSecondCard 
-    ? `PONTOS: ${bjDealerHand[0].value} + ?` 
-    : `PONTOS: ${getHandScore(bjDealerHand)}`;
+  document.getElementById('playerScore').textContent = `PONTOS: ${getHandScore(bjPlayerHand)} | CARTAS: ${bjPlayerHand.length}`;
+
+  let dScoreText = '';
+  if (hideDealerCards) {
+    // Soma visível é apenas a primeira carta
+    dScoreText = `PONTOS: ${bjDealerHand[0].value} + ? | CARTAS: ${bjDealerHand.length}`;
+  } else {
+    // Mostra pontuação completa quando revelado no final
+    dScoreText = `PONTOS: ${getHandScore(bjDealerHand)} | CARTAS: ${bjDealerHand.length}`;
+  }
+  document.getElementById('dealerScore').textContent = dScoreText;
 }
 
 function bjPlayerHit() {
@@ -774,24 +780,78 @@ function bjPlayerHit() {
   playSound('card');
   bjPlayerHand.push(bjDeck.pop());
   document.getElementById('btnBjDouble').disabled = true;
-  renderBjTable(true);
-  if (getHandScore(bjPlayerHand) > 21) finishBlackjackRound();
+  renderBjTable(true); // Continua ocultando a mão secundária do crupiê
+  
+  const pScore = getHandScore(bjPlayerHand);
+  if (pScore > 21) {
+    document.getElementById('bjPlayActions').style.display = 'none';
+    setTimeout(() => finishBlackjackRound(), 800);
+  } else if (pScore === 21) {
+    document.getElementById('bjPlayActions').style.display = 'none';
+    setTimeout(() => playDealerTurn(), 800);
+  }
 }
 
 function bjPlayerStand() {
   if (!bjGameActive) return;
   playSound('click');
-  finishBlackjackRound();
+  document.getElementById('bjPlayActions').style.display = 'none';
+  playDealerTurn();
 }
 
-function bjPlayerDouble() {
+async function bjPlayerDouble() {
   if (!bjGameActive || casinoChips < bjCurrentBet) return;
-  casinoChips -= bjCurrentBet;
-  bjCurrentBet *= 2;
+  
+  casinoChips -= bjCurrentBet; // Deduz o valor dobrado
+  bjCurrentBet *= 2; // Atualiza a aposta base
   updateDisplays();
   playSound('chip');
+  
+  document.getElementById('bjStatusBadge').textContent = `APOSTA DOBRADA PARA ${bjCurrentBet} FG!`;
+  document.getElementById('bjPlayActions').style.display = 'none'; // Bloqueia mais ações do jogador
+
+  await new Promise(r => setTimeout(r, 600));
+
+  playSound('card');
   bjPlayerHand.push(bjDeck.pop());
-  renderBjTable(true);
+  renderBjTable(true); // Atualiza com a nova carta, mantendo segredos do crupiê
+
+  if (getHandScore(bjPlayerHand) > 21) {
+    await new Promise(r => setTimeout(r, 800));
+    finishBlackjackRound(); // Vai direto pro fim se o double estourar a mão
+  } else {
+    await new Promise(r => setTimeout(r, 800));
+    playDealerTurn(); // Passa o turno para o crupiê
+  }
+}
+
+async function playDealerTurn() {
+  let pScore = getHandScore(bjPlayerHand);
+  if (pScore > 21) return; // Se jogador estourou, crupiê não precisa jogar
+
+  let dScore = getHandScore(bjDealerHand);
+  const isPlayerBJ = (bjPlayerHand.length === 2 && pScore === 21);
+
+  // Se o jogador não tem Blackjack Natural, o crupiê é obrigado a comprar até 17.
+  if (!isPlayerBJ) {
+    while (dScore < 17) {
+      await new Promise(r => setTimeout(r, 1000));
+      bjDealerHand.push(bjDeck.pop());
+      dScore = getHandScore(bjDealerHand);
+
+      playSound('card');
+      renderBjTable(true); // Continua ocultando TODAS as cartas exceto a 1ª
+      document.getElementById('bjStatusBadge').textContent = `CRUPIÊ COMPROU MAIS UMA CARTA... (${bjDealerHand.length} CARTAS NA MÃO)`;
+    }
+  }
+
+  await new Promise(r => setTimeout(r, 1000));
+  document.getElementById('bjStatusBadge').textContent = `CRUPIÊ PAROU COM ${bjDealerHand.length} CARTAS! REVELANDO...`;
+  
+  await new Promise(r => setTimeout(r, 1200));
+  renderBjTable(false); // Revela TODAS as cartas do crupiê e calcula total visivel
+
+  await new Promise(r => setTimeout(r, 500));
   finishBlackjackRound();
 }
 
@@ -800,12 +860,7 @@ async function finishBlackjackRound() {
   let dScore = getHandScore(bjDealerHand);
   const pScore = getHandScore(bjPlayerHand);
 
-  if (pScore <= 21) {
-    while (dScore < 17) {
-      bjDealerHand.push(bjDeck.pop());
-      dScore = getHandScore(bjDealerHand);
-    }
-  }
+  // Garante que tudo esteja revelado no fim da rodada
   renderBjTable(false);
 
   let prize = 0;
@@ -1020,7 +1075,7 @@ async function pokerActionFold() {
   pokerState.active = false;
   document.getElementById('pokerStatusBadge').textContent = `VOCÊ DESISTIU (FOLD)!`;
   logConsole(`PÔQUER: Desistência. Perda de ${pokerState.playerRoundBet} FG.`, 'log-loss');
-  
+
   await persistirSaldoNoBanco();
   await registrarLogCassino('POKER', 'FOLD', `Desistiu da mão (Fold). Perda de ${pokerState.playerRoundBet} FG`, -pokerState.playerRoundBet);
   endPokerHandUI();
@@ -1217,19 +1272,56 @@ function endPokerHandUI() {
 // ==========================================================================
 // SLOTS MATRIX
 // ==========================================================================
-const SLOT_SYMBOLS = ['⚔️', '💎', '🪐', '🚀', '⚡', '👾'];
+
+// Usamos um sistema de rolos pesados (weighted reels) para garantir que
+// os símbolos de maior pagamento apareçam com menos frequência.
+// Total: 20 posições no rolo (RTP balanceado para casa e jogador)
+const SLOT_SYMBOLS_WEIGHTED = [
+  '⚔️',                                 // 1 (50x)
+  '💎', '💎',                           // 2 (25x)
+  '🪐', '🪐', '🪐',                     // 3 (15x)
+  '🚀', '🚀', '🚀', '🚀',               // 4 (10x)
+  '⚡', '⚡', '⚡', '⚡', '⚡',              // 5 (5x)
+  '👾', '👾', '👾', '👾', '👾'          // 5 (Alien - Não faz par)
+];
+
+let slotReelsData = [[], [], []];
 let isSlotSpinning = false;
+
+function shuffleArray(array) {
+  let arr = [...array];
+  let curId = arr.length;
+  while (0 !== curId) {
+    let randId = Math.floor(Math.random() * curId);
+    curId -= 1;
+    let tmp = arr[curId];
+    arr[curId] = arr[randId];
+    arr[randId] = tmp;
+  }
+  return arr;
+}
 
 function buildSlotReels() {
   for (let c = 0; c < 3; c++) {
     const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
     strip.innerHTML = '';
-    for (let i = 0; i < 20; i++) {
+    
+    // Cada coluna recebe um rolo com os 20 simbolos embaralhados independentemente
+    let baseReel = shuffleArray(SLOT_SYMBOLS_WEIGHTED);
+    slotReelsData[c] = baseReel;
+    
+    // Repetimos o array base 4 vezes para criar um "cinto" longo para a animação do giro
+    let fullStrip = [...baseReel, ...baseReel, ...baseReel, ...baseReel];
+    
+    for (let i = 0; i < fullStrip.length; i++) {
       const div = document.createElement('div');
       div.className = 'slot-symbol-item';
-      div.textContent = SLOT_SYMBOLS[i % SLOT_SYMBOLS.length];
+      div.textContent = fullStrip[i];
       strip.appendChild(div);
     }
+    
+    // Posiciona no índice 0 inicialmente
+    strip.style.transform = `translateY(0px)`;
   }
 }
 
@@ -1261,12 +1353,20 @@ function spinSlotMachine() {
   document.getElementById('btnSpinSlot').disabled = true;
 
   const results = [];
+  const targetIndices = [];
+
   for (let c = 0; c < 3; c++) {
-    const targetIdx = Math.floor(Math.random() * SLOT_SYMBOLS.length);
-    results.push(SLOT_SYMBOLS[targetIdx]);
+    // Escolhe o índice alvo (0 a 19) no rolo base
+    const targetIdx = Math.floor(Math.random() * slotReelsData[c].length);
+    targetIndices.push(targetIdx);
+    results.push(slotReelsData[c][targetIdx]);
+    
     const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
     strip.style.transition = `transform ${2.5 + c * 0.5}s cubic-bezier(0.1, 0.9, 0.2, 1)`;
-    strip.style.transform = `translateY(-${(10 + targetIdx) * 150}px)`;
+    
+    // Rola para o 3º bloco repetido (índice 40 + targetIdx) para uma animação loooonga
+    // Isso garante a precisão exata entre o visual (frontend) e a lógica matemática (backend)
+    strip.style.transform = `translateY(-${(40 + targetIdx) * 150}px)`;
   }
 
   setTimeout(async () => {
@@ -1274,36 +1374,57 @@ function spinSlotMachine() {
     document.getElementById('btnSpinSlot').disabled = false;
     const [s1, s2, s3] = results;
 
+    let prize = 0;
+    let eventType = '';
+    let logMsg = '';
+
+    // Avaliação de Vitórias
     if (s1 === s2 && s2 === s3) {
-      let mult = s1 === '⚔️' ? 50 : s1 === '💎' ? 25 : s1 === '🪐' ? 15 : s1 === '🚀' ? 10 : 5;
-      const prize = bet * mult;
+      if (s1 === '👾') {
+        prize = 0;
+        eventType = 'DERROTA';
+        logMsg = `Invasor Alinhado [👾 👾 👾]. Sem recompensa. -${bet} FG.`;
+      } else {
+        let mult = s1 === '⚔️' ? 50 : s1 === '💎' ? 25 : s1 === '🪐' ? 15 : s1 === '🚀' ? 10 : 5;
+        prize = bet * mult;
+        eventType = 'TRIPLO';
+        logMsg = `HIPER-ALINHAMENTO [${s1} ${s2} ${s3}]! +${prize} FG (x${mult})!`;
+      }
+    } else if ((s1 === s2 && s1 !== '👾') || (s2 === s3 && s2 !== '👾') || (s1 === s3 && s1 !== '👾')) {
+      prize = bet * 2;
+      eventType = 'DUPLA';
+      logMsg = `Par idêntico de valor [${s1} ${s2} ${s3}]. +${prize} FG (x2).`;
+    } else {
+      prize = 0;
+      eventType = 'DERROTA';
+      logMsg = `Sem alinhamento de valor [${s1} ${s2} ${s3}]. -${bet} FG.`;
+    }
+
+    // Pagamento e Logs
+    if (prize > 0) {
       casinoChips += prize;
       updateDisplays();
       playSound('win');
-      logConsole(`HIPER-ALINHAMENTO [${s1} ${s2} ${s3}]! +${prize} FG (x${mult})!`, "log-win");
-      await registrarLogCassino('SLOTS', 'TRIPLO', `Alinhamento [${s1} ${s2} ${s3}] (x${mult}). Ganhou ${prize} FG`, prize - bet);
-    } else if (s1 === s2 || s2 === s3 || s1 === s3) {
-      const prize = bet * 2;
-      casinoChips += prize;
-      updateDisplays();
-      playSound('win');
-      logConsole(`Par alinhado [${s1} ${s2} ${s3}]. +${prize} FG.`, "log-win");
-      await registrarLogCassino('SLOTS', 'DUPLA', `Duplicata [${s1} ${s2} ${s3}]. Ganhou ${prize} FG`, prize - bet);
+      logConsole(logMsg, "log-win");
+      await registrarLogCassino('SLOTS', eventType, logMsg, prize - bet);
     } else {
       playSound('loss');
-      logConsole(`Sem alinhamento [${s1} ${s2} ${s3}]. -${bet} FG.`, "log-loss");
-      await registrarLogCassino('SLOTS', 'DERROTA', `Sem alinhamento [${s1} ${s2} ${s3}]. Perdeu ${bet} FG`, -bet);
+      logConsole(logMsg, "log-loss");
+      await registrarLogCassino('SLOTS', eventType, logMsg, -bet);
     }
 
     await persistirSaldoNoBanco();
 
+    // Redefine a posição visual do rolo (sem animação) para o 1º bloco (mesmo índice).
+    // Isso garante que o próximo giro parta exatamente do símbolo atual sem rolar pra trás.
     setTimeout(() => {
       for (let c = 0; c < 3; c++) {
         const strip = document.querySelector(`#slotCol${c} .slot-reel-strip`);
         strip.style.transition = 'none';
-        strip.style.transform = 'translateY(0px)';
+        strip.style.transform = `translateY(-${targetIndices[c] * 150}px)`;
       }
-    }, 1000);
+    }, 800);
+
   }, 3600);
 }
 
@@ -1326,41 +1447,83 @@ function rollSabaccDice(choice) {
   isSabaccRolling = true;
   playSound('spinTick');
 
+  const isJackpot = choice === 'jackpot';
+
+  // Exibir ou ocultar os dados extras dependendo da aposta
+  document.querySelectorAll('.jackpot-die').forEach(el => {
+    el.style.display = isJackpot ? 'block' : 'none';
+  });
+
+  // Rolagem dos dados
   const d1 = Math.floor(Math.random() * 6) + 1;
   const d2 = Math.floor(Math.random() * 6) + 1;
-  const sum = d1 + d2;
+  const d3 = isJackpot ? Math.floor(Math.random() * 6) + 1 : 0;
+  const d4 = isJackpot ? Math.floor(Math.random() * 6) + 1 : 0;
+
+  const sum = d1 + d2; // A soma tradicional do painel foca apenas em 2d6
 
   const cubeRotations = {
     1: { x: 0, y: 0 }, 2: { x: -90, y: 0 }, 3: { x: 0, y: -90 },
     4: { x: 0, y: 90 }, 5: { x: 90, y: 0 }, 6: { x: 0, y: 180 }
   };
 
+  // Animação 3D
   document.getElementById('cube1').style.transform = `rotateX(${cubeRotations[d1].x + 720}deg) rotateY(${cubeRotations[d1].y + 720}deg)`;
   document.getElementById('cube2').style.transform = `rotateX(${cubeRotations[d2].x + 1080}deg) rotateY(${cubeRotations[d2].y + 1080}deg)`;
+
+  if (isJackpot) {
+    document.getElementById('cube3').style.transform = `rotateX(${cubeRotations[d3].x + 720}deg) rotateY(${cubeRotations[d3].y + 720}deg)`;
+    document.getElementById('cube4').style.transform = `rotateX(${cubeRotations[d4].x + 1080}deg) rotateY(${cubeRotations[d4].y + 1080}deg)`;
+  }
 
   setTimeout(async () => {
     isSabaccRolling = false;
     document.getElementById('sabaccDie1Val').textContent = d1;
     document.getElementById('sabaccDie2Val').textContent = d2;
-    document.getElementById('sabaccSumVal').textContent = sum;
+
+    // Altera o painel central dependendo do modo
+    if (isJackpot) {
+      document.getElementById('sabaccSumVal').textContent = `${d1}-${d2}-${d3}-${d4}`;
+    } else {
+      document.getElementById('sabaccSumVal').textContent = sum;
+    }
 
     let won = false, mult = 0;
-    if (choice === 'low' && sum >= 2 && sum <= 6) { won = true; mult = 2.0; }
-    else if (choice === 'high' && sum >= 8 && sum <= 12) { won = true; mult = 2.0; }
-    else if (choice === 'seven' && sum === 7) { won = true; mult = 4.5; }
-    else if (choice === 'double' && d1 === d2) { won = true; mult = 5.5; }
+
+    // Lógica de Pagamentos e Validação
+    if (choice === 'low' && sum >= 2 && sum <= 6) {
+      won = true; mult = 2.0;
+    }
+    else if (choice === 'high' && sum >= 8 && sum <= 12) {
+      won = true; mult = 2.0;
+    }
+    else if (choice === 'double' && d1 === d2) {
+      won = true; mult = 4.0; // Multiplicador ajustado para 4x
+    }
+    else if (choice === 'jackpot') {
+      const faces = [d1, d2, d3, d4];
+      const count1 = faces.filter(f => f === 1).length;
+      const count6 = faces.filter(f => f === 6).length;
+
+      // Checa se há EXATAMENTE dois 1s e dois 6s
+      if (count1 === 2 && count6 === 2) {
+        won = true; mult = 100.0;
+      }
+    }
 
     if (won) {
       const prize = Math.floor(bet * mult);
       casinoChips += prize;
       updateDisplays();
       playSound('win');
-      logConsole(`SABACC: Dados [${d1}, ${d2}] -> Soma ${sum}. Ganhou +${prize} FG!`, "log-win");
-      await registrarLogCassino('SABACC', 'VITORIA', `Aposta ${choice} ganha com dados [${d1}, ${d2}]. Recebeu ${prize} FG`, prize - bet);
+      const resultadoStr = isJackpot ? `[${d1}, ${d2}, ${d3}, ${d4}]` : `[${d1}, ${d2}] -> Soma ${sum}`;
+      logConsole(`SABACC: Dados ${resultadoStr}. Ganhou +${prize} FG!`, "log-win");
+      await registrarLogCassino('SABACC', 'VITORIA', `Aposta ${choice} ganha. Recebeu ${prize} FG`, prize - bet);
     } else {
       playSound('loss');
-      logConsole(`SABACC: Dados [${d1}, ${d2}] -> Soma ${sum}. -${bet} FG.`, "log-loss");
-      await registrarLogCassino('SABACC', 'DERROTA', `Aposta ${choice} perdida com dados [${d1}, ${d2}]`, -bet);
+      const resultadoStr = isJackpot ? `[${d1}, ${d2}, ${d3}, ${d4}]` : `[${d1}, ${d2}] -> Soma ${sum}`;
+      logConsole(`SABACC: Dados ${resultadoStr}. -${bet} FG.`, "log-loss");
+      await registrarLogCassino('SABACC', 'DERROTA', `Aposta ${choice} perdida.`, -bet);
     }
 
     await persistirSaldoNoBanco();

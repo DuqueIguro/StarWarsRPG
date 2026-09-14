@@ -475,3 +475,29 @@ input:focus, select:focus {
 .modal-card { width: 90%; max-width: 480px; border-color: var(--neon-red); }
 .close-hud-btn { margin-left: auto; font-size: 1.4rem; color: var(--danger-color); cursor: pointer; }
 .modal-btns { display: flex; gap: 10px; }
+
+.cycle-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 136, 255, 0.12);
+  border: 1px solid var(--neon-blue);
+  padding: 3px 6px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+.cycle-btn {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  width: 20px;
+  height: 20px;
+  line-height: 18px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+}
+.cycle-btn:hover {
+  background: var(--neon-blue);
+  color: #000;
+}

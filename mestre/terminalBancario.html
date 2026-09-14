@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,11 @@
   <link rel="stylesheet" href="terminalBancario/terminalBancario.css">
   <link rel="icon" href="../img/imperio.png" type="image/png">
 </head>
+
 <body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/isb_gatekeeper.js"></script>
 
   <!-- Overlay de Efeitos Especiais Sci-Fi -->
   <div class="datapad-grid-bg"></div>
@@ -39,7 +44,7 @@
         <span class="status-dot"></span>
         <span class="sys-text">ISB FINANCIAL TERMINAL :: ACESSO NÍVEL 5 [MUUNILINST-NODE-RED]</span>
       </div>
-      
+
       <div class="header-main">
         <div class="aurebesh-sub">TERMINAL BANCARIO IMPERIAL</div>
         <h1 class="glitch-title">TERMINAL BANCÁRIO IMPERIAL</h1>
@@ -95,37 +100,8 @@
       </div>
     </section>
 
-    <!-- 2. LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET -->
-    <section class="hud-card log-card">
-      <div class="card-title">
-        <span class="hud-icon">📡</span>
-        <h3>LOG DE ÚLTIMAS TRANSAÇÕES DA HOLONET</h3>
-        <span class="aurebesh-mini">TRANSACTIONS MONITOR</span>
-      </div>
-
-      <div class="hud-table-wrapper">
-        <table class="hud-table log-table">
-          <thead>
-            <tr>
-              <th>HORÁRIO</th>
-              <th>ORIGEM / REMETENTE</th>
-              <th>DESTINO / DESTINATÁRIO</th>
-              <th>VALOR GASTO</th>
-              <th>MOEDA</th>
-              <th>PÁGINA DO SITE</th>
-              <th>AÇÃO</th>
-            </tr>
-          </thead>
-          <tbody id="logs-table-body">
-            <!-- Renderizado via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- 3. ÁREA DE EMPRÉSTIMOS (Grid Adaptativa) -->
+    <!-- 2. ÁREA DE EMPRÉSTIMOS -->
     <div id="loans-grid" class="dynamic-grid single-col">
-      <!-- Coluna 1: Formulário -->
       <section class="hud-card loan-form-card">
         <div class="card-title">
           <span class="hud-icon">🏦</span>
@@ -134,8 +110,10 @@
 
         <form id="loan-form" onsubmit="handleCreateLoan(event)">
           <div class="input-hud-group">
-            <label for="loan-player">NOME DO JOGADOR / ALVO</label>
-            <input type="text" id="loan-player" placeholder="Ex: Han Solo, Caçador de Recompensas" required>
+            <label for="loan-player">SELECIONAR JOGADOR / PERSONAGEM</label>
+            <select id="loan-player" required>
+              <option value="">CARREGANDO REGISTROS IMPERIAIS...</option>
+            </select>
           </div>
 
           <div class="input-hud-row">
@@ -161,7 +139,6 @@
         </form>
       </section>
 
-      <!-- Coluna 2: Empréstimos Imperiais Ativos (Condicional) -->
       <section id="loans-card-list" class="hud-card loans-list-card" style="display: none;">
         <div class="card-title">
           <span class="hud-icon">⚖</span>
@@ -180,17 +157,14 @@
                 <th>AÇÕES</th>
               </tr>
             </thead>
-            <tbody id="loans-table-body">
-              <!-- Renderizado via JS -->
-            </tbody>
+            <tbody id="loans-table-body"></tbody>
           </table>
         </div>
       </section>
     </div>
 
-    <!-- 4. ÁREA DE TAXAS, IMPOSTOS E DÍVIDAS (Grid Adaptativa) -->
+    <!-- 3. ÁREA DE TAXAS, IMPOSTOS E DÍVIDAS -->
     <div id="taxes-grid" class="dynamic-grid single-col">
-      <!-- Coluna 1: Formulário de Criação -->
       <section class="hud-card tax-form-card">
         <div class="card-title">
           <span class="hud-icon">📜</span>
@@ -204,8 +178,10 @@
           </div>
 
           <div class="input-hud-group">
-            <label for="tax-target">ATRIBUIR A / ALVO(S)</label>
-            <input type="text" id="tax-target" placeholder="Ex: Todos os Jogadores, Han Solo, Esquadrão Rebelde" required>
+            <label for="tax-target">ATRIBUIR A / ALVO</label>
+            <select id="tax-target" required>
+              <option value="">CARREGANDO REGISTROS IMPERIAIS...</option>
+            </select>
           </div>
 
           <div class="input-hud-row">
@@ -229,7 +205,6 @@
         </form>
       </section>
 
-      <!-- Coluna 2: Tabela de Taxas Registradas (Condicional) -->
       <section id="taxes-card-list" class="hud-card taxes-list-card" style="display: none;">
         <div class="card-title">
           <span class="hud-icon">📑</span>
@@ -249,17 +224,14 @@
                 <th>AÇÕES</th>
               </tr>
             </thead>
-            <tbody id="taxes-table-body">
-              <!-- Renderizado via JS -->
-            </tbody>
+            <tbody id="taxes-table-body"></tbody>
           </table>
         </div>
       </section>
     </div>
 
-    <!-- 5. ÁREA DE CUPONS DE DESCONTO (Grid Adaptativa) -->
+    <!-- 4. ÁREA DE CUPONS DE DESCONTO -->
     <div id="coupons-grid" class="dynamic-grid single-col">
-      <!-- Coluna 1: Formulário de Criação -->
       <section class="hud-card create-card">
         <div class="card-title">
           <span class="hud-icon">✚</span>
@@ -307,7 +279,6 @@
         </form>
       </section>
 
-      <!-- Coluna 2: Cupons Registrados & Estatísticas (Condicional) -->
       <section id="coupons-card-list" class="hud-card list-card" style="display: none;">
         <div class="card-title">
           <span class="hud-icon">☰</span>
@@ -326,9 +297,7 @@
                 <th>AÇÕES</th>
               </tr>
             </thead>
-            <tbody id="coupons-table-body">
-              <!-- Renderizado via JS -->
-            </tbody>
+            <tbody id="coupons-table-body"></tbody>
           </table>
         </div>
       </section>
@@ -336,7 +305,7 @@
 
   </div>
 
-  <!-- Modal Holográfico para Edição de Cupom -->
+  <!-- Modal de Edição de Cupom -->
   <div id="edit-modal" class="hud-modal">
     <div class="modal-card hud-card">
       <div class="card-title">
@@ -346,7 +315,7 @@
 
       <form id="edit-coupon-form" onsubmit="handleSaveEditCoupon(event)">
         <input type="hidden" id="edit-coupon-id">
-        
+
         <div class="input-hud-group">
           <label>CÓDIGO ALVO</label>
           <input type="text" id="edit-coupon-code" readonly class="input-disabled">
@@ -391,4 +360,5 @@
 
   <script src="terminalBancario/terminalBancario.js"></script>
 </body>
+
 </html>
