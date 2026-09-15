@@ -288,18 +288,35 @@ function getPlayerSaldo(moeda) {
     return 0;
 }
 
-/* Calcula o resultado de uma conversão. Retorna null se a rota for bloqueada. */
-function calcularCambio(de, para, valor) {
+/* Calcula quanto da moeda de ORIGEM é necessário debitar para entregar exatamente
+   "desejado" unidades da moeda de DESTINO. Trabalhar a partir do valor desejado
+   (e não do valor a converter) garante que o débito seja sempre um número exato,
+   nunca uma fração arredondada. Retorna null se a rota for bloqueada. */
+function calcularOrigemNecessaria(de, para, desejado) {
     const chave = `${de}_${para}`;
     switch (chave) {
-        case 'CI_FC': return valor / 100000;
-        case 'CI_PG': return valor / 40000;
-        case 'FC_CI': return valor * 100000;
-        case 'FC_PG': return valor * 200000;
-        case 'PG_FC': return valor / 200000;
-        case 'PG_CI': return null; // rota bloqueada
+        case 'CI_FC': return desejado * 100000;   // 100.000 CI = 1 FC
+        case 'CI_PG': return desejado * 40000;    // 40.000 CI = 1 PG
+        case 'FC_CI': return desejado / 100000;   // 1 FC = 100.000 CI
+        case 'FC_PG': return desejado / 200000;   // 1 FC = 200.000 PG
+        case 'PG_FC': return desejado * 200000;   // 200.000 PG = 1 FC
+        case 'PG_CI': return null;                // rota bloqueada
         default: return null;
     }
+}
+
+// Quantas unidades da moeda de destino equivalem a 1 unidade "indivisível" na rota,
+// usado apenas para mensagens de erro quando o valor desejado não é exato.
+function getMultiploExigido(de, para) {
+    const chave = `${de}_${para}`;
+    if (chave === 'FC_CI') return 100000;
+    if (chave === 'FC_PG') return 200000;
+    return 1;
+}
+
+const EPSILON = 1e-6;
+function isValorInteiro(n) {
+    return Math.abs(n - Math.round(n)) < EPSILON;
 }
 
 function setupExchangeUI() {
@@ -322,7 +339,7 @@ function setupExchangeUI() {
     function atualizarPreviewCambio() {
         const de = fromSelect.value;
         const para = toSelect.value;
-        const valor = parseFloat(amountInput.value);
+        const desejado = parseFloat(amountInput.value);
         const preview = document.getElementById("exchange-preview");
         const warning = document.getElementById("exchange-warning");
         const exchangeBtn = document.getElementById("exchange-btn");
@@ -339,23 +356,33 @@ function setupExchangeUI() {
             return;
         }
 
-        if (!valor || valor <= 0) {
-            preview.innerText = "Informe um valor para simular a conversão.";
+        if (!desejado || desejado <= 0) {
+            preview.innerText = "Informe quanto deseja RECEBER na moeda de destino para simular a conversão.";
             preview.classList.remove('ready');
             return;
         }
 
-        const resultadoBruto = calcularCambio(de, para, valor);
-        const resultado = Math.floor(resultadoBruto);
+        const origemNecessaria = calcularOrigemNecessaria(de, para, desejado);
 
-        if (resultado < 1) {
-            preview.innerText = `Valor insuficiente: são necessários ao menos ${Math.ceil(1 / (resultadoBruto / valor))} ${de} para gerar 1 ${para}.`;
+        if (!isValorInteiro(origemNecessaria)) {
+            const multiplo = getMultiploExigido(de, para);
+            preview.innerText = `VALOR NÃO EXATO: para receber ${para} sem perdas nesta rota, o valor desejado precisa ser múltiplo de ${multiplo.toLocaleString()} ${para}.`;
             preview.classList.remove('ready');
             exchangeBtn.disabled = true;
             return;
         }
 
-        preview.innerText = `${valor.toLocaleString()} ${de} ➜ ${resultado.toLocaleString()} ${para}`;
+        const origemArredondada = Math.round(origemNecessaria);
+        const saldoDisponivel = getPlayerSaldo(de);
+
+        if (origemArredondada > saldoDisponivel) {
+            preview.innerText = `Para receber ${desejado.toLocaleString()} ${para} seria necessário debitar ${origemArredondada.toLocaleString()} ${de} — SALDO INSUFICIENTE (disponível: ${saldoDisponivel.toLocaleString()} ${de}).`;
+            preview.classList.remove('ready');
+            exchangeBtn.disabled = true;
+            return;
+        }
+
+        preview.innerText = `Será debitado ${origemArredondada.toLocaleString()} ${de} ➜ Você receberá ${desejado.toLocaleString()} ${para}`;
         preview.classList.add('ready');
     }
 
@@ -376,7 +403,7 @@ function setupExchangeUI() {
 async function executarCambio() {
     const de = document.getElementById("exchange-from").value;
     const para = document.getElementById("exchange-to").value;
-    const valor = parseFloat(document.getElementById("exchange-amount").value);
+    const desejado = parseFloat(document.getElementById("exchange-amount").value);
     const exchangeBtn = document.getElementById("exchange-btn");
 
     if (de === para) {
@@ -389,20 +416,24 @@ async function executarCambio() {
         return;
     }
 
-    if (!valor || valor <= 0) {
-        alert("ERRO DO SISTEMA: Informe um valor válido para o câmbio.");
+    if (!desejado || desejado <= 0) {
+        alert("ERRO DO SISTEMA: Informe quanto deseja receber na moeda de destino.");
         return;
     }
 
+    const origemNecessaria = calcularOrigemNecessaria(de, para, desejado);
+
+    if (!isValorInteiro(origemNecessaria)) {
+        const multiplo = getMultiploExigido(de, para);
+        alert(`ERRO DO SISTEMA: Para receber ${para} sem perdas nesta rota, o valor desejado precisa ser múltiplo de ${multiplo.toLocaleString()}.`);
+        return;
+    }
+
+    const valorDebitado = Math.round(origemNecessaria);
     const saldoAtual = getPlayerSaldo(de);
-    if (valor > saldoAtual) {
-        alert(`SALDO INSUFICIENTE: Você não possui ${valor.toLocaleString()} ${de} disponíveis.`);
-        return;
-    }
 
-    const resultado = Math.floor(calcularCambio(de, para, valor));
-    if (resultado < 1) {
-        alert("ERRO DO SISTEMA: O valor informado não é suficiente para gerar ao menos 1 unidade da moeda de destino.");
+    if (valorDebitado > saldoAtual) {
+        alert(`SALDO INSUFICIENTE: Seriam necessários ${valorDebitado.toLocaleString()} ${de}, mas você possui apenas ${saldoAtual.toLocaleString()} ${de}.`);
         return;
     }
 
@@ -412,8 +443,8 @@ async function executarCambio() {
     const colunaOrigem = CURRENCY_COLUMN[de];
     const colunaDestino = CURRENCY_COLUMN[para];
 
-    const novoSaldoOrigem = saldoAtual - valor;
-    const novoSaldoDestino = getPlayerSaldo(para) + resultado;
+    const novoSaldoOrigem = saldoAtual - valorDebitado;
+    const novoSaldoDestino = getPlayerSaldo(para) + desejado;
 
     const { error } = await supabaseClient.from('personagens').update({
         [colunaOrigem]: novoSaldoOrigem,
@@ -431,9 +462,9 @@ async function executarCambio() {
         user_id: playerUserId,
         personagem_id: playerId,
         tipo_evento: `CAMBIO_${de}_${para}`,
-        descricao: `Converteu ${valor.toLocaleString()} ${de} em ${resultado.toLocaleString()} ${para}.`,
-        valor_creditos: valor,
-        dados_adicionais: JSON.stringify({ de, para, valor_origem: valor, valor_destino: resultado })
+        descricao: `Converteu ${valorDebitado.toLocaleString()} ${de} para receber exatamente ${desejado.toLocaleString()} ${para}.`,
+        valor_creditos: valorDebitado,
+        dados_adicionais: JSON.stringify({ de, para, valor_debitado: valorDebitado, valor_recebido: desejado })
     });
 
     // Atualiza estado local
@@ -447,7 +478,7 @@ async function executarCambio() {
 
     exchangeBtn.disabled = false;
     exchangeBtn.innerText = "CONFIRMAR CÂMBIO";
-    alert(`CÂMBIO CONCLUÍDO: ${valor.toLocaleString()} ${de} convertidos em ${resultado.toLocaleString()} ${para}.`);
+    alert(`CÂMBIO CONCLUÍDO: ${valorDebitado.toLocaleString()} ${de} debitados, ${desejado.toLocaleString()} ${para} creditados.`);
 }
 /* FIM DE FUNÇÃO DE executarCambio */
 
@@ -526,18 +557,31 @@ async function quitarDivida(dividaId, valorTotal, btn) {
 
     await supabaseClient.from('personagens').update({ creditos: novoSaldoJogador }).eq('id', playerId);
     await supabaseClient.from('personagens').update({ creditos: novoSaldoMestre }).eq('id', mestreData.id);
-    await supabaseClient.from('dividas_emprestimos').update({ status: 'PAGO' }).eq('id', dividaId);
 
+    // Apaga a dívida quitada do banco de dados (não apenas atualiza o status)
+    const { error: deleteError } = await supabaseClient.from('dividas_emprestimos').delete().eq('id', dividaId);
+
+    if (deleteError) {
+        alert("ERRO DO SISTEMA: Créditos transferidos, mas houve falha ao remover o registro da dívida.");
+    }
+
+    // Log da página (log_bancario)
     await supabaseClient.from('log_bancario').insert([
         { user_id: playerUserId, personagem_id: playerId, tipo_evento: 'QUITACAO_DIVIDA', descricao: `Quitou dívida/taxa de ${valorTotal.toLocaleString()} CI.`, valor_creditos: -valorTotal, dados_adicionais: JSON.stringify({ divida_id: dividaId }) },
         { user_id: playerUserId, personagem_id: mestreData.id, tipo_evento: 'RECEBIMENTO_QUITACAO', descricao: `Recebeu quitação de ${valorTotal.toLocaleString()} CI de ${playerName}.`, valor_creditos: valorTotal, dados_adicionais: JSON.stringify({ divida_id: dividaId, origem: playerId }) }
+    ]);
+
+    // Log de auditoria do Mestre (mesmo padrão usado na transferência entre jogadores)
+    await supabaseClient.from('logs_auditoria').insert([
+        { personagem_id: playerId, tipo_evento: 'QUITACAO_DIVIDA', descricao: `Quitou dívida/taxa de ${valorTotal.toLocaleString()} CI.`, mudanca_creditos: -valorTotal },
+        { personagem_id: mestreData.id, tipo_evento: 'RECEBIMENTO_QUITACAO', descricao: `Recebeu quitação de ${valorTotal.toLocaleString()} CI de ${playerName}.`, mudanca_creditos: valorTotal }
     ]);
 
     playerBalance = novoSaldoJogador;
     renderBalances();
 
     await carregarDividas();
-    alert("DÍVIDA QUITADA COM SUCESSO. Registro atualizado junto à Guilda Financeira.");
+    alert("DÍVIDA QUITADA E REMOVIDA COM SUCESSO. Registro atualizado junto à Guilda Financeira.");
 }
 /* FIM DE FUNÇÃO DE quitarDivida */
 
@@ -572,7 +616,7 @@ async function solicitarEmprestimo() {
     loanBtn.disabled = true;
     loanBtn.innerText = "ENVIANDO...";
 
-    const { data: novaDivida, error } = await supabaseClient.from('dividas_emprestimos').insert({
+    const { error } = await supabaseClient.from('dividas_emprestimos').insert({
         categoria: 'EMPRESTIMO',
         titulo: `Solicitação de Empréstimo — ${playerName}`,
         alvo_descricao: playerName,
@@ -580,12 +624,16 @@ async function solicitarEmprestimo() {
         valor_original: valor,
         taxa_juros: 0,
         valor_total: valor,
+        frequencia: 'UNICA',
+        ciclos_totais: 1,
+        ciclos_pagos: 0,
         status: 'SOLICITADO',
         observacoes: justificativa
-    }).select().single();
+    });
 
     if (error) {
         alert("ERRO DO SISTEMA: Falha ao registrar a solicitação de empréstimo.");
+        console.error(error);
         loanBtn.disabled = false;
         loanBtn.innerText = "ENVIAR SOLICITAÇÃO";
         return;
@@ -597,7 +645,7 @@ async function solicitarEmprestimo() {
         tipo_evento: 'SOLICITACAO_EMPRESTIMO',
         descricao: `Solicitou empréstimo de ${valor.toLocaleString()} CI. Justificativa: ${justificativa}`,
         valor_creditos: valor,
-        dados_adicionais: JSON.stringify({ divida_id: novaDivida ? novaDivida.id : null, justificativa })
+        dados_adicionais: JSON.stringify({ justificativa })
     });
 
     amountInput.value = "";
