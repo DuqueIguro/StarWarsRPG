@@ -22,7 +22,7 @@
             <div class="brand">
                 <span class="logo-icon">◈</span>
                 <div>
-                    <h1>BANCO CENTRAL GALÁCTICO</h1>
+                    <h1>BANCO CENTRAL IMPERIAL</h1>
                     <span class="subtext">REDE DE TRANSFERÊNCIA DE CRÉDITOS DA ORLA EXTERIOR</span>
                 </div>
             </div>
@@ -42,21 +42,33 @@
                 <div class="panel-header">=== PERFIL DO OPERADOR ===</div>
                 <div class="account-card">
                     <div class="avatar-box">
-                        <span>OPERADOR</span>
+                        <img id="avatar-img" src="../img/p2w.png" alt="Avatar do Operador" class="avatar-img">
                         <div class="avatar-ring"></div>
                     </div>
                     <div class="account-info">
-                        <label>SUA CHAVE DE TRANSFERÊNCIA (ID GALÁCTICO):</label>
+                        <label>SUA CHAVE DE TRANSFERÊNCIA (ID IMPERIAL):</label>
                         <div class="key-box">
                             <span id="my-key" class="highlight-text animate-pulse">SINCRONIZANDO...</span>
                             <button id="copy-btn" class="btn-small">COPIAR</button>
                             <button id="generate-key-btn" class="btn-small">GERAR NOVA</button>
                         </div>
 
-                        <div class="balance-box">
-                            <span class="balance-label">SALDO DISPONÍVEL:</span>
-                            <span class="balance-value"><span id="user-balance">0</span>
-                                <span>CRÉDITOS</span></span>
+                        <div class="balances-grid">
+                            <div class="balance-box balance-ci">
+                                <span class="balance-label">CRÉDITOS IMPERIAIS</span>
+                                <span class="balance-value"><span id="user-balance">0</span><span
+                                        class="balance-unit">CI</span></span>
+                            </div>
+                            <div class="balance-box balance-fc">
+                                <span class="balance-label">FACECRED</span>
+                                <span class="balance-value"><span id="user-facecred">0</span><span
+                                        class="balance-unit">FC</span></span>
+                            </div>
+                            <div class="balance-box balance-pg">
+                                <span class="balance-label">PEGGATS</span>
+                                <span class="balance-value"><span id="user-peggats">0</span><span
+                                        class="balance-unit">PG</span></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -64,7 +76,7 @@
 
             <!-- Formulário de Transferência -->
             <section class="panel transfer-panel">
-                <div class="panel-header">=== ENVIAR CRÉDITOS GALÁCTICOS ===</div>
+                <div class="panel-header">=== ENVIAR CRÉDITOS IMPERIAIS ===</div>
                 <form id="transfer-form">
 
                     <div class="form-group">
@@ -74,11 +86,12 @@
 
                     <div class="form-group">
                         <label for="target-key">CHAVE DO DESTINATÁRIO</label>
-                        <input type="text" id="target-key" placeholder="Ex: GAL-8F29-99X0" required style="text-transform: uppercase;">
+                        <input type="text" id="target-key" placeholder="Ex: IMP-8F29-99X0" required
+                            style="text-transform: uppercase;">
                     </div>
 
                     <div class="form-group">
-                        <label for="transfer-amount">VALOR DA TRANSFERÊNCIA (CR)</label>
+                        <label for="transfer-amount">VALOR DA TRANSFERÊNCIA (CI)</label>
                         <input type="number" id="transfer-amount" min="1" placeholder="0" required>
                     </div>
 
@@ -94,6 +107,67 @@
                 </form>
             </section>
 
+            <!-- Câmbio Galáctico -->
+            <section class="panel exchange-panel">
+                <div class="panel-header">=== CÂMBIO GALÁCTICO ===</div>
+                <div class="exchange-rates-note">
+                    100.000 CI = 1 FC &nbsp;|&nbsp; 40.000 CI = 1 PG &nbsp;|&nbsp; 200.000 PG = 1 FC
+                </div>
+                <form id="exchange-form">
+                    <div class="exchange-row">
+                        <div class="form-group">
+                            <label for="exchange-from">DE</label>
+                            <select id="exchange-from">
+                                <option value="CI">CI — Créditos Imperiais</option>
+                                <option value="FC">FC — FaceCred</option>
+                                <option value="PG">PG — Peggats</option>
+                            </select>
+                        </div>
+                        <div class="exchange-arrow">➜</div>
+                        <div class="form-group">
+                            <label for="exchange-to">PARA</label>
+                            <select id="exchange-to"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exchange-amount">VALOR A CONVERTER</label>
+                        <input type="number" id="exchange-amount" min="1" placeholder="0">
+                    </div>
+
+                    <div id="exchange-preview" class="exchange-preview">SELECIONE OS VALORES PARA SIMULAR A
+                        CONVERSÃO.</div>
+                    <div id="exchange-warning" class="exchange-warning" style="display:none;"></div>
+
+                    <button type="submit" class="btn-primary" id="exchange-btn">CONFIRMAR CÂMBIO</button>
+                </form>
+            </section>
+
+            <!-- Dívidas, Taxas e Empréstimos -->
+            <section class="panel debts-panel">
+                <div class="panel-header">=== DÍVIDAS E TAXAS PENDENTES ===</div>
+                <div class="debts-list" id="debts-list">
+                    <div class="empty-history text-stone-500 animate-pulse">CARREGANDO DÍVIDAS...</div>
+                </div>
+
+                <div class="loan-request-box">
+                    <div class="panel-header sub-header">=== SOLICITAR EMPRÉSTIMO ===</div>
+                    <form id="loan-form">
+                        <div class="form-group">
+                            <label for="loan-amount">VALOR DESEJADO (CI)</label>
+                            <input type="number" id="loan-amount" min="1" placeholder="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loan-reason">JUSTIFICATIVA / GARANTIA</label>
+                            <textarea id="loan-reason" rows="3"
+                                placeholder="Ex: Financiamento de nave, garantia: carga de especiaria..."
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" id="loan-btn">ENVIAR SOLICITAÇÃO</button>
+                    </form>
+                </div>
+            </section>
+
             <!-- Histórico de Transações -->
             <section class="panel history-panel">
                 <div class="panel-header">=== REGISTRO DE TRANSAÇÕES ===</div>
@@ -106,7 +180,7 @@
 
         <!-- Rodapé Terminal -->
         <footer class="terminal-footer">
-            <span>SISTEMA AUDITADO PELA GUILDA FINANCEIRA GALÁCTICA</span>
+            <span>SISTEMA AUDITADO PELA GUILDA FINANCEIRA IMPERIAL</span>
             <span id="system-time">00:00:00 STAR-DATE</span>
         </footer>
     </div>

@@ -13,8 +13,15 @@
     --accent-glow: rgba(255, 215, 0, 0.4);
     --accent-dim: #b39700;
 
+    /* FaceCred (Azul Holo) & Peggats (Roxo Especiaria) */
+    --facecred: #33d6ff;
+    --facecred-glow: rgba(51, 214, 255, 0.35);
+    --peggats: #c084fc;
+    --peggats-glow: rgba(192, 132, 252, 0.35);
+
     /* Perigo / Alertas */
     --danger: #ff3333;
+    --danger-glow: rgba(255, 51, 51, 0.35);
 
     --text-main: #d0f5db;
     --text-dim: #518c65;
@@ -228,11 +235,60 @@ body {
     gap: 8px;
 }
 
+.panel-header.sub-header {
+    font-size: 0.72rem;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border-color);
+}
+
 /* Profile Panel */
+.account-card {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.avatar-box {
+    position: relative;
+    width: 74px;
+    height: 74px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+    background: var(--primary-dark);
+}
+
+.avatar-ring {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    animation: blink 3s infinite;
+    pointer-events: none;
+}
+
+.account-info {
+    flex: 1;
+    min-width: 0;
+}
+
 .key-box {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
     background: rgba(0, 255, 102, 0.04);
     border: 1px dashed var(--primary);
     padding: 8px 12px;
@@ -249,25 +305,63 @@ body {
     text-shadow: 0 0 6px var(--primary-glow);
 }
 
+/* Grade de 3 saldos: CI / FC / PG */
+.balances-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
 .balance-box {
     background: rgba(255, 215, 0, 0.08);
     border-left: 3px solid var(--accent);
     border-right: 1px solid rgba(255, 215, 0, 0.2);
-    padding: 12px 16px;
+    padding: 10px 12px;
 }
 
 .balance-label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.62rem;
     color: var(--accent-dim);
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .balance-value {
     font-family: var(--font-title);
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     color: var(--accent);
     text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.balance-unit {
+    font-size: 0.65rem;
+    margin-left: 3px;
+    opacity: 0.8;
+}
+
+.balance-fc {
+    border-left-color: var(--facecred);
+    background: rgba(51, 214, 255, 0.08);
+}
+
+.balance-fc .balance-label,
+.balance-fc .balance-value {
+    color: var(--facecred);
+    text-shadow: 0 0 10px var(--facecred-glow);
+}
+
+.balance-pg {
+    border-left-color: var(--peggats);
+    background: rgba(192, 132, 252, 0.08);
+}
+
+.balance-pg .balance-label,
+.balance-pg .balance-value {
+    color: var(--peggats);
+    text-shadow: 0 0 10px var(--peggats-glow);
 }
 
 /* Forms */
@@ -284,7 +378,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
     width: 100%;
     background: rgba(1, 15, 8, 0.95);
     border: 1px solid var(--border-color);
@@ -296,8 +391,13 @@ textarea {
     transition: all 0.3s ease;
 }
 
+select {
+    cursor: pointer;
+}
+
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     border-color: var(--accent);
     box-shadow: 0 0 10px var(--accent-glow);
     color: #ffffff;
@@ -331,6 +431,12 @@ textarea::placeholder {
     box-shadow: 0 0 20px var(--accent);
 }
 
+.btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 .btn-small {
     background: transparent;
     border: 1px solid var(--accent);
@@ -346,6 +452,133 @@ textarea::placeholder {
     background: var(--accent);
     color: #030d07;
     box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.btn-danger-small {
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    font-family: var(--font-mono);
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-danger-small:hover {
+    background: var(--danger);
+    color: #050505;
+    box-shadow: 0 0 8px var(--danger-glow);
+}
+
+.btn-danger-small:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Câmbio Galáctico */
+.exchange-rates-note {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+}
+
+.exchange-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.exchange-row .form-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.exchange-arrow {
+    color: var(--accent);
+    font-size: 1.2rem;
+    padding-bottom: 12px;
+    text-shadow: 0 0 6px var(--accent-glow);
+}
+
+.exchange-preview {
+    background: rgba(0, 255, 102, 0.04);
+    border: 1px dashed var(--border-color);
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    min-height: 18px;
+}
+
+.exchange-preview.ready {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.exchange-warning {
+    background: rgba(255, 51, 51, 0.08);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 10px 12px;
+    font-size: 0.75rem;
+    margin-bottom: 14px;
+    line-height: 1.4;
+}
+
+/* Dívidas e Empréstimos */
+.debts-list {
+    max-height: 220px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.debt-item {
+    background: rgba(255, 51, 51, 0.04);
+    border: 1px solid rgba(255, 51, 51, 0.25);
+    border-left: 3px solid var(--danger);
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+}
+
+.debt-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.debt-title {
+    color: var(--text-main);
+    font-weight: bold;
+}
+
+.debt-meta {
+    color: var(--text-dim);
+    font-size: 0.68rem;
+    letter-spacing: 0.3px;
+}
+
+.debt-value {
+    color: var(--danger);
+    font-family: var(--font-title);
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.loan-request-box {
+    margin-top: 4px;
 }
 
 /* Transaction History */
@@ -404,15 +637,18 @@ textarea::placeholder {
 }
 
 /* Custom Scrollbar */
-.history-list::-webkit-scrollbar {
+.history-list::-webkit-scrollbar,
+.debts-list::-webkit-scrollbar {
     width: 6px;
 }
 
-.history-list::-webkit-scrollbar-track {
+.history-list::-webkit-scrollbar-track,
+.debts-list::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.3);
 }
 
-.history-list::-webkit-scrollbar-thumb {
+.history-list::-webkit-scrollbar-thumb,
+.debts-list::-webkit-scrollbar-thumb {
     background: var(--border-color);
 }
 
@@ -425,4 +661,21 @@ textarea::placeholder {
     justify-content: space-between;
     font-size: 0.7rem;
     color: var(--text-dim);
+}
+
+@media (max-width: 480px) {
+    .balances-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .account-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .debt-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
