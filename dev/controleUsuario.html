@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV_CORE // Controle de Usuário</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./controleUsuario/controleUsuario.css">
+    <link rel="icon" type="image/x-icon" href="../img/d20.png">
+</head>
+
+<body id="devBody" class="scan-active">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+
+    <div id="accessOverlay" class="access-overlay">
+        <div class="access-box">
+            <div class="access-spinner"></div>
+            <p>VERIFICANDO CREDENCIAIS DE DESENVOLVEDOR...</p>
+        </div>
+    </div>
+
+    <div class="hud-frame">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+
+        <header class="dev-header">
+            <div class="dev-brand">
+                <span class="dev-icon">&#9670;</span>
+                <div>
+                    <h1>PAINEL DE CONTROLE // DEV_CORE</h1>
+                    <span class="dev-sub">GERENCIAMENTO DE CONTAS E ECONOMIA GALÁCTICA</span>
+                </div>
+            </div>
+            <div class="dev-operator">
+                <span class="op-label">OPERADOR ATIVO</span>
+                <span id="operatorName" class="op-name">SINCRONIZANDO...</span>
+            </div>
+            <a href="../menu" class="btn-back">◀ SAIR</a>
+        </header>
+
+        <main class="dev-main">
+
+            <!-- COLUNA ESQUERDA: LISTA DE PERSONAGENS -->
+            <section class="panel roster-panel">
+                <div class="panel-title">
+                    <span>◈ REGISTRO DE PERSONAGENS</span>
+                    <span id="rosterCount" class="count-badge">0</span>
+                </div>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar personagem por nome...">
+                <div id="rosterList" class="roster-list">
+                    <div class="roster-empty">Carregando dossiês da Holonet...</div>
+                </div>
+            </section>
+
+            <!-- COLUNA DIREITA: HUD DE EDIÇÃO -->
+            <section class="panel editor-panel">
+
+                <div id="editorPlaceholder" class="editor-placeholder">
+                    <span>◈ Selecione um personagem no registro à esquerda para abrir o dossiê operacional.</span>
+                </div>
+
+                <div id="editorContent" class="editor-content hidden">
+
+                    <div class="editor-topbar">
+                        <div class="avatar-block">
+                            <img id="avatarPreview" src="" alt="Avatar" class="avatar-img">
+                            <div class="avatar-input-wrap">
+                                <label>URL DO AVATAR</label>
+                                <input type="text" id="imgUrlInput" placeholder="https://..." class="hud-input">
+                                <button id="btnSaveAvatar" class="btn-mini btn-confirm">Atualizar Imagem</button>
+                            </div>
+                        </div>
+                        <div class="identity-block">
+                            <span id="charName" class="char-name">-</span>
+                            <span id="charId" class="char-id">ID: -</span>
+
+                            <label class="field-label">GRUPO / FACÇÃO</label>
+                            <div class="faction-row">
+                                <select id="factionSelect" class="hud-input">
+                                    <option value="Não Atribuído / Civil">Não Atribuído / Civil</option>
+                                    <option value="Diretiva Orion">Diretiva Orion</option>
+                                    <option value="Movimento Astara">Movimento Astara</option>
+                                    <option value="O Caminho">O Caminho</option>
+                                    <option value="Grupo Massassi">Grupo Massassi</option>
+                                    <option value="Lothal">Lothal</option>
+                                    <option value="Império Galáctico">Império Galáctico</option>
+                                </select>
+                                <button id="btnSaveFaction" class="btn-mini btn-confirm">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-bar" id="feedbackBar"></div>
+
+                    <div class="balances-grid">
+
+                        <!-- CRÉDITOS -->
+                        <div class="balance-card" data-field="creditos">
+                            <div class="balance-header">
+                                <span class="balance-label">CRÉDITOS IMPERIAIS</span>
+                                <span class="balance-icon">&#128179;</span>
+                            </div>
+                            <div class="balance-value" id="val-creditos">0</div>
+                            <div class="balance-controls">
+                                <input type="number" class="hud-input amount-input" id="amt-creditos" placeholder="Valor">
+                                <button class="btn-mini btn-add" data-op="add" data-field="creditos">+ Add</button>
+                                <button class="btn-mini btn-sub" data-op="sub" data-field="creditos">- Rem</button>
+                            </div>
+                        </div>
+
+                        <!-- FACECRED -->
+                        <div class="balance-card" data-field="facecred">
+                            <div class="balance-header">
+                                <span class="balance-label">FACECRED</span>
+                                <span class="balance-icon">&#9733;</span>
+                            </div>
+                            <div class="balance-value" id="val-facecred">0</div>
+                            <div class="balance-controls">
+                                <input type="number" class="hud-input amount-input" id="amt-facecred" placeholder="Valor">
+                                <button class="btn-mini btn-add" data-op="add" data-field="facecred">+ Add</button>
+                                <button class="btn-mini btn-sub" data-op="sub" data-field="facecred">- Rem</button>
+                            </div>
+                        </div>
+
+                        <!-- PEGGATS -->
+                        <div class="balance-card" data-field="peggats">
+                            <div class="balance-header">
+                                <span class="balance-label">PEGGATS</span>
+                                <span class="balance-icon">&#9830;</span>
+                            </div>
+                            <div class="balance-value" id="val-peggats">0</div>
+                            <div class="balance-controls">
+                                <input type="number" class="hud-input amount-input" id="amt-peggats" placeholder="Valor">
+                                <button class="btn-mini btn-add" data-op="add" data-field="peggats">+ Add</button>
+                                <button class="btn-mini btn-sub" data-op="sub" data-field="peggats">- Rem</button>
+                            </div>
+                        </div>
+
+                        <!-- FICHAS GALÁCTICAS -->
+                        <div class="balance-card" data-field="fichas">
+                            <div class="balance-header">
+                                <span class="balance-label">FICHAS GALÁCTICAS</span>
+                                <span class="balance-icon">&#9776;</span>
+                            </div>
+                            <div class="balance-value" id="val-fichas">0</div>
+                            <div class="balance-controls">
+                                <input type="number" class="hud-input amount-input" id="amt-fichas" placeholder="Valor">
+                                <button class="btn-mini btn-add" data-op="add" data-field="fichas">+ Add</button>
+                                <button class="btn-mini btn-sub" data-op="sub" data-field="fichas">- Rem</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="audit-note">
+                        <span>&#9888; Toda transação nesta interface é registrada, vinculada ao ID do operador logado.</span>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="dev-footer">
+            <span>© ABY 04 - NÚCLEO DE DESENVOLVIMENTO // ACESSO NÍVEL OMEGA</span>
+            <span id="footerClock">00:00:00</span>
+        </footer>
+    </div>
+
+    <script src="./controleUsuario/controleUsuario.js"></script>
+</body>
+
+</html>

@@ -32,6 +32,11 @@ StarWarsRPG
 │  ├─ p2w.json
 │  ├─ planetasSecretos.json
 │  └─ planetas_database.json
+├─ dev
+│  ├─ controleUsuario
+│  │  ├─ controleUsuario.css
+│  │  └─ controleUsuario.js
+│  └─ controleUsuario.html
 ├─ durtoc
 │  ├─ database
 │  │  ├─ manifesto.json
@@ -90,6 +95,7 @@ StarWarsRPG
 │  ├─ contatoMassassi.png
 │  ├─ contatoOrion.png
 │  ├─ d20.png
+│  ├─ dado.png
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
 │  ├─ error-404.ico
@@ -180,8 +186,7 @@ StarWarsRPG
 │  ├─ oldMacro
 │  │  ├─ oldMacro.css
 │  │  ├─ oldMacro.js
-│  │  ├─ oldMacro.json
-│  │  └─ split_old_macro.py
+│  │  └─ oldMacro.json
 │  ├─ oldMacro.html
 │  ├─ redirecionamentos.html
 │  ├─ terminalBancario
@@ -189,6 +194,10 @@ StarWarsRPG
 │  │  └─ terminalBancario.js
 │  └─ terminalBancario.html
 ├─ monopoly
+│  ├─ cassino
+│  │  ├─ cassino.css
+│  │  └─ cassino.js
+│  ├─ cassino.html
 │  ├─ macroDurtoc
 │  │  ├─ app.js
 │  │  ├─ audio.js
@@ -225,11 +234,6 @@ StarWarsRPG
 │  ├─ mapa.html
 │  ├─ MCMT.html
 │  └─ mestre.html
-├─ staging
-│  └─ cassino
-│     ├─ cassino.css
-│     ├─ cassino.html
-│     └─ cassino.js
 ├─ styles
 │  ├─ 404.css
 │  ├─ armazem.css
