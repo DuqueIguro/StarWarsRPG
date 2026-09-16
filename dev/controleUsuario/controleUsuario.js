@@ -197,7 +197,13 @@ async function salvarAvatar() {
     if (!selectedCharacter) return;
 
     const novoUrl = document.getElementById('imgUrlInput').value.trim();
+    const valorAnterior = selectedCharacter.img_url || '';
     const btn = document.getElementById('btnSaveAvatar');
+
+    if (novoUrl === valorAnterior) {
+        mostrarFeedback('Nenhuma alteração na imagem detectada.', 'info');
+        return;
+    }
 
     btn.disabled = true;
     btn.textContent = 'Sincronizando...';
@@ -216,6 +222,14 @@ async function salvarAvatar() {
         return;
     }
 
+    // Auditoria direcionada para logs_auditoria
+    await registrarLogAuditoria({
+        personagem_id: selectedCharacter.id,
+        tipo_evento: 'ATUALIZACAO_AVATAR',
+        descricao: `Avatar de [${selectedCharacter.nome}] alterado por ${currentOperator.nome}.`,
+        mudanca_creditos: null
+    });
+
     selectedCharacter.img_url = novoUrl;
     const idx = allCharacters.findIndex(c => c.id === selectedCharacter.id);
     if (idx !== -1) allCharacters[idx].img_url = novoUrl;
@@ -224,7 +238,7 @@ async function salvarAvatar() {
         ? allCharacters.filter(c => (c.nome || '').toLowerCase().includes(document.getElementById('searchInput').value.trim().toLowerCase()))
         : allCharacters);
 
-    mostrarFeedback('Imagem do dossiê atualizada com sucesso.', 'success');
+    mostrarFeedback('Imagem do dossiê atualizada e registrada na auditoria.', 'success');
 }
 
 /* ============================================================
@@ -259,19 +273,12 @@ async function salvarFaccao() {
         return;
     }
 
-    // Auditoria
-    await registrarLogBancario({
+    // Auditoria direcionada para logs_auditoria
+    await registrarLogAuditoria({
         personagem_id: selectedCharacter.id,
-        tipo_evento: 'AJUSTE_ADMINISTRATIVO',
+        tipo_evento: 'ALTERACAO_FACCAO',
         descricao: `Facção de [${selectedCharacter.nome}] alterada por ${currentOperator.nome}. De "${valorAnterior}" para "${novaFaccao}".`,
-        valor_creditos: 0,
-        dados_adicionais: {
-            operador_id: currentOperator.id,
-            campo_alterado: 'grupo_faccao',
-            delta: null,
-            valor_anterior: valorAnterior,
-            novo_valor: novaFaccao
-        }
+        mudanca_creditos: null
     });
 
     selectedCharacter.grupo_faccao = novaFaccao;
@@ -347,8 +354,25 @@ async function ajustarSaldo(field, operacao) {
 }
 
 /* ============================================================
-   8. AUDITORIA — log_bancario
+   8. AUDITORIA — logs_auditoria / log_bancario
    ============================================================ */
+async function registrarLogAuditoria({ personagem_id, tipo_evento, descricao, mudanca_creditos = null }) {
+    try {
+        const { error } = await supabaseClient.from('logs_auditoria').insert([{
+            personagem_id: personagem_id,
+            tipo_evento: tipo_evento,
+            descricao: descricao,
+            mudanca_creditos: mudanca_creditos
+        }]);
+
+        if (error) {
+            console.error('[DEV_CORE] Falha ao gravar log de auditoria geral:', error);
+        }
+    } catch (err) {
+        console.error('[DEV_CORE] Exceção ao gravar log de auditoria geral:', err);
+    }
+}
+
 async function registrarLogBancario({ personagem_id, tipo_evento, descricao, valor_creditos, dados_adicionais }) {
     try {
         const { error } = await supabaseClient.from('log_bancario').insert([{
@@ -361,10 +385,10 @@ async function registrarLogBancario({ personagem_id, tipo_evento, descricao, val
         }]);
 
         if (error) {
-            console.error('[DEV_CORE] Falha ao gravar log de auditoria:', error);
+            console.error('[DEV_CORE] Falha ao gravar log bancário:', error);
         }
     } catch (err) {
-        console.error('[DEV_CORE] Exceção ao gravar log de auditoria:', err);
+        console.error('[DEV_CORE] Exceção ao gravar log bancário:', err);
     }
 }
 
