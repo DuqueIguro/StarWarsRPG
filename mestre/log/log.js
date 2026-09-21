@@ -14,7 +14,7 @@ async function carregarPersonagens() {
 
     const { data, error } = await client
         .from('personagens')
-        .select('id, nome, creditos, fichas')
+        .select('id, nome, creditos, fichas, facecred, peggats')
         .order('nome');
 
     if (!error && data) {
@@ -39,10 +39,12 @@ async function carregarPersonagens() {
                 card.target = '_blank';
                 card.className = 'bg-stone-900/40 border border-cyan-900/30 hover:border-cyan-500 hover:bg-stone-900 p-3 rounded flex flex-col justify-between transition-all cursor-pointer group shadow-sm';
                 card.innerHTML = `
-                    <span class="text-xs font-bold text-stone-300 group-hover:text-cyan-300 transition-colors uppercase tracking-wider">${p.nome}</span>
-                    <div class="mt-2 pt-2 border-t border-stone-800 flex justify-between items-center text-[10px]">
-                        <span class="text-green-400 font-bold">${p.creditos || 0} 💳</span>
-                        <span class="text-yellow-400 font-bold">${p.fichas || 0} 🪙</span>
+                    <span class="text-xs font-bold text-stone-300 group-hover:text-cyan-300 transition-colors uppercase tracking-wider mb-2 truncate">${p.nome}</span>
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-1 pt-2 border-t border-stone-800 text-[10px]">
+                        <span class="flex items-center gap-1 font-bold text-amber-400" title="Créditos Imperiais">💳 ${p.creditos || 0} CI</span>
+                        <span class="flex items-center gap-1 font-bold text-sky-400" title="FaceCred">💠 ${p.facecred || 0} FC</span>
+                        <span class="flex items-center gap-1 font-bold text-pink-400" title="Peggats">🪙 ${p.peggats || 0} PG</span>
+                        <span class="flex items-center gap-1 font-bold text-orange-400" title="Fichas Galácticas">🎲 ${p.fichas || 0} FG</span>
                     </div>
                 `;
                 rosterPanel.appendChild(card);
@@ -316,7 +318,27 @@ async function carregarLogsBancario() {
 
         let deltaCreditos = '<span class="text-stone-500">—</span>';
         if (log.valor_creditos !== null && log.valor_creditos !== undefined) {
-            deltaCreditos = `<span class="text-amber-400 font-bold">${Number(log.valor_creditos).toLocaleString('pt-BR')} CR</span>`;
+            const valorFormatado = Number(log.valor_creditos).toLocaleString('pt-BR');
+            const moeda = (log.dados_adicionais?.moeda || log.dados_adicionais?.currency || 'CI').toUpperCase();
+
+            let moedaClasse = 'text-amber-400';
+            let moedaTexto = `${valorFormatado} CI 💳`;
+
+            if (moeda === 'FC') {
+                moedaClasse = 'text-sky-400';
+                moedaTexto = `${valorFormatado} FC 💠`;
+            } else if (moeda === 'PG') {
+                moedaClasse = 'text-pink-400';
+                moedaTexto = `${valorFormatado} PG 🪙`;
+            } else if (moeda === 'BRL') {
+                moedaClasse = 'text-emerald-400';
+                moedaTexto = `R$ ${valorFormatado}`;
+            } else if (moeda === 'FG') {
+                moedaClasse = 'text-orange-400';
+                moedaTexto = `${valorFormatado} FG 🎲` ;
+            }
+
+            deltaCreditos = `<span class="px-2 py-1 rounded border border-stone-700/60 bg-stone-950/60 font-bold ${moedaClasse}">${moedaTexto}</span>`;
         }
 
         const tr = document.createElement('tr');

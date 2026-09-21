@@ -12,6 +12,25 @@ body {
     background-color: rgba(56, 189, 248, 0.05);
 }
 
+#roster-panel {
+    align-items: stretch;
+}
+
+#roster-panel > a {
+    min-height: 92px;
+}
+
+#roster-panel > a .grid {
+    row-gap: 0.35rem;
+    column-gap: 0.5rem;
+}
+
+#roster-panel > a .grid span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 ::-webkit-scrollbar {
     width: 8px;
 }
