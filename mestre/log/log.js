@@ -248,6 +248,42 @@ async function carregarLogsDeDados() {
     });
 }
 
+// 4a. Resolve moeda + valor real de um log bancário, com fallbacks robustos
+function extrairImpactoEconomico(log) {
+    const dados = log.dados_adicionais || {};
+
+    // 1. Moeda: tenta as chaves conhecidas do JSON, senão infere pelo texto da descrição.
+    let moeda = (dados.moeda || dados.currency || dados.tipo_moeda || '').toString().toUpperCase();
+    const desc = (log.descricao || '').toLowerCase();
+    if (!moeda) {
+        if (desc.includes('facecred')) moeda = 'FC';
+        else if (desc.includes('peggat')) moeda = 'PG';
+        else if (desc.includes('ficha')) moeda = 'FG';
+        else if (desc.includes('real') || desc.includes('r$')) moeda = 'BRL';
+        else moeda = 'CI';
+    }
+
+    // 2. Valor: prioriza valor_creditos quando fizer sentido (não nulo e diferente de zero),
+    // senão procura campos alternativos dentro de dados_adicionais,
+    // senão extrai o número com sinal ao final da descrição (Ex: "Operação: +10").
+    let valor = null;
+    if (log.valor_creditos !== null && log.valor_creditos !== undefined && Number(log.valor_creditos) !== 0) {
+        valor = Number(log.valor_creditos);
+    } else {
+        const candidatos = [dados.valor, dados.quantidade, dados.montante, dados.delta, dados.ajuste, dados.valor_alterado];
+        const alternativo = candidatos.find(v => v !== null && v !== undefined && v !== '');
+        if (alternativo !== undefined) {
+            valor = Number(alternativo);
+        } else {
+            const match = (log.descricao || '').match(/([+-]\s?\d+(?:[.,]\d+)?)\s*$/);
+            if (match) valor = Number(match[1].replace(/\s/g, '').replace(',', '.'));
+            else if (log.valor_creditos !== null && log.valor_creditos !== undefined) valor = Number(log.valor_creditos);
+        }
+    }
+
+    return { moeda, valor: (valor === null || Number.isNaN(valor)) ? null : valor };
+}
+
 // 4. Log Bancário (Novo: Empréstimos, Quitações, Cupons, Taxas)
 async function carregarLogsBancario() {
     const client = getSupabaseClient();
@@ -316,26 +352,27 @@ async function carregarLogsBancario() {
             labelTipo = 'REVOGAÇÃO';
         }
 
+        const impacto = extrairImpactoEconomico(log);
         let deltaCreditos = '<span class="text-stone-500">—</span>';
-        if (log.valor_creditos !== null && log.valor_creditos !== undefined) {
-            const valorFormatado = Number(log.valor_creditos).toLocaleString('pt-BR');
-            const moeda = (log.dados_adicionais?.moeda || log.dados_adicionais?.currency || 'CI').toUpperCase();
+        if (impacto.valor !== null) {
+            const sinal = impacto.valor > 0 ? '+' : '';
+            const valorFormatado = sinal + Number(impacto.valor).toLocaleString('pt-BR');
 
             let moedaClasse = 'text-amber-400';
             let moedaTexto = `${valorFormatado} CI 💳`;
 
-            if (moeda === 'FC') {
+            if (impacto.moeda === 'FC') {
                 moedaClasse = 'text-sky-400';
                 moedaTexto = `${valorFormatado} FC 💠`;
-            } else if (moeda === 'PG') {
+            } else if (impacto.moeda === 'PG') {
                 moedaClasse = 'text-pink-400';
                 moedaTexto = `${valorFormatado} PG 🪙`;
-            } else if (moeda === 'BRL') {
+            } else if (impacto.moeda === 'BRL') {
                 moedaClasse = 'text-emerald-400';
                 moedaTexto = `R$ ${valorFormatado}`;
-            } else if (moeda === 'FG') {
+            } else if (impacto.moeda === 'FG') {
                 moedaClasse = 'text-orange-400';
-                moedaTexto = `${valorFormatado} FG 🎲` ;
+                moedaTexto = `${valorFormatado} FG 🎲`;
             }
 
             deltaCreditos = `<span class="px-2 py-1 rounded border border-stone-700/60 bg-stone-950/60 font-bold ${moedaClasse}">${moedaTexto}</span>`;
