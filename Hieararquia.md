@@ -39,9 +39,13 @@ StarWarsRPG
 │  └─ controleUsuario.html
 ├─ durtoc
 │  ├─ database
+│  │  ├─ durtoc.js
+│  │  ├─ inventarioOficina.js
 │  │  ├─ manifesto.json
 │  │  ├─ manifestoSigiloso.json
+│  │  ├─ MCMT.css
 │  │  ├─ modeloOS.json
+│  │  ├─ oficina.js
 │  │  ├─ ordens_de_servico
 │  │  │  ├─ OS-04-COR-001.json
 │  │  │  ├─ OS-14-EGM-001.json
@@ -54,14 +58,15 @@ StarWarsRPG
 │  │  │  └─ OS-14-SIG-002.json
 │  │  ├─ OS-04-COR-001.json
 │  │  ├─ OS-04-UND-001.json
+│  │  ├─ servicosMCMT.js
 │  │  └─ siglasLocalidade.json
 │  ├─ droids
+│  │  └─ droids.js
 │  ├─ droids.html
-│  ├─ droids.js
 │  ├─ durtoc.html
-│  ├─ durtoc.js
 │  ├─ durtocGateKeeper.js
 │  ├─ fornecedores
+│  │  ├─ fornecedores.css
 │  │  ├─ fornecedores.js
 │  │  └─ fornecedores.json
 │  ├─ fornecedores.html
@@ -71,11 +76,8 @@ StarWarsRPG
 │  │  ├─ hangarAutorizado.html
 │  │  └─ status.js
 │  ├─ inventarioOficina.html
-│  ├─ inventarioOficina.js
 │  ├─ oficina.html
-│  ├─ oficina.js
 │  ├─ servicosMCMT.html
-│  ├─ servicosMCMT.js
 │  ├─ siglas
 │  │  ├─ siglas.css
 │  │  ├─ siglas.js
@@ -258,7 +260,6 @@ StarWarsRPG
 │  ├─ durtoc.css
 │  ├─ escudo.css
 │  ├─ ficha.css
-│  ├─ fornecedores.css
 │  ├─ frotaRebeldes.css
 │  ├─ hangar.css
 │  ├─ hierarquiaGeral.css
@@ -270,7 +271,6 @@ StarWarsRPG
 │  ├─ login.css
 │  ├─ manutencao.css
 │  ├─ mapa_galatico.css
-│  ├─ MCMT.css
 │  ├─ menu.css
 │  ├─ MTP.css
 │  ├─ oficina.css
