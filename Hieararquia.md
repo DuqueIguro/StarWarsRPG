@@ -76,6 +76,10 @@ StarWarsRPG
 │  ├─ oficina.js
 │  ├─ servicosMCMT.html
 │  ├─ servicosMCMT.js
+│  ├─ siglas
+│  │  ├─ siglas.css
+│  │  └─ siglas.js
+│  ├─ siglas.html
 │  └─ tripulantes.html
 ├─ Hieararquia.md
 ├─ img
@@ -132,11 +136,18 @@ StarWarsRPG
 │  ├─ sabres.ico
 │  ├─ servicos.png
 │  └─ tripulantes
+│     ├─ PosFaisca.jpeg
+│     ├─ PosGara.jpeg
+│     ├─ PosKael.jpeg
+│     ├─ PosLoras.jpeg
+│     ├─ PosRenn.jpeg
+│     ├─ PosVasctor.jpeg
+│     ├─ PosZarek.jpeg
 │     ├─ PreFaisca.png
+│     ├─ PreGara.png
 │     ├─ PreKael.png
 │     ├─ PreLoras.png
 │     ├─ PreRenn.png
-│     ├─ PreSara.png
 │     ├─ PreVasctor.png
 │     └─ PreZarek.png
 ├─ index.html
