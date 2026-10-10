@@ -3,7 +3,7 @@
    Importa o estilo base da Engrenagem Mestra e
    acrescenta só o que é exclusivo desta página.
    ============================================= */
-@import url('../../styles/MCMT.css');
+@import url('../database/MCMT.css');
 
 :root {
   --acc-sigla: var(--green-bright);
