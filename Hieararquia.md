@@ -78,7 +78,10 @@ StarWarsRPG
 │  ├─ servicosMCMT.js
 │  ├─ siglas
 │  │  ├─ siglas.css
-│  │  └─ siglas.js
+│  │  ├─ siglas.js
+│  │  ├─ siglasData.js
+│  │  ├─ sugestoes.js
+│  │  └─ tino.js
 │  ├─ siglas.html
 │  └─ tripulantes.html
 ├─ Hieararquia.md

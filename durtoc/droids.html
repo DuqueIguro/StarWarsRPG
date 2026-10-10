@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Droids Operacionais — MCMT</title>
-  <link rel="icon" href="../img/droid.ico" />
+  <link rel="icon" href="../img/servicos.png" />
   <link rel="stylesheet" href="../styles/MCMT.css" />
 </head>
+
 <body>
 
   <!-- Aurebesh watermark background -->
@@ -20,11 +22,12 @@
     </div>
     <nav aria-label="Navegação MCMT">
       <ul class="mcmt-nav">
-        <li><a href="../pages/oficina">Oficina</a></li>
-        <li><a href="../durtoc/servicosMCMT">Serviços</a></li>
-        <li><a href="../durtoc/tripulantes">Tripulação</a></li>
-        <li><a href="../durtoc/droids" class="active">Droids</a></li>
-        <li><a href="../durtoc/hangar/hangarAutorizado.html">Hangar</a></li>
+        <li><a href="oficina.html">Oficina</a></li>
+        <li><a href="servicosMCMT.html">Serviços</a></li>
+        <li><a href="droids.html" class="active">Droids</a></li>
+        <li><a href="tripulantes.html">Tripulantes</a></li>
+        <li><a href="fornecedores.html">Fornecedores</a></li>
+        <li><a href="siglas.html">Léxico</a></li>
       </ul>
     </nav>
   </header>
@@ -85,7 +88,8 @@
       </article>
 
       <!-- USM-07 — Comboio -->
-      <article class="mcmt-card" onclick="MCMT.open(DROIDS.comboio)" tabindex="0" aria-label="Abrir ficha de USM-07 Comboio">
+      <article class="mcmt-card" onclick="MCMT.open(DROIDS.comboio)" tabindex="0"
+        aria-label="Abrir ficha de USM-07 Comboio">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Comboio.png" alt="Comboio — USM-07" loading="lazy" />
           <span class="card-status">ATIVO</span>
@@ -162,4 +166,5 @@
 
   <script src="../js/MCMT.js"></script>
 </body>
+
 </html>

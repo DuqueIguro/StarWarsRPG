@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Léxico do Dur'toc — Engrenagem Mestra</title>
+  <link rel="icon" href="../img/servicos.png">
+  <!-- siglas.css importa ../../styles/MCMT.css e acrescenta os estilos desta página -->
+  <link rel="stylesheet" href="siglas/siglas.css">
+</head>
+<body>
+
+  <div class="aurebesh-bg" id="aurebeshBg" aria-hidden="true"></div>
+
+  <header class="mcmt-header">
+    <div class="logo">
+      <span class="logo-aurebesh">engrenagem mestra</span>
+      <span>Oficina Dur'toc · Léxico</span>
+    </div>
+    <ul class="mcmt-nav">
+        <li><a href="oficina.html">Oficina</a></li>
+        <li><a href="servicosMCMT.html">Serviços</a></li>
+      <li><a href="droids.html">Droids</a></li>
+      <li><a href="tripulantes.html">Tripulantes</a></li>
+      <li><a href="fornecedores.html">Fornecedores</a></li>
+      <li><a href="siglas.html" class="active">Léxico</a></li>
+    </ul>
+  </header>
+
+  <main class="mcmt-wrapper">
+
+    <!-- ===== HERO ===== -->
+    <section class="mcmt-hero">
+      <div class="hero-meta">
+        <span class="reg-num">LEX-DUR-01</span>
+        Arquivo de vernáculo<br>da oficina
+      </div>
+      <p class="hero-eyebrow"><span>lexico</span>Registro de linguagem · Oficina Dur'toc</p>
+      <h1>Gírias, siglas &amp; expressões</h1>
+      <p class="hero-sub">Tudo o que Dur'toc fala quando um cliente entra pela porta: consulte, edite, acrescente e peça sugestões de fala para a situação que você está interpretando.</p>
+      <div class="sg-stats" id="sgStats">
+        <div class="sg-stat"><b id="stSig">0</b><span>siglas</span></div>
+        <div class="sg-stat"><b id="stGir">0</b><span>gírias</span></div>
+        <div class="sg-stat"><b id="stExp">0</b><span>expressões</span></div>
+        <div class="sg-stat"><b id="stCat">0</b><span>categorias</span></div>
+      </div>
+    </section>
+
+    <!-- ===== SUGESTOR ===== -->
+    <section id="sugestor" aria-labelledby="h-sugestor">
+      <div class="section-header">
+        <span class="section-tag">sugestor</span>
+        <h2 id="h-sugestor">Sugestor de falas e siglas</h2>
+      </div>
+
+      <div class="sg-sug">
+        <div class="sg-sug-input">
+          <label for="ctxInput">Descreva a situação na oficina</label>
+          <textarea id="ctxInput" rows="3" placeholder="Ex.: o piloto tentou consertar o hiperpropulsor sozinho e agora quer desconto…   (Ctrl + Enter para sugerir)"></textarea>
+          <div class="sg-chips" id="ctxChips" aria-label="Situações comuns"></div>
+          <div class="sg-sug-opts">
+            <span>Sugerir</span>
+            <span id="sugTipos" style="display:contents">
+              <label class="sg-check"><input type="checkbox" value="sigla" checked><span>Siglas</span></label>
+              <label class="sg-check"><input type="checkbox" value="giria" checked><span>Gírias</span></label>
+              <label class="sg-check"><input type="checkbox" value="expressao" checked><span>Expressões</span></label>
+            </span>
+            <button type="button" class="sg-btn" id="btnLimparCtx">Limpar</button>
+            <button type="button" class="sg-btn" id="btnOutras">Outras sugestões</button>
+            <button type="button" class="sg-btn sg-btn-primary" id="btnSugerir">Sugerir</button>
+          </div>
+        </div>
+        <div class="sg-sug-out" id="sugOut" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ===== BIBLIOTECA ===== -->
+    <section id="lexico" aria-labelledby="h-lexico">
+      <div class="section-header">
+        <span class="section-tag">lexico</span>
+        <h2 id="h-lexico">Biblioteca do léxico</h2>
+      </div>
+
+      <div class="sg-toolbar">
+        <div class="sg-search-wrap">
+          <input id="sgSearch" type="search" class="sg-search" placeholder="Buscar sigla, gíria, frase ou categoria…   ( / )" autocomplete="off" aria-label="Buscar no léxico">
+          <button type="button" class="sg-clear" id="sgClearQ" aria-label="Limpar busca" hidden>&times;</button>
+        </div>
+
+        <div class="sg-tabs" id="sgTabs" role="tablist" aria-label="Tipo de registro">
+          <button type="button" class="sg-tab active" role="tab" data-tipo="todos">Tudo <i>0</i></button>
+          <button type="button" class="sg-tab" role="tab" data-tipo="sigla">Siglas <i>0</i></button>
+          <button type="button" class="sg-tab" role="tab" data-tipo="giria">Gírias <i>0</i></button>
+          <button type="button" class="sg-tab" role="tab" data-tipo="expressao">Expressões <i>0</i></button>
+        </div>
+
+        <div class="sg-filtros" id="sgFiltros">
+          <label class="sg-field"><span>Categoria</span>
+            <select id="sgCat"><option value="todas">Todas as categorias</option></select>
+          </label>
+          <label class="sg-field"><span>Pronúncia (siglas)</span>
+            <select id="sgPron">
+              <option value="todas">Todas</option>
+              <option value="palavra">Como palavra</option>
+              <option value="soletrada">Soletrada</option>
+            </select>
+          </label>
+          <label class="sg-field"><span>Ordem</span>
+            <select id="sgOrd">
+              <option value="padrao">Ordem do arquivo</option>
+              <option value="az">A → Z</option>
+              <option value="cat">Por categoria</option>
+              <option value="recentes">Mais recentes</option>
+            </select>
+          </label>
+          <button type="button" class="sg-btn" id="sgFavOnly" aria-pressed="false">★ Favoritos</button>
+          <button type="button" class="sg-btn" id="sgReset" hidden>Limpar filtros</button>
+        </div>
+
+        <div class="sg-actions">
+          <button type="button" class="sg-btn sg-btn-primary" id="btnNovo">+ Nova entrada</button>
+          <button type="button" class="sg-btn" id="btnAleatorio">Aleatório</button>
+          <button type="button" class="sg-btn" id="btnExport">Exportar</button>
+          <button type="button" class="sg-btn" id="btnImport">Importar</button>
+          <button type="button" class="sg-btn" id="btnRestaurar">Restaurar padrão</button>
+          <span class="sg-viewtoggle" role="group" aria-label="Visualização">
+            <button type="button" class="sg-btn" id="vwGrid" aria-pressed="true" aria-label="Cards" title="Cards">▦</button>
+            <button type="button" class="sg-btn" id="vwList" aria-pressed="false" aria-label="Lista" title="Lista">☰</button>
+          </span>
+          <input type="file" id="fileImport" accept="application/json,.json" hidden>
+        </div>
+      </div>
+
+      <p class="sg-count" id="sgCount" aria-live="polite"></p>
+      <div class="sg-catinfo" id="sgCatInfo" hidden></div>
+
+      <div class="cards-grid sg-grid" id="sgGrid"></div>
+
+      <div class="sg-empty" id="sgEmpty" hidden>
+        <strong>Nenhum registro encontrado</strong>
+        <p>Tente menos palavras, tire um filtro ou cadastre isso como novo item do léxico.</p>
+        <button type="button" class="sg-btn" id="sgEmptyReset">Limpar filtros</button>
+        <button type="button" class="sg-btn sg-btn-primary" id="sgEmptyNovo">+ Criar entrada</button>
+      </div>
+    </section>
+
+    <footer class="mcmt-footer">
+      <span>Engrenagem Mestra · Oficina Dur'toc</span>
+      <span class="footer-aurebesh">durtoc</span>
+      <span>Léxico v1</span>
+    </footer>
+  </main>
+
+  <!-- ===== MODAL: detalhe ===== -->
+  <div class="mcmt-modal-overlay" id="sgDetail" role="dialog" aria-modal="true" aria-label="Detalhes do registro">
+    <div class="mcmt-modal sg-modal"></div>
+  </div>
+
+  <!-- ===== MODAL: adicionar / editar ===== -->
+  <div class="mcmt-modal-overlay" id="sgForm" role="dialog" aria-modal="true" aria-labelledby="sgFormTitle">
+    <div class="mcmt-modal sg-modal sg-modal-sm">
+      <div class="modal-close sg-modal-bar">
+        <h3 class="sg-modal-h" id="sgFormTitle">Nova entrada</h3>
+        <button type="button" data-close>Fechar</button>
+      </div>
+      <form class="sg-form" id="sgFormEl" novalidate autocomplete="off">
+        <label class="sg-lbl">Tipo
+          <select id="fTipo">
+            <option value="sigla">Sigla</option>
+            <option value="giria">Gíria</option>
+            <option value="expressao">Expressão / fala</option>
+          </select>
+        </label>
+
+        <label class="sg-lbl" data-for="sigla">Sigla
+          <input id="fTermo" type="text" maxlength="30" placeholder="Ex.: GAFO  ou  G.A.F.O">
+          <small>Com pontos, o chefe soletra. Sem pontos, ele diz como palavra.</small>
+        </label>
+        <label class="sg-lbl" data-for="sigla">Significado por extenso
+          <input id="fSignificado" type="text" maxlength="200" placeholder="Ex.: Gambiarra Altamente Funcional e Otimizada">
+        </label>
+        <div class="sg-lbl" data-for="sigla" role="radiogroup" aria-label="Pronúncia">Pronúncia
+          <div class="sg-radios">
+            <label><input type="radio" name="fPron" value="palavra" checked> Como palavra</label>
+            <label><input type="radio" name="fPron" value="soletrada"> Soletrada (letra por letra)</label>
+          </div>
+        </div>
+
+        <label class="sg-lbl" data-for="giria expressao" hidden>Texto da fala
+          <textarea id="fTexto" maxlength="800" placeholder="O que Dur'toc diz, sem aspas."></textarea>
+        </label>
+        <label class="sg-lbl" data-for="giria expressao" hidden>Cena ou ação (opcional)
+          <input id="fCena" type="text" maxlength="120" placeholder="Ex.: Limpando um circuito">
+        </label>
+
+        <label class="sg-lbl">Categoria
+          <input id="fCat" type="text" list="dlCats" maxlength="80" placeholder="Escolha uma existente ou digite uma nova">
+          <datalist id="dlCats"></datalist>
+        </label>
+        <label class="sg-lbl"><span id="fDefLbl">Definição</span>
+          <textarea id="fDef" maxlength="900"></textarea>
+        </label>
+        <label class="sg-lbl">Exemplos de uso (um por linha)
+          <textarea id="fExemplos" maxlength="1800"></textarea>
+        </label>
+        <label class="sg-lbl">Tags (separadas por vírgula)
+          <input id="fTags" type="text" maxlength="200" placeholder="Ex.: cliente, preço, droide">
+          <small>As tags ajudam o Sugestor a achar este registro.</small>
+        </label>
+
+        <div class="sg-err" id="fErro" role="alert"></div>
+        <div class="sg-form-btns">
+          <button type="button" class="sg-btn" id="fCancelar">Cancelar</button>
+          <button type="submit" class="sg-btn sg-btn-primary" id="fSalvar">Adicionar ao léxico</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: confirmação ===== -->
+  <div class="mcmt-modal-overlay" id="sgConfirm" role="alertdialog" aria-modal="true" aria-labelledby="sgConfirmTitle">
+    <div class="mcmt-modal sg-modal sg-modal-xs">
+      <div class="sg-form">
+        <h3 class="sg-modal-h" id="sgConfirmTitle"></h3>
+        <p class="modal-desc" id="sgConfirmMsg"></p>
+        <div class="sg-confirm-btns" id="sgConfirmBtns"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-toasts" id="sgToasts" aria-live="polite"></div>
+
+  <!-- Ordem importa: guarda de acesso, dados, núcleo, sugestor, droide-guia -->
+  <script src="siglas/siglasData.js"></script>
+  <script src="siglas/siglas.js"></script>
+  <script src="siglas/sugestoes.js"></script>
+  <script src="siglas/tino.js"></script>
+</body>
+</html>
