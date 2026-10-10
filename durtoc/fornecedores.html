@@ -1,63 +1,73 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal de Fornecedores - Star Wars RPG</title>
-    <link rel="stylesheet" href="fornecedores/fornecedores.css">
-    <link rel="icon" type="image/x-icon" href="../img/servicos.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fornecedores — MCMT</title>
+  <link rel="icon" href="../img/servicos.png" />
+  <link rel="stylesheet" href="database/MCMT.css" />
+  <link rel="stylesheet" href="fornecedores/fornecedores.css" />
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <a href="../" class="back-button">
-                <i class="fa-solid fa-arrow-left"></i> Voltar ao Início
-            </a>
-            <a href="../pages/oficina" class="back-button">
-                <i class="fa-solid fa-arrow-left"></i> Voltar a Oficina
-            </a>
-            <h1><i class="fa-solid fa-wrench"></i> Terminal de Fornecedores</h1>
-            <p class="font-aurebesh">Terminal de Fornecedores</p>
-        </header>
 
-        <main>
-            <div class="filtros-container">
-                <div class="filtro-grupo">
-                    <label for="busca-nome"><i class="fa-solid fa-user"></i> Nome do Fornecedor</label>
-                    <input type="text" id="busca-nome" class="filtro-input" placeholder="Ex: Faísca...">
-                </div>
-                <div class="filtro-grupo">
-                    <label for="busca-raca"><i class="fa-solid fa-users"></i> Raça</label>
-                    <input type="text" id="busca-raca" class="filtro-input" placeholder="Ex: Twi'lek...">
-                </div>
-                <div class="filtro-grupo">
-                    <label for="busca-planeta"><i class="fa-solid fa-globe"></i> Planeta</label>
-                    <input type="text" id="busca-planeta" class="filtro-input" placeholder="Ex: Coruscant...">
-                </div>
-                <div class="filtro-grupo">
-                    <label for="filtro-qualidade"><i class="fa-solid fa-star"></i> Qualidade</label>
-                    <select id="filtro-qualidade" class="filtro-input">
-                        <option value="">Todas</option>
-                        <option value="Ruim">Ruim</option>
-                        <option value="Normal">Normal</option>
-                        <option value="Boa">Boa</option>
-                        <option value="Excelente">Excelente</option>
-                    </select>
-                </div>
-            </div>
+  <div class="aurebesh-bg" aria-hidden="true"></div>
+  <script src="../js/mcmt-shell.js" data-active="fornecedores"></script>
 
-            <div id="lista-fornecedores">
-                </div>
-            <p id="mensagem-nenhum-resultado" style="display: none;">Nenhum fornecedor corresponde aos parâmetros de busca.</p>
-        </main>
+  <main class="mcmt-wrapper">
+
+    <section class="mcmt-hero">
+      <p class="hero-eyebrow"><span>fornecedores</span>Rede de Suprimentos · Peças e Componentes</p>
+      <h1>Terminal de Fornecedores</h1>
+      <p class="hero-sub">Consulte contatos, origem e qualidade dos fornecedores de peças da oficina.</p>
+      <div class="hero-meta">
+        <span class="reg-num">SUP-MCMT</span>
+        Catálogo de fornecedores
+      </div>
+    </section>
+
+    <div class="section-header">
+      <span class="section-tag">busca</span>
+      <h2>Filtros</h2>
     </div>
 
-    <script src="fornecedores/fornecedores.js"></script>
+    <div class="filtros-container">
+      <div class="filtro-grupo">
+        <label for="busca-nome">Nome do fornecedor</label>
+        <input type="text" id="busca-nome" class="filtro-input" placeholder="Ex: Faísca...">
+      </div>
+      <div class="filtro-grupo">
+        <label for="busca-raca">Raça</label>
+        <input type="text" id="busca-raca" class="filtro-input" placeholder="Ex: Twi'lek...">
+      </div>
+      <div class="filtro-grupo">
+        <label for="busca-planeta">Planeta</label>
+        <input type="text" id="busca-planeta" class="filtro-input" placeholder="Ex: Coruscant...">
+      </div>
+      <div class="filtro-grupo">
+        <label for="filtro-qualidade">Qualidade</label>
+        <select id="filtro-qualidade" class="filtro-input">
+          <option value="">Todas</option>
+          <option value="Ruim">Ruim</option>
+          <option value="Normal">Normal</option>
+          <option value="Boa">Boa</option>
+          <option value="Excelente">Excelente</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-tag">registro</span>
+      <h2>Fornecedores Registrados</h2>
+    </div>
+
+    <div id="lista-fornecedores"></div>
+    <p id="mensagem-nenhum-resultado" style="display: none;">Nenhum fornecedor corresponde aos parâmetros de busca.</p>
+
+  </main>
+
+  <script src="fornecedores/fornecedores.js"></script>
 </body>
 
 </html>

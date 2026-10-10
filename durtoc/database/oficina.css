@@ -108,17 +108,86 @@ i.fa-solid {
     color: #fef3c7 !important;
 }
 
-/* Ajuste específico para o Botão Fornecedores se assemelhar ao estilo do MCMT */
-#btn-fornecedores {
-    min-width: 160px;
-    text-align: center;
+/* =============================================
+   PADRONIZAÇÃO — layout da página de Oficina
+   ============================================= */
+
+/* O Tailwind (preflight) zera o line-height do body; reaplica o padrão MCMT */
+body { line-height: 1.7 !important; }
+
+/* Acesso rápido */
+.os-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
-@media (max-width: 768px) {
-    #btn-fornecedores {
-        min-width: 140px;
-        padding-left: 12px;
-        padding-right: 12px;
-        font-size: 0.9rem;
-    }
+.os-quick a {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
+
+.os-quick a:hover {
+  border-color: var(--border-glow);
+  background: var(--bg-card-hover);
+  color: var(--green-bright);
+}
+
+/* Painéis */
+.os-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+}
+
+.os-panel-title {
+  font-family: var(--font-main);
+  font-size: 0.7rem;
+  font-weight: normal;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green-mid) !important;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.os-panel-title-sigiloso {
+  color: #f87171 !important;
+  border-bottom-color: rgba(239, 68, 68, 0.3);
+}
+
+.os-placeholder-text {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.os-placeholder-sigiloso { color: #f87171; opacity: 0.8; }
+
+/* Adendo de sigilo */
+.os-adendo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  padding: 0.9rem 1rem;
+  background: rgba(45, 10, 10, 0.4);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: var(--radius);
+  font-size: 0.72rem;
+  color: #fca5a5;
+}
+
+.os-adendo-icon { font-size: 1.1rem; color: #f87171; line-height: 1.4; }
+.os-adendo strong { letter-spacing: 0.12em; text-transform: uppercase; }

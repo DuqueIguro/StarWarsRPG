@@ -161,26 +161,26 @@ const createItemCard = (item, context = 'shop') => {
     const itemPrice = item.price !== undefined ? item.price : (parseFloat(item.custo) || 0);
 
     const qualityClass = itemQuality.replace(/\s/g, '-');
-    card.className = `glass-pane p-4 rounded-lg flex flex-col border-l-4 quality-${qualityClass} item-card-animate transform transition-all duration-300 hover:-translate-y-1`;
+    card.className = `inv-card quality-${qualityClass} item-card-animate`;
 
     let buttonsHtml = '';
 
     if (context === 'shop') {
-        buttonsHtml = `<button class="add-to-cart-btn mt-4 btn-primary font-bold py-2 px-4 rounded-md w-full cursor-pointer uppercase tracking-widest text-xs">Adicionar ao Carrinho</button>`;
+        buttonsHtml = `<button class="add-to-cart-btn btn-primary inv-btn-block">Adicionar ao Carrinho</button>`;
     } else {
         // Interface exclusiva de Inventário (Transferência + Remoção)
         buttonsHtml = `
-            <div class="mt-4 pt-3 border-t border-cyan-900/50">
-                <label class="block text-[10px] text-cyan-500 uppercase tracking-widest mb-1 font-bold">Transferir para:</label>
-                <div class="flex gap-2 mb-2">
-                    <select class="transfer-dest-select flex-grow bg-stone-900 border border-stone-700 rounded p-1.5 text-[11px] text-stone-300 outline-none focus:border-cyan-400 font-bold uppercase tracking-wider cursor-pointer">
+            <div class="inv-card-actions">
+                <label class="inv-label">Transferir para:</label>
+                <div class="inv-row">
+                    <select class="transfer-dest-select mcmt-input inv-select-sm">
                         <option value="personagem" ${item.owner_id === currentPersonagemId ? 'disabled' : ''}>Inventário Pessoal</option>
                         <option value="oficina1" ${item.owner_id === OFICINA1_ID ? 'disabled' : ''}>MCMT 1</option>
                         <option value="oficina2" ${item.owner_id === OFICINA2_ID ? 'disabled' : ''}>MCMT 2</option>
                     </select>
-                    <button class="transfer-btn btn-success px-3 py-1.5 text-xs rounded font-bold cursor-pointer uppercase tracking-widest">Mover</button>
+                    <button class="transfer-btn btn-success">Mover</button>
                 </div>
-                <button class="remove-from-inventory-btn btn-danger font-bold py-1.5 px-4 rounded-md w-full cursor-pointer text-[10px] uppercase tracking-widest">Descartar Item</button>
+                <button class="remove-from-inventory-btn btn-danger inv-btn-block">Descartar Item</button>
             </div>
         `;
     }
@@ -188,15 +188,15 @@ const createItemCard = (item, context = 'shop') => {
     const priceInReais = itemPrice / 10000;
 
     card.innerHTML = `
-        <div class="flex-grow">
-            <h4 class="font-orbitron text-lg text-cyan-400">${itemName}</h4>
-            <p class="text-sm text-gray-400 mb-2">Qualidade: <span class="font-bold">${itemQuality}</span></p>
-            <p class="text-xs mb-2 text-gray-400">Categoria: ${itemCategory}</p>
-            <p class="text-sm mb-4 text-gray-300">${itemDesc}</p>
+        <div class="inv-card-main">
+            <h4 class="inv-card-title">${itemName}</h4>
+            <p class="inv-card-meta">Qualidade: <span class="inv-quality">${itemQuality}</span></p>
+            <p class="inv-card-meta inv-card-meta-sm">Categoria: ${itemCategory}</p>
+            <p class="inv-card-desc">${itemDesc}</p>
         </div>
         <div>
-            <p class="font-bold text-yellow-400 text-lg">${itemPrice.toLocaleString()} ⦻ (Créditos)</p>
-            <p class="text-sm text-green-400 font-bold mb-2">R$ ${priceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            <p class="inv-price">${itemPrice.toLocaleString()} ⦻ (Créditos)</p>
+            <p class="inv-price-real">R$ ${priceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             ${buttonsHtml}
         </div>
     `;
@@ -237,7 +237,7 @@ const renderItems = () => {
     });
 
     if (filteredItems.length === 0) {
-        itemGridEl.innerHTML = '<p class="text-gray-400 col-span-full text-center">Nenhum item encontrado com os filtros atuais.</p>';
+        itemGridEl.innerHTML = '<p class="inv-empty">Nenhum item encontrado com os filtros atuais.</p>';
         return;
     }
 
@@ -267,7 +267,7 @@ const renderItems = () => {
 };
 
 const renderInventoryGrid = (inventoryArray, gridElement) => {
-    gridElement.innerHTML = '<p class="text-gray-500 col-span-full text-center tracking-widest uppercase text-xs mt-8">Nenhum item armazenado neste compartimento.</p>';
+    gridElement.innerHTML = '<p class="inv-empty">Nenhum item armazenado neste compartimento.</p>';
     if (inventoryArray.length > 0) {
         gridElement.innerHTML = '';
         inventoryArray.sort((a, b) => {
@@ -291,30 +291,30 @@ const renderCart = () => {
     let totalPersonal = 0;
 
     if (state.cart.length === 0) {
-        cartItemsEl.innerHTML = '<p class="text-gray-400 text-center py-4">O carrinho está vazio.</p>';
+        cartItemsEl.innerHTML = '<p class="inv-empty">O carrinho está vazio.</p>';
     } else {
         state.cart.forEach((cartItem, index) => {
             const div = document.createElement('div');
-            div.className = 'mb-4 p-3 rounded-md bg-gray-900/40 border border-gray-800 flex flex-col item-card-animate';
+            div.className = 'inv-cart-item item-card-animate';
 
             const itemPriceInReais = cartItem.item.price / 10000;
 
             div.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
+                <div class="inv-cart-item-head">
                     <div>
-                        <p class="font-bold text-sm text-cyan-100">${cartItem.item.name}</p>
-                        <p class="text-xs text-yellow-400">${cartItem.item.price.toLocaleString()} Créditos</p>
-                        <p class="text-xs text-green-400">R$ ${itemPriceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        <p class="inv-cart-name">${cartItem.item.name}</p>
+                        <p class="inv-cart-price">${cartItem.item.price.toLocaleString()} Créditos</p>
+                        <p class="inv-cart-price-real">R$ ${itemPriceInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                 </div>
                 
-                <select data-index="${index}" class="item-dest-select w-full bg-stone-900 border border-stone-700 rounded p-1.5 mb-2 text-stone-300 text-xs focus:ring-1 focus:ring-cyan-500 outline-none cursor-pointer font-bold tracking-wider">
+                <select data-index="${index}" class="item-dest-select mcmt-input inv-select-sm">
                     <option value="personagem" ${cartItem.destination === 'personagem' ? 'selected' : ''}>📍 Destino: Inventário Pessoal</option>
                     <option value="oficina1" ${cartItem.destination === 'oficina1' ? 'selected' : ''}>📍 Destino: MCMT 1</option>
                     <option value="oficina2" ${cartItem.destination === 'oficina2' ? 'selected' : ''}>📍 Destino: MCMT 2</option>
                 </select>
 
-                <button data-index="${index}" class="remove-from-cart-btn text-xs btn-danger px-2 py-1.5 rounded-md w-full cursor-pointer uppercase tracking-widest font-bold">Remover</button>
+                <button data-index="${index}" class="remove-from-cart-btn btn-danger inv-btn-block">Remover</button>
             `;
             totalPersonal += cartItem.item.price;
             cartItemsEl.appendChild(div);
@@ -369,7 +369,7 @@ const handleUpdateCredits = (e) => {
 
 const showNotification = (message, type = 'success') => {
     notificationEl.textContent = message;
-    notificationEl.className = `notification fixed top-5 right-5 p-4 rounded-lg text-white font-bold z-50 opacity-0 transform translate-y-[-20px] transition-all duration-300 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+    notificationEl.className = `notification inv-notify opacity-0 transform translate-y-[-20px] transition-all duration-300 ${type === 'success' ? 'inv-notify-ok' : 'inv-notify-err'}`;
     setTimeout(() => {
         notificationEl.classList.remove('opacity-0', 'translate-y-[-20px]');
         notificationEl.classList.add('opacity-100', 'translate-y-0');

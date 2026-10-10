@@ -591,3 +591,80 @@ body::before {
   .cards-grid { grid-template-columns: 1fr; }
   .mcmt-header { flex-wrap: wrap; }
 }
+
+/* =============================================
+   PADRONIZAÇÃO ENTRE PÁGINAS (shell compartilhado)
+   ============================================= */
+:root {
+  --page-max: 1100px;
+  --page-gutter: 1.5rem;
+  /* padding lateral que alinha header/footer com o conteúdo de .mcmt-wrapper */
+  --edge-pad: max(var(--page-gutter), calc((100% - var(--page-max)) / 2 + var(--page-gutter)));
+}
+
+/* Header e footer: barra de borda a borda, conteúdo alinhado ao wrapper */
+.mcmt-header {
+  padding: 1.2rem var(--edge-pad);
+}
+
+.mcmt-header nav { min-width: 0; }
+
+.mcmt-nav {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 0.4rem;
+}
+
+.mcmt-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: 3rem;
+  padding: 1.2rem var(--edge-pad);
+  background: var(--bg-panel);
+  flex-wrap: wrap;
+}
+
+/* Wrapper: mesmo espaçamento em todas as páginas */
+.mcmt-wrapper {
+  max-width: var(--page-max);
+  padding: 0 var(--page-gutter) 2rem;
+}
+
+/* Hero: sempre colado no header, mesma margem inferior */
+.mcmt-wrapper > .mcmt-hero:first-child { margin-top: 0; }
+
+/* Controles de formulário no padrão MCMT (usados em Fornecedores e outros) */
+.mcmt-field { display: flex; flex-direction: column; gap: 0.35rem; flex: 1; min-width: 200px; }
+
+.mcmt-field label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green-dim);
+}
+
+.mcmt-input {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 0.8rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.mcmt-input::placeholder { color: var(--text-dim); }
+
+.mcmt-input:focus {
+  outline: none;
+  border-color: var(--green-mid);
+  box-shadow: 0 0 0 1px var(--green-dim);
+}
+
+@media (max-width: 700px) {
+  :root { --page-gutter: 1rem; }
+  .mcmt-header { flex-direction: column; align-items: flex-start; }
+  .mcmt-nav { justify-content: flex-start; }
+  .mcmt-footer { flex-direction: column; align-items: flex-start; }
+}

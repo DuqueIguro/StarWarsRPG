@@ -1,127 +1,103 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oficina do Dur'Toc - Star Wars RPG</title>
+    <title>Oficina — MCMT</title>
+    <!-- Tailwind continua carregado porque o database/oficina.js gera os itens das listas com classes Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="database/MCMT.css">
     <link rel="stylesheet" href="database/oficina.css">
     <link rel="icon" type="image/x-icon" href="../img/servicos.png">
 </head>
 
-<body class="min-h-screen p-4 md:p-8">
+<body>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase.js"></script>
     <script src="durtocGateKeeper.js"></script>
 
-    <header class="text-center mb-8 relative">
-        <!-- Alterado o botão de voltar para tons de verde/emerald -->
-        <a href="../" class="absolute top-0 left-0 flex items-center gap-1 py-1 px-3 rounded-md font-orbitron text-green-300 border border-green-700 bg-gray-900/70 hover:bg-green-900/60 transition-colors shadow-md text-xs font-bold" style="text-decoration:none;">
-            <span class="text-lg">&#8592;</span> Voltar
-        </a>
-        <!-- Alterado o título principal para text-green-400 (ou text-[#7bcf9a] se quiser o tom exato) -->
-        <h1 class="text-3xl md:text-5xl font-orbitron text-green-400 tracking-widest uppercase">Terminal de registro das Oficinas MCMT1 e MCMT2</h1>
-        <p class="font-aurebesh text-lg text-green-600">Terminal de registro de ordens de serviço</p>
-    </header>
+    <div class="aurebesh-bg" aria-hidden="true"></div>
+    <script src="../js/mcmt-shell.js" data-active="oficina"></script>
 
-    <!-- Botões de navegação centralizados acima dos registros de serviço -->
-    <div class="max-w-7xl mx-auto mb-6 flex flex-wrap justify-center gap-3">
-        <a href="durtoc" id="btn-durtoc" class="inline-flex items-center gap-2 py-2 px-4 rounded-md font-orbitron text-orange-300 border border-orange-700 bg-gray-900/70 hover:bg-orange-900/60 transition-colors shadow-md text-sm font-bold" style="text-decoration:none;">
-            <i class="fa-solid fa-fire"></i>
-            Dur'Toc
-        </a>
+    <main class="mcmt-wrapper">
 
-        <a href="ficha" id="btn-ficha" class="inline-flex items-center gap-2 py-2 px-4 rounded-md font-orbitron text-yellow-300 border border-yellow-700 bg-gray-900/70 hover:bg-yellow-900/60 transition-colors shadow-md text-sm font-bold" style="text-decoration:none;">
-            <i class="fa-solid fa-user"></i>
-            Ficha
-        </a>
-
-            <a href="inventarioOficina" id="btn-inventario" class="inline-flex items-center gap-2 py-2 px-4 rounded-md font-orbitron text-sky-300 border border-sky-700 bg-gray-900/70 hover:bg-sky-900/60 transition-colors shadow-md text-sm font-bold" style="text-decoration:none;">
-                <i class="fa-solid fa-boxes-stacked"></i>
-            Inventário
-        </a>
-
-        <a href="tripulantes" id="btn-tripulantes" class="inline-flex items-center gap-2 py-2 px-4 rounded-md font-orbitron text-green-300 border border-green-700 bg-gray-900/70 hover:bg-green-900/60 transition-colors shadow-md text-sm font-bold" style="text-decoration:none;">
-            <i class="fa-solid fa-users"></i>
-            Tripulantes
-        </a>
-        
-        <a href="droids" id="btn-droids" class="inline-flex items-center gap-2 py-2 px-4 rounded-md font-orbitron text-purple-300 border border-purple-700 bg-gray-900/70 hover:bg-purple-900/60 transition-colors shadow-md text-sm font-bold" style="text-decoration:none;">
-            <i class="fa-solid fa-robot"></i>
-            Droids
-        </a>
-        
-        <a href="hangar/hangarAutorizado" id="btn-hangar" class="inline-flex items-center gap-2 py-2 px-4 rounded-md font-orbitron text-lime-300 border border-lime-700 bg-gray-900/70 hover:bg-lime-900/60 transition-colors shadow-md text-sm font-bold" style="text-decoration:none;">
-            <i class="fa-solid fa-plane-up"></i>
-            Hangar
-        </a>
-
-        <a href="fornecedores" id="btn-fornecedores" class="inline-flex items-center gap-2 py-2 px-4 rounded-md font-orbitron text-amber-400 border border-amber-700 bg-gray-900/70 hover:bg-amber-900/60 transition-colors shadow-md text-sm font-bold" style="text-decoration:none;">
-            <i class="fa-solid fa-store"></i>
-            Fornecedores
-        </a>
-
-        <a href="servicosMCMT" id="btn-servicos" class="inline-flex items-center gap-2 py-2 px-4 rounded-md font-orbitron text-cyan-300 border border-cyan-700 bg-gray-900/70 hover:bg-cyan-900/60 transition-colors shadow-md text-sm font-bold" style="text-decoration:none;">
-            <i class="fa-solid fa-tools"></i>
-            Serviços
-        </a>
-    </div>
-
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <div class="lg:col-span-1 glass-pane p-4 rounded-lg">
-            <h2 class="font-orbitron text-xl text-orange-300 mb-4 border-b border-orange-700 pb-2"><i class="fa-solid fa-clipboard-list"></i>Registros de Serviço</h2>
-            <div id="os-list" class="max-h-[25vh] overflow-y-auto pr-2 space-y-2">
+        <!-- Hero -->
+        <section class="mcmt-hero">
+            <p class="hero-eyebrow"><span>oficinas</span>Registro de Ordens de Serviço</p>
+            <h1>Terminal das Oficinas MCMT1 e MCMT2</h1>
+            <p class="hero-sub">Consulte as ordens de serviço em andamento e o histórico de reparos das duas oficinas.</p>
+            <div class="hero-meta">
+                <span class="reg-num">OS-MCMT</span>
+                Terminal de registro
             </div>
+        </section>
+
+        <!-- Acesso rápido (os ids são usados pelo gatekeeper / oficina.js, não remover) -->
+        <div class="section-header">
+            <span class="section-tag">acesso</span>
+            <h2>Acesso Rápido</h2>
         </div>
 
-        <div id="os-details-container" class="lg:col-span-2 glass-pane p-6 rounded-lg hidden">
-            <div id="os-details" class="max-h-[35vh] overflow-y-auto pr-4">
-            </div>
-        </div>
-        <div id="os-placeholder" class="lg:col-span-2 glass-pane p-6 rounded-lg flex items-center justify-center">
-            <p class="text-orange-400 text-lg font-orbitron">Selecione uma Ordem de Serviço para ver os detalhes.</p>
+        <nav class="os-quick" aria-label="Acesso rápido da oficina">
+            <a href="durtoc" id="btn-durtoc">Dur'Toc</a>
+            <a href="ficha" id="btn-ficha">Ficha</a>
+            <a href="hangar/hangarAutorizado" id="btn-hangar">Hangar</a>
+            <!-- Tripulantes, Droids, Fornecedores e Serviços ficam na nav do topo -->
+        </nav>
+
+        <!-- Ordens de serviço -->
+        <div class="section-header">
+            <span class="section-tag">registros</span>
+            <h2>Registros de Serviço</h2>
         </div>
 
-        <!-- Divisor horizontal -->
-        <div class="col-span-1 lg:col-span-3">
-            <hr class="border-orange-700 mb-2">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-1 glass-pane os-panel">
+                <h2 class="os-panel-title">Ordens de Serviço</h2>
+                <div id="os-list" class="max-h-[25vh] overflow-y-auto pr-2 space-y-2"></div>
+            </div>
+
+            <div id="os-details-container" class="lg:col-span-2 glass-pane os-panel hidden">
+                <div id="os-details" class="max-h-[35vh] overflow-y-auto pr-4"></div>
+            </div>
+            <div id="os-placeholder" class="lg:col-span-2 glass-pane os-panel flex items-center justify-center">
+                <p class="os-placeholder-text">Selecione uma Ordem de Serviço para ver os detalhes.</p>
+            </div>
+
         </div>
 
-        <!-- Adendo com ícone de alerta -->
-        <div class="col-span-1 lg:col-span-3">
-            <div class="mb-2 flex items-start gap-3 bg-red-900/30 border border-red-700 rounded-md p-3">
-                <i class="fa-solid fa-triangle-exclamation text-red-400 text-xl mt-1"></i>
-                <span class="text-red-300 text-sm font-orbitron flex items-center gap-2">
-                    <strong>Adendo:</strong>
-                    <span>
-                        Conteúdo restrito ao mestre da campanha para fins de ambientação. As informações aqui presentes não devem ser utilizadas em RP, salvo mediante falha da oficina em ocultar suas atividades do Império. Estes serviços não possuem registro oficial.
-                    </span>
-                    <!-- Ícone que representa sigilo/relacionamento -->
-                    <i class="fa-solid fa-user-secret text-red-400 text-base ml-2" title="Referente aos registros sigilosos"></i>
-                </span>
-            </div>
+        <!-- Registros sigilosos -->
+        <div class="section-header">
+            <span class="section-tag">sigilo</span>
+            <h2>Registros Sigilosos</h2>
         </div>
 
-        <div class="lg:col-span-1 glass-pane-sigiloso p-4 rounded-lg mt-2">
-            <h2 class="font-orbitron text-xl text-red-400 mb-4 border-b border-red-800 pb-2">
-                <i class="fa-solid fa-user-secret"></i>Registros Sigilosos
-            </h2>
-            <div id="os-list-sigiloso" class="max-h-[25vh] overflow-y-auto pr-2 space-y-2">
-            </div>
+        <div class="os-adendo" role="note">
+            <span class="os-adendo-icon" aria-hidden="true">&#9888;</span>
+            <p>
+                <strong>Adendo:</strong>
+                Conteúdo restrito ao mestre da campanha para fins de ambientação. As informações aqui presentes não
+                devem ser utilizadas em RP, salvo mediante falha da oficina em ocultar suas atividades do Império.
+                Estes serviços não possuem registro oficial.
+            </p>
         </div>
-        
-        <div id="os-details-container-sigiloso" class="lg:col-span-2 glass-pane-sigiloso p-6 rounded-lg hidden">
-            <div id="os-details-sigiloso" class="max-h-[35vh] overflow-y-auto pr-4">
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-1 glass-pane-sigiloso os-panel">
+                <h2 class="os-panel-title os-panel-title-sigiloso">Registros Sigilosos</h2>
+                <div id="os-list-sigiloso" class="max-h-[25vh] overflow-y-auto pr-2 space-y-2"></div>
             </div>
-        </div>
-        <div id="os-placeholder-sigiloso" class="lg:col-span-2 glass-pane-sigiloso p-6 rounded-lg flex items-center justify-center">
-            <p class="text-red-400 text-lg font-orbitron">Selecione um Registro Sigiloso para análise.</p>
+
+            <div id="os-details-container-sigiloso" class="lg:col-span-2 glass-pane-sigiloso os-panel hidden">
+                <div id="os-details-sigiloso" class="max-h-[35vh] overflow-y-auto pr-4"></div>
+            </div>
+            <div id="os-placeholder-sigiloso" class="lg:col-span-2 glass-pane-sigiloso os-panel flex items-center justify-center">
+                <p class="os-placeholder-text os-placeholder-sigiloso">Selecione um Registro Sigiloso para análise.</p>
+            </div>
+
         </div>
 
     </main>
