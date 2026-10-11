@@ -18,128 +18,73 @@ O sistema realiza o CRUD diretamente do frontend via JavaScript assíncrono. O t
 *   **Exclusão (Delete):** `await supabaseClient.from('tabela').delete().eq('id', recordId);`
 
 ## 3. Diretrizes de Segurança (RLS - Row Level Security) e Autorização
-*   **Regra de Ouro:** O banco é blindado por RLS. Operações de `INSERT`, `UPDATE` ou `DELETE` frequentemente exigem que o payload contenha a assinatura do autor (`user_id` e/ou `personagem_id`). Falhas nisso geram **Erro 403** ou **42501**.
-*   **Acesso ISB (Mestres/Devs):** A tabela `permissoes` dita quem é Mestre. Jogadores com o cargo `mestre` ou `dev` possuem políticas de RLS de exceção (bypass) que lhes dão acesso total (ALL) a tabelas como `inventario`, `personagens` e `logs_auditoria`.
+*   **Regra de Ouro:** O banco é blindado por RLS. Operações de `INSERT`, `UPDATE` ou `DELETE` frequentemente exigem que o payload contenha a assinatura do autor (`user_id` e/ou `personagem_id`). 
+*   **Acesso ISB (Mestres/Devs):** A tabela `permissoes` dita quem é Mestre. Jogadores com o cargo `mestre`, `dev` ou `desenvolvedor` possuem políticas de RLS de exceção (bypass) que lhes dão acesso total (ALL) às tabelas.
 *   **NUNCA** sugira o uso da `service_role key` no frontend. A segurança deve ser resolvida via modelagem de RLS ou ajuste no payload JS.
 
 ## 4. Estruturas JSONB Críticas (Atenção a estes nós)
 O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. Estruturas conhecidas:
 *   `personagens.dados_ficha`: Contém o estado reativo da ficha do RPG (ex: `.biografia`, `.atributosBase`, `.pericias`, `.modificadoresManuais`).
 *   `inventario.dados_customizados`: Contém metadados mutáveis ou itens criados por jogadores (ex: `.nome`, `.qualidade`, `.dadoDano`, `.bonusAtaque`). Na leitura, mescla-se com o ID base do item.
-*   `transacoes_log.detalhes`: Armazena um stringified JSON com `{ remetente_nome, destinatario_nome, mensagem, itens }` para não poluir relacionamentos nativos.
+*   `log_bancario.dados_adicionais`: Contém metadados de transações financeiras e eventos bancários.
 
 ---
 
 ## 5. Estrutura do Banco de Dados (Schema)
 
-| Tabela | Coluna | Tipo de Dado | Aceita Nulo | Valor Padrão |
-| :--- | :--- | :--- | :--- | :--- |
-| **frota_ativa** | id | uuid | NO | gen_random_uuid() |
-| frota_ativa | nome | text | NO | - |
-| frota_ativa | imagem | text | YES | - |
-| frota_ativa | escudo_atual | integer | YES | 0 |
-| frota_ativa | escudo_maximo | integer | YES | 0 |
-| frota_ativa | casco_atual | integer | YES | 0 |
-| frota_ativa | casco_maximo | integer | YES | 0 |
-| frota_ativa | faccao | text | NO | - |
-| frota_ativa | custo | integer | YES | 0 |
-| frota_ativa | visivel | boolean | YES | true |
-| frota_ativa | created_at | timestamptz | YES | now() |
-| **inventario** | id | uuid | NO | gen_random_uuid() |
-| inventario | user_id | uuid | YES | - |
-| inventario | personagem_id | uuid | YES | - |
-| inventario | item_id | text | YES | - |
-| inventario | quantidade | integer | YES | 1 |
-| inventario | origem | text | YES | 'sistema' |
-| inventario | dados_customizados | jsonb | YES | '{}' |
-| inventario | created_at | timestamptz | YES | now() |
-| **logs_auditoria** | id | uuid | NO | gen_random_uuid() |
-| logs_auditoria | personagem_id | uuid | YES | - |
-| logs_auditoria | tipo_evento | text | NO | - |
-| logs_auditoria | descricao | text | NO | - |
-| logs_auditoria | mudanca_creditos | bigint | YES | 0 |
-| logs_auditoria | created_at | timestamptz | YES | now() |
-| **logs_dados** | id | bigint | NO | - |
-| logs_dados | personagem_id | uuid | YES | - |
-| logs_dados | user_id | uuid | NO | - |
-| logs_dados | nome_rolagem | text | NO | - |
-| logs_dados | dado_puro | integer | NO | - |
-| logs_dados | bonus_total | integer | NO | - |
-| logs_dados | resultado_final | integer | NO | - |
-| logs_dados | detalhamento | text | NO | - |
-| logs_dados | created_at | timestamptz | YES | now() |
-| **logs_taticos** | id | uuid | NO | gen_random_uuid() |
-| logs_taticos | user_id | uuid | YES | - |
-| logs_taticos | nome_jogador | text | YES | - |
-| logs_taticos | nave_nome | text | YES | - |
-| logs_taticos | faccao | text | YES | - |
-| logs_taticos | acao | text | YES | - |
-| logs_taticos | detalhes | text | YES | - |
-| logs_taticos | created_at | timestamptz | YES | now() |
-| **permissoes** | id | integer | NO | nextval |
-| permissoes | user_id | uuid | NO | - |
-| permissoes | cargo | text | NO | - |
-| permissoes | nome | text | YES | - |
-| permissoes | created_at | timestamptz | YES | now() |
-| **personagens** | id | uuid | NO | gen_random_uuid() |
-| personagens | user_id | uuid | NO | - |
-| personagens | nome | text | YES | 'Desconhecido' |
-| personagens | creditos | bigint | YES | 1000 |
-| personagens | grupo_faccao | text | YES | 'Não Atribuído' |
-| personagens | chave_transferencia | varchar | YES | - |
-| personagens | dados_ficha | jsonb | NO | '{}' |
-| personagens | created_at | timestamptz | NO | now() |
-| personagens | updated_at | timestamptz | NO | now() |
-| **servicos_mcmt** | id | bigint | NO | - |
-| servicos_mcmt | oficina | varchar | YES | - |
-| servicos_mcmt | nome_servico | text | YES | - |
-| servicos_mcmt | categoria | varchar | YES | - |
-| servicos_mcmt | mao_de_obra | smallint | YES | - |
-| servicos_mcmt | peca | text | YES | - |
-| servicos_mcmt | preco_componentes | integer | YES | 0 |
-| servicos_mcmt | descricao | text | YES | - |
-| servicos_mcmt | created_at | timestamptz | NO | now() |
-| **status_faccoes** | faccao | text | NO | - |
-| status_faccoes | em_combate | boolean | YES | false |
-| **system_access** | id | bigint | NO | - |
-| system_access | key_name | text | NO | - |
-| system_access | display_name | text | NO | - |
-| system_access | password | text | YES | - |
-| system_access | redirect_url | text | YES | - |
-| system_access | is_active | boolean | YES | false |
-| **transacoes_log** | id | integer | NO | nextval |
-| transacoes_log | tipo_transacao | varchar | NO | - |
-| transacoes_log | remetente_id | uuid | NO | - |
-| transacoes_log | destinatario_id | uuid | NO | - |
-| transacoes_log | valor_ou_quantidade | integer | NO | - |
-| transacoes_log | detalhes | text | YES | - |
-| transacoes_log | data_transacao | timestamp | YES | CURRENT_TIMESTAMP |
-
-*(Nota: Existem também as Views `view_inventario_personagem`, `view_jogador_email` e `view_logs_auditoria_detalhado` para consultas complexas no backend).*
+| Tabela | Coluna | Tipo de Dado | Restrições / Notas |
+| :--- | :--- | :--- | :--- |
+| **cupons** | id, codigo, moeda, tipo_desconto, valor_desconto, limite_usos, vezes_usado, is_ativo, created_at, updated_at | uuid, text, text, text, numeric, int4, int4, bool, timestamptz, timestamptz | Primary Key (id), Unique (codigo) |
+| **dividas_emprestimos** | id, categoria, titulo, alvo_descricao, personagem_id, valor_original, taxa_juros, valor_total, frequencia, status, observacoes, created_at, updated_at, ciclos_totais, ciclos_pagos | uuid, text, text, text, uuid, int8, numeric, int8, text, text, text, timestamptz, timestamptz, int4, int4 | Primary Key (id) |
+| **frota_ativa** | id, nome, imagem, escudo_atual, escudo_maximo, casco_atual, casco_maximo, faccao, custo, created_at, visivel | uuid, text, text, int4, int4, int4, int4, text, int4, timestamptz, bool | Primary Key (id) |
+| **inventario** | id, user_id, personagem_id, item_id, quantidade, origem, dados_customizados, created_at | uuid, uuid, uuid, text, int4, text, jsonb, timestamptz | Primary Key (id) |
+| **log_bancario** | id, user_id, personagem_id, tipo_evento, descricao, valor_creditos, dados_adicionais, created_at | uuid, uuid, uuid, text, text, int8, jsonb, timestamptz | Primary Key (id) |
+| **logs_auditoria** | id, personagem_id, tipo_evento, descricao, mudanca_creditos, created_at | uuid, uuid, text, text, int8, timestamptz | Primary Key (id) |
+| **logs_cassino** | id, personagem_id, user_id, jogo, tipo_evento, descricao, delta_fichas, created_at | uuid, uuid, uuid, varchar, varchar, text, int4, timestamptz | Primary Key (id) |
+| **logs_dados** | id, personagem_id, user_id, nome_rolagem, dado_puro, bonus_total, resultado_final, detalhamento, created_at | int8, uuid, uuid, text, int4, int4, int4, text, timestamptz | Primary Identity (id) |
+| **logs_taticos** | id, user_id, nome_jogador, nave_nome, faccao, acao, detalhes, created_at | uuid, uuid, text, text, text, text, text, timestamptz | Primary Key (id) |
+| **permissoes** | id, user_id, cargo, created_at, nome | int4, uuid, text, timestamptz, text | Primary Key (id) |
+| **personagens** | id, user_id, nome, creditos, dados_ficha, created_at, updated_at, grupo_faccao, chave_transferencia, fichas, img_url, facecred, peggats | uuid, uuid, text, int8, jsonb, timestamptz, timestamptz, text, varchar, int4, text, int4, int4 | Primary Key (id), Unique (chave_transferencia) |
+| **servicos_mcmt** | id, oficina, nome_servico, categoria, mao_de_obra, peca, preco_componentes, descricao, created_at | int8, varchar, text, varchar, int2, text, int4, text, timestamptz | Primary Identity (id) |
+| **status_faccoes** | faccao, em_combate | text, bool | Primary Key (faccao) |
+| **storage_access** | id, key_name, display_name, password, redirect_url | int8, text, text, text, text | Primary Identity (id), Unique (key_name) |
+| **system_access** | id, key_name, display_name, password, redirect_url, is_active | int8, text, text, text, text, bool | Primary Identity (id), Unique (key_name) |
+| **transacoes_log** | id, tipo_transacao, remetente_id, destinatario_id, valor_ou_quantidade, detalhes, data_transacao | int4, varchar, uuid, uuid, int4, text, timestamp | Primary Key (id) |
 
 ---
 
 ## 6. Políticas de Segurança Ativas (RLS Policies)
 
-| Tabela | Nome da Política | Comando | Regra RLS |
+| Tabela | Nome da Política | Comando | Regra RLS (Resumo) |
 | :--- | :--- | :--- | :--- |
-| **frota_ativa** | Acesso total frota | ALL | Leitura e Escrita Livres |
-| **inventario** | ISB acesso total a inventario | ALL | Apenas para cargo `mestre` ou `dev` na tabela `permissoes` |
-| inventario | Visualizar próprio inventário | SELECT | `auth.uid() = user_id` |
-| inventario | Inserir no próprio inventário | INSERT | `auth.uid() = user_id` |
-| inventario | Deletar do próprio inventário | DELETE | `auth.uid() = user_id` |
-| inventario | Atualizar próprio inventário | UPDATE | `auth.uid() = user_id` |
-| inventario | Inventario_Select / Update / Insert / Delete | ALL | Abertura customizada para logística frontend |
-| **logs_auditoria** | ISB acesso total a logs_auditoria | ALL | Apenas para cargo `mestre` ou `dev` |
-| logs_auditoria | Visualizar/Inserir próprios logs | SELECT / INSERT | Permite se cruzar `personagem_id` com a tabela `personagens` |
-| logs_auditoria | LogsAuditoria_Select / Insert | SELECT / INSERT | Liberados publicamente |
-| **logs_dados** | ISB acesso total a logs de dados | ALL | Apenas para cargo `mestre` ou `dev` |
-| logs_dados | Jogador pode inserir/ler proprios dados | INSERT / SELECT | `auth.uid() = user_id` |
-| **logs_taticos** | Acesso total logs | ALL | Leitura e Escrita Livres |
+| **cupons** | Leitura de cupons ativos | SELECT | Permitido se `is_ativo = true` |
+| **cupons** | ISB gerenciamento total de cupons | ALL | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
+| **dividas_emprestimos** | Jogadores podem ver / deletar proprias dividas | SELECT / DELETE | Permite se cruzar `personagem_id` com a tabela `personagens` pertencente ao usuário |
+| **dividas_emprestimos** | Jogadores podem criar dividas | INSERT | `auth.uid()` dono do `personagem_id` |
+| **dividas_emprestimos** | ISB gerenciamento total | ALL | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
+| **frota_ativa** | Acesso total frota | ALL | Autenticados têm acesso total |
+| **inventario** | Visualizar / Inserir / Atualizar / Deletar próprio inventário | SELECT / INSERT / UPDATE / DELETE | `auth.uid() = user_id` |
+| **inventario** | ISB acesso total a inventario | ALL | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
+| **inventario** | Inventario Geral | SELECT / INSERT / UPDATE / DELETE | Autenticados (Aberto para logística frontend) |
+| **log_bancario** | Leitura log_bancario proprio e ISB | SELECT | `auth.uid() = user_id` OU Cargos ISB |
+| **log_bancario** | Insercao log_bancario autenticado | INSERT | Autenticados |
+| **log_bancario** | ISB delete log_bancario | DELETE | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
+| **logs_auditoria** | Visualizar / Inserir próprios logs | SELECT / INSERT | Permite se cruzar `personagem_id` com `personagens` do usuário |
+| **logs_auditoria** | ISB acesso total e leitura irrestrita | ALL / SELECT | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
+| **logs_auditoria** | LogsAuditoria Público | SELECT / INSERT | Autenticados |
+| **logs_cassino** | Permitir select proprio e ISB | SELECT | `auth.uid() = user_id` OU Cargos ISB |
+| **logs_cassino** | Permitir insert proprio | INSERT | `auth.uid() = user_id` |
+| **logs_cassino** | Permitir delete ISB | DELETE | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
+| **logs_dados** | Jogador pode ler / inserir proprios dados | SELECT / INSERT | `auth.uid() = user_id` |
+| **logs_dados** | ISB acesso total a logs de dados | ALL | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
+| **logs_taticos** | Acesso total logs | ALL | Autenticados têm acesso total |
 | **permissoes** | Permitir leitura da própria permissao | SELECT | `auth.uid() = user_id` |
-| **personagens** | ISB acesso total a personagens | ALL | Apenas para cargo `mestre` ou `dev` |
-| personagens | Jogadores ver/criar/atualizar/deletar | ALL | `auth.uid() = user_id` |
-| personagens | Permitir leitura / update geral | SELECT / UPDATE | Liberados publicamente |
-| **status_faccoes** | Acesso total status_faccoes | ALL | Leitura e Escrita Livres |
-| **system_access** | Permitir leitura publica | SELECT | Leitura Livre |
-| **transacoes_log** | Log_Select / Insert | SELECT / INSERT | Liberados publicamente |
+| **personagens** | Jogadores podem ver/criar/atualizar/deletar | ALL (Separados) | `auth.uid() = user_id` |
+| **personagens** | ISB acesso total a personagens | ALL / SELECT | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
+| **personagens** | Permitir leitura / update geral | SELECT / UPDATE | Autenticados |
+| **servicos_mcmt** | Permitir leitura publica dos servicos | SELECT | Leitura Livre |
+| **servicos_mcmt** | Modificação (Insert/Update/Delete) | INSERT / UPDATE / DELETE | Apenas UUIDs autorizados específicos no banco |
+| **status_faccoes** | Acesso total status_faccoes | ALL | Autenticados têm acesso total |
+| **storage_access** | Enable read access for all users | SELECT | Leitura Livre |
+| **system_access** | Enable read access / Permitir leitura publica | SELECT | Leitura Livre |
+| **transacoes_log** | Log_Select / Insert | SELECT / INSERT | Autenticados |

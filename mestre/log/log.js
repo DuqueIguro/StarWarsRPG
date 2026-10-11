@@ -654,7 +654,133 @@ async function carregarLogsCassino() {
     });
 }
 
-// 8. Exclusão Universal de Registros
+// 8. Alterações da Holonet (HNN) — quem mexeu em quê
+const HOLONET_SECOES = {
+    NOTICIAS: 'Notícias', TICKER: 'Ticker', CANAIS: 'Canais ao vivo', MERCADOS: 'Mercados',
+    ALERTA: 'Alerta imperial', CABECALHO: 'Cabeçalho / Terminal', GERAL: 'Geral'
+};
+const HOLONET_CAMPOS = {
+    categoria: 'categoria', icone: 'ícone', titulo: 'título', subtitulo: 'subtítulo', corpo: 'texto',
+    fonte: 'fonte', data_texto: 'data', tag_aurebesh: 'tag aurebesh', publicada: 'publicada',
+    texto: 'texto', ativo: 'ativa', canal: 'canal', status: 'status', descricao: 'descrição',
+    nome: 'nome', valor: 'valor', variacao: 'variação %', ordem: 'ordem'
+};
+
+function abaHolonetAtiva() {
+    const c = document.getElementById('conteudo-holonet');
+    return !!c && !c.classList.contains('hidden');
+}
+
+function holonetEsc(v) {
+    return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function holonetValor(v) {
+    if (v === null || v === undefined || v === '') return '(vazio)';
+    if (typeof v === 'boolean') return v ? 'sim' : 'não';
+    const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
+    return s.length > 90 ? s.slice(0, 90) + '…' : s;
+}
+
+async function carregarLogsHolonet() {
+    const client = getSupabaseClient();
+    const tbody = document.getElementById('logs-holonet-body');
+    if (!client || !tbody) return;
+
+    const selSecao = document.getElementById('holonet-filter-secao');
+    const selAcao = document.getElementById('holonet-filter-acao');
+    const inpUsuario = document.getElementById('holonet-filter-usuario');
+    const inputBusca = document.getElementById('filter-text');
+    const dateStart = document.getElementById('filter-date-start');
+    const dateEnd = document.getElementById('filter-date-end');
+
+    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-orange-400 animate-pulse">Recuperando registros da Holonet...</td></tr>';
+
+    let query = client
+        .from('holonet_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(300);
+
+    if (selSecao && selSecao.value) query = query.eq('secao', selSecao.value);
+    if (selAcao && selAcao.value) query = query.eq('acao', selAcao.value);
+    if (inpUsuario && inpUsuario.value.trim()) query = query.ilike('usuario_nome', `%${inpUsuario.value.trim().replace(/[%*,()]/g, ' ')}%`);
+    const txt = inputBusca ? inputBusca.value.trim().replace(/[%*,()]/g, ' ') : '';
+    if (txt) query = query.or(`resumo.ilike.%${txt}%,titulo_registro.ilike.%${txt}%`);
+    if (dateStart && dateStart.value) query = query.gte('created_at', `${dateStart.value}T00:00:00-03:00`);
+    if (dateEnd && dateEnd.value) query = query.lte('created_at', `${dateEnd.value}T23:59:59-03:00`);
+
+    const { data: logs, error } = await query;
+
+    if (error) {
+        const semTabela = error.code === '42P01' || /does not exist|relation/i.test(error.message || '');
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">${semTabela
+            ? 'A tabela holonet_logs ainda não existe. Rode o holonet_logs.sql no Supabase.'
+            : 'Falha ao buscar logs da Holonet: ' + holonetEsc(error.message)}</td></tr>`;
+        return;
+    }
+
+    if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Nenhuma alteração da Holonet registrada com estes filtros.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+
+    logs.forEach(log => {
+        const dataObj = new Date(log.created_at);
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        let acaoClass = 'text-cyan-400 bg-cyan-950/40 border-cyan-800/50';
+        let acaoLabel = log.acao;
+        if (log.acao === 'CRIAR') { acaoClass = 'text-emerald-400 bg-emerald-950/40 border-emerald-800/50'; acaoLabel = 'CRIAÇÃO'; }
+        else if (log.acao === 'EDITAR') { acaoClass = 'text-amber-400 bg-amber-950/40 border-amber-800/50'; acaoLabel = 'EDIÇÃO'; }
+        else if (log.acao === 'EXCLUIR') { acaoClass = 'text-rose-500 bg-rose-950/40 border-rose-800/50'; acaoLabel = 'EXCLUSÃO'; }
+        else if (log.acao === 'REORDENAR') { acaoClass = 'text-sky-400 bg-sky-950/40 border-sky-800/50'; acaoLabel = 'REORDENAÇÃO'; }
+        else if (log.acao === 'IMPORTAR') { acaoClass = 'text-purple-400 bg-purple-950/40 border-purple-800/50'; acaoLabel = 'IMPORTAÇÃO'; }
+
+        // Chips "campo: de ➔ para" nas edições
+        let chips = '';
+        if (log.acao === 'EDITAR' && Array.isArray(log.mudancas)) {
+            chips = '<div class="flex flex-wrap gap-1 mt-1">' + log.mudancas
+                .filter(m => m && m.campo)
+                .map(m => `<span class="inline-block bg-stone-900 border border-stone-800 rounded px-2 py-0.5 text-xs">
+                    <span class="text-stone-500">${holonetEsc(HOLONET_CAMPOS[m.campo] || m.campo)}:</span>
+                    <span class="text-stone-400 line-through">${holonetEsc(holonetValor(m.de))}</span>
+                    <span class="text-amber-400 font-bold mx-1">➔</span>
+                    <span class="text-emerald-400 font-bold">${holonetEsc(holonetValor(m.para))}</span>
+                </span>`).join('') + '</div>';
+        }
+
+        // Dados completos nas criações e exclusões
+        let detalhes = '';
+        const snapshot = log.acao === 'EXCLUIR' ? log.dados_antes : (log.acao === 'CRIAR' ? log.dados_depois : null);
+        if (snapshot) {
+            detalhes = `<details class="mt-1"><summary class="cursor-pointer text-[10px] text-stone-500 hover:text-stone-300 uppercase tracking-wider">Ver dados completos</summary>
+                <pre class="mt-1 p-2 bg-stone-900 border border-stone-800 rounded text-[10px] text-stone-400 whitespace-pre-wrap break-words max-h-48 overflow-auto">${holonetEsc(JSON.stringify(snapshot, null, 2))}</pre></details>`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-stone-900/50 transition-colors border-b border-stone-800/30';
+        tr.innerHTML = `
+            <td class="p-4 text-stone-400 text-xs whitespace-nowrap">${dataFormatada}</td>
+            <td class="p-4 whitespace-nowrap">
+                <div class="font-bold text-orange-300 text-xs uppercase tracking-wider">${holonetEsc(log.usuario_nome || 'Desconhecido')}</div>
+                ${log.usuario_cargo ? `<div class="text-[10px] text-stone-500 uppercase">${holonetEsc(log.usuario_cargo)}</div>` : ''}
+            </td>
+            <td class="p-4 text-stone-300 text-xs whitespace-nowrap">${holonetEsc(HOLONET_SECOES[log.secao] || log.secao)}</td>
+            <td class="p-4 whitespace-nowrap"><span class="px-2 py-1 text-[10px] tracking-widest font-bold rounded border ${acaoClass}">${acaoLabel}</span></td>
+            <td class="p-4 text-stone-300 text-xs">
+                <div class="font-bold text-stone-200">${holonetEsc(log.resumo)}</div>
+                ${chips}${detalhes}
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// 9. Exclusão Universal de Registros
 window.deletarLog = async function (id, tabela) {
     if (!confirm('ATENÇÃO: Deseja obliterar este registro dos arquivos da ISB? Esta ação é irreversível.')) return;
 
@@ -694,6 +820,7 @@ window.alternarAbas = function (aba) {
     const btnFrota = document.getElementById('btn-tab-frota');
     const btnMcmt = document.getElementById('btn-tab-mcmt');
     const btnCassino = document.getElementById('btn-tab-cassino');
+    const btnHolonet = document.getElementById('btn-tab-holonet');
 
     const contFinancas = document.getElementById('conteudo-financas');
     const contDados = document.getElementById('conteudo-dados');
@@ -701,14 +828,15 @@ window.alternarAbas = function (aba) {
     const contFrota = document.getElementById('conteudo-frota');
     const contMcmt = document.getElementById('conteudo-mcmt');
     const contCassino = document.getElementById('conteudo-cassino');
+    const contHolonet = document.getElementById('conteudo-holonet');
 
     const filtroTipo = document.getElementById('filter-action');
     const filtroBusca = document.getElementById('filter-text');
 
     const cssInativo = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors';
 
-    [btnFinancas, btnDados, btnBancario, btnFrota, btnMcmt, btnCassino].forEach(btn => { if (btn) btn.className = cssInativo; });
-    [contFinancas, contDados, contBancario, contFrota, contMcmt, contCassino].forEach(cont => { if (cont) cont.classList.replace('block', 'hidden'); });
+    [btnFinancas, btnDados, btnBancario, btnFrota, btnMcmt, btnCassino, btnHolonet].forEach(btn => { if (btn) btn.className = cssInativo; });
+    [contFinancas, contDados, contBancario, contFrota, contMcmt, contCassino, contHolonet].forEach(cont => { if (cont) cont.classList.replace('block', 'hidden'); });
 
     if (aba === 'financas') {
         if (btnFinancas) btnFinancas.className = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-cyan-900/40 text-cyan-400 border border-cyan-500 rounded transition-colors';
@@ -796,6 +924,20 @@ window.alternarAbas = function (aba) {
             filtroBusca.placeholder = 'Ex: Roleta, Blackjack, Poker...';
         }
         carregarLogsCassino();
+    } else if (aba === 'holonet') {
+        if (btnHolonet) btnHolonet.className = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-orange-900/40 text-orange-400 border border-orange-500 rounded transition-colors';
+        if (contHolonet) contHolonet.classList.replace('hidden', 'block');
+        if (filtroTipo) {
+            filtroTipo.disabled = true;
+            filtroTipo.classList.add('opacity-30', 'cursor-not-allowed');
+            filtroTipo.value = '';
+        }
+        if (filtroBusca) {
+            filtroBusca.disabled = false;
+            filtroBusca.classList.remove('opacity-30', 'cursor-not-allowed');
+            filtroBusca.placeholder = 'Ex: título da notícia, mercado, alerta...';
+        }
+        carregarLogsHolonet();
     }
 };
 
@@ -813,6 +955,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnRefresh) {
         btnRefresh.addEventListener('click', async () => {
             await carregarPersonagens();
+            if (abaHolonetAtiva()) { carregarLogsHolonet(); return; }
 
             const contDados = document.getElementById('conteudo-dados');
             const contBancario = document.getElementById('conteudo-bancario');
@@ -831,6 +974,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnSearch) {
         btnSearch.addEventListener('click', () => {
+            if (abaHolonetAtiva()) { carregarLogsHolonet(); return; }
             const contDados = document.getElementById('conteudo-dados');
             const contBancario = document.getElementById('conteudo-bancario');
             const contFrota = document.getElementById('conteudo-frota');
@@ -849,6 +993,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (inputBusca) {
         inputBusca.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                if (abaHolonetAtiva()) { carregarLogsHolonet(); return; }
                 const contCassino = document.getElementById('conteudo-cassino');
                 const contBancario = document.getElementById('conteudo-bancario');
 
@@ -866,6 +1011,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (selectAcao) selectAcao.value = '';
             if (dateStart) dateStart.value = '';
             if (dateEnd) dateEnd.value = '';
+
+            if (abaHolonetAtiva()) {
+                ['holonet-filter-secao', 'holonet-filter-acao', 'holonet-filter-usuario'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                carregarLogsHolonet();
+                return;
+            }
 
             const contDados = document.getElementById('conteudo-dados');
             const contBancario = document.getElementById('conteudo-bancario');
@@ -886,6 +1040,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     selectsDeFiltro.forEach(el => {
         if (el) {
             el.addEventListener('change', () => {
+                if (abaHolonetAtiva()) { carregarLogsHolonet(); return; }
                 const contDados = document.getElementById('conteudo-dados');
                 const contBancario = document.getElementById('conteudo-bancario');
                 const contFrota = document.getElementById('conteudo-frota');
@@ -904,4 +1059,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await carregarPersonagens();
     await carregarLogs();
+
+    // Atalho vindo do console da Holonet: log.html?aba=holonet
+    if (new URLSearchParams(window.location.search).get('aba') === 'holonet') alternarAbas('holonet');
 });

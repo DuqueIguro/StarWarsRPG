@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Console da Holonet — Mestre</title>
+  <link rel="icon" href="../img/HNN.ico" type="image/x-icon" />
+  <!-- holonet.css traz a paleta, as fontes e as classes usadas nas pré-visualizações -->
+  <link rel="stylesheet" href="../styles/holonet.css" />
+  <link rel="stylesheet" href="holonetMestre/holonetMestre.css" />
+</head>
+
+<body class="hm-body">
+
+  <!-- Tela de verificação / acesso negado -->
+  <div class="hm-gate" id="hm-gate">
+    <p class="hm-gate-msg" id="hm-gate-msg">Verificando credenciais…</p>
+    <a class="hm-btn ghost" id="hm-gate-link" href="../index.html" hidden>Voltar ao início</a>
+  </div>
+
+  <div class="hm-app" id="hm-app" hidden>
+
+    <header class="hm-top">
+      <div class="hm-brand">
+        <a class="hm-btn ghost" href="escudo.html" aria-label="Voltar ao Escudo">◀ Voltar ao Escudo</a>
+        <span class="hm-brand-logo">HNN</span>
+        <span class="hm-brand-sub">Console do Mestre</span>
+      </div>
+      <div class="hm-top-right">
+        <span class="hm-user" id="hm-user"></span>
+        <span class="hm-unsaved" id="hm-unsaved" hidden>Alterações não salvas</span>
+        <a class="hm-btn ghost" href="../pages/holonet.html" target="_blank" rel="noopener">Abrir a Holonet</a>
+      </div>
+    </header>
+
+    <div class="hm-shell">
+
+      <nav class="hm-rail" id="hm-rail" aria-label="Seções">
+        <button class="hm-tab active" data-tab="noticias">Notícias <span class="hm-count" id="cnt-noticias"></span></button>
+        <button class="hm-tab" data-tab="ticker">Manchetes do ticker <span class="hm-count" id="cnt-ticker"></span></button>
+        <button class="hm-tab" data-tab="canais">Canais ao vivo <span class="hm-count" id="cnt-canais"></span></button>
+        <button class="hm-tab" data-tab="mercados">Mercados <span class="hm-count" id="cnt-mercados"></span></button>
+        <button class="hm-tab" data-tab="alerta">Alerta imperial</button>
+        <button class="hm-tab" data-tab="geral">Cabeçalho e terminal</button>
+        <button class="hm-tab" data-tab="dados">Importar e exportar</button>
+      </nav>
+
+      <main class="hm-pane">
+
+        <!-- ═════════ NOTÍCIAS ═════════ -->
+        <section class="hm-section" id="tab-noticias">
+          <div class="hm-section-head">
+            <div>
+              <h2>Notícias</h2>
+              <p class="hm-hint">A primeira da lista é a notícia principal da Holonet. Use as setas para mudar a ordem.</p>
+            </div>
+            <button class="hm-btn primary" id="btn-nova-noticia">Nova notícia</button>
+          </div>
+
+          <div class="hm-toolbar">
+            <select class="hm-input" id="filtro-cat" aria-label="Filtrar por categoria"></select>
+            <input class="hm-input" id="busca-noticia" type="search" placeholder="Buscar por título, subtítulo ou fonte" />
+          </div>
+
+          <div class="hm-news-list" id="lista-noticias"></div>
+        </section>
+
+        <!-- ═════════ TICKER ═════════ -->
+        <section class="hm-section" id="tab-ticker" hidden>
+          <div class="hm-section-head">
+            <div>
+              <h2>Manchetes do ticker</h2>
+              <p class="hm-hint">Frases que rolam na faixa do topo da Holonet. Desmarque “Ativa” para esconder sem apagar.</p>
+            </div>
+            <div class="hm-actions">
+              <button class="hm-btn ghost" data-add="ticker">Adicionar manchete</button>
+              <button class="hm-btn primary" data-save="ticker">Salvar alterações</button>
+            </div>
+          </div>
+          <div class="hm-rows" id="rows-ticker"></div>
+        </section>
+
+        <!-- ═════════ CANAIS ═════════ -->
+        <section class="hm-section" id="tab-canais" hidden>
+          <div class="hm-section-head">
+            <div>
+              <h2>Canais ao vivo</h2>
+              <p class="hm-hint">Painel lateral “Canais ao vivo”. O status define a cor do selo.</p>
+            </div>
+            <div class="hm-actions">
+              <button class="hm-btn ghost" data-add="canais">Adicionar canal</button>
+              <button class="hm-btn primary" data-save="canais">Salvar alterações</button>
+            </div>
+          </div>
+          <div class="hm-rows" id="rows-canais"></div>
+        </section>
+
+        <!-- ═════════ MERCADOS ═════════ -->
+        <section class="hm-section" id="tab-mercados" hidden>
+          <div class="hm-section-head">
+            <div>
+              <h2>Mercados galácticos</h2>
+              <p class="hm-hint">A Holonet mostra a variação em %. Valor positivo aparece em verde, negativo em vermelho.</p>
+            </div>
+            <div class="hm-actions">
+              <button class="hm-btn ghost" data-add="mercados">Adicionar item</button>
+              <button class="hm-btn primary" data-save="mercados">Salvar alterações</button>
+            </div>
+          </div>
+          <div class="hm-rows" id="rows-mercados"></div>
+        </section>
+
+        <!-- ═════════ ALERTA ═════════ -->
+        <section class="hm-section" id="tab-alerta" hidden>
+          <div class="hm-section-head">
+            <div>
+              <h2>Alerta de segurança imperial</h2>
+              <p class="hm-hint">Painel vermelho da barra lateral.</p>
+            </div>
+            <button class="hm-btn primary" data-save-cfg="alerta">Salvar alterações</button>
+          </div>
+
+          <div class="hm-split">
+            <div class="hm-form">
+              <label class="hm-check">
+                <input type="checkbox" data-cfg="alerta_ativo" data-bool="1" />
+                <span>Mostrar o alerta na Holonet</span>
+              </label>
+              <label class="hm-field"><span>Título do painel</span>
+                <input class="hm-input" data-cfg="alerta_cabecalho" />
+              </label>
+              <label class="hm-field"><span>Texto em Aurebesh (cabeçalho)</span>
+                <input class="hm-input aure" data-cfg="alerta_aure_cab" />
+              </label>
+              <label class="hm-field"><span>Nível de ameaça</span>
+                <input class="hm-input" data-cfg="alerta_titulo" />
+              </label>
+              <label class="hm-field"><span>Mensagem</span>
+                <textarea class="hm-input" rows="9" data-cfg="alerta_texto"></textarea>
+              </label>
+              <label class="hm-field"><span>Texto em Aurebesh (rodapé)</span>
+                <input class="hm-input aure" data-cfg="alerta_aure_rodape" />
+              </label>
+            </div>
+            <div class="hm-preview-col">
+              <p class="hm-preview-label">Pré-visualização</p>
+              <div id="prev-alerta"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═════════ GERAL ═════════ -->
+        <section class="hm-section" id="tab-geral" hidden>
+          <div class="hm-section-head">
+            <div>
+              <h2>Cabeçalho e terminal</h2>
+              <p class="hm-hint">Versão e data exibidas no topo, e o painel “Terminal ID”.</p>
+            </div>
+            <button class="hm-btn primary" data-save-cfg="geral">Salvar alterações</button>
+          </div>
+
+          <div class="hm-form narrow">
+            <label class="hm-field"><span>Versão da HNN</span>
+              <input class="hm-input" data-cfg="hnn_version" placeholder="HNN-7.4.2" />
+            </label>
+            <label class="hm-field"><span>Data exibida no cabeçalho e no rodapé</span>
+              <input class="hm-input" data-cfg="data_universo" placeholder="Ex.: 14 BBY — Ciclo de Coruscant" />
+            </label>
+            <hr class="hm-sep" />
+            <label class="hm-field"><span>Identificação do terminal</span>
+              <input class="hm-input" data-cfg="terminal_id" />
+            </label>
+            <label class="hm-field"><span>Setor</span>
+              <input class="hm-input" data-cfg="terminal_setor" />
+            </label>
+            <label class="hm-field"><span>Criptografia</span>
+              <input class="hm-input" data-cfg="terminal_cripto" />
+            </label>
+            <label class="hm-field"><span>Intensidade do sinal (0 a 100)</span>
+              <input class="hm-input" type="number" min="0" max="100" data-cfg="terminal_sinal" />
+            </label>
+          </div>
+        </section>
+
+        <!-- ═════════ DADOS ═════════ -->
+        <section class="hm-section" id="tab-dados" hidden>
+          <div class="hm-section-head">
+            <div>
+              <h2>Importar e exportar</h2>
+              <p class="hm-hint">Traga o conteúdo dos arquivos JSON antigos para o banco, ou baixe um backup.</p>
+            </div>
+          </div>
+
+          <div class="hm-card">
+            <h3>Importar JSON</h3>
+            <p>Selecione de uma vez os arquivos <code>holonet.json</code> e os da pasta <code>data/holonet/</code>
+              (<code>UrgenteNews.json</code>, <code>PoliticaNews.json</code>…). Também aceita um backup exportado por esta página.</p>
+            <input type="file" id="arq-import" accept=".json,application/json" multiple />
+            <label class="hm-check">
+              <input type="checkbox" id="import-limpar" />
+              <span>Apagar notícias, manchetes e canais atuais antes de importar</span>
+            </label>
+            <div class="hm-import-resumo" id="import-resumo"></div>
+            <button class="hm-btn primary" id="btn-importar" disabled>Importar para o banco</button>
+          </div>
+
+          <div class="hm-card">
+            <h3>Exportar backup</h3>
+            <p>Baixa um arquivo JSON com notícias, ticker, canais, mercados e configurações.</p>
+            <button class="hm-btn ghost" id="btn-exportar">Baixar backup</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ═════════ EDITOR DE NOTÍCIA ═════════ -->
+  <dialog class="hm-dialog" id="dlg-noticia">
+    <form method="dialog" id="form-noticia" class="hm-dialog-inner" novalidate>
+      <header class="hm-dialog-head">
+        <h2 id="dlg-titulo">Nova notícia</h2>
+        <button type="button" class="hm-btn ghost" id="dlg-fechar">Fechar</button>
+      </header>
+
+      <div class="hm-dialog-body">
+        <div class="hm-form">
+          <div class="hm-row2">
+            <label class="hm-field"><span>Categoria</span>
+              <select class="hm-input" id="f-categoria"></select>
+            </label>
+            <label class="hm-field"><span>Ícone</span>
+              <input class="hm-input" id="f-icone" maxlength="4" />
+            </label>
+          </div>
+          <label class="hm-field"><span>Título</span>
+            <input class="hm-input" id="f-titulo" />
+          </label>
+          <label class="hm-field"><span>Subtítulo</span>
+            <input class="hm-input" id="f-subtitulo" />
+          </label>
+          <label class="hm-field"><span>Texto da notícia</span>
+            <textarea class="hm-input" id="f-corpo" rows="9"></textarea>
+          </label>
+          <div class="hm-row2">
+            <label class="hm-field"><span>Fonte</span>
+              <input class="hm-input" id="f-fonte" />
+            </label>
+            <label class="hm-field"><span>Data no universo</span>
+              <input class="hm-input" id="f-data" placeholder="Ex.: 14 BBY" />
+            </label>
+          </div>
+          <label class="hm-field"><span>Tag em Aurebesh</span>
+            <span class="hm-inline">
+              <input class="hm-input aure" id="f-aure" />
+              <button type="button" class="hm-btn ghost" id="btn-aure-titulo">Usar o título</button>
+            </span>
+          </label>
+          <label class="hm-check">
+            <input type="checkbox" id="f-publicada" checked />
+            <span>Publicada (desmarque para guardar como rascunho)</span>
+          </label>
+          <label class="hm-check" id="wrap-destaque">
+            <input type="checkbox" id="f-destaque" checked />
+            <span>Colocar como notícia principal</span>
+          </label>
+        </div>
+
+        <div class="hm-preview-col">
+          <p class="hm-preview-label">Como aparece na Holonet</p>
+          <div id="prev-destaque" class="hm-prev-box"></div>
+          <div id="prev-card" class="hm-prev-box small"></div>
+        </div>
+      </div>
+
+      <footer class="hm-dialog-foot">
+        <button type="button" class="hm-btn ghost" id="dlg-cancelar">Cancelar</button>
+        <button type="button" class="hm-btn primary" id="dlg-salvar">Salvar notícia</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="hm-toasts" id="hm-toasts" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="holonetMestre/holonetMestre.js"></script>
+</body>
+
+</html>

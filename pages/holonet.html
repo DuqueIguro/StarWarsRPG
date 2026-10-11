@@ -31,6 +31,7 @@
   <header class="hnn-header">
 
     <div class="hnn-logo-block">
+      <a class="hnn-back-link" href="../menu.html">◀ Voltar ao Menu</a>
       <span class="hnn-logo">HNN</span>
       <span class="hnn-logo-sub">Holonet News Network</span>
       <span class="hnn-logo-aure" title="Holonet em Aurebesh">𝐇𝐎𝐋𝐎𝐍𝐄𝐓</span>
@@ -120,14 +121,14 @@
       </div>
 
       <!-- Alerta Imperial -->
-      <div class="hnn-panel hnn-alerta" role="alert" aria-live="assertive">
+      <div class="hnn-panel hnn-alerta" id="hnn-alerta" role="alert" aria-live="assertive">
         <div class="hnn-panel-header" style="background:rgba(204,34,0,0.2); border-bottom-color: var(--red-hot);">
-          <span class="hnn-panel-title" style="color:var(--red-warm);">⚠ ALERTA DE SEGURANÇA IMPERIAL</span>
-          <span class="hnn-panel-aure" title="Alerta em Aurebesh">VIGILÂNCIA PERLEMIANA</span>
+          <span class="hnn-panel-title" id="hnn-alerta-cab" style="color:var(--red-warm);">⚠ ALERTA DE SEGURANÇA IMPERIAL</span>
+          <span class="hnn-panel-aure" id="hnn-alerta-aure-cab" title="Alerta em Aurebesh">VIGILÂNCIA PERLEMIANA</span>
         </div>
         <div class="hnn-alerta-body">
-          <p class="hnn-alerta-titulo">NÍVEL DE AMEAÇA: VERMELHO</p>
-          <p class="hnn-alerta-texto">
+          <p class="hnn-alerta-titulo" id="hnn-alerta-titulo">NÍVEL DE AMEAÇA: VERMELHO</p>
+          <p class="hnn-alerta-texto" id="hnn-alerta-texto">
             Confisco imediato de todo o arquivo histórico no setor Coruscant. O complexo educacional da Praça Galáctica
             com a Antiga e Grande Biblioteca encontra-se sob vigilância estrita. Agentes da Inteligência Imperial
             detectaram células de espionagem em larga escala tentando utilizar nossos servidores acadêmicos para
@@ -136,7 +137,7 @@
             patrulhas de purga do ISB. Qualquer tentativa de acesso para a holonet sem autorização prévia será
             considerada ato de traição e resultará em prisão ou execução pelos nossos Soldados.
           </p>
-          <p class="hnn-alerta-aure" title="Código de alerta em Aurebesh">
+          <p class="hnn-alerta-aure" id="hnn-alerta-aure" title="Código de alerta em Aurebesh">
             VIGILÂNCIA PERLEMIANA — NÍVEL DE AMEAÇA: VERMELHO
           </p>
         </div>
@@ -152,7 +153,7 @@
             <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;">
               TERMINAL
             </span>
-            <span style="font-family:var(--font-mono);font-size:10px;color:var(--amber-light);letter-spacing:0.06em;">
+            <span id="hnn-terminal-id" style="font-family:var(--font-mono);font-size:10px;color:var(--amber-light);letter-spacing:0.06em;">
               HNN-NODE-0047
             </span>
           </div>
@@ -160,7 +161,7 @@
             <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;">
               SETOR
             </span>
-            <span style="font-family:var(--font-mono);font-size:10px;color:var(--amber-light);letter-spacing:0.06em;">
+            <span id="hnn-terminal-setor" style="font-family:var(--font-mono);font-size:10px;color:var(--amber-light);letter-spacing:0.06em;">
               INNER RIM / CORUSCANT
             </span>
           </div>
@@ -168,7 +169,7 @@
             <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;">
               CRIPTOGRAFIA
             </span>
-            <span style="font-family:var(--font-mono);font-size:10px;color:#66FF88;letter-spacing:0.06em;">
+            <span id="hnn-terminal-cripto" style="font-family:var(--font-mono);font-size:10px;color:#66FF88;letter-spacing:0.06em;">
               ATIVA ✓
             </span>
           </div>
@@ -176,7 +177,7 @@
             <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;">
               SINAL
             </span>
-            <span style="font-family:var(--font-mono);font-size:10px;color:#66FF88;letter-spacing:0.06em;">
+            <span id="hnn-terminal-sinal" style="font-family:var(--font-mono);font-size:10px;color:#66FF88;letter-spacing:0.06em;">
               ████████░░ 80%
             </span>
           </div>
@@ -235,6 +236,12 @@
     // Fallback: dados mínimos caso o fetch de holonet.json falhe em dev local
     window.__HNN_DATA__ = null; // será substituído se necessário
   </script>
+
+  <!-- Supabase: se o seu js/supabase.js já carrega a biblioteca, remova a linha do CDN -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="../js/supabase.js"></script>
 
   <script src="../js/holonet.js"></script>
   <script src="../js/holonet-rotator.js"></script>

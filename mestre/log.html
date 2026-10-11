@@ -147,6 +147,10 @@
                 class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
                 Serviços MCMT
             </button>
+            <button id="btn-tab-holonet" onclick="alternarAbas('holonet')"
+                class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
+                Holonet (HNN)
+            </button>
         </div>
 
         <div id="conteudo-financas" class="block">
@@ -292,6 +296,65 @@
                             <tr>
                                 <td colspan="5" class="p-8 text-center text-stone-500">Aguardando telemetria das
                                     oficinas MCMT...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="conteudo-holonet" class="hidden">
+            <div class="bg-stone-900/60 border border-orange-900/30 rounded-lg p-3 mb-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[10px] text-orange-400 uppercase tracking-widest mb-1 font-bold">Seção da Holonet</label>
+                    <select id="holonet-filter-secao" onchange="carregarLogsHolonet()"
+                        class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-orange-500 outline-none transition">
+                        <option value="">Todas as seções</option>
+                        <option value="NOTICIAS">Notícias</option>
+                        <option value="TICKER">Ticker</option>
+                        <option value="CANAIS">Canais ao vivo</option>
+                        <option value="MERCADOS">Mercados</option>
+                        <option value="ALERTA">Alerta imperial</option>
+                        <option value="CABECALHO">Cabeçalho / Terminal</option>
+                        <option value="GERAL">Geral / Importação</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-orange-400 uppercase tracking-widest mb-1 font-bold">Ação</label>
+                    <select id="holonet-filter-acao" onchange="carregarLogsHolonet()"
+                        class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-orange-500 outline-none transition">
+                        <option value="">Qualquer ação</option>
+                        <option value="CRIAR">Criação</option>
+                        <option value="EDITAR">Edição</option>
+                        <option value="EXCLUIR">Exclusão</option>
+                        <option value="REORDENAR">Reordenação</option>
+                        <option value="IMPORTAR">Importação</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-orange-400 uppercase tracking-widest mb-1 font-bold">Quem mexeu</label>
+                    <input type="text" id="holonet-filter-usuario" placeholder="Nome do mestre / dev..."
+                        onkeypress="if (event.key === 'Enter') carregarLogsHolonet()"
+                        class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-200 focus:border-orange-500 outline-none transition">
+                </div>
+            </div>
+            <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[900px]">
+                        <thead>
+                            <tr
+                                class="bg-stone-900 border-b border-stone-800 text-orange-400 text-xs uppercase tracking-wider">
+                                <th class="p-4 w-44">Data / Hora Local</th>
+                                <th class="p-4 w-48">Quem Mexeu</th>
+                                <th class="p-4 w-40">Seção</th>
+                                <th class="p-4 w-32">Ação</th>
+                                <th class="p-4">O que foi alterado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-holonet-body" class="text-sm divide-y divide-stone-800/50">
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-stone-500">Aguardando registros da Holonet...
+                                </td>
                             </tr>
                         </tbody>
                     </table>
