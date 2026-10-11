@@ -1,341 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<title>Datapad - Brigada das Catracas</title>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
-    :root {
-        --term-bg: #051405;
-        --term-green: #39ff14;
-        --term-dark-green: #1a4d1a;
-        --term-border: #228b22;
-        --term-text: #aaffaa;
-    }
-
-    body {
-        background-color: var(--term-bg);
-        color: var(--term-text);
-        font-family: 'Share Tech Mono', monospace;
-        margin: 0;
-        padding: 20px;
-        background-image: repeating-linear-gradient(
-            0deg,
-            rgba(0, 0, 0, 0.15),
-            rgba(0, 0, 0, 0.15) 1px,
-            transparent 1px,
-            transparent 2px
-        );
-        line-height: 1.5;
-    }
-
-    h1 {
-        text-align: center;
-        text-transform: uppercase;
-        color: var(--term-green);
-        border-bottom: 2px solid var(--term-green);
-        padding-bottom: 10px;
-        text-shadow: 0 0 5px var(--term-green);
-        margin-bottom: 40px;
-    }
-
-    .crew-container {
-        display: flex;
-        flex-direction: column;
-        gap: 40px;
-        max-width: 1100px;
-        margin: 0 auto;
-    }
-
-    .crew-card {
-        border: 1px solid var(--term-border);
-        background-color: rgba(26, 77, 26, 0.1);
-        padding: 30px;
-        box-shadow: inset 0 0 15px rgba(57, 255, 20, 0.05);
-    }
-
-    .crew-header {
-        font-size: 1.8em;
-        font-weight: bold;
-        color: var(--term-green);
-        margin-bottom: 25px;
-        border-left: 5px solid var(--term-green);
-        padding-left: 15px;
-        text-shadow: 0 0 3px var(--term-green);
-        text-transform: uppercase;
-        background: linear-gradient(90deg, rgba(57,255,20,0.1) 0%, transparent 50%);
-    }
-
-    .profile-content {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-    }
-
-    .images-wrapper {
-        display: flex;
-        gap: 30px;
-        justify-content: center;
-        background-color: rgba(0, 0, 0, 0.5);
-        padding: 20px;
-        border: 1px dashed var(--term-dark-green);
-    }
-
-    .image-box {
-        text-align: center;
-        font-size: 0.9em;
-        color: var(--term-green);
-    }
-
-    .image-box img {
-        max-width: 200px;
-        height: auto;
-        border: 2px solid var(--term-dark-green);
-        filter: sepia(1) hue-rotate(90deg) saturate(2) brightness(0.9) contrast(1.2); 
-        margin-bottom: 10px;
-    }
-
-    .lore-section {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-    }
-
-    .lore-block {
-        border-top: 1px solid var(--term-dark-green);
-        padding-top: 15px;
-    }
-
-    .lore-title {
-        color: var(--term-green);
-        font-weight: bold;
-        font-size: 1.2em;
-        margin-bottom: 15px;
-        text-transform: uppercase;
-    }
-
-    p {
-        margin-bottom: 15px;
-        text-align: justify;
-    }
-
-    .highlight {
-        color: var(--term-green);
-        font-weight: bold;
-    }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tripulantes — MCMT</title>
+  <link rel="icon" href="../img/servicos.png" />
+  <link rel="stylesheet" href="database/MCMT.css" />
+  <link rel="stylesheet" href="tripulantes/tripulantes.css" />
 </head>
+
 <body>
 
-    <h1>// BANCO DE DADOS: TRIPULAÇÃO - BRIGADA DAS CATRACAS</h1>
+  <div class="aurebesh-bg" aria-hidden="true"></div>
+  <script src="../js/mcmt-shell.js" data-active="tripulantes"></script>
 
-    <div class="crew-container">
+  <main class="mcmt-wrapper">
 
-        <!-- Lyra'nara ("Faísca") -->
-        <div class="crew-card">
-            <div class="crew-header">Lyra'nara ["Faísca"]</div>
-            <div class="profile-content">
-                <div class="images-wrapper">
-                    <div class="image-box">
-                        <img src="img/tripulantes/PreFaisca.png" alt="Pré 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ANTIGO ]
-                    </div>
-                    <div class="image-box">
-                        <img src="img/tripulantes/PosFaisca.jpeg" alt="Pós 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ATUAL ]
-                    </div>
-                </div>
-                <div class="lore-section">
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Anterior: Técnica de Reparos e Invenções</div>
-                        <p>Seu nome de nascimento é Lyra'nara, mas isso é algo que ela guardava para si. Como órfã em Ryloth, aprendeu a sobreviver consertando pequenos dróides e adotou o apelido <span class="highlight">"Faísca"</span> como sua identidade para fugir de um futuro sem perspectivas. Durante uma visita da Engrenagem Mestra ao seu planeta, esgueirou-se a bordo e foi descoberta setores depois.</p>
-                        <p>Em vez de expulsá-la, Dur'toc viu nela um reflexo de si mesmo: uma Twi'lek com talento natural para mecânica. A bordo, ela operava em um caos organizado na oficina, desmontando e consertando. Era a única que não temia a fúria do capitão, respondendo aos gritos com um sorriso e soluções engenhosas que o deixavam secretamente orgulhoso.</p>
-                    </div>
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Atual: Gerente Chefe de Operações - Oficina MCMT 1</div>
-                        <p>Nos últimos nove ciclos, a trajetória de Faísca sofreu uma elevação exponencial. Com a partida de Dur'toc para o Generalato em Lothal, a responsabilidade de manter a oficina das vielas de Coruscant (MCMT 1) recaiu sobre seus ombros. Ela comanda uma equipe mista de orgânicos e dróides com eficiência, filtrando o ruído diário para não sobrecarregar o comando.</p>
-                        <p>Apesar do cargo gerencial, Faísca recusa-se a abandonar sua essência. Seu tempo livre é dedicado a transformar peças condenadas em pura inovação, pegando as chamadas <span class="highlight">PVIS (Peças Vagabundas Inutilizando o Sistema)</span> e as convertendo em <span class="highlight">GAFOs (Gambiarras Altamente Funcionais e Otimizadas)</span>, provando que a melhor engenharia pode nascer do lixo esquecido.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Hero -->
+    <section class="mcmt-hero">
+      <p class="hero-eyebrow"><span>tripulacao</span>Registro de Pessoal — Brigada das Catracas</p>
+      <h1>Tripulação</h1>
+      <p class="hero-sub">
+        Arquivos da equipe da Engrenagem Mestra: a função que cada um exercia a bordo
+        e o cargo que ocupa hoje nas oficinas MCMT.
+      </p>
+      <div class="hero-meta">
+        <span class="reg-num">CRW-MCMT</span>
+        TRIPULANTES REGISTRADOS: <span id="crew-count">—</span>
+      </div>
+    </section>
 
-        <!-- Zarek Valerius -->
-        <div class="crew-card">
-            <div class="crew-header">Zarek Valerius</div>
-            <div class="profile-content">
-                <div class="images-wrapper">
-                    <div class="image-box">
-                        <img src="img/tripulantes/PreZarek.png" alt="Pré 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ANTIGO ]
-                    </div>
-                    <div class="image-box">
-                        <img src="img/tripulantes/PosZarek.jpeg" alt="Pós 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ATUAL ]
-                    </div>
-                </div>
-                <div class="lore-section">
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Anterior: Engenheiro-Chefe</div>
-                        <p>Zarek foi um engenheiro civil a serviço do Império antes de se desiludir com a burocracia e o desperdício da máquina imperial. Encontrou na Engrenagem Mestra a chance de tratar a engenharia como arte. Calmo, metódico e estritamente profissional, ele era o centro de tranquilidade da nave e a âncora para a genialidade caótica de Dur'toc.</p>
-                        <p>Especialista em hipermotores e diagnósticos de precisão, Zarek era talvez a única pessoa a bordo que podia criticar um projeto do capitão e ser ouvido. Ele exigia procedimentos rígidos e os melhores componentes, garantindo que a sinfonia estrutural da nave nunca desmoronasse.</p>
-                    </div>
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Atual: Gerente Chefe de Operações - Oficina MCMT 2</div>
-                        <p>Com a expansão da Brigada para a elite da Parte Alta de Coruscant, Zarek tornou-se a escolha inquestionável para assumir a nova filial. Ele governa a <span class="highlight">MCMT 2</span> com precisão clínica, atendendo a oficiais imperialistas e à nata corporativa em um bastião de reparos de altíssima qualidade.</p>
-                        <p>Sua oficina é um santuário da ordem. Não existem fios soltos ou ferramentas jogadas. Tudo é esterilizado, coordenado por um esquadrão silencioso de dróides de limpeza Série L-1. O ambiente é tão polido e suas operações são tão rastreáveis que oficiais frequentemente preferem aguardar na sua recepção impecável do que em seus próprios escritórios.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Loras Kaddak -->
-        <div class="crew-card">
-            <div class="crew-header">Loras Kaddak</div>
-            <div class="profile-content">
-                <div class="images-wrapper">
-                    <div class="image-box">
-                        <img src="img/tripulantes/PreLoras.png" alt="Pré 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ANTIGO ]
-                    </div>
-                    <div class="image-box">
-                        <img src="img/tripulantes/PosLoras.jpeg" alt="Pós 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ATUAL ]
-                    </div>
-                </div>
-                <div class="lore-section">
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Anterior: Operador de Sistemas</div>
-                        <p>Nascido nos níveis mais baixos de Coruscant, o Zabrak Loras aprendeu cedo que tecnologia de ponta não valia nada sem os créditos para mantê-la. Extremamente inteligente e desconfiado, ele era pragmaticamente avarento. A bordo da Engrenagem Mestra, desviava energia, monitorava consumos e buscava sempre peças com o melhor custo-benefício.</p>
-                        <p>Sua relação com Dur'toc era baseada no atrito e na dependência. Loras trazia descontos inacreditáveis de fornecedores, mas frequentemente enlouquecia o capitão ao sugerir o uso de peças recondicionadas em sistemas críticos, absorvendo as ameaças de morte do Twi'lek como mero ruído de fundo.</p>
-                    </div>
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Atual: Gestor Chefe de Operações Financeiras</div>
-                        <p>Com a fundação das MCMT 1 e 2, Loras abandonou qualquer proximidade com a sujeira mecânica e assumiu o controle absoluto das artérias comerciais da Brigada. Ele é a muralha burocrática intransponível da organização, recolhendo pesados relatórios semanais e negando implacavelmente despesas supérfluas.</p>
-                        <p>Refletindo sua aversão ao trabalho braçal, Loras reivindicou um escritório isolado na esterilizada MCMT 2. Ele passa os ciclos analisando o mercado negro e o mercado oficial, emergindo apenas para conduzir temidas vistorias surpresa nas oficinas e aplicar severos cortes de orçamento sob os olhos revirados do restante da equipe.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Kaelen ("Kael") -->
-        <div class="crew-card">
-            <div class="crew-header">Kaelen ["Kael"]</div>
-            <div class="profile-content">
-                <div class="images-wrapper">
-                    <div class="image-box">
-                        <img src="img/tripulantes/PreKael.png" alt="Pré 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ANTIGO ]
-                    </div>
-                    <div class="image-box">
-                        <img src="img/tripulantes/PosKael.jpeg" alt="Pós 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ATUAL ]
-                    </div>
-                </div>
-                <div class="lore-section">
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Anterior: Co-piloto e Vigia</div>
-                        <p>Kaelen foi um piloto corporativo promissor cuja carreira foi encerrada ao ser banido por usar modificações ilegais no motor. Desesperado para voar, implorou por um lugar com Dur'toc após ficar obcecado pelo design da Engrenagem Mestra e do caça furtivo 'O Cinzel'. Otimista incurável e falante, Kael era a energia constante na ponte de comando.</p>
-                        <p>Atuando como os olhos da nave, ele identificava naves passando e vivia sonhando com rotas "mais emocionantes". Passava o tempo livre admirando 'O Cinzel' no hangar, o que frequentemente resultava em Dur'toc ameaçá-lo fisicamente caso ele sugerisse modificar as asas ou se atrevesse a mexer nos controles.</p>
-                    </div>
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Atual: Piloto Chefe de Logística e Resgate</div>
-                        <p>Sem a fragata mãe e 'O Cinzel', que partiram para Lothal, Kael teve de adaptar sua fome de voo à gravidade brutal de Coruscant. Ele agora comanda a frota de pesados rebocadores e transportes logísticos da Brigada, tecendo manobras arriscadas nos engarrafamentos verticais e vielas estreitas para resgatar caças danificados e componentes críticos.</p>
-                        <p>Além do resgate, ele é o comprador de campo. Quando as oficinas precisam de algo, Kael voa pelo planeta para negociar, sempre sob a vigilância orçamentária implacável de Loras. Kael ainda tenta adicionar compras "emocionantes" e propulsores ilegais nas faturas, sendo invariavelmente vetado pela contabilidade.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gara -->
-        <div class="crew-card">
-            <div class="crew-header">Gara</div>
-            <div class="profile-content">
-                <div class="images-wrapper">
-                    <div class="image-box">
-                        <img src="img/tripulantes/PreGara.png" alt="Pré 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ANTIGO ]
-                    </div>
-                    <div class="image-box">
-                        <img src="img/tripulantes/PosGara.jpeg" alt="Pós 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ATUAL ]
-                    </div>
-                </div>
-                <div class="lore-section">
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Anterior: Operadora Auxiliar (Software)</div>
-                        <p>Uma brilhante estudante de Chandrila, Gara abandonou a academia considerando-a puramente teórica e restritiva. Curiosa e proativa, ela se juntou à tripulação buscando experiência sem amarras, enxergando toda a tecnologia como um quebra-cabeça ansioso para ser solucionado.</p>
-                        <p>Na Engrenagem Mestra, ela ficava sob a supervisão de Loras, mas sempre caçava formas de "otimizar" sistemas que já estavam operando perfeitamente. Dur'toc a via com uma mistura constante de irritação e encanto oculto, repreendendo-a por modificar códigos sem autorização, mas permitindo que ficasse pois ela era das poucas que genuinamente admirava seu ofício.</p>
-                    </div>
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Atual: Chefe de Suporte Técnico de Software</div>
-                        <p>Gara evoluiu para se tornar a mente e a arquiteta digital por trás da infraestrutura da Brigada. É ela quem reescreve as interfaces, fortalece os firewalls criptografados e assegura que os servidores das operações da Parte Alta e da Parte Baixa consigam conversar sem interferências na rede da cidade.</p>
-                        <p>Flutuando entre as bases em trabalho remoto ou presencial, Gara nunca perdeu seu "jeitinho animado". Ela navega o perigoso cenário corporativo de Coruscant armada de seu datapad modificado e fones de ouvido tocando música eletrônica, garantindo que os dados da Brigada fiquem sempre invisíveis a qualquer varredura indesejada do Império.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Renn -->
-        <div class="crew-card">
-            <div class="crew-header">Renn</div>
-            <div class="profile-content">
-                <div class="images-wrapper">
-                    <div class="image-box">
-                        <img src="img/tripulantes/PreRenn.png" alt="Pré 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ANTIGO ]
-                    </div>
-                    <div class="image-box">
-                        <img src="img/tripulantes/PosRenn.jpeg" alt="Pós 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ATUAL ]
-                    </div>
-                </div>
-                <div class="lore-section">
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Anterior: Operador Auxiliar (Defesas)</div>
-                        <p>Um ex-técnico da Frota de Segurança Mirialana, Renn aposentou-se cedo após discordar de superiores burocratas sobre procedimentos de manutenção. Metódico e incrivelmente focado, ele buscava um lugar onde apenas a competência ditasse o valor de alguém.</p>
-                        <p>Na ponte da Engrenagem Mestra, Renn era a presença mais calma e constante. Responsável pelos escudos e suporte de vida, seu posto era o mais organizado. A interação com o exigente capitão era baseada num profundo respeito tácito; Dur'toc nunca precisava gritar sobre os sistemas de Renn, pois eles simplesmente não falhavam.</p>
-                    </div>
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Atual: Chefe de Hardware e Infraestrutura</div>
-                        <p>Com as novas instalações, Renn assumiu o controle absoluto sobre o cabeamento, roteadores e servidores físicos que mantêm a MCMT operando. Enquanto Gara cuida dos dados, o Mirialano cuida do metal e do silicone físico, montando e calibrando os terminais de alta precisão com a mesma disciplina de seus anos militares.</p>
-                        <p>Transitando entre as oficinas, sua preferência natural o coloca quase sempre no ambiente limpo de Zarek na MCMT 2. Após nove anos nas trincheiras com a Brigada, sua rigidez militar amoleceu o suficiente para exibir uma lealdade e relaxamento genuínos perto da equipe, ainda que ele continue sendo uma força silenciosa.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Vasctor -->
-        <div class="crew-card">
-            <div class="crew-header">Vasctor</div>
-            <div class="profile-content">
-                <div class="images-wrapper">
-                    <div class="image-box">
-                        <img src="img/tripulantes/PreVasctor.png" alt="Pré 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ANTIGO ]
-                    </div>
-                    <div class="image-box">
-                        <img src="img/tripulantes/PosVasctor.jpeg" alt="Pós 9 anos" onerror="this.src='https://via.placeholder.com/200x250/051405/39ff14?text=ARQUIVO+CORROMPIDO'">
-                        <br>[ REGISTRO ATUAL ]
-                    </div>
-                </div>
-                <div class="lore-section">
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Anterior: Técnico de Reparos de Casco</div>
-                        <p>Vasctor, o Thisspiasiano, era um operário braçal de estaleiros da Orla Exterior que perdeu sua função para a automação. Com múltiplos braços movendo-se numa fluidez hipnótica, ele foi acolhido pela nave para consertos extremos e reforços de blindagem.</p>
-                        <p>Geralmente operando no vácuo do espaço ou nas entranhas da fuselagem, Vasctor personificava força bruta com precisão estrutural. Dur'toc sabia que qualquer solda executada por ele se tornaria mais resistente do que a própria placa de metal original, comunicando-se com o técnico quase exclusivamente através de apontamentos silenciosos.</p>
-                    </div>
-                    <div class="lore-block">
-                        <div class="lore-title">>>> Função Atual: Chefe de Metalurgia e Eng. Pesada</div>
-                        <p>Vasctor evoluiu para o cargo massivo de Chefe de Metalurgia. Qualquer trabalho envolvendo dobras de ligas densas, restauração de cascos aniquilados e instalação de motores pesados passa diretamente por ele. Movendo-se silenciosamente pelas docas de Faísca e Zarek, ele executa as tarefas braçais impossíveis.</p>
-                        <p>Ele frequentemente forma uma dupla imbatível com o dróide elevador CL-R ("Bruto"). Juntos, atuam não apenas na forja e solda, mas também garantindo o transporte seguro de componentes de extrema tonelagem. Em meio às reclamações orçamentárias e gritaria da equipe, Vasctor permanece como um imponente ancoradouro de tranquilidade, preferindo sempre deixar o maçarico falar por ele.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <div class="section-header">
+      <span class="section-tag">registros</span>
+      <h2>Tripulantes Registrados</h2>
     </div>
 
+    <!-- Os cards são gerados por tripulantes/tripulantes.js a partir de tripulantes/tripulantes.json -->
+    <div class="cards-grid crew-grid" id="crew-grid" aria-live="polite">
+      <p class="crew-status">Carregando arquivos…</p>
+    </div>
+    <noscript><p class="crew-status">Ative o JavaScript para consultar os registros da tripulação.</p></noscript>
+
+  </main>
+
+  <!-- Modal de ficha -->
+  <div class="mcmt-modal-overlay" id="crew-overlay" role="dialog" aria-modal="true" aria-labelledby="crew-title">
+    <div class="mcmt-modal crew-modal">
+      <div class="modal-close">
+        <button type="button" id="crew-close" aria-label="Fechar">&#x2715; FECHAR</button>
+      </div>
+      <div class="modal-inner">
+        <div class="modal-img-col">
+          <div class="crew-photos" id="crew-photos"></div>
+        </div>
+        <div class="modal-content-col">
+          <p class="modal-eyebrow" id="crew-eyebrow"></p>
+          <h2 class="modal-title" id="crew-title"></h2>
+          <p class="modal-subtitle" id="crew-subtitle"></p>
+          <div id="crew-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="tripulantes/tripulantes.js"></script>
 </body>
+
 </html>

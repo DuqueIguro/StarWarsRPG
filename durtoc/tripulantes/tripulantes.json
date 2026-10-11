@@ -1,0 +1,158 @@
+{
+  "tripulantes": [
+    {
+      "id": "faisca",
+      "nome": "Lyra'nara",
+      "apelido": "Faísca",
+      "setor": "Operações · MCMT 1",
+      "imgAntiga": "PreFaisca.png",
+      "imgAtual": "PosFaisca.jpeg",
+      "anterior": {
+        "cargo": "Técnica de Reparos e Invenções",
+        "texto": [
+          "Seu nome de nascimento é Lyra'nara, mas isso é algo que ela guardava para si. Como órfã em Ryloth, aprendeu a sobreviver consertando pequenos dróides e adotou o apelido **\"Faísca\"** como sua identidade para fugir de um futuro sem perspectivas. Durante uma visita da Engrenagem Mestra ao seu planeta, esgueirou-se a bordo e foi descoberta setores depois.",
+          "Em vez de expulsá-la, Dur'toc viu nela um reflexo de si mesmo: uma Twi'lek com talento natural para mecânica. A bordo, ela operava em um caos organizado na oficina, desmontando e consertando. Era a única que não temia a fúria do capitão, respondendo aos gritos com um sorriso e soluções engenhosas que o deixavam secretamente orgulhoso."
+        ]
+      },
+      "atual": {
+        "cargo": "Gerente Chefe de Operações - Oficina MCMT 1",
+        "texto": [
+          "Nos últimos nove ciclos, a trajetória de Faísca sofreu uma elevação exponencial. Com a partida de Dur'toc para o Generalato em Lothal, a responsabilidade de manter a oficina das vielas de Coruscant (MCMT 1) recaiu sobre seus ombros. Ela comanda uma equipe mista de orgânicos e dróides com eficiência, filtrando o ruído diário para não sobrecarregar o comando.",
+          "Apesar do cargo gerencial, Faísca recusa-se a abandonar sua essência. Seu tempo livre é dedicado a transformar peças condenadas em pura inovação, pegando as chamadas **PVIS (Peças Vagabundas Inutilizando o Sistema)** e as convertendo em **GAFOs (Gambiarras Altamente Funcionais e Otimizadas)**, provando que a melhor engenharia pode nascer do lixo esquecido."
+        ]
+      }
+    },
+    {
+      "id": "zarek",
+      "nome": "Zarek Valerius",
+      "apelido": "",
+      "setor": "Operações · MCMT 2",
+      "imgAntiga": "PreZarek.png",
+      "imgAtual": "PosZarek.jpeg",
+      "anterior": {
+        "cargo": "Engenheiro-Chefe",
+        "texto": [
+          "Zarek foi um engenheiro civil a serviço do Império antes de se desiludir com a burocracia e o desperdício da máquina imperial. Encontrou na Engrenagem Mestra a chance de tratar a engenharia como arte. Calmo, metódico e estritamente profissional, ele era o centro de tranquilidade da nave e a âncora para a genialidade caótica de Dur'toc.",
+          "Especialista em hipermotores e diagnósticos de precisão, Zarek era talvez a única pessoa a bordo que podia criticar um projeto do capitão e ser ouvido. Ele exigia procedimentos rígidos e os melhores componentes, garantindo que a sinfonia estrutural da nave nunca desmoronasse."
+        ]
+      },
+      "atual": {
+        "cargo": "Gerente Chefe de Operações - Oficina MCMT 2",
+        "texto": [
+          "Com a expansão da Brigada para a elite da Parte Alta de Coruscant, Zarek tornou-se a escolha inquestionável para assumir a nova filial. Ele governa a **MCMT 2** com precisão clínica, atendendo a oficiais imperialistas e à nata corporativa em um bastião de reparos de altíssima qualidade.",
+          "Sua oficina é um santuário da ordem. Não existem fios soltos ou ferramentas jogadas. Tudo é esterilizado, coordenado por um esquadrão silencioso de dróides de limpeza Série L-1. O ambiente é tão polido e suas operações são tão rastreáveis que oficiais frequentemente preferem aguardar na sua recepção impecável do que em seus próprios escritórios."
+        ]
+      }
+    },
+    {
+      "id": "loras",
+      "nome": "Loras Kaddak",
+      "apelido": "",
+      "setor": "Operações Financeiras",
+      "imgAntiga": "PreLoras.png",
+      "imgAtual": "PosLoras.jpeg",
+      "anterior": {
+        "cargo": "Operador de Sistemas",
+        "texto": [
+          "Nascido nos níveis mais baixos de Coruscant, o Zabrak Loras aprendeu cedo que tecnologia de ponta não valia nada sem os créditos para mantê-la. Extremamente inteligente e desconfiado, ele era pragmaticamente avarento. A bordo da Engrenagem Mestra, desviava energia, monitorava consumos e buscava sempre peças com o melhor custo-benefício.",
+          "Sua relação com Dur'toc era baseada no atrito e na dependência. Loras trazia descontos inacreditáveis de fornecedores, mas frequentemente enlouquecia o capitão ao sugerir o uso de peças recondicionadas em sistemas críticos, absorvendo as ameaças de morte do Twi'lek como mero ruído de fundo."
+        ]
+      },
+      "atual": {
+        "cargo": "Gestor Chefe de Operações Financeiras",
+        "texto": [
+          "Com a fundação das MCMT 1 e 2, Loras abandonou qualquer proximidade com a sujeira mecânica e assumiu o controle absoluto das artérias comerciais da Brigada. Ele é a muralha burocrática intransponível da organização, recolhendo pesados relatórios semanais e negando implacavelmente despesas supérfluas.",
+          "Refletindo sua aversão ao trabalho braçal, Loras reivindicou um escritório isolado na esterilizada MCMT 2. Ele passa os ciclos analisando o mercado negro e o mercado oficial, emergindo apenas para conduzir temidas vistorias surpresa nas oficinas e aplicar severos cortes de orçamento sob os olhos revirados do restante da equipe."
+        ]
+      }
+    },
+    {
+      "id": "kael",
+      "nome": "Kaelen",
+      "apelido": "Kael",
+      "setor": "Logística e Resgate",
+      "imgAntiga": "PreKael.png",
+      "imgAtual": "PosKael.jpeg",
+      "anterior": {
+        "cargo": "Co-piloto e Vigia",
+        "texto": [
+          "Kaelen foi um piloto corporativo promissor cuja carreira foi encerrada ao ser banido por usar modificações ilegais no motor. Desesperado para voar, implorou por um lugar com Dur'toc após ficar obcecado pelo design da Engrenagem Mestra e do caça furtivo 'O Cinzel'. Otimista incurável e falante, Kael era a energia constante na ponte de comando.",
+          "Atuando como os olhos da nave, ele identificava naves passando e vivia sonhando com rotas \"mais emocionantes\". Passava o tempo livre admirando 'O Cinzel' no hangar, o que frequentemente resultava em Dur'toc ameaçá-lo fisicamente caso ele sugerisse modificar as asas ou se atrevesse a mexer nos controles."
+        ]
+      },
+      "atual": {
+        "cargo": "Piloto Chefe de Logística e Resgate",
+        "texto": [
+          "Sem a fragata mãe e 'O Cinzel', que partiram para Lothal, Kael teve de adaptar sua fome de voo à gravidade brutal de Coruscant. Ele agora comanda a frota de pesados rebocadores e transportes logísticos da Brigada, tecendo manobras arriscadas nos engarrafamentos verticais e vielas estreitas para resgatar caças danificados e componentes críticos.",
+          "Além do resgate, ele é o comprador de campo. Quando as oficinas precisam de algo, Kael voa pelo planeta para negociar, sempre sob a vigilância orçamentária implacável de Loras. Kael ainda tenta adicionar compras \"emocionantes\" e propulsores ilegais nas faturas, sendo invariavelmente vetado pela contabilidade."
+        ]
+      }
+    },
+    {
+      "id": "gara",
+      "nome": "Gara",
+      "apelido": "",
+      "setor": "Software",
+      "imgAntiga": "PreGara.png",
+      "imgAtual": "PosGara.jpeg",
+      "anterior": {
+        "cargo": "Operadora Auxiliar (Software)",
+        "texto": [
+          "Uma brilhante estudante de Chandrila, Gara abandonou a academia considerando-a puramente teórica e restritiva. Curiosa e proativa, ela se juntou à tripulação buscando experiência sem amarras, enxergando toda a tecnologia como um quebra-cabeça ansioso para ser solucionado.",
+          "Na Engrenagem Mestra, ela ficava sob a supervisão de Loras, mas sempre caçava formas de \"otimizar\" sistemas que já estavam operando perfeitamente. Dur'toc a via com uma mistura constante de irritação e encanto oculto, repreendendo-a por modificar códigos sem autorização, mas permitindo que ficasse pois ela era das poucas que genuinamente admirava seu ofício."
+        ]
+      },
+      "atual": {
+        "cargo": "Chefe de Suporte Técnico de Software",
+        "texto": [
+          "Gara evoluiu para se tornar a mente e a arquiteta digital por trás da infraestrutura da Brigada. É ela quem reescreve as interfaces, fortalece os firewalls criptografados e assegura que os servidores das operações da Parte Alta e da Parte Baixa consigam conversar sem interferências na rede da cidade.",
+          "Flutuando entre as bases em trabalho remoto ou presencial, Gara nunca perdeu seu \"jeitinho animado\". Ela navega o perigoso cenário corporativo de Coruscant armada de seu datapad modificado e fones de ouvido tocando música eletrônica, garantindo que os dados da Brigada fiquem sempre invisíveis a qualquer varredura indesejada do Império."
+        ]
+      }
+    },
+    {
+      "id": "renn",
+      "nome": "Renn",
+      "apelido": "",
+      "setor": "Hardware e Infraestrutura",
+      "imgAntiga": "PreRenn.png",
+      "imgAtual": "PosRenn.jpeg",
+      "anterior": {
+        "cargo": "Operador Auxiliar (Defesas)",
+        "texto": [
+          "Um ex-técnico da Frota de Segurança Mirialana, Renn aposentou-se cedo após discordar de superiores burocratas sobre procedimentos de manutenção. Metódico e incrivelmente focado, ele buscava um lugar onde apenas a competência ditasse o valor de alguém.",
+          "Na ponte da Engrenagem Mestra, Renn era a presença mais calma e constante. Responsável pelos escudos e suporte de vida, seu posto era o mais organizado. A interação com o exigente capitão era baseada num profundo respeito tácito; Dur'toc nunca precisava gritar sobre os sistemas de Renn, pois eles simplesmente não falhavam."
+        ]
+      },
+      "atual": {
+        "cargo": "Chefe de Hardware e Infraestrutura",
+        "texto": [
+          "Com as novas instalações, Renn assumiu o controle absoluto sobre o cabeamento, roteadores e servidores físicos que mantêm a MCMT operando. Enquanto Gara cuida dos dados, o Mirialano cuida do metal e do silicone físico, montando e calibrando os terminais de alta precisão com a mesma disciplina de seus anos militares.",
+          "Transitando entre as oficinas, sua preferência natural o coloca quase sempre no ambiente limpo de Zarek na MCMT 2. Após nove anos nas trincheiras com a Brigada, sua rigidez militar amoleceu o suficiente para exibir uma lealdade e relaxamento genuínos perto da equipe, ainda que ele continue sendo uma força silenciosa."
+        ]
+      }
+    },
+    {
+      "id": "vasctor",
+      "nome": "Vasctor",
+      "apelido": "",
+      "setor": "Metalurgia e Eng. Pesada",
+      "imgAntiga": "PreVasctor.png",
+      "imgAtual": "PosVasctor.jpeg",
+      "anterior": {
+        "cargo": "Técnico de Reparos de Casco",
+        "texto": [
+          "Vasctor, o Thisspiasiano, era um operário braçal de estaleiros da Orla Exterior que perdeu sua função para a automação. Com múltiplos braços movendo-se numa fluidez hipnótica, ele foi acolhido pela nave para consertos extremos e reforços de blindagem.",
+          "Geralmente operando no vácuo do espaço ou nas entranhas da fuselagem, Vasctor personificava força bruta com precisão estrutural. Dur'toc sabia que qualquer solda executada por ele se tornaria mais resistente do que a própria placa de metal original, comunicando-se com o técnico quase exclusivamente através de apontamentos silenciosos."
+        ]
+      },
+      "atual": {
+        "cargo": "Chefe de Metalurgia e Eng. Pesada",
+        "texto": [
+          "Vasctor evoluiu para o cargo massivo de Chefe de Metalurgia. Qualquer trabalho envolvendo dobras de ligas densas, restauração de cascos aniquilados e instalação de motores pesados passa diretamente por ele. Movendo-se silenciosamente pelas docas de Faísca e Zarek, ele executa as tarefas braçais impossíveis.",
+          "Ele frequentemente forma uma dupla imbatível com o dróide elevador CL-R (\"Bruto\"). Juntos, atuam não apenas na forja e solda, mas também garantindo o transporte seguro de componentes de extrema tonelagem. Em meio às reclamações orçamentárias e gritaria da equipe, Vasctor permanece como um imponente ancoradouro de tranquilidade, preferindo sempre deixar o maçarico falar por ele."
+        ]
+      }
+    }
+  ]
+}
