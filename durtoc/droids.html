@@ -7,12 +7,14 @@
   <title>Droids Operacionais — MCMT</title>
   <link rel="icon" href="../img/servicos.png" />
   <link rel="stylesheet" href="database/MCMT.css" />
+  <link rel="stylesheet" href="droids/genesis.css" />
 </head>
 
 <body>
 
   <!-- Aurebesh watermark background -->
   <div class="aurebesh-bg" aria-hidden="true"></div>
+  <canvas id="gn-mesh" aria-hidden="true"></canvas>
   <script src="../js/mcmt-shell.js" data-active="droids"></script>
 
 
@@ -33,9 +35,22 @@
       <div class="hero-meta">
         <span class="reg-num">IMC14427G</span>
         CLASSE: CRUZADOR CARGUEIRO DE REPAROS<br />
-        UNIDADES ATIVAS: 4 · OFFLINE: 1
+        UNIDADES ATIVAS: 6 · INTEGRADO: 1 · STANDBY: 1
       </div>
     </div>
+
+
+    <!-- G.E.N.E.S.I.S. — presença viva da página -->
+    <section class="gn-core" id="gn-core" aria-label="G.E.N.E.S.I.S., IA geral de Dur'toc">
+      <button class="gn-orb-btn" type="button" onclick="MCMT.open(DROIDS.genesis)" aria-label="Abrir ficha do G.E.N.E.S.I.S.">
+        <canvas id="gn-orb" width="240" height="240"></canvas>
+      </button>
+      <div class="gn-text">
+        <p class="gn-name">G.E.N.E.S.I.S.</p>
+        <p class="gn-line" id="gn-line"></p>
+        <p class="gn-meta" id="gn-meta"></p>
+      </div>
+    </section>
 
     <!-- Grid de droids -->
     <div class="section-header">
@@ -46,7 +61,7 @@
     <div class="cards-grid" id="droids-grid">
 
       <!-- R5-T1N — Tino -->
-      <article class="mcmt-card" onclick="MCMT.open(DROIDS.tino)" tabindex="0" aria-label="Abrir ficha de R5-T1N Tino">
+      <article class="mcmt-card" data-droid="tino" onclick="MCMT.open(DROIDS.tino)" tabindex="0" aria-label="Abrir ficha de R5-T1N Tino">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Tino.png" alt="Tino — R5-T1N" loading="lazy" />
           <span class="card-status">ATIVO</span>
@@ -60,7 +75,7 @@
       </article>
 
       <!-- C3-V0K — Vok -->
-      <article class="mcmt-card" onclick="MCMT.open(DROIDS.vok)" tabindex="0" aria-label="Abrir ficha de C3-V0K Vok">
+      <article class="mcmt-card" data-droid="vok" onclick="MCMT.open(DROIDS.vok)" tabindex="0" aria-label="Abrir ficha de C3-V0K Vok">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Vok.png" alt="Vok — C3-V0K" loading="lazy" />
           <span class="card-status">ATIVO</span>
@@ -74,7 +89,7 @@
       </article>
 
       <!-- USM-07 — Comboio -->
-      <article class="mcmt-card" onclick="MCMT.open(DROIDS.comboio)" tabindex="0"
+      <article class="mcmt-card" data-droid="comboio" onclick="MCMT.open(DROIDS.comboio)" tabindex="0"
         aria-label="Abrir ficha de USM-07 Comboio">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Comboio.png" alt="Comboio — USM-07" loading="lazy" />
@@ -89,7 +104,7 @@
       </article>
 
       <!-- CL-R — Bruto -->
-      <article class="mcmt-card" onclick="MCMT.open(DROIDS.bruto)" tabindex="0" aria-label="Abrir ficha de CL-R Bruto">
+      <article class="mcmt-card" data-droid="bruto" onclick="MCMT.open(DROIDS.bruto)" tabindex="0" aria-label="Abrir ficha de CL-R Bruto">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Bruto.png" alt="Bruto — CL-R" loading="lazy" />
           <span class="card-status offline">STANDBY</span>
@@ -103,7 +118,7 @@
       </article>
 
       <!-- Zunido -->
-      <article class="mcmt-card" onclick="MCMT.open(DROIDS.zunido)" tabindex="0" aria-label="Abrir ficha de Zunido">
+      <article class="mcmt-card" data-droid="zunido" onclick="MCMT.open(DROIDS.zunido)" tabindex="0" aria-label="Abrir ficha de Zunido">
         <div class="card-img-wrap">
           <img src="../img/blueprints/zunido.png" alt="Zunido — Droid Integrado" loading="lazy" />
           <span class="card-status">INTEGRADO</span>
@@ -113,6 +128,48 @@
           <h2 class="card-name">Zunido</h2>
           <p class="card-alias">Sistema Nervoso do Cinzel</p>
           <p class="card-role">Computador de Voo / Co-piloto do Cinzel</p>
+        </div>
+      </article>
+
+      <!-- BD-1SP — Bispo -->
+      <article class="mcmt-card" data-droid="bispo" onclick="MCMT.open(DROIDS.bispo)" tabindex="0" aria-label="Abrir ficha de BD-1SP Bispo">
+        <div class="card-img-wrap">
+          <img src="../img/blueprints/Bispo.png" alt="Bispo — BD-1SP" loading="lazy" />
+          <span class="card-status">ATIVO</span>
+        </div>
+        <div class="card-body">
+          <p class="card-designation">BD-1SP</p>
+          <h2 class="card-name">Bispo</h2>
+          <p class="card-alias">Assistente Técnico de Campo</p>
+          <p class="card-role">Exploração e Diagnóstico</p>
+        </div>
+      </article>
+
+      <!-- RB-0SH — Rob -->
+      <article class="mcmt-card" data-droid="rob" onclick="MCMT.open(DROIDS.rob)" tabindex="0" aria-label="Abrir ficha de RB-0SH Rob">
+        <div class="card-img-wrap">
+          <img src="../img/blueprints/Rob.png" alt="Rob — RB-0SH" loading="lazy" />
+          <span class="card-status">ATIVO</span>
+        </div>
+        <div class="card-body">
+          <p class="card-designation">RB-0SH</p>
+          <h2 class="card-name">Rob</h2>
+          <p class="card-alias">Arquivista</p>
+          <p class="card-role">Banco de Dados Integrado</p>
+        </div>
+      </article>
+
+      <!-- DOPE — Dope -->
+      <article class="mcmt-card" data-droid="dope" onclick="MCMT.open(DROIDS.dope)" tabindex="0" aria-label="Abrir ficha de DOPE Dope">
+        <div class="card-img-wrap">
+          <img src="../img/blueprints/Dope.png" alt="Dope — DV-PE3" loading="lazy" />
+          <span class="card-status">ATIVO</span>
+        </div>
+        <div class="card-body">
+          <p class="card-designation">DV-PE3</p>
+          <h2 class="card-name">Dope</h2>
+          <p class="card-alias">Valete e Sommelier</p>
+          <p class="card-role">Valete Pessoal / Café Exclusivo</p>
         </div>
       </article>
 
@@ -143,9 +200,11 @@
   </div>
 
   <!-- ── DADOS DOS DROIDS ────────────────────────────────── -->
-  <script src="droids.js"></script>
+  <script src="droids/droids.js"></script>
 
   <script src="../js/MCMT.js"></script>
+  <script src="droids/genesis.js"></script>
+  
 </body>
 
 </html>

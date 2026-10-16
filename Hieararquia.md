@@ -40,11 +40,13 @@ StarWarsRPG
 ├─ durtoc
 │  ├─ database
 │  │  ├─ durtoc.js
+│  │  ├─ inventarioOficina.css
 │  │  ├─ inventarioOficina.js
 │  │  ├─ manifesto.json
 │  │  ├─ manifestoSigiloso.json
 │  │  ├─ MCMT.css
 │  │  ├─ modeloOS.json
+│  │  ├─ oficina.css
 │  │  ├─ oficina.js
 │  │  ├─ ordens_de_servico
 │  │  │  ├─ OS-04-COR-001.json
@@ -61,7 +63,9 @@ StarWarsRPG
 │  │  ├─ servicosMCMT.js
 │  │  └─ siglasLocalidade.json
 │  ├─ droids
-│  │  └─ droids.js
+│  │  ├─ droids.js
+│  │  ├─ genesis.css
+│  │  └─ genesis.js
 │  ├─ droids.html
 │  ├─ durtoc.html
 │  ├─ durtocGateKeeper.js
@@ -85,6 +89,10 @@ StarWarsRPG
 │  │  ├─ sugestoes.js
 │  │  └─ tino.js
 │  ├─ siglas.html
+│  ├─ tripulantes
+│  │  ├─ tripulantes.css
+│  │  ├─ tripulantes.js
+│  │  └─ tripulantes.json
 │  └─ tripulantes.html
 ├─ Hieararquia.md
 ├─ img
@@ -92,11 +100,15 @@ StarWarsRPG
 │  ├─ astaraLogo.png
 │  ├─ bg.png
 │  ├─ blueprints
+│  │  ├─ Bispo.png
 │  │  ├─ Bruto.png
 │  │  ├─ Comboio.png
+│  │  ├─ Dope.png
+│  │  ├─ Rob.png
 │  │  ├─ Tino.png
 │  │  ├─ Vok.png
 │  │  └─ zunido.png
+│  ├─ caixas.png
 │  ├─ caminho.png
 │  ├─ caminhoLogo.png
 │  ├─ contatoAstara.png
@@ -180,6 +192,7 @@ StarWarsRPG
 │  ├─ login.js
 │  ├─ manutencao.js
 │  ├─ mapa_galatico.js
+│  ├─ mcmt-shell.js
 │  ├─ MCMT.js
 │  ├─ MTP.js
 │  ├─ mtpEffects.js
@@ -195,6 +208,10 @@ StarWarsRPG
 │  ├─ escudo.html
 │  ├─ fichasBalanceamento.html
 │  ├─ frotaMestre.html
+│  ├─ holonetMestre
+│  │  ├─ holonetMestre.css
+│  │  └─ holonetMestre.js
+│  ├─ holonetMestre.html
 │  ├─ log
 │  │  ├─ log.css
 │  │  └─ log.js
@@ -273,7 +290,6 @@ StarWarsRPG
 │  ├─ mapa_galatico.css
 │  ├─ menu.css
 │  ├─ MTP.css
-│  ├─ oficina.css
 │  ├─ organizacoes.css
 │  ├─ p2w.css
 │  ├─ posto.css
