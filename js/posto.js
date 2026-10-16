@@ -54,6 +54,7 @@ let pumpInterval = null;
 let currentPumpingAmount = 0;
 let initialPumpingCredits = 0; // Guarda o dinheiro antes de começar a abastecer
 let isPumpingActive = false;   // Previne que a base de dados grave múltiplas vezes
+let currentPumpingType = null; // 'sublight' | 'hyperdrive' — tipo sendo bombeado
 let audioContext = null;
 let pumpOsc = null;
 let pumpGain = null;
@@ -122,6 +123,7 @@ async function carregarDadosDoBanco() {
                     subLevel: itemFinal.subLevel !== undefined ? itemFinal.subLevel : null,
                     hypCap: itemFinal.hypCap || null,
                     hypLevel: itemFinal.hypLevel !== undefined ? itemFinal.hypLevel : null,
+                    motorClass: itemFinal.motorClass || null, // Classe do motor hiperespacial (usada na página de Navegação)
                     quote: itemFinal.quote || "Sinalizador ativo do cockpit.",
                     dados_originais: itemFinal // Guarda a raiz do item para não apagarmos os atributos base ao atualizar
                 };
@@ -294,6 +296,7 @@ function updateShipUI() {
         document.getElementById('customSubLevel').value = "";
         document.getElementById('customHypCap').value = "";
         document.getElementById('customHypLevel').value = "";
+        document.getElementById('customMotor').value = ship.motorClass || "";
 
         showToast("D-09 INFORMA", "Nova nave detectada. Por favor, calibre a capacidade dos tanques para iniciar o abastecimento.", "⚙️");
         return;
@@ -342,6 +345,7 @@ window.openNewShipForm = function () {
     document.getElementById('customSubLevel').value = '';
     document.getElementById('customHypCap').value = '';
     document.getElementById('customHypLevel').value = '';
+    document.getElementById('customMotor').value = '';
 
     // 3. Mostra o formulário, oculta os status e foca no input de nome
     document.getElementById('customShipForm').classList.remove('hidden');
@@ -357,6 +361,7 @@ async function registerCustomShip() {
     const subLevel = Math.max(0, parseInt(document.getElementById('customSubLevel').value) || 0);
     const hypCap = Math.max(1, parseInt(document.getElementById('customHypCap').value) || 10);
     const hypLevel = Math.max(0, parseInt(document.getElementById('customHypLevel').value) || 0);
+    const motorClass = document.getElementById('customMotor').value || null;
 
     if (!name) return showToast("ALERTA", "Forneça o nome ou modelo identificador da sua nave.", "❌");
 
@@ -376,6 +381,7 @@ async function registerCustomShip() {
             subLevel: Math.min(subLevel, subCap),
             hypCap: hypCap,
             hypLevel: Math.min(hypLevel, hypCap),
+            motorClass: motorClass || shipToUpdate.dados_originais.motorClass || null,
             quote: quote
         };
 
@@ -398,6 +404,7 @@ async function registerCustomShip() {
             subLevel: Math.min(subLevel, subCap),
             hypCap: hypCap,
             hypLevel: Math.min(hypLevel, hypCap),
+            motorClass: motorClass,
             quote: quote
         };
 
@@ -432,6 +439,7 @@ async function registerCustomShip() {
     document.getElementById('customSubLevel').value = '';
     document.getElementById('customHypCap').value = '';
     document.getElementById('customHypLevel').value = '';
+    document.getElementById('customMotor').value = '';
 
     // Recarrega o banco inteiro para aplicar a matriz correta ao ecrã
     await carregarDadosDoBanco();
@@ -468,6 +476,7 @@ function startPumping(type) {
     }
 
     currentPumpingAmount = 0;
+    currentPumpingType = type;
     isPumpingActive = true;
     initialPumpingCredits = userCredits; // Congela o saldo inicial para a auditoria final
 
@@ -533,26 +542,63 @@ async function stopPumping() {
     if (currentPumpingAmount > 0 && isPumpingActive) {
         isPumpingActive = false;
         const ship = shipsData[currentShipKey];
+        const pumpedAmount = currentPumpingAmount;
+        const pumpedType = currentPumpingType;
         const totalCost = initialPumpingCredits - userCredits;
 
         // Bloqueia a UI para evitar bugs de transação dupla
         document.getElementById('btnPumpSublight').disabled = true;
         document.getElementById('btnPumpHyperdrive').disabled = true;
 
-        // 1. Desconta os Créditos
+        // 1. Soma o combustível no servidor (atômico). Assim o Posto e a página de
+        //    Navegação nunca sobrescrevem a alteração um do outro.
+        const ok = await somarCombustivelNoServidor(ship, pumpedType, pumpedAmount);
+        if (!ok) {
+            await carregarDadosDoBanco(); // Reverte o estado local (inclusive créditos) para o que está na nuvem
+            document.getElementById('btnPumpSublight').disabled = false;
+            document.getElementById('btnPumpHyperdrive').disabled = false;
+            return;
+        }
+
+        // 2. Desconta os Créditos
         await supabaseClient.from('personagens').update({ creditos: Math.floor(userCredits) }).eq('id', currentPersonagemId);
 
-        // 2. Atualiza o Nível de Combustível da Nave
-        const novosDados = { ...ship.dados_originais, subLevel: ship.subLevel, hypLevel: ship.hypLevel };
-        await supabaseClient.from('inventario').update({ dados_customizados: novosDados }).eq('id', ship.db_id);
-
-        addLog(`COMPRA DE FLUXO: Abastecidos +${currentPumpingAmount.toFixed(2)} na nave [${ship.name}].`);
-        await registarLog(currentPersonagemId, 'ABASTECIMENTO', `Aeronave [${ship.name}] abastecida. +${currentPumpingAmount.toFixed(2)} combustível.`, -Math.floor(totalCost));
+        addLog(`COMPRA DE FLUXO: Abastecidos +${pumpedAmount.toFixed(2)} na nave [${ship.name}].`);
+        await registarLog(currentPersonagemId, 'ABASTECIMENTO', `Aeronave [${ship.name}] abastecida. +${pumpedAmount.toFixed(2)} combustível.`, -Math.floor(totalCost));
         playBeep(220, 0.2);
 
         document.getElementById('btnPumpSublight').disabled = false;
         document.getElementById('btnPumpHyperdrive').disabled = false;
     }
+}
+
+// Soma combustível via RPC compartilhada com a página de Navegação.
+// Devolve true/false e sincroniza o nível real da nave na tela.
+async function somarCombustivelNoServidor(ship, type, amount) {
+    const tipoRpc = type === 'sublight' ? 'subluz' : 'hiperespacial';
+    const { data: novoNivel, error } = await supabaseClient.rpc('ajustar_combustivel', {
+        p_inventario_id: ship.db_id,
+        p_tipo: tipoRpc,
+        p_delta: Number(amount.toFixed(2))
+    });
+
+    if (error) {
+        console.error('Falha ao ajustar combustível:', error);
+        addLog('ALERTA: Falha ao sincronizar o combustível com o servidor. Operação cancelada, nenhum crédito foi cobrado.');
+        showToast("ERRO", "Falha ao gravar o abastecimento. Nenhum crédito foi cobrado.", "❌");
+        return false;
+    }
+
+    // O servidor é a fonte da verdade (a Navegação pode ter gasto combustível nesse meio-tempo)
+    if (type === 'sublight') {
+        ship.subLevel = Number(novoNivel);
+        ship.dados_originais.subLevel = ship.subLevel;
+    } else {
+        ship.hypLevel = Number(novoNivel);
+        ship.dados_originais.hypLevel = ship.hypLevel;
+    }
+    updateShipUI();
+    return true;
 }
 
 async function fillFully(type) {
@@ -607,10 +653,15 @@ async function fillFully(type) {
 
     document.body.style.pointerEvents = 'none'; // Blindagem de transação
 
-    await supabaseClient.from('personagens').update({ creditos: Math.floor(userCredits) }).eq('id', currentPersonagemId);
+    // Soma o combustível primeiro (RPC compartilhada com a Navegação). Se falhar, ninguém é cobrado.
+    const ok = await somarCombustivelNoServidor(ship, type, amount);
+    if (!ok) {
+        document.body.style.pointerEvents = 'auto';
+        await carregarDadosDoBanco();
+        return;
+    }
 
-    const novosDados = { ...ship.dados_originais, subLevel: ship.subLevel, hypLevel: ship.hypLevel };
-    await supabaseClient.from('inventario').update({ dados_customizados: novosDados }).eq('id', ship.db_id);
+    await supabaseClient.from('personagens').update({ creditos: Math.floor(userCredits) }).eq('id', currentPersonagemId);
 
     addLog(logMsg);
     await registarLog(currentPersonagemId, 'ABASTECIMENTO', logMsg, -Math.floor(cost));

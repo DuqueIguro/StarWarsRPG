@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imperial Tactical Holo-Terminal v6.0.4</title>
     <link rel="stylesheet" href="distanciaPlanetas/distanciaPlanetas.css">
-    <link rel="icon" type="image/x-icon" href="../img/d20.png">
+    <link rel="icon" type="image/x-icon" href="../img/nave.ico">
 </head>
 
 <body>
@@ -73,9 +73,10 @@
                 <div class="panel-block">
                     <div class="panel-label">
                         <span>CLASSE DO MOTOR HIPERESPACIAL</span>
-                        <span>DEFINIDA PELA NAVE</span>
+                        <span>DEFINIDA NA NAVE</span>
                     </div>
-                    <select id="engineClass" disabled>
+                    <select id="engineClass" disabled onchange="onEngineClassChange()">
+                        <option value="">Não definida</option>
                         <option value="0.5">Classe 0.5 — Elite / Protótipo</option>
                         <option value="1">Classe 1 — Padrão Militar</option>
                         <option value="2">Classe 2 — Comercial</option>
@@ -184,6 +185,7 @@
         </footer>
     </div>
 
+    <script src="../js/databaseInventario.js"></script>
     <script src="distanciaPlanetas/distanciaPlanetas.js"></script>
 </body>
 

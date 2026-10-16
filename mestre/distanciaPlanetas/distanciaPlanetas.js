@@ -13,7 +13,7 @@ let currentUserName = '';
 let isISB = false;
 let isBusy = false;
 
-// Naves reais (tabela naves_jogadores) — carregadas após o login
+// Naves reais (linhas de public.inventario, categoria Nave) — carregadas após o login
 let playerShips = [];
 
 const regionWeights = {
@@ -89,7 +89,7 @@ const simulationShips = [
         combustivel_hiperespacial_max: 150,
         combustivel_hiperespacial_atual: 150
     }
-].map((ship) => ({ ...ship, simulada: true }));
+].map((ship) => ({ ...ship, simulada: true, calibrada: true }));
 
 const gateOverlay = document.getElementById('gate');
 const engineClassSelect = document.getElementById('engineClass');
@@ -288,17 +288,16 @@ function updateShipCard() {
         }
     }
 
-    if (selectedShip.motor_hiperespacial) {
-        document.getElementById('shipMotorTripulacao').innerText = `Motor Classe ${selectedShip.motor_hiperespacial} // ${selectedShip.tripulacao}`;
-        if (engineClassSelect) {
-            engineClassSelect.value = selectedShip.motor_hiperespacial;
-            engineClassSelect.disabled = true;
-        }
-    } else {
-        document.getElementById('shipMotorTripulacao').innerText = `Motor Hiperespacial: NÃO INSTALADO // ${selectedShip.tripulacao}`;
-        if (engineClassSelect) {
-            engineClassSelect.disabled = true;
-        }
+    document.getElementById('shipMotorTripulacao').innerText = selectedShip.motor_hiperespacial
+        ? `Motor Classe ${selectedShip.motor_hiperespacial} // ${selectedShip.tripulacao}`
+        : `Motor Hiperespacial: NÃO DEFINIDO // ${selectedShip.tripulacao}`;
+
+    if (engineClassSelect) {
+        engineClassSelect.value = selectedShip.motor_hiperespacial || '';
+        // Jogador define uma única vez; ISB pode corrigir sempre. Simulação é fixa.
+        const canEdit = !selectedShip.simulada && selectedShip.calibrada
+            && (isISB || !selectedShip.motor_hiperespacial);
+        engineClassSelect.disabled = !canEdit;
     }
 
     renderFuelBars();
@@ -313,8 +312,8 @@ function renderFuelBars() {
     const subluzPct = subluzMax ? Math.max(0, Math.min(100, (selectedShip.combustivel_subluz_atual / subluzMax) * 100)) : 0;
     const hiperPct = hiperMax ? Math.max(0, Math.min(100, (selectedShip.combustivel_hiperespacial_atual / hiperMax) * 100)) : 0;
 
-    document.getElementById('subluzFuelText').innerText = `${Math.round(selectedShip.combustivel_subluz_atual)} / ${subluzMax}`;
-    document.getElementById('hiperFuelText').innerText = hiperMax ? `${Math.round(selectedShip.combustivel_hiperespacial_atual)} / ${hiperMax}` : 'N/D';
+    document.getElementById('subluzFuelText').innerText = `${Math.floor(selectedShip.combustivel_subluz_atual)} / ${subluzMax} L`;
+    document.getElementById('hiperFuelText').innerText = hiperMax ? `${Math.floor(selectedShip.combustivel_hiperespacial_atual)} / ${hiperMax} Kg` : 'N/D';
 
     const subluzBar = document.getElementById('subluzFuelBar');
     const hiperBar = document.getElementById('hiperFuelBar');
@@ -395,33 +394,65 @@ async function initAuth() {
     return true;
 }
 
+// Lê as naves do inventário — a MESMA fonte e a mesma regra de detecção usadas pelo Posto.
+// Jogador: naves do seu personagem. ISB: naves de todos os personagens.
 async function loadPlayerShips() {
-    const { data, error } = await supabaseClient
-        .from('naves_jogadores')
-        .select('*, personagens(nome, grupo_faccao)')
-        .order('nome');
+    playerShips = [];
 
-    if (error) {
-        console.error('Falha ao carregar naves:', error);
-        playerShips = [];
+    // Personagens (nome/facção do dono)
+    let personagensQuery = supabaseClient.from('personagens').select('id, nome, grupo_faccao');
+    if (!isISB) personagensQuery = personagensQuery.eq('user_id', currentUser.id).limit(1); // igual ao Posto
+
+    const { data: personagens, error: pError } = await personagensQuery;
+    if (pError || !personagens || !personagens.length) {
+        if (pError) console.error('Falha ao carregar personagens:', pError);
         return;
     }
 
-    playerShips = (data || []).map((row) => ({
-        id: row.id,
-        simulada: false,
-        nome: row.nome,
-        classe: row.classe || '—',
-        motor_hiperespacial: row.motor_hiperespacial || null,
-        tripulacao: row.tripulacao || '—',
-        status: row.status || 'OPERACIONAL',
-        combustivel_subluz_max: Number(row.combustivel_subluz_max) || 0,
-        combustivel_subluz_atual: Number(row.combustivel_subluz_atual) || 0,
-        combustivel_hiperespacial_max: Number(row.combustivel_hiperespacial_max) || 0,
-        combustivel_hiperespacial_atual: Number(row.combustivel_hiperespacial_atual) || 0,
-        dono_nome: row.personagens ? row.personagens.nome : null,
-        faccao: row.personagens ? row.personagens.grupo_faccao : null
-    }));
+    const personagemMap = {};
+    personagens.forEach((p) => { personagemMap[p.id] = p; });
+
+    let invQuery = supabaseClient.from('inventario').select('*');
+    if (!isISB) invQuery = invQuery.eq('personagem_id', personagens[0].id);
+
+    const { data: invData, error: invError } = await invQuery;
+    if (invError) {
+        console.error('Falha ao carregar inventário:', invError);
+        return;
+    }
+
+    (invData || []).forEach((dbItem) => {
+        let baseItem = {};
+        if (dbItem.item_id && typeof itemDatabase !== 'undefined') {
+            baseItem = itemDatabase.find((i) => i.id === dbItem.item_id) || {};
+        }
+        const item = { ...baseItem, ...dbItem.dados_customizados };
+
+        const isShip = item.category === 'Naves Prontas' || item.categoria === 'Naves Prontas' || item.categoria === 'Nave';
+        if (!isShip) return;
+
+        const subCap = item.subCap || null;
+        const hypCap = item.hypCap || null;
+        const calibrada = subCap !== null && hypCap !== null;
+        const dono = personagemMap[dbItem.personagem_id];
+
+        playerShips.push({
+            id: dbItem.id, // id da linha em public.inventario
+            simulada: false,
+            calibrada,
+            nome: item.name || item.nome || 'Nave Desconhecida',
+            classe: item.classe || 'Nave Registrada',
+            motor_hiperespacial: item.motorClass ? String(item.motorClass) : null,
+            tripulacao: item.tripulacao || '—',
+            status: calibrada ? 'OPERACIONAL' : 'NÃO CALIBRADA — ABRA O POSTO',
+            combustivel_subluz_max: Number(subCap) || 0,
+            combustivel_subluz_atual: Number(item.subLevel) || 0,
+            combustivel_hiperespacial_max: Number(hypCap) || 0,
+            combustivel_hiperespacial_atual: Number(item.hypLevel) || 0,
+            dono_nome: dono ? dono.nome : null,
+            faccao: dono ? dono.grupo_faccao : null
+        });
+    });
 }
 
 async function initTerminal() {
@@ -436,7 +467,7 @@ async function initTerminal() {
     setTravelMode('hiperespaco');
 
     if (!allShips().length) {
-        setConsole('> NENHUMA NAVE REGISTRADA PARA ESTE USUÁRIO. PROCURE O MESTRE.', 'var(--amber)');
+        setConsole('> NENHUMA NAVE ENCONTRADA NO INVENTÁRIO. COMPRE OU CADASTRE SUA NAVE NO POSTO.', 'var(--amber)');
     }
 }
 
@@ -485,22 +516,45 @@ async function resolveLegDistance(from, to) {
     return { distancia: row.distancia, origem: row.criada ? 'NOVA' : 'CATALOGADA' };
 }
 
+// Mesma regra do Posto: a função ajustar_combustivel (RPC) é quem altera o inventário.
 async function spendFuel(type, amount) {
+    const key = type === 'subluz' ? 'combustivel_subluz_atual' : 'combustivel_hiperespacial_atual';
+
     if (selectedShip.simulada) {
-        const key = type === 'subluz' ? 'combustivel_subluz_atual' : 'combustivel_hiperespacial_atual';
         selectedShip[key] = Math.max(0, selectedShip[key] - amount);
         return;
     }
 
-    const { data, error } = await supabaseClient.rpc('consumir_combustivel', {
-        p_nave_id: selectedShip.id,
+    const { data, error } = await supabaseClient.rpc('ajustar_combustivel', {
+        p_inventario_id: selectedShip.id,
         p_tipo: type,
-        p_quantidade: Number(amount.toFixed(2))
+        p_delta: -amount
     });
     if (error) throw error;
 
-    const key = type === 'subluz' ? 'combustivel_subluz_atual' : 'combustivel_hiperespacial_atual';
     selectedShip[key] = Number(data);
+}
+
+// Define a classe do motor quando a nave ainda não tem (ou quando o ISB corrige).
+async function onEngineClassChange() {
+    if (!selectedShip || selectedShip.simulada || !engineClassSelect.value) {
+        updateShipCard();
+        return;
+    }
+
+    const { error } = await supabaseClient.rpc('definir_motor_nave', {
+        p_inventario_id: selectedShip.id,
+        p_classe: engineClassSelect.value
+    });
+
+    if (error) {
+        console.error(error);
+        setConsole(`> ERRO CÓDIGO 0x93: ${friendlyDbError(error)}`, 'var(--neon-red)');
+    } else {
+        selectedShip.motor_hiperespacial = engineClassSelect.value;
+        setConsole(`> CLASSE ${selectedShip.motor_hiperespacial} REGISTRADA PARA ${selectedShip.nome.toUpperCase()}.`, 'var(--neon-cyan)');
+    }
+    updateShipCard();
 }
 
 async function logTravel(acao, detalhes) {
@@ -520,6 +574,8 @@ async function logTravel(acao, detalhes) {
 function friendlyDbError(error) {
     const msg = (error && error.message) || String(error);
     if (msg.includes('COMBUSTIVEL_INSUFICIENTE')) return 'COMBUSTÍVEL INSUFICIENTE (CONFIRMADO PELO SERVIDOR).';
+    if (msg.includes('NAVE_NAO_CALIBRADA')) return 'NAVE NÃO CALIBRADA. CONFIGURE OS TANQUES NO POSTO.';
+    if (msg.includes('MOTOR_JA_DEFINIDO')) return 'A CLASSE DO MOTOR JÁ FOI DEFINIDA. SOMENTE O MESTRE PODE ALTERÁ-LA.';
     if (msg.includes('SEM_PERMISSAO')) return 'VOCÊ NÃO TEM PERMISSÃO PARA USAR ESTA NAVE.';
     if (msg.includes('NAO_AUTENTICADO')) return 'SESSÃO EXPIRADA. FAÇA LOGIN NOVAMENTE.';
     return msg.toUpperCase();
@@ -583,8 +639,11 @@ async function engageHyperspaceJump() {
 
     if (!pOrig || !pDest) return fail("> ERRO CÓDIGO 0x14: PLANETA DE ORIGEM OU DESTINO NÃO ENCONTRADO NA BASE.");
     if (!selectedShip) return fail("> ERRO: NENHUMA NAVE SELECIONADA.");
+    if (!selectedShip.calibrada) {
+        return fail(`> ERRO CÓDIGO 0x61: ${selectedShip.nome.toUpperCase()} NÃO TEM TANQUES CALIBRADOS. CONFIGURE-A NO POSTO.`);
+    }
     if (!selectedShip.motor_hiperespacial) {
-        return fail(`> ERRO CÓDIGO 0x60: ${selectedShip.nome.toUpperCase()} NÃO POSSUI MOTOR HIPERESPACIAL INSTALADO.`);
+        return fail(`> ERRO CÓDIGO 0x60: CLASSE DO MOTOR HIPERESPACIAL DE ${selectedShip.nome.toUpperCase()} NÃO DEFINIDA. SELECIONE-A NO PAINEL.`);
     }
     if (pOrig.nome === pDest.nome) return fail("> ERRO CÓDIGO 0x44: COORDENADAS COINCIDENTES. ABORTANDO.");
 
@@ -639,10 +698,11 @@ async function engageHyperspaceJump() {
     const legSummary = resolved.map(leg => leg.origem).join(' + ');
 
     const totalHours = calculateHyperspaceDuration(totalParsecs, engineClass);
-    const fuelNeeded = calculateHyperspaceFuel(totalParsecs, engineClass);
+    // arredonda para cima em 2 casas: o que a tela mostra é exatamente o que o servidor desconta
+    const fuelNeeded = Math.ceil(calculateHyperspaceFuel(totalParsecs, engineClass) * 100) / 100;
 
     if (fuelNeeded > selectedShip.combustivel_hiperespacial_atual) {
-        fail(`> ERRO CÓDIGO 0x72: COMBUSTÍVEL HIPERESPACIAL INSUFICIENTE. NECESSÁRIO ${fuelNeeded.toFixed(1)} UN, DISPONÍVEL ${selectedShip.combustivel_hiperespacial_atual.toFixed(1)} UN.`);
+        fail(`> ERRO CÓDIGO 0x72: COMBUSTÍVEL HIPERESPACIAL INSUFICIENTE. NECESSÁRIO ${fuelNeeded.toFixed(2)} KG, DISPONÍVEL ${selectedShip.combustivel_hiperespacial_atual.toFixed(2)} KG.`);
         setBusy(false);
         return;
     }
@@ -664,12 +724,12 @@ async function engageHyperspaceJump() {
     document.getElementById('distOut').innerText = `${totalParsecs} PC`;
     document.getElementById('jumpsOut').innerText = jumps;
     document.getElementById('durationOut').innerText = formatDuration(totalHours);
-    document.getElementById('fuelOut').innerText = `${fuelNeeded.toFixed(1)} UN`;
+    document.getElementById('fuelOut').innerText = `${fuelNeeded.toFixed(2)} KG`;
     metricsBox.classList.add('show');
 
     await logTravel(
         'VIAGEM_HIPERESPACO',
-        `${routeLabel} | ${totalParsecs} PC | ${jumps} salto(s) | ${fuelNeeded.toFixed(1)} UN | trechos: ${legSummary}`
+        `${routeLabel} | ${totalParsecs} PC | ${jumps} salto(s) | ${fuelNeeded.toFixed(2)} Kg | trechos: ${legSummary}`
     );
 
     setBusy(false);
@@ -685,6 +745,9 @@ async function engageSubluzManeuver() {
     };
 
     if (!selectedShip) return fail("> ERRO: NENHUMA NAVE SELECIONADA.");
+    if (!selectedShip.calibrada) {
+        return fail(`> ERRO CÓDIGO 0x61: ${selectedShip.nome.toUpperCase()} NÃO TEM TANQUES CALIBRADOS. CONFIGURE-A NO POSTO.`);
+    }
 
     const context = subluzContextSelect ? subluzContextSelect.value : 'espaco';
     const hours = subluzHoursInput ? parseFloat(subluzHoursInput.value) || 0 : 0;
@@ -697,10 +760,10 @@ async function engageSubluzManeuver() {
 
     await wait(1200);
 
-    const fuelNeeded = calculateSubluzFuel(context, hours);
+    const fuelNeeded = Math.ceil(calculateSubluzFuel(context, hours) * 100) / 100;
 
     if (fuelNeeded > selectedShip.combustivel_subluz_atual) {
-        fail(`> ERRO CÓDIGO 0x73: COMBUSTÍVEL SUBLUZ INSUFICIENTE. NECESSÁRIO ${fuelNeeded.toFixed(1)} UN, DISPONÍVEL ${selectedShip.combustivel_subluz_atual.toFixed(1)} UN.`);
+        fail(`> ERRO CÓDIGO 0x73: COMBUSTÍVEL SUBLUZ INSUFICIENTE. NECESSÁRIO ${fuelNeeded.toFixed(2)} L, DISPONÍVEL ${selectedShip.combustivel_subluz_atual.toFixed(2)} L.`);
         setBusy(false);
         return;
     }
@@ -723,12 +786,12 @@ async function engageSubluzManeuver() {
     setConsole(`> MANOBRA SUBLUZ CONCLUÍDA${tag} EM CONTEXTO: ${contextLabel}.`, 'var(--neon-green)');
 
     document.getElementById('durationOut').innerText = formatDuration(hours);
-    document.getElementById('fuelOut').innerText = `${fuelNeeded.toFixed(1)} UN`;
+    document.getElementById('fuelOut').innerText = `${fuelNeeded.toFixed(2)} L`;
     metricsBox.classList.add('show');
 
     await logTravel(
         'MANOBRA_SUBLUZ',
-        `${contextLabel} | ${hours} h | ${fuelNeeded.toFixed(1)} UN`
+        `${contextLabel} | ${hours} h | ${fuelNeeded.toFixed(2)} L`
     );
 
     setBusy(false);

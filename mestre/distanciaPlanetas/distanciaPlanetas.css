@@ -437,3 +437,21 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
 }
+
+/* ---- Navegação com naves reais / simulação ---- */
+.btn-hyperjump:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: rgba(255, 0, 85, 0.04);
+    color: var(--neon-red);
+    box-shadow: none;
+}
+
+#shipOwner.sim {
+    color: var(--amber);
+}
+
+optgroup {
+    color: var(--amber);
+    font-style: normal;
+}
