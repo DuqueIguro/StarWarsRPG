@@ -5,14 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imperial Tactical Holo-Terminal v6.0.4</title>
-    <link rel="stylesheet" href="../styles/distanciaPlanetas.css">
+    <link rel="stylesheet" href="distanciaPlanetas/distanciaPlanetas.css">
     <link rel="icon" type="image/x-icon" href="../img/d20.png">
 </head>
 
 <body>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Acesso liberado a jogadores: o gatekeeper ISB foi removido desta página.
+         A autenticação e o cargo (mestre/dev) agora são verificados em distanciaPlanetas.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase.js"></script>
-    <script src="../js/isb_gatekeeper.js"></script> -->
 
     <div class="starfield"></div>
     <div class="hyperspace-gate" id="gate"></div>
@@ -127,6 +128,10 @@
                 <div class="aurebesh-subtext" id="shipNomeAur">-</div>
             </div>
             <div class="data-row">
+                <div class="data-title">Proprietário</div>
+                <div class="data-value" id="shipOwner">-</div>
+            </div>
+            <div class="data-row">
                 <div class="data-title">Classe / Status</div>
                 <div class="data-value" id="shipClasseStatus">-</div>
             </div>
@@ -179,7 +184,7 @@
         </footer>
     </div>
 
-    <script src="../js/distanciaPlanetas.js"></script>
+    <script src="distanciaPlanetas/distanciaPlanetas.js"></script>
 </body>
 
 </html>

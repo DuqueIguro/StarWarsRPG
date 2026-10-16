@@ -26,6 +26,8 @@ O sistema realiza o CRUD diretamente do frontend via JavaScript assíncrono. O t
 O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. Estruturas conhecidas:
 *   `personagens.dados_ficha`: Contém o estado reativo da ficha do RPG (ex: `.biografia`, `.atributosBase`, `.pericias`, `.modificadoresManuais`).
 *   `inventario.dados_customizados`: Contém metadados mutáveis ou itens criados por jogadores (ex: `.nome`, `.qualidade`, `.dadoDano`, `.bonusAtaque`). Na leitura, mescla-se com o ID base do item.
+    *   **Naves** (`category = 'Naves Prontas'`) guardam aqui o combustível: `.subCap` / `.subLevel` (subluz, em **litros**), `.hypCap` / `.hypLevel` (hiperespacial, em **kg**), `.motorClass` (classe do motor: `'0.5'`, `'1'`, `'2'` ou `'3'`) e `.quote`. `subCap`/`hypCap` nulos = nave ainda não calibrada no Posto.
+    *   **Nunca** altere `subLevel`/`hypLevel` com `update` direto de `dados_customizados` (sobrescreve alterações de outra página). Use a RPC `ajustar_combustivel`.
 *   `log_bancario.dados_adicionais`: Contém metadados de transações financeiras e eventos bancários.
 *   `holonet_logs.mudancas` / `dados_antes` / `dados_depois`: Registram payloads em JSON das alterações executadas pela moderação no painel da HoloNet.
 
@@ -52,6 +54,7 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 | **logs_taticos** | id, user_id, nome_jogador, nave_nome, faccao, acao, detalhes, created_at | uuid, uuid, text, text, text, text, text, timestamptz | Primary Key (id) |
 | **permissoes** | id, user_id, cargo, created_at, nome | int4, uuid, text, timestamptz, text | Primary Key (id) |
 | **personagens** | id, user_id, nome, creditos, dados_ficha, created_at, updated_at, grupo_faccao, chave_transferencia, fichas, img_url, facecred, peggats | uuid, uuid, text, int8, jsonb, timestamptz, timestamptz, text, varchar, int4, text, int4, int4 | Primary Key (id), Unique (chave_transferencia) |
+| **rotas_hiperespaco** | id, planeta_a, planeta_b, distancia_pc, criado_por, created_at | int8, text, text, int4, uuid, timestamptz | Primary Identity (id), Unique (planeta_a, planeta_b). Check: `planeta_a < planeta_b` (par sempre em ordem alfabética: A↔B e B↔A são a mesma linha); `distancia_pc > 0` |
 | **servicos_mcmt** | id, oficina, nome_servico, categoria, mao_de_obra, peca, preco_componentes, descricao, created_at | int8, varchar, text, varchar, int2, text, int4, text, timestamptz | Primary Identity (id) |
 | **status_faccoes** | faccao, em_combate | text, bool | Primary Key (faccao) |
 | **storage_access** | id, key_name, display_name, password, redirect_url | int8, text, text, text, text | Primary Identity (id), Unique (key_name) |
@@ -109,9 +112,34 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 | **personagens** | ISB acesso total a personagens | ALL | public | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
 | **personagens** | Permitir leitura geral personagens | SELECT | authenticated | Leitura aberta para autenticados |
 | **personagens** | Permitir update personagens | UPDATE | authenticated | Atualização aberta para autenticados |
+| **rotas_hiperespaco** | Leitura de rotas para autenticados | SELECT | authenticated | Leitura irrestrita (`true`) |
+| **rotas_hiperespaco** | ISB gerenciamento total de rotas | ALL | authenticated | Apenas Mestre/Dev via `holonet_is_mestre()` |
 | **servicos_mcmt** | Permitir leitura publica dos servicos | SELECT | public | Leitura irrestrita (`true`) |
 | **servicos_mcmt** | Permitir insercao/update/delete apenas autorizados | INSERT, UPDATE, DELETE | authenticated | Restrito a UUIDs específicos de mestres/oficinas |
 | **status_faccoes** | Acesso total status_faccoes | ALL | authenticated | Acesso livre a usuários autenticados |
 | **storage_access** | Enable read access for all users | SELECT | public | Leitura irrestrita (`true`) |
 | **system_access** | Enable read access for all users / Permitir leitura publica | SELECT | public | Leitura irrestrita (`true`) |
 | **transacoes_log** | Log_Select / Log_Insert | SELECT, INSERT | authenticated | Leitura e inserção liberadas para autenticados |
+
+---
+
+## 7. Funções RPC (Postgres) — chamadas via `supabaseClient.rpc(...)`
+Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam ser atômicas. Todas exigem usuário autenticado (`EXECUTE` revogado para `anon`).
+
+| Função | Parâmetros | Retorno | Uso |
+| :--- | :--- | :--- | :--- |
+| `holonet_is_mestre()` | — | bool | Helper de RLS: `true` para cargos `mestre`/`dev`/`desenvolvedor`. |
+| `peso_regiao(p_regiao)` | text | int | Peso da região (Núcleo=1, Orla Interior=3, Orla Média=5, Orla Exterior=8, outra=4). Usada no sorteio de rotas. |
+| `consultar_rota(p_a, p_b)` | text, text | int ou `null` | Lê a distância já catalogada entre dois planetas (ordem dos nomes indiferente). **Não cria nada** — usada nas simulações do ISB. |
+| `obter_ou_criar_rota(p_a, p_b, p_regiao_a, p_regiao_b)` | text, text, text, text | tabela `(distancia int, criada bool)` | Devolve a distância da rota; se for a primeira viagem, sorteia no servidor, grava em `rotas_hiperespaco` e retorna `criada = true`. Resistente a corrida (o primeiro a gravar vence). |
+| `ajustar_combustivel(p_inventario_id, p_tipo, p_delta)` | uuid (`inventario.id`), text (`'subluz'` ou `'hiperespacial'`), numeric | numeric (nível resultante) | Soma (`delta > 0`, Posto) ou desconta (`delta < 0`, Navegação) combustível de uma nave em `inventario.dados_customizados` (`subLevel`/`hypLevel`). Trava a linha (`FOR UPDATE`), limita ao máximo (`subCap`/`hypCap`) e só altera o nível. Só o dono (`inventario.user_id`) ou ISB. Erros: `NAO_AUTENTICADO`, `TIPO_INVALIDO`, `QUANTIDADE_INVALIDA`, `NAVE_NAO_ENCONTRADA`, `SEM_PERMISSAO`, `NAVE_NAO_CALIBRADA`, `COMBUSTIVEL_INSUFICIENTE`. |
+| `definir_motor_nave(p_inventario_id, p_classe)` | uuid, text (`'0.5'`, `'1'`, `'2'`, `'3'`) | void | Grava `dados_customizados.motorClass`. Jogador define **uma única vez** (se estiver vazio); ISB altera sempre. Erros: `CLASSE_INVALIDA`, `MOTOR_JA_DEFINIDO`, `SEM_PERMISSAO`, `NAVE_NAO_ENCONTRADA`. |
+
+### Regras de negócio da navegação (`distanciaPlanetas.html`)
+*   **Rotas fixas:** a distância entre dois planetas é sorteada **uma única vez** (1ª viagem real) e gravada em `rotas_hiperespaco`. Vale nos dois sentidos.
+*   **Viagem com parada (A > B > C):** cada trecho (A-B, B-C) é resolvido separadamente via `obter_ou_criar_rota`: trecho conhecido reaproveita o valor, trecho desconhecido é sorteado e gravado; o total é a soma. A rota direta A-C **não** é afetada.
+*   **Chaves das rotas:** o nome do planeta (`planetas_database.json → nome`). Renomear um planeta no JSON deixa suas rotas antigas órfãs.
+*   **Naves e combustível compartilhados com o Posto (`posto.html`):** as duas páginas usam as mesmas naves (`inventario`) e a mesma RPC `ajustar_combustivel`. Posto soma; Navegação subtrai. Unidades: subluz em litros (L), hiperespacial em kg.
+*   **Quem vê o quê:** jogador vê as naves do seu personagem (igual ao Posto); ISB vê as naves de todos os personagens, mais as naves *placeholder* de simulação.
+*   **Simulação (somente ISB):** as naves *placeholder* do JS (`simulationShips`) e qualquer rota ainda desconhecida **não gravam nada** no banco; rotas já catalogadas são reaproveitadas.
+*   **Log:** cada viagem/manobra com nave real é registrada em `logs_taticos` (`acao` = `VIAGEM_HIPERESPACO` ou `MANOBRA_SUBLUZ`). Abastecimentos continuam em `logs_auditoria` (`tipo_evento = 'ABASTECIMENTO'`).
