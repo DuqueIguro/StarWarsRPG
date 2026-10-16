@@ -16,13 +16,6 @@ let isBusy = false;
 // Naves reais (linhas de public.inventario, categoria Nave) — carregadas após o login
 let playerShips = [];
 
-const regionWeights = {
-    "Núcleo": 1,
-    "Orla Interior": 3,
-    "Orla Média": 5,
-    "Orla Exterior": 8
-};
-
 const hyperdriveClassFactors = {
     "0.5": 0.4,
     "1": 0.8,
@@ -373,7 +366,7 @@ async function initAuth() {
 
     const { data: userData, error } = await supabaseClient.auth.getUser();
     if (error || !userData || !userData.user) {
-        window.location.href = '../index.html'; // ajuste se a tela de login for outra
+        window.location.href = '../index'; // ajuste se a tela de login for outra
         return false;
     }
 
@@ -486,14 +479,6 @@ function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Sorteio local — usado SOMENTE em simulação de rota ainda não catalogada.
-// (O sorteio oficial acontece no banco, em obter_ou_criar_rota.)
-function generateRandomDistance(planetA, planetB) {
-    const wA = regionWeights[planetA.regiao] || 4;
-    const wB = regionWeights[planetB.regiao] || 4;
-    return Math.ceil(Math.abs(wA - wB) * 3500 + (Math.random() * 800 + 400));
-}
-
 // Retorna { distancia, origem } onde origem = 'NOVA' | 'CATALOGADA' | 'SIMULADA'
 async function resolveLegDistance(from, to) {
     if (selectedShip.simulada) {
@@ -501,7 +486,11 @@ async function resolveLegDistance(from, to) {
         const { data, error } = await supabaseClient.rpc('consultar_rota', { p_a: from.nome, p_b: to.nome });
         if (error) throw error;
         if (data !== null && data !== undefined) return { distancia: data, origem: 'CATALOGADA' };
-        return { distancia: generateRandomDistance(from, to), origem: 'SIMULADA' };
+
+        // Rota ainda desconhecida: o servidor sorteia (mesma fórmula da rota real), mas NÃO grava.
+        const sim = await supabaseClient.rpc('sortear_distancia', { p_regiao_a: from.regiao, p_regiao_b: to.regiao });
+        if (sim.error) throw sim.error;
+        return { distancia: sim.data, origem: 'SIMULADA' };
     }
 
     const { data, error } = await supabaseClient.rpc('obter_ou_criar_rota', {
