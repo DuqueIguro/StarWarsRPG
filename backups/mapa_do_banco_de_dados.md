@@ -19,7 +19,7 @@ O sistema realiza o CRUD diretamente do frontend via JavaScript assíncrono. O t
 
 ## 3. Diretrizes de Segurança (RLS - Row Level Security) e Autorização
 *   **Regra de Ouro:** O banco é blindado por RLS. Operações de `INSERT`, `UPDATE` ou `DELETE` frequentemente exigem que o payload contenha a assinatura do autor (`user_id` e/ou `personagem_id`). 
-*   **Acesso ISB (Mestres/Devs):** A tabela `permissoes` dita quem é Mestre. Jogadores com o cargo `mestre`, `dev` ou `desenvolvedor` possuem políticas de RLS de exceção (bypass) que lhes dão acesso total (ALL) às tabelas.
+*   **Acesso ISB (Mestres/Devs):** A tabela `permissoes` e a função auxiliar `holonet_is_mestre()` ditam os privilégios administrativos. Usuários com os cargos `mestre`, `dev` ou `desenvolvedor` possuem políticas de RLS de exceção (bypass) com permissão irrestrita (`ALL`) às tabelas críticas do sistema.
 *   **NUNCA** sugira o uso da `service_role key` no frontend. A segurança deve ser resolvida via modelagem de RLS ou ajuste no payload JS.
 
 ## 4. Estruturas JSONB Críticas (Atenção a estes nós)
@@ -27,6 +27,7 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 *   `personagens.dados_ficha`: Contém o estado reativo da ficha do RPG (ex: `.biografia`, `.atributosBase`, `.pericias`, `.modificadoresManuais`).
 *   `inventario.dados_customizados`: Contém metadados mutáveis ou itens criados por jogadores (ex: `.nome`, `.qualidade`, `.dadoDano`, `.bonusAtaque`). Na leitura, mescla-se com o ID base do item.
 *   `log_bancario.dados_adicionais`: Contém metadados de transações financeiras e eventos bancários.
+*   `holonet_logs.mudancas` / `dados_antes` / `dados_depois`: Registram payloads em JSON das alterações executadas pela moderação no painel da HoloNet.
 
 ---
 
@@ -37,6 +38,12 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 | **cupons** | id, codigo, moeda, tipo_desconto, valor_desconto, limite_usos, vezes_usado, is_ativo, created_at, updated_at | uuid, text, text, text, numeric, int4, int4, bool, timestamptz, timestamptz | Primary Key (id), Unique (codigo) |
 | **dividas_emprestimos** | id, categoria, titulo, alvo_descricao, personagem_id, valor_original, taxa_juros, valor_total, frequencia, status, observacoes, created_at, updated_at, ciclos_totais, ciclos_pagos | uuid, text, text, text, uuid, int8, numeric, int8, text, text, text, timestamptz, timestamptz, int4, int4 | Primary Key (id) |
 | **frota_ativa** | id, nome, imagem, escudo_atual, escudo_maximo, casco_atual, casco_maximo, faccao, custo, created_at, visivel | uuid, text, text, int4, int4, int4, int4, text, int4, timestamptz, bool | Primary Key (id) |
+| **holonet_config** | chave, valor, updated_at | text, text, timestamptz | Primary Key (chave) |
+| **holonet_logs** | id, created_at, user_id, usuario_nome, usuario_cargo, secao, tabela, acao, registro_id, titulo_registro, resumo, mudancas, dados_antes, dados_depois | int8, timestamptz, uuid, text, text, text, text, text, text, text, text, jsonb, jsonb, jsonb | Primary Identity (id) |
+| **holonet_mercados** | id, ordem, nome, valor, variacao, ativo, created_at, updated_at | int8, int4, text, text, numeric, bool, timestamptz, timestamptz | Primary Identity (id) |
+| **holonet_noticias** | id, ordem, categoria, icone, titulo, subtitulo, corpo, fonte, data_texto, tag_aurebesh, publicada, created_at, updated_at | int8, int4, text, text, text, text, text, text, text, text, bool, timestamptz, timestamptz | Primary Identity (id) |
+| **holonet_ticker** | id, ordem, texto, ativo, created_at, updated_at | int8, int4, text, bool, timestamptz, timestamptz | Primary Identity (id) |
+| **holonet_transmissoes** | id, ordem, canal, status, descricao, ativo, created_at, updated_at | int8, int4, text, text, text, bool, timestamptz, timestamptz | Primary Identity (id) |
 | **inventario** | id, user_id, personagem_id, item_id, quantidade, origem, dados_customizados, created_at | uuid, uuid, uuid, text, int4, text, jsonb, timestamptz | Primary Key (id) |
 | **log_bancario** | id, user_id, personagem_id, tipo_evento, descricao, valor_creditos, dados_adicionais, created_at | uuid, uuid, uuid, text, text, int8, jsonb, timestamptz | Primary Key (id) |
 | **logs_auditoria** | id, personagem_id, tipo_evento, descricao, mudanca_creditos, created_at | uuid, uuid, text, text, int8, timestamptz | Primary Key (id) |
@@ -55,36 +62,56 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 
 ## 6. Políticas de Segurança Ativas (RLS Policies)
 
-| Tabela | Nome da Política | Comando | Regra RLS (Resumo) |
-| :--- | :--- | :--- | :--- |
-| **cupons** | Leitura de cupons ativos | SELECT | Permitido se `is_ativo = true` |
-| **cupons** | ISB gerenciamento total de cupons | ALL | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
-| **dividas_emprestimos** | Jogadores podem ver / deletar proprias dividas | SELECT / DELETE | Permite se cruzar `personagem_id` com a tabela `personagens` pertencente ao usuário |
-| **dividas_emprestimos** | Jogadores podem criar dividas | INSERT | `auth.uid()` dono do `personagem_id` |
-| **dividas_emprestimos** | ISB gerenciamento total | ALL | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
-| **frota_ativa** | Acesso total frota | ALL | Autenticados têm acesso total |
-| **inventario** | Visualizar / Inserir / Atualizar / Deletar próprio inventário | SELECT / INSERT / UPDATE / DELETE | `auth.uid() = user_id` |
-| **inventario** | ISB acesso total a inventario | ALL | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
-| **inventario** | Inventario Geral | SELECT / INSERT / UPDATE / DELETE | Autenticados (Aberto para logística frontend) |
-| **log_bancario** | Leitura log_bancario proprio e ISB | SELECT | `auth.uid() = user_id` OU Cargos ISB |
-| **log_bancario** | Insercao log_bancario autenticado | INSERT | Autenticados |
-| **log_bancario** | ISB delete log_bancario | DELETE | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
-| **logs_auditoria** | Visualizar / Inserir próprios logs | SELECT / INSERT | Permite se cruzar `personagem_id` com `personagens` do usuário |
-| **logs_auditoria** | ISB acesso total e leitura irrestrita | ALL / SELECT | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
-| **logs_auditoria** | LogsAuditoria Público | SELECT / INSERT | Autenticados |
-| **logs_cassino** | Permitir select proprio e ISB | SELECT | `auth.uid() = user_id` OU Cargos ISB |
-| **logs_cassino** | Permitir insert proprio | INSERT | `auth.uid() = user_id` |
-| **logs_cassino** | Permitir delete ISB | DELETE | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
-| **logs_dados** | Jogador pode ler / inserir proprios dados | SELECT / INSERT | `auth.uid() = user_id` |
-| **logs_dados** | ISB acesso total a logs de dados | ALL | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
-| **logs_taticos** | Acesso total logs | ALL | Autenticados têm acesso total |
-| **permissoes** | Permitir leitura da própria permissao | SELECT | `auth.uid() = user_id` |
-| **personagens** | Jogadores podem ver/criar/atualizar/deletar | ALL (Separados) | `auth.uid() = user_id` |
-| **personagens** | ISB acesso total a personagens | ALL / SELECT | Apenas cargos: `mestre`, `dev`, `desenvolvedor` |
-| **personagens** | Permitir leitura / update geral | SELECT / UPDATE | Autenticados |
-| **servicos_mcmt** | Permitir leitura publica dos servicos | SELECT | Leitura Livre |
-| **servicos_mcmt** | Modificação (Insert/Update/Delete) | INSERT / UPDATE / DELETE | Apenas UUIDs autorizados específicos no banco |
-| **status_faccoes** | Acesso total status_faccoes | ALL | Autenticados têm acesso total |
-| **storage_access** | Enable read access for all users | SELECT | Leitura Livre |
-| **system_access** | Enable read access / Permitir leitura publica | SELECT | Leitura Livre |
-| **transacoes_log** | Log_Select / Insert | SELECT / INSERT | Autenticados |
+| Tabela | Nome da Política | Comando | Roles | Regra RLS (Resumo) |
+| :--- | :--- | :--- | :--- | :--- |
+| **cupons** | Leitura de cupons ativos | SELECT | anon, authenticated | `is_ativo = true` |
+| **cupons** | ISB gerenciamento total de cupons | ALL | authenticated | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+| **dividas_emprestimos** | Jogadores podem ver proprias dividas | SELECT | authenticated | `personagem_id` pertence a um personagem do `auth.uid()` |
+| **dividas_emprestimos** | Jogadores podem criar dividas | INSERT | authenticated | `personagem_id` pertence a um personagem do `auth.uid()` |
+| **dividas_emprestimos** | Jogadores podem deletar proprias dividas | DELETE | authenticated | `personagem_id` pertence a um personagem do `auth.uid()` |
+| **dividas_emprestimos** | ISB gerenciamento total de dividas e emprestimos | ALL | authenticated | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+| **frota_ativa** | Acesso total frota | ALL | authenticated | Acesso livre a usuários autenticados |
+| **holonet_config** | holonet_config leitura | SELECT | anon, authenticated | Leitura irrestrita (`true`) |
+| **holonet_config** | holonet_config ISB escrita | ALL | authenticated | Apenas Mestre/Dev via `holonet_is_mestre()` |
+| **holonet_logs** | holonet_logs leitura ISB | SELECT | authenticated | Apenas Mestre/Dev via `holonet_is_mestre()` |
+| **holonet_mercados** | holonet_mercados leitura | SELECT | anon, authenticated | `ativo = true` OU `holonet_is_mestre()` |
+| **holonet_mercados** | holonet_mercados ISB escrita | ALL | authenticated | Apenas Mestre/Dev via `holonet_is_mestre()` |
+| **holonet_noticias** | holonet_noticias leitura | SELECT | anon, authenticated | `publicada = true` OU `holonet_is_mestre()` |
+| **holonet_noticias** | holonet_noticias ISB escrita | ALL | authenticated | Apenas Mestre/Dev via `holonet_is_mestre()` |
+| **holonet_ticker** | holonet_ticker leitura | SELECT | anon, authenticated | `ativo = true` OU `holonet_is_mestre()` |
+| **holonet_ticker** | holonet_ticker ISB escrita | ALL | authenticated | Apenas Mestre/Dev via `holonet_is_mestre()` |
+| **holonet_transmissoes** | holonet_transmissoes leitura | SELECT | anon, authenticated | `ativo = true` OU `holonet_is_mestre()` |
+| **holonet_transmissoes** | holonet_transmissoes ISB escrita | ALL | authenticated | Apenas Mestre/Dev via `holonet_is_mestre()` |
+| **inventario** | Visualizar próprio inventário | SELECT | public | `auth.uid() = user_id` |
+| **inventario** | Inserir no próprio inventário | INSERT | public | `auth.uid() = user_id` |
+| **inventario** | Atualizar próprio inventário | UPDATE | public | `auth.uid() = user_id` |
+| **inventario** | Deletar do próprio inventário | DELETE | public | `auth.uid() = user_id` |
+| **inventario** | ISB acesso total a inventario | ALL | public | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+| **inventario** | Inventario_Select / Insert / Update / Delete | SELECT, INSERT, UPDATE, DELETE | authenticated | Acesso total de CRUD para autenticados |
+| **log_bancario** | Permitir leitura log_bancario proprio e ISB | SELECT | authenticated | `auth.uid() = user_id` OU Cargos ISB |
+| **log_bancario** | Permitir insercao log_bancario autenticado | INSERT | authenticated | Autenticados podem inserir transações |
+| **log_bancario** | ISB delete log_bancario | DELETE | authenticated | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+| **logs_auditoria** | Visualizar próprios logs | SELECT | public | Personagem associado a `auth.uid()` |
+| **logs_auditoria** | Inserir próprios logs | INSERT | public | Personagem associado a `auth.uid()` |
+| **logs_auditoria** | Acesso irrestrito de leitura aos logs para o ISB | SELECT | public | Cargos: `mestre` ou `dev` |
+| **logs_auditoria** | ISB acesso total a logs_auditoria | ALL | public | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+| **logs_auditoria** | LogsAuditoria_Select / LogsAuditoria_Insert | SELECT, INSERT | authenticated | Autenticados têm permissão de leitura e inserção |
+| **logs_cassino** | Permitir select proprio e ISB logs_cassino | SELECT | authenticated | `auth.uid() = user_id` OU Cargos ISB |
+| **logs_cassino** | Permitir insert proprio logs_cassino | INSERT | authenticated | `auth.uid() = user_id` |
+| **logs_cassino** | Permitir delete ISB logs_cassino | DELETE | authenticated | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+| **logs_dados** | Jogador pode ler proprios dados | SELECT | public | `auth.uid() = user_id` |
+| **logs_dados** | Jogador pode inserir proprios dados | INSERT | public | `auth.uid() = user_id` |
+| **logs_dados** | ISB acesso total a logs de dados | ALL | public | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+| **logs_taticos** | Acesso total logs | ALL | authenticated | Acesso livre a usuários autenticados |
+| **permissoes** | Permitir leitura da própria permissao | SELECT | public | `auth.uid() = user_id` |
+| **personagens** | Jogadores podem ver/criar/atualizar/deletar | SELECT, INSERT, UPDATE, DELETE | public | `auth.uid() = user_id` |
+| **personagens** | Acesso irrestrito de leitura aos personagens para o ISB | SELECT | public | Cargos: `mestre` ou `dev` |
+| **personagens** | ISB acesso total a personagens | ALL | public | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+| **personagens** | Permitir leitura geral personagens | SELECT | authenticated | Leitura aberta para autenticados |
+| **personagens** | Permitir update personagens | UPDATE | authenticated | Atualização aberta para autenticados |
+| **servicos_mcmt** | Permitir leitura publica dos servicos | SELECT | public | Leitura irrestrita (`true`) |
+| **servicos_mcmt** | Permitir insercao/update/delete apenas autorizados | INSERT, UPDATE, DELETE | authenticated | Restrito a UUIDs específicos de mestres/oficinas |
+| **status_faccoes** | Acesso total status_faccoes | ALL | authenticated | Acesso livre a usuários autenticados |
+| **storage_access** | Enable read access for all users | SELECT | public | Leitura irrestrita (`true`) |
+| **system_access** | Enable read access for all users / Permitir leitura publica | SELECT | public | Leitura irrestrita (`true`) |
+| **transacoes_log** | Log_Select / Log_Insert | SELECT, INSERT | authenticated | Leitura e inserção liberadas para autenticados |
