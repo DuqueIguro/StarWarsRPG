@@ -11,6 +11,9 @@
 </head>
 
 <body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="durtocGateKeeper.js"></script>
 
   <!-- Aurebesh watermark background -->
   <div class="aurebesh-bg" aria-hidden="true"></div>
@@ -42,7 +45,8 @@
 
     <!-- G.E.N.E.S.I.S. — presença viva da página -->
     <section class="gn-core" id="gn-core" aria-label="G.E.N.E.S.I.S., IA geral de Dur'toc">
-      <button class="gn-orb-btn" type="button" onclick="MCMT.open(DROIDS.genesis)" aria-label="Abrir ficha do G.E.N.E.S.I.S.">
+      <button class="gn-orb-btn" type="button" onclick="MCMT.open(DROIDS.genesis)"
+        aria-label="Abrir ficha do G.E.N.E.S.I.S.">
         <canvas id="gn-orb" width="240" height="240"></canvas>
       </button>
       <div class="gn-text">
@@ -61,7 +65,8 @@
     <div class="cards-grid" id="droids-grid">
 
       <!-- R5-T1N — Tino -->
-      <article class="mcmt-card" data-droid="tino" onclick="MCMT.open(DROIDS.tino)" tabindex="0" aria-label="Abrir ficha de R5-T1N Tino">
+      <article class="mcmt-card" data-droid="tino" onclick="MCMT.open(DROIDS.tino)" tabindex="0"
+        aria-label="Abrir ficha de R5-T1N Tino">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Tino.png" alt="Tino — R5-T1N" loading="lazy" />
           <span class="card-status">ATIVO</span>
@@ -75,7 +80,8 @@
       </article>
 
       <!-- C3-V0K — Vok -->
-      <article class="mcmt-card" data-droid="vok" onclick="MCMT.open(DROIDS.vok)" tabindex="0" aria-label="Abrir ficha de C3-V0K Vok">
+      <article class="mcmt-card" data-droid="vok" onclick="MCMT.open(DROIDS.vok)" tabindex="0"
+        aria-label="Abrir ficha de C3-V0K Vok">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Vok.png" alt="Vok — C3-V0K" loading="lazy" />
           <span class="card-status">ATIVO</span>
@@ -104,7 +110,8 @@
       </article>
 
       <!-- CL-R — Bruto -->
-      <article class="mcmt-card" data-droid="bruto" onclick="MCMT.open(DROIDS.bruto)" tabindex="0" aria-label="Abrir ficha de CL-R Bruto">
+      <article class="mcmt-card" data-droid="bruto" onclick="MCMT.open(DROIDS.bruto)" tabindex="0"
+        aria-label="Abrir ficha de CL-R Bruto">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Bruto.png" alt="Bruto — CL-R" loading="lazy" />
           <span class="card-status offline">STANDBY</span>
@@ -118,7 +125,8 @@
       </article>
 
       <!-- Zunido -->
-      <article class="mcmt-card" data-droid="zunido" onclick="MCMT.open(DROIDS.zunido)" tabindex="0" aria-label="Abrir ficha de Zunido">
+      <article class="mcmt-card" data-droid="zunido" onclick="MCMT.open(DROIDS.zunido)" tabindex="0"
+        aria-label="Abrir ficha de Zunido">
         <div class="card-img-wrap">
           <img src="../img/blueprints/zunido.png" alt="Zunido — Droid Integrado" loading="lazy" />
           <span class="card-status">INTEGRADO</span>
@@ -132,7 +140,8 @@
       </article>
 
       <!-- BD-1SP — Bispo -->
-      <article class="mcmt-card" data-droid="bispo" onclick="MCMT.open(DROIDS.bispo)" tabindex="0" aria-label="Abrir ficha de BD-1SP Bispo">
+      <article class="mcmt-card" data-droid="bispo" onclick="MCMT.open(DROIDS.bispo)" tabindex="0"
+        aria-label="Abrir ficha de BD-1SP Bispo">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Bispo.png" alt="Bispo — BD-1SP" loading="lazy" />
           <span class="card-status">ATIVO</span>
@@ -146,7 +155,8 @@
       </article>
 
       <!-- RB-0SH — Rob -->
-      <article class="mcmt-card" data-droid="rob" onclick="MCMT.open(DROIDS.rob)" tabindex="0" aria-label="Abrir ficha de RB-0SH Rob">
+      <article class="mcmt-card" data-droid="rob" onclick="MCMT.open(DROIDS.rob)" tabindex="0"
+        aria-label="Abrir ficha de RB-0SH Rob">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Rob.png" alt="Rob — RB-0SH" loading="lazy" />
           <span class="card-status">ATIVO</span>
@@ -160,7 +170,8 @@
       </article>
 
       <!-- DOPE — Dope -->
-      <article class="mcmt-card" data-droid="dope" onclick="MCMT.open(DROIDS.dope)" tabindex="0" aria-label="Abrir ficha de DOPE Dope">
+      <article class="mcmt-card" data-droid="dope" onclick="MCMT.open(DROIDS.dope)" tabindex="0"
+        aria-label="Abrir ficha de DOPE Dope">
         <div class="card-img-wrap">
           <img src="../img/blueprints/Dope.png" alt="Dope — DV-PE3" loading="lazy" />
           <span class="card-status">ATIVO</span>
@@ -204,7 +215,7 @@
 
   <script src="../js/MCMT.js"></script>
   <script src="droids/genesis.js"></script>
-  
+
 </body>
 
 </html>
