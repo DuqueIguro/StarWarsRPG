@@ -204,7 +204,6 @@ StarWarsRPG
 │  └─ supabase.js
 ├─ menu.html
 ├─ mestre
-│  ├─ distanciaPlanetas.html
 │  ├─ escudo.html
 │  ├─ fichasBalanceamento.html
 │  ├─ frotaMestre.html
@@ -242,6 +241,7 @@ StarWarsRPG
 │  ├─ banco.html
 │  ├─ comunicacao.html
 │  ├─ dados.html
+│  ├─ distanciaPlanetas.html
 │  ├─ ficha.html
 │  ├─ frotaRebeldes.html
 │  ├─ hierarquiaGerais.html

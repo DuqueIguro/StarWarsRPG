@@ -29,6 +29,11 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
     *   **Naves** (`category = 'Naves Prontas'`) guardam aqui o combustível: `.subCap` / `.subLevel` (subluz, em **litros**), `.hypCap` / `.hypLevel` (hiperespacial, em **kg**), `.motorClass` (classe do motor: `'0.5'`, `'1'`, `'2'` ou `'3'`) e `.quote`. `subCap`/`hypCap` nulos = nave ainda não calibrada no Posto.
     *   **Nunca** altere `subLevel`/`hypLevel` com `update` direto de `dados_customizados` (sobrescreve alterações de outra página). Use a RPC `ajustar_combustivel`.
 *   `log_bancario.dados_adicionais`: Contém metadados de transações financeiras e eventos bancários.
+*   `ordens_servico.cliente`: `{nome, afiliacao, contato_holonet}`.
+*   `ordens_servico.itens`: array de serviços `{servico_id, servico, tipo, improvisado, subtotal, detalhes:{causaDoProblema, peca:{nome, custo, cobrada}, maoDeObra:{custo, expressao?}}}`. `servico_id` aponta para `servicos_mcmt.id` (null se personalizado).
+*   `ordens_servico.taxas` / `taxas_ocultas`: array de `{nome, sigla, tipo ('fixa'|'percentual'), base ('peca'|'mao_de_obra'|'mao_de_obra_improvisada'|'servico_total'), percentual, custo, justificativa}`. `base` e `percentual` só existem em taxas percentuais.
+*   `ordens_servico.gorjeta`: `{tipo ('fixa'|'percentual'), percentual?, custo, justificativa}` ou null.
+*   `ordens_servico.financeiro`: `{subtotalPecas, subtotalMaoDeObra, subtotalTaxasFixas, subtotalAdicionais, subtotalTaxasOcultas, moeda, total}`. Adicionais incluem taxas percentuais, gorjeta e taxas ocultas. `subtotalTaxasOcultas` é removido pela view para quem não é ISB.
 *   `holonet_logs.mudancas` / `dados_antes` / `dados_depois`: Registram payloads em JSON das alterações executadas pela moderação no painel da HoloNet.
 
 ---
@@ -52,6 +57,8 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 | **logs_cassino** | id, personagem_id, user_id, jogo, tipo_evento, descricao, delta_fichas, created_at | uuid, uuid, uuid, varchar, varchar, text, int4, timestamptz | Primary Key (id) |
 | **logs_dados** | id, personagem_id, user_id, nome_rolagem, dado_puro, bonus_total, resultado_final, detalhamento, created_at | int8, uuid, uuid, text, int4, int4, int4, text, timestamptz | Primary Identity (id) |
 | **logs_taticos** | id, user_id, nome_jogador, nave_nome, faccao, acao, detalhes, created_at | uuid, uuid, text, text, text, text, text, timestamptz | Primary Key (id) |
+| **ordens_servico** | id, ano_aby, sigla_localidade, serie, localidade, data_texto, sigiloso, status, titulo, mecanicos, unidade_responsavel, cliente, relatorio_problema, notas_mecanico, itens, taxas, taxas_ocultas, gorjeta, financeiro, termos_automaticos, termos_manuais, termos, created_by, created_at, updated_at | text, int2, text, int4, text, text, bool, text, text, text[], text, jsonb, text, text, jsonb, jsonb, jsonb, jsonb, jsonb, text[], text, text, uuid, timestamptz, timestamptz | Primary Key (id), Unique (ano_aby, sigla_localidade, serie). `id` e `serie` gerados pelo trigger `trg_os_gerar_id` no formato `OS-[ANO]-[SIGLA]-[SERIE 3 dígitos]` (ex.: `OS-14-COR-003`); o ID é imutável após criado. `status` ∈ Em Aberto, Em Progresso, Aguardando Peça, Concluído, Cancelado. `created_by` default `auth.uid()` |
+| **ordens_servico_leitura** *(view)* | mesmas colunas de `ordens_servico`, exceto `created_by` | — | View de leitura pública (`anon`, `authenticated`). Filtra `sigiloso = false` OU `os_pode_editar()`; `taxas_ocultas` vira `[]` e `financeiro` perde `subtotalTaxasOcultas` para quem não é ISB. Roda com privilégios do dono (contorna o RLS da tabela de propósito) |
 | **permissoes** | id, user_id, cargo, created_at, nome | int4, uuid, text, timestamptz, text | Primary Key (id) |
 | **personagens** | id, user_id, nome, creditos, dados_ficha, created_at, updated_at, grupo_faccao, chave_transferencia, fichas, img_url, facecred, peggats | uuid, uuid, text, int8, jsonb, timestamptz, timestamptz, text, varchar, int4, text, int4, int4 | Primary Key (id), Unique (chave_transferencia) |
 | **rotas_hiperespaco** | id, planeta_a, planeta_b, distancia_pc, criado_por, created_at | int8, text, text, int4, uuid, timestamptz | Primary Identity (id), Unique (planeta_a, planeta_b). Check: `planeta_a < planeta_b` (par sempre em ordem alfabética: A↔B e B↔A são a mesma linha); `distancia_pc > 0` |
@@ -106,6 +113,7 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 | **logs_dados** | Jogador pode inserir proprios dados | INSERT | public | `auth.uid() = user_id` |
 | **logs_dados** | ISB acesso total a logs de dados | ALL | public | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
 | **logs_taticos** | Acesso total logs | ALL | authenticated | Acesso livre a usuários autenticados |
+| **ordens_servico** | ISB gerenciamento total de ordens_servico | ALL | authenticated | `os_pode_editar()` (hoje = `holonet_is_mestre()`). `anon` sem acesso à tabela; leitura pública apenas pela view `ordens_servico_leitura` |
 | **permissoes** | Permitir leitura da própria permissao | SELECT | public | `auth.uid() = user_id` |
 | **personagens** | Jogadores podem ver/criar/atualizar/deletar | SELECT, INSERT, UPDATE, DELETE | public | `auth.uid() = user_id` |
 | **personagens** | Acesso irrestrito de leitura aos personagens para o ISB | SELECT | public | Cargos: `mestre` ou `dev` |
@@ -129,6 +137,7 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 | Função | Parâmetros | Retorno | Uso |
 | :--- | :--- | :--- | :--- |
 | `holonet_is_mestre()` | — | bool | Helper de RLS: `true` para cargos `mestre`/`dev`/`desenvolvedor`. |
+| `os_pode_editar()` | — | bool | Helper de RLS/view das ordens de serviço (security definer). Hoje apenas envolve `holonet_is_mestre()`; é o **único ponto a alterar** para liberar criação/edição de OS à equipe da oficina. |
 | `limites_regiao(p_regiao)` | text | tabela `(r_min, r_max)` | Raios (em PC) do anel de cada região: Núcleo 0–3.500, Orla Interior 3.500–8.500, Orla Média 8.500–14.000, Orla Exterior 14.000–20.000; região desconhecida = galáxia inteira (0–20.000). **É aqui que se ajusta a escala da galáxia.** |
 | `sortear_distancia(p_regiao_a, p_regiao_b)` | text, text | int | Sorteia a distância entre dois planetas: cada um cai num ponto aleatório (uniforme por área) do anel da sua região e a distância é a reta entre os pontos (mínimo 400 PC). **Não grava nada.** Usada por `obter_ou_criar_rota` e pelas simulações do ISB. |
 | `consultar_rota(p_a, p_b)` | text, text | int ou `null` | Lê a distância já catalogada entre dois planetas (ordem dos nomes indiferente). **Não cria nada** — usada nas simulações do ISB. |
@@ -145,3 +154,10 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 *   **Quem vê o quê:** jogador vê as naves do seu personagem (igual ao Posto); ISB vê as naves de todos os personagens, mais as naves *placeholder* de simulação.
 *   **Simulação (somente ISB):** as naves *placeholder* do JS (`simulationShips`) e qualquer rota ainda desconhecida **não gravam nada** no banco; rotas já catalogadas são reaproveitadas.
 *   **Log:** cada viagem/manobra com nave real é registrada em `logs_taticos` (`acao` = `VIAGEM_HIPERESPACO` ou `MANOBRA_SUBLUZ`). Abastecimentos continuam em `logs_auditoria` (`tipo_evento = 'ABASTECIMENTO'`).
+
+### Ordens de serviço (`durtoc/oficina.html`)
+*   **Leitura:** a página lê de `ordens_servico_leitura` (nunca da tabela). OS sigilosas e linhas de taxas ocultas só chegam ao ISB.
+*   **Criação/edição/exclusão:** direto na tabela `ordens_servico`, só ISB. O payload **não** envia `id` nem `serie`: o trigger os calcula (próxima série livre por ano + sigla, com advisory lock). Após o insert, usar `.select().single()` para obter o ID gerado.
+*   **Serviços:** o formulário puxa o catálogo de `servicos_mcmt` (`nome_servico`, `peca`, `preco_componentes`, `mao_de_obra`) e grava uma cópia em `itens`; mudanças posteriores no catálogo não alteram OS antigas.
+*   **Financeiro:** calculado no frontend e gravado em `financeiro`. Base `servico_total` = valor de todas as peças + mão de obra; `peca` inclui peças fornecidas pelo cliente (`cobrada = false`), que não entram em `subtotalPecas`.
+*   **Siglas de localidade:** vêm de `durtoc/database/siglasLocalidade.json`. OS legadas `OS-14-OFI-001/002` mantêm a sigla `OFI`, que não existe nesse arquivo.

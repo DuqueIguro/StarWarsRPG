@@ -52,6 +52,10 @@
             <h2>Registros de Serviço</h2>
         </div>
 
+        <div class="os-toolbar">
+            <button type="button" id="btn-nova-os" class="os-btn os-btn-primary hidden">+ Nova Ordem de Serviço</button>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <div class="lg:col-span-1 glass-pane os-panel">
@@ -68,6 +72,7 @@
 
         </div>
 
+        <div id="secao-sigilosa" class="hidden">
         <!-- Registros sigilosos -->
         <div class="section-header">
             <span class="section-tag">sigilo</span>
@@ -99,8 +104,112 @@
             </div>
 
         </div>
+        </div>
 
     </main>
+
+
+    <!-- Criação de OS (só aparece para o ISB) -->
+    <datalist id="tipos-servico">
+        <option value="Mão de Obra"></option>
+        <option value="Peça e Mão de Obra"></option>
+        <option value="Protocolo S.E.V.I.R.A."></option>
+        <option value="Mão de Obra Improvisada"></option>
+        <option value="Transporte Especializado"></option>
+    </datalist>
+
+    <dialog id="os-dialog" class="os-dialog">
+        <form id="os-form" novalidate>
+            <div class="os-dialog-head">
+                <h2>Nova Ordem de Serviço</h2>
+                <p class="os-hint">ID previsto: <strong id="f-id-previa">defina localidade e ano</strong> (definitivo ao salvar)</p>
+            </div>
+
+            <fieldset class="os-fs">
+                <legend>Identificação</legend>
+                <div class="os-grid">
+                    <label class="span-2">Título <input id="f-titulo" type="text" placeholder="Ex.: Reparo de emergência em nave Nubiana"></label>
+                    <label>Localidade <select id="f-localidade"></select></label>
+                    <label>Ano (ABY) <input id="f-ano" type="number" min="0" max="99" placeholder="14"></label>
+                    <label>Status <select id="f-status"></select></label>
+                    <label>Unidade responsável <input id="f-unidade" type="text" value="R5-T1N"></label>
+                    <label class="os-check span-2"><input id="f-sigiloso" type="checkbox"> Registro sigiloso (só o ISB enxerga)</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="os-fs">
+                <legend>Mecânico responsável</legend>
+                <div id="f-mecanicos" class="os-checks"></div>
+            </fieldset>
+
+            <fieldset class="os-fs">
+                <legend>Cliente</legend>
+                <div class="os-grid">
+                    <label>Nome <input id="f-cli-nome" type="text"></label>
+                    <label>Afiliação <input id="f-cli-afil" type="text"></label>
+                    <label class="span-2">Contato HoloNet <input id="f-cli-contato" type="text" placeholder="Não informado"></label>
+                </div>
+            </fieldset>
+
+            <fieldset class="os-fs">
+                <legend>Relatório do problema</legend>
+                <textarea id="f-relatorio" rows="3"></textarea>
+            </fieldset>
+
+            <fieldset class="os-fs">
+                <legend>Serviços</legend>
+                <p class="os-hint">Escolha um serviço do catálogo (servicos_mcmt) para preencher peça e mão de obra, ou digite um personalizado. Mão de obra aceita soma, ex.: 500+300.</p>
+                <div id="f-servicos"></div>
+                <button type="button" id="f-add-servico" class="os-btn">+ Serviço</button>
+            </fieldset>
+
+            <fieldset class="os-fs">
+                <legend>Taxas</legend>
+                <div id="f-taxas"></div>
+                <button type="button" id="f-add-taxa" class="os-btn">+ Taxa</button>
+            </fieldset>
+
+            <fieldset class="os-fs os-fs-oculta">
+                <legend>Taxas ocultas</legend>
+                <p class="os-hint">Entram no total, mas as linhas só aparecem para o ISB.</p>
+                <div id="f-ocultas"></div>
+                <button type="button" id="f-add-oculta" class="os-btn">+ Taxa oculta</button>
+            </fieldset>
+
+            <fieldset class="os-fs">
+                <legend>Gorjeta</legend>
+                <div class="os-grid">
+                    <label>Tipo
+                        <select id="f-g-tipo">
+                            <option value="">Sem gorjeta</option>
+                            <option value="fixa">Valor fixo (créditos)</option>
+                            <option value="percentual">Percentual do total do serviço</option>
+                        </select>
+                    </label>
+                    <label>Valor / % <input id="f-g-valor" type="text" inputmode="decimal"></label>
+                </div>
+            </fieldset>
+
+            <fieldset class="os-fs">
+                <legend>Notas do mecânico</legend>
+                <textarea id="f-notas" rows="3"></textarea>
+            </fieldset>
+
+            <fieldset class="os-fs">
+                <legend>Termos</legend>
+                <div id="f-termos-auto" class="os-checks os-checks-col"></div>
+                <label>Termos manuais <textarea id="f-termos-manual" rows="2" placeholder="Opcional"></textarea></label>
+            </fieldset>
+
+            <div id="f-resumo" class="os-resumo"></div>
+
+            <div class="os-dialog-foot">
+                <p id="f-msg" class="os-msg"></p>
+                <button type="button" id="f-cancelar" class="os-btn">Cancelar</button>
+                <button type="submit" id="f-salvar" class="os-btn os-btn-primary">Criar OS</button>
+            </div>
+        </form>
+    </dialog>
 
     <script src="database/oficina.js"></script>
 </body>

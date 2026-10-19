@@ -191,3 +191,114 @@ body { line-height: 1.7 !important; }
 
 .os-adendo-icon { font-size: 1.1rem; color: #f87171; line-height: 1.4; }
 .os-adendo strong { letter-spacing: 0.12em; text-transform: uppercase; }
+/* =============================================
+   CRIAÇÃO DE OS (formulário / toolbar)
+   ============================================= */
+.hidden { display: none !important; }
+
+.os-toolbar { margin-bottom: 1rem; }
+
+.os-btn {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.os-btn:hover { border-color: var(--border-glow); background: var(--bg-card-hover); color: var(--green-bright); }
+.os-btn:focus-visible, .os-dialog input:focus-visible, .os-dialog select:focus-visible, .os-dialog textarea:focus-visible {
+  outline: 2px solid var(--green-neon); outline-offset: 1px;
+}
+.os-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.os-btn-primary { border-color: var(--green-mid); color: var(--green-bright); }
+.os-btn-danger { border-color: rgba(239, 68, 68, 0.5); color: #f87171; }
+.os-btn-danger:hover { background: rgba(127, 29, 29, 0.35); color: #fca5a5; border-color: #ef4444; }
+.os-x { padding: 0.35rem 0.6rem; font-size: 1rem; line-height: 1; }
+
+.os-controles { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; }
+.os-controles label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.7rem; color: var(--text-dim); }
+
+.os-oculta { color: #fbbf24 !important; }
+
+/* Diálogo */
+.os-dialog {
+  width: min(960px, 96vw);
+  max-height: 92vh;
+  padding: 0;
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+}
+.os-dialog::backdrop { background: rgba(0, 0, 0, 0.75); }
+.os-dialog form { padding: 1.4rem; max-height: 92vh; overflow-y: auto; }
+
+.os-dialog-head h2 { color: var(--green-bright); font-size: 1.1rem; margin-bottom: 0.2rem; }
+.os-dialog-head p { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 1rem; }
+.os-dialog-head strong { color: var(--green-neon); letter-spacing: 0.1em; }
+
+.os-fs { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem 1rem; margin-bottom: 0.9rem; }
+.os-fs legend { padding: 0 0.5rem; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--green-mid); }
+.os-fs-oculta { border-color: rgba(251, 191, 36, 0.35); }
+.os-fs-oculta legend { color: #fbbf24; }
+.os-hint { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.7rem; }
+
+.os-dialog label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.7rem; color: var(--text-dim); }
+.os-dialog input:not([type="checkbox"]), .os-dialog select, .os-dialog textarea {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8rem;
+}
+.os-dialog textarea { resize: vertical; }
+
+.os-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.8rem; align-items: end; }
+.os-grid .span-2 { grid-column: span 2; }
+
+.os-checks { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; margin-bottom: 0.8rem; }
+.os-checks-col { flex-direction: column; }
+.os-dialog label.os-check { flex-direction: row; align-items: flex-start; gap: 0.45rem; color: var(--text-primary); font-size: 0.75rem; }
+
+.os-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.os-resumo {
+  display: grid;
+  gap: 0.25rem;
+  margin: 1rem 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  font-size: 0.8rem;
+}
+.os-resumo div { display: flex; justify-content: space-between; }
+.os-resumo .os-total { margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid var(--border); color: var(--green-bright); font-size: 1rem; }
+
+.os-msg { min-height: 1.2rem; font-size: 0.75rem; }
+.os-msg-erro { color: #f87171; }
+.os-dialog-foot { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 0.4rem; }
+
+@media (max-width: 640px) {
+  .os-grid .span-2 { grid-column: auto; }
+  .os-dialog form { padding: 1rem; }
+}
