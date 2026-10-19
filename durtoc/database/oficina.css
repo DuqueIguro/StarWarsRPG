@@ -191,6 +191,7 @@ body { line-height: 1.7 !important; }
 
 .os-adendo-icon { font-size: 1.1rem; color: #f87171; line-height: 1.4; }
 .os-adendo strong { letter-spacing: 0.12em; text-transform: uppercase; }
+
 /* =============================================
    CRIAÇÃO DE OS (formulário / toolbar)
    ============================================= */
@@ -226,7 +227,7 @@ body { line-height: 1.7 !important; }
 
 .os-oculta { color: #fbbf24 !important; }
 
-/* Diálogo */
+/* Diálogo / Modal Centralizado */
 .os-dialog {
   width: min(960px, 96vw);
   max-height: 92vh;
@@ -235,8 +236,15 @@ body { line-height: 1.7 !important; }
   border-radius: var(--radius);
   background: var(--bg-deep);
   color: var(--text-primary);
+  
+  /* Centralização na janela */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
 }
-.os-dialog::backdrop { background: rgba(0, 0, 0, 0.75); }
+.os-dialog::backdrop { background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(2px); }
 .os-dialog form { padding: 1.4rem; max-height: 92vh; overflow-y: auto; }
 
 .os-dialog-head h2 { color: var(--green-bright); font-size: 1.1rem; margin-bottom: 0.2rem; }
@@ -262,12 +270,110 @@ body { line-height: 1.7 !important; }
 }
 .os-dialog textarea { resize: vertical; }
 
+/* Estilização Customizada de Elementos Select */
+.os-dialog select,
+.os-status-sel {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: var(--bg-card);
+  padding-right: 2rem !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237bcf9a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 1rem;
+  cursor: pointer;
+}
+
+.os-dialog select option,
+.os-dialog select optgroup {
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+}
+
+/* =============================================
+   CAIXAS DE SELEÇÃO / CHECKBOXES (ESTILO TERMINAL)
+   ============================================= */
+
+.os-checks { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 0.6rem 1.2rem; 
+  margin-bottom: 0.8rem; 
+}
+.os-checks-col { 
+  flex-direction: column; 
+}
+
+/* Label de suporte da caixa */
+.os-dialog label.os-check { 
+  display: inline-flex;
+  flex-direction: row; 
+  align-items: center; 
+  gap: 0.55rem; 
+  color: var(--text-primary); 
+  font-size: 0.8rem; 
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.os-dialog label.os-check:hover {
+  color: var(--green-bright);
+}
+
+/* Quadrado customizado da caixa de seleção */
+.os-dialog input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  min-width: 1.15rem;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  position: relative;
+  transition: all 0.2s ease-in-out;
+}
+
+.os-dialog input[type="checkbox"]:hover {
+  border-color: var(--border-glow);
+  background-color: var(--bg-card-hover);
+  box-shadow: 0 0 5px rgba(123, 207, 154, 0.2);
+}
+
+.os-dialog input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--green-neon);
+  outline-offset: 1px;
+}
+
+/* Estado Ativo / Marcado com símbolo de verificação */
+.os-dialog input[type="checkbox"]:checked {
+  background-color: rgba(22, 101, 52, 0.35);
+  border-color: var(--green-neon);
+  box-shadow: 0 0 8px rgba(123, 207, 154, 0.35);
+}
+
+.os-dialog input[type="checkbox"]:checked::before {
+  content: "";
+  width: 0.35rem;
+  height: 0.65rem;
+  border: solid var(--green-bright);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+  display: block;
+  filter: drop-shadow(0 0 2px var(--green-neon));
+}
+
+/* Grelhas e Linhas */
 .os-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.8rem; align-items: end; }
 .os-grid .span-2 { grid-column: span 2; }
-
-.os-checks { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; margin-bottom: 0.8rem; }
-.os-checks-col { flex-direction: column; }
-.os-dialog label.os-check { flex-direction: row; align-items: flex-start; gap: 0.45rem; color: var(--text-primary); font-size: 0.75rem; }
 
 .os-row {
   display: grid;

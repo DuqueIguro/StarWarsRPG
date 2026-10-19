@@ -5,7 +5,7 @@
 
 @font-face {
   font-family: 'Aurebesh';
-  src: url('../data/Aurebesh.woff') format('woff');
+  src: url('../../data/Aurebesh.woff') format('woff');
 }
 
 /* ---------- Reset & Base ---------- */

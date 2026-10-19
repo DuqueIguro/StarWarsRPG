@@ -109,7 +109,7 @@
     </main>
 
 
-    <!-- Criação de OS (só aparece para o ISB) -->
+    <!-- Datalists para Autocomplete -->
     <datalist id="tipos-servico">
         <option value="Mão de Obra"></option>
         <option value="Peça e Mão de Obra"></option>
@@ -117,6 +117,10 @@
         <option value="Mão de Obra Improvisada"></option>
         <option value="Transporte Especializado"></option>
     </datalist>
+
+    <datalist id="lista-localidades"></datalist>
+    <datalist id="lista-catalogo-servicos"></datalist>
+    <datalist id="lista-taxas-preset"></datalist>
 
     <dialog id="os-dialog" class="os-dialog">
         <form id="os-form" novalidate>
@@ -129,7 +133,9 @@
                 <legend>Identificação</legend>
                 <div class="os-grid">
                     <label class="span-2">Título <input id="f-titulo" type="text" placeholder="Ex.: Reparo de emergência em nave Nubiana"></label>
-                    <label>Localidade <select id="f-localidade"></select></label>
+                    <label>Localidade 
+                        <input id="f-localidade" list="lista-localidades" placeholder="Digite para buscar..." autocomplete="off">
+                    </label>
                     <label>Ano (ABY) <input id="f-ano" type="number" min="0" max="99" placeholder="14"></label>
                     <label>Status <select id="f-status"></select></label>
                     <label>Unidade responsável <input id="f-unidade" type="text" value="R5-T1N"></label>
@@ -202,6 +208,14 @@
             </fieldset>
 
             <div id="f-resumo" class="os-resumo"></div>
+
+            <!-- Visualização da Ordem de Serviço -->
+            <fieldset class="os-fs">
+                <legend>Pré-visualização do Registro</legend>
+                <div id="f-live-preview" class="p-3 bg-[#0d0f0e]/50 border border-[var(--border)] rounded text-xs space-y-2">
+                    <!-- Renderizado dinamicamente -->
+                </div>
+            </fieldset>
 
             <div class="os-dialog-foot">
                 <p id="f-msg" class="os-msg"></p>

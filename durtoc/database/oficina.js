@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const BASES = { peca: 'Peça', mao_de_obra: 'Mão de Obra', mao_de_obra_improvisada: 'Mão de Obra Impr.', servico_total: 'Total do Serviço' };
     const CARGOS_ISB = ['mestre', 'dev', 'desenvolvedor', 'durtoc'];
 
-    // Presets de taxa. Ajuste os valores aqui; BIOS, I.D.A. e FIMEL estão com 0% de propósito (defina a regra da mesa).
+    // Presets de taxa
     const TAXAS_PRESET = [
         { sigla: 'T.D.P', nome: 'Taxa de Diagnóstico Padrão', tipo: 'fixa', valor: 150, just: 'Aplicada para identificação precisa da causa-raiz do defeito.' },
         { sigla: 'S.E.V.I.R.A.', nome: 'Adicional Protocolo S.E.V.I.R.A.', tipo: 'percentual', base: 'mao_de_obra_improvisada', valor: 15, just: 'Adicional sobre a mão de obra improvisada por recusa do reparo adequado.' },
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderListas() {
-        const nor = $('os-list'), sig = $('os-list-sigiloso');
+        const nor = $('os-list'), sig =$('os-list-sigiloso');
         nor.innerHTML = ''; sig.innerHTML = '';
         ordens.forEach(os => (os.sigiloso ? sig : nor).appendChild(criarItem(os)));
         if (!nor.children.length) nor.innerHTML = '<p class="os-placeholder-text">Nenhuma ordem registrada.</p>';
@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const painel = sig => sig
-        ? { det: $('os-details-container-sigiloso'), ph: $('os-placeholder-sigiloso'), body: $('os-details-sigiloso') }
-        : { det: $('os-details-container'), ph: $('os-placeholder'), body: $('os-details') };
+        ? { det: $('os-details-container-sigiloso'), ph: $('os-placeholder-sigiloso'), body:$('os-details-sigiloso') }
+        : { det: $('os-details-container'), ph: $('os-placeholder'), body:$('os-details') };
 
     function selecionar(os, el) {
         const C = painel(os.sigiloso), O = painel(!os.sigiloso);
@@ -232,22 +232,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function montarFormulario() {
-        $('f-localidade').innerHTML = opt('', 'Selecione…') + locais.map(l => opt(l.sigla, `${l.nome} (${l.sigla})`)).join('');
-        $('f-status').innerHTML = STATUS.map(s => opt(s, s)).join('');
-        $('f-mecanicos').innerHTML = MECANICOS.map(m => `<label class="os-check"><input type="checkbox" value="${esc(m)}"> ${esc(m)}</label>`).join('');
+        // Autocomplete de Localidade
+        $('lista-localidades').innerHTML = locais.map(l => `<option value="${esc(l.sigla)}">${esc(l.nome)} (${esc(l.sigla)})</option>`).join('');
+
+        // Autocomplete de Catálogo de Serviços
+        $('lista-catalogo-servicos').innerHTML = catalogo.map(s => 
+            `<option value="${esc(s.nome_servico)}">[${esc(s.oficina || 'Geral')}] Peça: ${fmt(s.preco_componentes || 0)} cr | MO: ${fmt(s.mao_de_obra || 0)} cr</option>`
+        ).join('');
+
+        // Autocomplete de Taxas
+        $('lista-taxas-preset').innerHTML = TAXAS_PRESET.map(p => 
+            `<option value="${esc(p.sigla)}">${esc(p.nome)}</option>`
+        ).join('');
+
+        $('f-status').innerHTML = STATUS.map(s => opt(s, s)).join('');$('f-mecanicos').innerHTML = MECANICOS.map(m => `<label class="os-check"><input type="checkbox" value="${esc(m)}"> ${esc(m)}</label>`).join('');
         $('f-termos-auto').innerHTML = TERMOS_AUTO.map(t => `<label class="os-check"><input type="checkbox" data-termo="${t.id}"> ${esc(t.texto)}</label>`).join('');
     }
 
     function linhaServico() {
-        const grupos = {};
-        catalogo.forEach((s, i) => (grupos[s.oficina || 'Geral'] ||= []).push([i, s]));
-        const cat = '<option value="">Serviço personalizado</option>' + Object.entries(grupos)
-            .map(([of, arr]) => `<optgroup label="${esc(of)}">${arr.map(([i, s]) => opt(i, s.nome_servico)).join('')}</optgroup>`).join('');
         const d = document.createElement('div');
         d.className = 'os-row'; d.dataset.row = 'servico';
         d.innerHTML = `
-            <select class="f-cat">${cat}</select>
-            <input class="f-servico" placeholder="Serviço">
+            <input class="f-servico" list="lista-catalogo-servicos" placeholder="Serviço (digite para buscar)" autocomplete="off">
             <input class="f-tipo" list="tipos-servico" placeholder="Tipo" value="Mão de Obra">
             <input class="f-causa" placeholder="Causa do problema">
             <input class="f-peca-nome" placeholder="Peça">
@@ -263,9 +269,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const d = document.createElement('div');
         d.className = 'os-row'; d.dataset.row = 'taxa';
         d.innerHTML = `
-            <select class="f-preset"><option value="">Taxa personalizada</option>${TAXAS_PRESET.map((p, i) => opt(i, p.sigla)).join('')}</select>
-            <input class="f-nome" placeholder="Nome">
-            <input class="f-sigla" placeholder="Sigla">
+            <input class="f-sigla" list="lista-taxas-preset" placeholder="Sigla/Preset" autocomplete="off">
+            <input class="f-nome" placeholder="Nome da Taxa">
             <select class="f-tipo"><option value="fixa">Fixa (créditos)</option><option value="percentual">Percentual</option></select>
             <select class="f-base" disabled>${Object.entries(BASES).map(([k, v]) => opt(k, v)).join('')}</select>
             <input class="f-valor" inputmode="decimal" placeholder="Valor ou %">
@@ -280,11 +285,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const q = s => r.querySelector(s);
             const peca = num(q('.f-peca-custo').value), cobrada = q('.f-peca-cobrada').checked;
             const expr = q('.f-mo').value.trim(), mo = soma(expr);
-            const cat = q('.f-cat').value;
+            const nomeServ = q('.f-servico').value.trim();
+            const servEncontrado = catalogo.find(c => c.nome_servico.toLowerCase() === nomeServ.toLowerCase());
             const mod = { custo: mo }; if (expr.includes('+')) mod.expressao = expr;
             return {
-                servico_id: cat !== '' ? catalogo[cat]?.id ?? null : null,
-                servico: q('.f-servico').value.trim(), tipo: q('.f-tipo').value.trim() || 'Mão de Obra',
+                servico_id: servEncontrado?.id ?? null,
+                servico: nomeServ, tipo: q('.f-tipo').value.trim() || 'Mão de Obra',
                 improvisado: q('.f-impr').checked, subtotal: (cobrada ? peca : 0) + mo,
                 detalhes: { causaDoProblema: q('.f-causa').value.trim() || null, peca: { nome: q('.f-peca-nome').value.trim() || null, custo: peca, cobrada }, maoDeObra: mod },
             };
@@ -322,12 +328,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function atualizarResumo() {
-        const { fin, taxas, ocultas } = lerFormulario();
+        const { fin, taxas, ocultas, itens, gorjeta } = lerFormulario();
         const l = (t, v) => `<div><span>${t}</span><strong>${fmt(v)}</strong></div>`;
         $('f-resumo').innerHTML = l('Peças', fin.subtotalPecas) + l('Mão de obra', fin.subtotalMaoDeObra) + l('Taxas fixas', fin.subtotalTaxasFixas)
             + l('Adicionais', fin.subtotalAdicionais - fin.subtotalTaxasOcultas) + (ocultas.length ? l('Taxas ocultas', fin.subtotalTaxasOcultas) : '')
             + `<div class="os-total"><span>Total</span><strong>${fmt(fin.total)} créditos</strong></div>`;
         sugerirTermos([...taxas, ...ocultas]);
+        renderizarPreviaAoVivo(fin, itens, taxas, ocultas, gorjeta);
+    }
+
+    function renderizarPreviaAoVivo(fin, itens, taxas, ocultas, gorjeta) {
+        const container = $('f-live-preview');
+        if (!container) return;
+
+        const titulo = $('f-titulo').value.trim() || 'Sem título';
+        const cliNome = $('f-cli-nome').value.trim() || 'Não informado';
+        const cliAfil = $('f-cli-afil').value.trim() || 'Não informada';
+        const idPrevia = $('f-id-previa').textContent;
+        const mecs = [...$('f-mecanicos').querySelectorAll('input:checked')].map(i => i.value).join(', ') || 'Nenhum selecionado';
+        const relatorio = $('f-relatorio').value.trim();
+
+        const servicosLista = itens.length 
+            ? itens.map(i => `<li class="flex justify-between border-b border-[#2a3d35]/50 py-1"><span>• <strong>${esc(i.servico)}</strong> (${esc(i.tipo)})</span><span class="text-[#a8f5c0]">${fmt(i.subtotal)} cr</span></li>`).join('')
+            : '<li class="text-[#6a857a] italic">Nenhum serviço adicionado até o momento.</li>';
+
+        const totalTaxas = [...taxas, ...(isMestre ? ocultas : [])];
+        const taxasLista = totalTaxas.length
+            ? totalTaxas.map(t => `<li class="flex justify-between text-[11px] text-[#6a857a]"><span>+ ${esc(t.nome)} (${esc(t.sigla || 'Taxa')})</span><span>${fmt(t.custo)} cr</span></li>`).join('')
+            : '';
+
+        container.innerHTML = `
+            <div class="border-b border-[#2a3d35] pb-2 mb-2 flex justify-between items-center">
+                <span class="text-[#7bcf9a] font-bold text-sm tracking-wide">${esc(titulo)}</span>
+                <span class="text-[#5a9e74] font-mono text-xs">${esc(idPrevia)}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-[11px] text-[#c8ddd5] mb-2 bg-[#0d0f0e]/60 p-2 rounded">
+                <div><strong>Cliente:</strong> ${esc(cliNome)} (${esc(cliAfil)})</div>
+                <div><strong>Mecânicos:</strong> ${esc(mecs)}</div>
+            </div>
+            ${relatorio ? `<div class="text-[11px] text-[#6a857a] mb-2 italic">"${esc(relatorio)}"</div>` : ''}
+            <div>
+                <strong class="text-[#5a9e74] uppercase text-[10px] tracking-wider">Serviços:</strong>
+                <ul class="mt-1 space-y-0.5">${servicosLista}</ul>
+            </div>
+            ${taxasLista ? `<div class="mt-2"><strong class="text-[#5a9e74] uppercase text-[10px] tracking-wider">Taxas:</strong><ul class="mt-1 space-y-0.5">${taxasLista}</ul></div>` : ''}
+            ${gorjeta ? `<div class="mt-1 text-[11px] text-[#6a857a] flex justify-between"><span>Gorjeta:</span><span>${fmt(gorjeta.custo)} cr</span></div>` : ''}
+            <div class="mt-3 pt-2 border-t border-[#3a6b50] flex justify-between text-[#a8f5c0] font-bold text-sm">
+                <span>Total Estimado:</span>
+                <span>${fmt(fin.total)} Créditos Galácticos</span>
+            </div>
+        `;
     }
 
     function sugerirTermos(todasTaxas) {
@@ -341,7 +391,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let previaToken = 0;
     async function atualizarPrevia() {
-        const sigla = $('f-localidade').value, ano = $('f-ano').value;
+        const sigla = $('f-localidade').value.trim().toUpperCase();
+        const ano = $('f-ano').value;
         const el = $('f-id-previa');
         if (!sigla || ano === '') { el.textContent = 'defina localidade e ano'; return; }
         const tok = ++previaToken;
@@ -356,20 +407,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         ['f-servicos', 'f-taxas', 'f-ocultas'].forEach(i => $(i).innerHTML = '');
         document.querySelectorAll('[data-termo]').forEach(cb => { delete cb.dataset.tocado; cb.checked = false; });
         $('f-servicos').appendChild(linhaServico());
-        $('f-msg').textContent = ''; $('f-id-previa').textContent = 'defina localidade e ano';
+        $('f-msg').textContent = '';$('f-id-previa').textContent = 'defina localidade e ano';
         atualizarResumo();
         $('os-dialog').showModal();
     }
 
     function ligarFormulario() {
-        const form = $('os-form');
-        $('btn-nova-os').addEventListener('click', abrirFormulario);
-        $('f-cancelar').addEventListener('click', () => $('os-dialog').close());
-        $('f-add-servico').addEventListener('click', () => { $('f-servicos').appendChild(linhaServico()); atualizarResumo(); });
-        $('f-add-taxa').addEventListener('click', () => { $('f-taxas').appendChild(linhaTaxa()); atualizarResumo(); });
-        $('f-add-oculta').addEventListener('click', () => { $('f-ocultas').appendChild(linhaTaxa()); atualizarResumo(); });
-        $('f-localidade').addEventListener('change', atualizarPrevia);
-        $('f-ano').addEventListener('input', atualizarPrevia);
+        const form = $('os-form');$('btn-nova-os').addEventListener('click', abrirFormulario);
+        $('f-cancelar').addEventListener('click', () =>$('os-dialog').close());
+        $('f-add-servico').addEventListener('click', () => {$('f-servicos').appendChild(linhaServico()); atualizarResumo(); });
+        $('f-add-taxa').addEventListener('click', () => {$('f-taxas').appendChild(linhaTaxa()); atualizarResumo(); });
+        $('f-add-oculta').addEventListener('click', () => {$('f-ocultas').appendChild(linhaTaxa()); atualizarResumo(); });
+        $('f-localidade').addEventListener('input', atualizarPrevia);$('f-ano').addEventListener('input', atualizarPrevia);
         document.querySelectorAll('[data-termo]').forEach(cb => cb.addEventListener('change', () => cb.dataset.tocado = '1'));
 
         form.addEventListener('click', e => {
@@ -379,33 +428,50 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         form.addEventListener('change', e => {
             const row = e.target.closest('.os-row');
-            // catálogo -> preenche a linha
-            if (row && e.target.classList.contains('f-cat') && e.target.value !== '') {
-                const s = catalogo[e.target.value], q = c => row.querySelector(c);
-                q('.f-servico').value = s.nome_servico || '';
-                q('.f-peca-nome').value = s.peca || '';
-                q('.f-peca-custo').value = s.preco_componentes || 0;
-                q('.f-mo').value = s.mao_de_obra || 0;
-                q('.f-tipo').value = (s.preco_componentes > 0 || s.peca) ? 'Peça e Mão de Obra' : 'Mão de Obra';
+            if (row && row.dataset.row === 'taxa') {
+                row.querySelector('.f-base').disabled = row.querySelector('.f-tipo').value !== 'percentual';
             }
-            // preset de taxa -> preenche a linha
-            if (row && e.target.classList.contains('f-preset') && e.target.value !== '') {
-                const p = TAXAS_PRESET[e.target.value], q = c => row.querySelector(c);
-                q('.f-nome').value = p.nome; q('.f-sigla').value = p.sigla; q('.f-tipo').value = p.tipo;
-                q('.f-valor').value = p.valor; q('.f-just').value = p.just;
-                if (p.base) q('.f-base').value = p.base;
-            }
-            if (row && row.dataset.row === 'taxa') row.querySelector('.f-base').disabled = row.querySelector('.f-tipo').value !== 'percentual';
             atualizarResumo();
         });
-        form.addEventListener('input', atualizarResumo);
+
+        form.addEventListener('input', e => {
+            const row = e.target.closest('.os-row');
+            
+            // Autocomplete de Serviço
+            if (row && e.target.classList.contains('f-servico')) {
+                const s = catalogo.find(item => item.nome_servico.toLowerCase() === e.target.value.trim().toLowerCase());
+                if (s) {
+                    const q = c => row.querySelector(c);
+                    q('.f-peca-nome').value = s.peca || '';
+                    q('.f-peca-custo').value = s.preco_componentes || 0;
+                    q('.f-mo').value = s.mao_de_obra || 0;
+                    q('.f-tipo').value = (s.preco_componentes > 0 || s.peca) ? 'Peça e Mão de Obra' : 'Mão de Obra';
+                }
+            }
+
+            // Autocomplete de Taxas
+            if (row && e.target.classList.contains('f-sigla')) {
+                const p = TAXAS_PRESET.find(item => item.sigla.toLowerCase() === e.target.value.trim().toLowerCase());
+                if (p) {
+                    const q = c => row.querySelector(c);
+                    q('.f-nome').value = p.nome;
+                    q('.f-tipo').value = p.tipo;
+                    q('.f-valor').value = p.valor;
+                    q('.f-just').value = p.just;
+                    if (p.base) q('.f-base').value = p.base;
+                    q('.f-base').disabled = p.tipo !== 'percentual';
+                }
+            }
+
+            atualizarResumo();
+        });
 
         form.addEventListener('submit', async e => {
             e.preventDefault();
             const msg = $('f-msg'); msg.className = 'os-msg';
             const { itens, taxas, ocultas, gorjeta, fin } = lerFormulario();
             const mecanicos = [...$('f-mecanicos').querySelectorAll('input:checked')].map(i => i.value);
-            const ano = $('f-ano').value, sigla = $('f-localidade').value, titulo = $('f-titulo').value.trim();
+            const ano = $('f-ano').value, sigla = $('f-localidade').value.trim().toUpperCase(), titulo =$('f-titulo').value.trim();
             const erro = !titulo ? 'Informe o título.' : !sigla ? 'Escolha a localidade.' : ano === '' ? 'Informe o ano (ABY).'
                 : !mecanicos.length ? 'Escolha ao menos um mecânico responsável.' : !itens.length ? 'Adicione ao menos um serviço.'
                 : !$('f-cli-nome').value.trim() ? 'Informe o nome do cliente.' : '';
@@ -418,10 +484,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const payload = {
                 ano_aby: Number(ano), sigla_localidade: sigla, localidade: locais.find(l => l.sigla === sigla)?.nome || sigla,
-                data_texto: `${Number(ano)} ABY`, sigiloso: $('f-sigiloso').checked, status: $('f-status').value, titulo,
+                data_texto: `${Number(ano)} ABY`, sigiloso: $('f-sigiloso').checked, status:$('f-status').value, titulo,
                 mecanicos, unidade_responsavel: $('f-unidade').value.trim() || null,
-                cliente: { nome: $('f-cli-nome').value.trim(), afiliacao: $('f-cli-afil').value.trim() || 'Não informado', contato_holonet: $('f-cli-contato').value.trim() || 'Não informado' },
-                relatorio_problema: $('f-relatorio').value.trim(), notas_mecanico: $('f-notas').value.trim(),
+                cliente: { nome: $('f-cli-nome').value.trim(), afiliacao:$('f-cli-afil').value.trim() || 'Não informado', contato_holonet: $('f-cli-contato').value.trim() || 'Não informado' },
+                relatorio_problema: $('f-relatorio').value.trim(), notas_mecanico:$('f-notas').value.trim(),
                 itens, taxas, taxas_ocultas: ocultas, gorjeta, financeiro: fin,
                 termos_automaticos: autos, termos_manuais: manual || null, termos,
                 created_by: u?.user?.id,
@@ -438,8 +504,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ---------- Início ----------
     isMestre = await verificarMestre();
     if (isMestre) {
-        $('secao-sigilosa').classList.remove('hidden');
-        $('btn-nova-os').classList.remove('hidden');
+        $('secao-sigilosa').classList.remove('hidden');$('btn-nova-os').classList.remove('hidden');
         await carregarApoio();
         montarFormulario();
         ligarFormulario();
