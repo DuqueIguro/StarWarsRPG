@@ -39,7 +39,7 @@
                     <span class="aurebesh-sub">BACK</span>
                 </button>
                 <div class="sys-id-tag">
-                    <span class="aurebesh-font">SYS</span> // V6.00.0
+                    <span class="aurebesh-font">SYS</span> // V6.00.4
                     <div class="link-pulse"><i class="fa-solid fa-satellite-dish"></i> HOLONET ONLINE</div>
                 </div>
             </div>
@@ -258,6 +258,19 @@
                             </button>
                         </div>
                         <div class="dice-selection-matrix macro-tri-grid">
+                            <div class="dice-unit macro-unit" data-type="md4">
+                                <div class="die-box-sq macro-box-sq">
+                                    <span class="m-title">MACRO D4</span>
+                                    <span class="m-sub">4 FACES</span>
+                                </div>
+                                <div class="stepper-ui">
+                                    <button class="step-btn" onclick="alterDie('macro', 'md4', -1)"><i
+                                            class="fa-solid fa-minus"></i></button>
+                                    <span class="step-value" id="val-macro-md4">0</span>
+                                    <button class="step-btn" onclick="alterDie('macro', 'md4', 1)"><i
+                                            class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
                             <div class="dice-unit macro-unit" data-type="md6">
                                 <div class="die-box-sq macro-box-sq">
                                     <span class="m-title">MACRO D6</span>

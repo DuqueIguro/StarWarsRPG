@@ -3,6 +3,12 @@
    ========================================================================== */
 
 const MACRO_DATA = {
+    md4: [
+        { face: 1, empty: true, s: 0, a: 0, p: 0 },
+        { face: 2, empty: false, s: 1, a: 0, p: 0 },
+        { face: 3, empty: false, s: 0, a: 1, p: 0 },
+        { face: 4, empty: false, s: 0, a: 0, p: 1 }
+    ],  
     md6: [
         { face: 1, empty: true, s: 0, a: 0, p: 0 },
         { face: 2, empty: true, s: 0, a: 0, p: 0 },
@@ -41,7 +47,7 @@ const MACRO_DATA = {
 
 let pools = {
     standard: { d4: 0, d6: 0, d8: 0, d10: 0, d12: 0, d20: 0, d100: 0 },
-    macro: { md6: 0, md10: 0, md12: 0 }
+    macro: { md4: 0, md6: 0, md10: 0, md12: 0 }
 };
 
 let currentMode = 'standard';
@@ -110,7 +116,7 @@ function goBack() {
     if (window.history.length > 1) {
         window.history.back();
     } else {
-        window.location.href = '../index.html';
+        window.location.href = '../menu';
     }
 }
 
