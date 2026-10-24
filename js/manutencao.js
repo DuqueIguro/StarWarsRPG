@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         commandInput.disabled = true; // Desabilita o input principal
         const formContainer = document.createElement('div');
         formContainer.id = 'bug-report-form';
-        
+
 
         const formHTML = `
             <p>Seu nome:</p>
@@ -42,72 +42,43 @@ document.addEventListener('DOMContentLoaded', () => {
         output.appendChild(formContainer);
         terminalBody.scrollTop = terminalBody.scrollHeight;
 
-        document.getElementById('submit-bug-report').addEventListener('click', () => {
+        document.getElementById('submit-bug-report').addEventListener('click', async () => {
             const submitBtn = document.getElementById('submit-bug-report');
-            const reporterName = document.getElementById('reporter-name').value;
+            const reporterName = document.getElementById('reporter-name').value.trim();
             const dev = document.getElementById('dev-select').value;
-            const bugPage = document.getElementById('bug-page').value;
-            const bugDescription = document.getElementById('bug-description').value;
+            const bugPage = document.getElementById('bug-page').value.trim();
+            const bugDescription = document.getElementById('bug-description').value.trim();
 
-            let FORMSPREE_ENDPOINT;
-
-            if (dev === "EidenFox") {
-                FORMSPREE_ENDPOINT = "https://formspree.io/f/mjknojqq";
-            } else {
-                FORMSPREE_ENDPOINT = "https://formspree.io/f/mrbnlwyl";  
-            }
-
-            if (reporterName && dev && bugPage && bugDescription) {
-
-                submitBtn.innerText = "Enviando...";
-                submitBtn.disabled = true;
-
-                const data = {
-                Nome: reporterName,
-                _subject: `Bug Report - ${bugPage} (${dev})`,
-                DEV: dev,
-                Pagina: bugPage,
-                Descrição: bugDescription
-                };
-
-
-
-                fetch(FORMSPREE_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-                })
-                .then(response => {
-                if (response.ok) {
-                    print(`\n<span class="success">Bug reportado com sucesso!</span>\nObrigado, ${reporterName}. Report enviado para o Dev ${dev}.`, 'success');
-                    formContainer.remove();
-                    commandInput.disabled = false;
-                    commandInput.focus();
-                } else {
-                    return response.json().then(data => {
-                        if (Object.hasOwn(data, 'errors')) {
-                            const errorMsg = data.errors.map(error => error["message"]).join(", ");
-                            throw new Error(errorMsg);
-                        } else {
-                            throw new Error('Ocorreu um erro no servidor.');
-                        }
-                    });
-                }
-            })
-            .catch(error => {
-                print(`\n<span class="error">Erro ao enviar: ${error.message}</span>`, 'error');
-                submitBtn.innerText = "Tentar Novamente";
-                submitBtn.disabled = false;
-            });
-
-
-
-            } else {
+            if (!reporterName || !dev || !bugPage || !bugDescription) {
                 print('\n<span class="error">Erro: Por favor, preencha todos os campos.</span>', 'error');
+                return;
             }
+
+            submitBtn.innerText = 'Enviando...';
+            submitBtn.disabled = true;
+
+            const { error } = await supabaseClient.from('dev_itens').insert([{
+                tipo: 'bug',
+                origem: 'manutencao',
+                status: 'aberto',
+                titulo: `Bug em ${bugPage}`,
+                pagina: bugPage,
+                descricao: bugDescription,
+                reportado_por: reporterName,
+                responsavel: dev
+            }]);
+
+            if (error) {
+                print(`\n<span class="error">Erro ao enviar: ${error.message}</span>`, 'error');
+                submitBtn.innerText = 'Tentar Novamente';
+                submitBtn.disabled = false;
+                return;
+            }
+
+            print(`\n<span class="success">Bug reportado com sucesso!</span>\nObrigado, ${reporterName}. Report enviado para o Dev ${dev}.`, 'success');
+            formContainer.remove();
+            commandInput.disabled = false;
+            commandInput.focus();
         });
 
         document.getElementById('cancel-bug-report').addEventListener('click', () => {
@@ -135,10 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
             typeWriter(welcomeMessage, true);
             return '';
         },
-        
+
         'creditos': 'Desenvolvido por Duque Iguro e EidenFox.\nInspirado no universo de Star Wars.',
     };
-    
+
     function executeCommand(command) {
         commandHistory.unshift(command);
         historyIndex = -1;
@@ -175,11 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-    
+
     // Efeito de digitação para a mensagem de boas-vindas
     let i = 0;
     function typeWriter(text, clear = false) {
-        if(clear) {
+        if (clear) {
             output.innerHTML = '';
             i = 0;
         }

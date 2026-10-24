@@ -36,7 +36,11 @@ StarWarsRPG
 │  ├─ controleUsuario
 │  │  ├─ controleUsuario.css
 │  │  └─ controleUsuario.js
-│  └─ controleUsuario.html
+│  ├─ controleUsuario.html
+│  ├─ devs
+│  │  ├─ devs.css
+│  │  └─ devs.js
+│  └─ devs.html
 ├─ durtoc
 │  ├─ database
 │  │  ├─ durtoc.js

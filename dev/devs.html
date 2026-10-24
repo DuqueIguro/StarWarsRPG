@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV_CORE // Chamados e Serviços</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./devs/devs.css">
+    <link rel="icon" type="image/x-icon" href="../img/d20.png">
+</head>
+<body id="devBody" class="scan-active" data-isb-overlay="custom">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/isb_gatekeeper.js"></script>
+
+    <div id="accessOverlay" class="access-overlay">
+        <div class="access-box">
+            <div class="access-spinner"></div>
+            <p id="accessMsg">VERIFICANDO CREDENCIAIS...</p>
+        </div>
+    </div>
+
+    <div class="hud-frame">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+
+        <header class="dev-header">
+            <div class="dev-brand">
+                <span class="dev-icon">&#9670;</span>
+                <div>
+                    <h1>PAINEL DE DEVS // CHAMADOS</h1>
+                    <span class="dev-sub">BUGS, POSTS E SERVIÇOS DA EQUIPE</span>
+                </div>
+            </div>
+            <div class="dev-operator">
+                <span class="op-label">OPERADOR ATIVO</span>
+                <span id="operatorName" class="op-name">SINCRONIZANDO...</span>
+            </div>
+            <a href="../menu" class="btn-back">◀ SAIR</a>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-tab="bug">CHAMADOS <span class="count-badge" data-count="bug">0</span></button>
+            <button class="tab" data-tab="post">POSTS <span class="count-badge" data-count="post">0</span></button>
+            <button class="tab" data-tab="servico">SERVIÇOS <span class="count-badge" data-count="servico">0</span></button>
+            <button class="tab" data-tab="log">LOG DE ATIVIDADE</button>
+        </nav>
+
+        <div id="feedback" class="feedback"></div>
+
+        <main class="dev-main">
+            <section class="panel" id="novoPanel">
+                <div class="panel-title"><span>◈ NOVO REGISTRO</span></div>
+                <form id="formNovo" class="form-grid">
+                    <select id="fTipo" class="hud-input">
+                        <option value="bug">Chamado de bug</option>
+                        <option value="post">Post</option>
+                        <option value="servico">Serviço</option>
+                    </select>
+                    <input id="fTitulo" class="hud-input" placeholder="Título" required>
+                    <input id="fPagina" class="hud-input" placeholder="Página (ex: ficha.html)">
+                    <select id="fResp" class="hud-input"></select>
+                    <textarea id="fDesc" class="hud-input" rows="3" placeholder="Descrição"></textarea>
+                    <button class="btn-mini btn-confirm" type="submit">REGISTRAR</button>
+                </form>
+            </section>
+
+            <section class="panel">
+                <div class="panel-title"><span id="listTitle">◈ CHAMADOS</span></div>
+                <div id="lista" class="lista"></div>
+            </section>
+        </main>
+
+        <footer class="dev-footer">
+            <span>© ABY 04 - NÚCLEO DE DESENVOLVIMENTO // ACESSO NÍVEL OMEGA</span>
+        </footer>
+    </div>
+
+    <script src="./devs/devs.js"></script>
+</body>
+</html>

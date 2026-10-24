@@ -813,7 +813,7 @@ window.deletarLog = async function (id, tabela) {
 // 9. Alternância de Abas (Com Suporte a Bancário)
 window.alternarAbas = function (aba) {
     carregarPersonagens();
-    
+
     const btnFinancas = document.getElementById('btn-tab-financas');
     const btnDados = document.getElementById('btn-tab-dados');
     const btnBancario = document.getElementById('btn-tab-bancario');
@@ -1063,3 +1063,141 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Atalho vindo do console da Holonet: log.html?aba=holonet
     if (new URLSearchParams(window.location.search).get('aba') === 'holonet') alternarAbas('holonet');
 });
+
+// 11. Aba DEVS — lê logs_dev (atividade da página de devs)
+async function carregarLogsDev() {
+    const client = getSupabaseClient();
+    const tbody = document.getElementById('logs-dev-body');
+    if (!client || !tbody) return;
+
+    const dateStart = document.getElementById('filter-date-start');
+    const dateEnd = document.getElementById('filter-date-end');
+    const inputBusca = document.getElementById('filter-text');
+
+    const txt = inputBusca ? inputBusca.value.trim().replace(/[%*,()]/g, ' ') : '';
+    const dataInicio = dateStart ? dateStart.value : null;
+    const dataFim = dateEnd ? dateEnd.value : null;
+
+    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-green-400 animate-pulse">Consultando registros dos devs...</td></tr>';
+
+    let query = client
+        .from('logs_dev')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(300);
+
+    if (txt) query = query.or(`resumo.ilike.%${txt}%,titulo_registro.ilike.%${txt}%,usuario_nome.ilike.%${txt}%`);
+    if (dataInicio) query = query.gte('created_at', `${dataInicio}T00:00:00-03:00`);
+    if (dataFim) query = query.lte('created_at', `${dataFim}T23:59:59-03:00`);
+
+    const { data, error } = await query;
+
+    if (error) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 font-bold">Falha ao buscar logs dos devs: ${holonetEsc(error.message)}</td></tr>`;
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-stone-500">Nenhuma atividade de dev registrada com estes filtros.</td></tr>';
+        return;
+    }
+
+    const ACOES = {
+        CRIAR: ['text-emerald-400 bg-emerald-950/40 border-emerald-800/50', 'CRIAÇÃO'],
+        CONCLUIR: ['text-sky-400 bg-sky-950/40 border-sky-800/50', 'CONCLUSÃO'],
+        REABRIR: ['text-amber-400 bg-amber-950/40 border-amber-800/50', 'REABERTURA'],
+        ETAPA: ['text-purple-400 bg-purple-950/40 border-purple-800/50', 'ETAPA'],
+        ATRIBUIR: ['text-pink-400 bg-pink-950/40 border-pink-800/50', 'ATRIBUIÇÃO']
+    };
+
+    tbody.innerHTML = '';
+
+    data.forEach(log => {
+        const dataObj = new Date(log.created_at);
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const [classeAcao, labelAcao] = ACOES[log.acao] || ['text-cyan-400 bg-cyan-950/40 border-cyan-800/50', log.acao];
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-stone-900/50 transition-colors border-b border-stone-800/30';
+        tr.innerHTML = `
+            <td class="p-4 text-stone-400 text-xs whitespace-nowrap">${dataFormatada}</td>
+            <td class="p-4 whitespace-nowrap">
+                <div class="font-bold text-green-300 text-xs uppercase tracking-wider">${holonetEsc(log.usuario_nome || 'Desconhecido')}</div>
+                ${log.usuario_cargo ? `<div class="text-[10px] text-stone-500 uppercase">${holonetEsc(log.usuario_cargo)}</div>` : ''}
+            </td>
+            <td class="p-4 whitespace-nowrap"><span class="px-2 py-1 text-[10px] tracking-widest font-bold rounded border ${classeAcao}">${labelAcao}</span></td>
+            <td class="p-4 text-stone-400 text-xs whitespace-nowrap">${holonetEsc(log.tabela || '—')}</td>
+            <td class="p-4 text-stone-300 text-xs">
+                <div class="font-bold text-stone-200">${holonetEsc(log.titulo_registro || '')}</div>
+                <div class="text-stone-500">${holonetEsc(log.resumo || '')}</div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// 12. Integração da aba DEVS sem alterar alternarAbas original
+(function integrarAbaDevs() {
+    const alternarBase = window.alternarAbas;
+    const cssInativo = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors';
+
+    window.alternarAbas = function (aba) {
+        alternarBase(aba);
+
+        const btnDevs = document.getElementById('btn-tab-devs');
+        const contDevs = document.getElementById('conteudo-devs');
+        const filtroTipo = document.getElementById('filter-action');
+        const filtroBusca = document.getElementById('filter-text');
+
+        if (btnDevs) btnDevs.className = cssInativo;
+        if (contDevs) contDevs.classList.add('hidden');
+        contDevs && contDevs.classList.remove('block');
+
+        if (aba !== 'devs') return;
+
+        if (btnDevs) btnDevs.className = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-green-900/40 text-green-400 border border-green-500 rounded transition-colors';
+        if (contDevs) {
+            contDevs.classList.remove('hidden');
+            contDevs.classList.add('block');
+        }
+        if (filtroTipo) {
+            filtroTipo.disabled = true;
+            filtroTipo.classList.add('opacity-30', 'cursor-not-allowed');
+            filtroTipo.value = '';
+        }
+        if (filtroBusca) {
+            filtroBusca.disabled = false;
+            filtroBusca.classList.remove('opacity-30', 'cursor-not-allowed');
+            filtroBusca.placeholder = 'Ex: nome do dev, página, título...';
+        }
+        carregarLogsDev();
+    };
+
+    // Botões de filtro e atualização devem recarregar a aba DEVS quando ela estiver ativa
+    document.addEventListener('DOMContentLoaded', () => {
+        const devsAtivo = () => {
+            const c = document.getElementById('conteudo-devs');
+            return !!c && !c.classList.contains('hidden');
+        };
+
+        ['btn-refresh', 'btn-search'].forEach(id => {
+            document.getElementById(id)?.addEventListener('click', () => {
+                if (devsAtivo()) carregarLogsDev();
+            });
+        });
+
+        document.getElementById('btn-clear')?.addEventListener('click', () => {
+            if (devsAtivo()) carregarLogsDev();
+        });
+
+        document.getElementById('filter-text')?.addEventListener('keypress', e => {
+            if (e.key === 'Enter' && devsAtivo()) carregarLogsDev();
+        });
+
+        ['filter-date-start', 'filter-date-end'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', () => {
+                if (devsAtivo()) carregarLogsDev();
+            });
+        });
+    });
+})();

@@ -5,9 +5,13 @@
    controleUsuario.js — Painel de Controle DEV/Mestre
    Gerencia personagens, facções e saldos econômicos com
    auditoria completa em log_bancario.
+   A autorização vem do isb_gatekeeper.js (window.isbReady).
+   Esta página só mantém a animação própria de verificação.
    ============================================================ */
 
-const AUTHORIZED_USERS = {
+// Usado apenas para o tema visual e o nome de exibição do operador.
+// Não controla acesso: quem decide isso é o gatekeeper.
+const OPERATOR_THEMES = {
     '94d1ed61-7955-40d8-a0a1-7733bd716b5d': { nome: 'Duque', tema: 'theme-duque' },
     'c28cf763-c1a9-4f31-b0b8-6bfe296810e2': { nome: 'Eiden', tema: 'theme-eiden' },
     'e5fc379a-fc6c-42bb-a3d4-b6984f1693b9': { nome: 'Mestre', tema: 'theme-mestre' }
@@ -28,37 +32,36 @@ let allCharacters = [];
 let selectedCharacter = null;
 
 /* ============================================================
-   1. GATEKEEPER — Verificação de Acesso Restrito
+   1. ACESSO — usa o gatekeeper e mantém a animação própria
    ============================================================ */
 async function verificarAcessoDev() {
     const overlay = document.getElementById('accessOverlay');
 
     try {
-        const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+        // O gatekeeper já checa credenciais e redireciona se negar
+        const isb = window.isbReady ? await window.isbReady : null;
+        if (!isb) return false;
 
-        if (userError || !userData?.user) {
-            alert('ALERTA DE INTRUSÃO: Autenticação biométrica requerida.');
-            window.location.href = '../index.html';
-            return false;
-        }
+        const uid = isb.user.id;
 
-        const uid = userData.user.id;
-        const authInfo = AUTHORIZED_USERS[uid];
-
-        if (!authInfo) {
-            alert('ACESSO NEGADO: Suas credenciais não possuem autorização nível DEV_CORE. O incidente foi registrado.');
+        if (!OPERATOR_THEMES[uid]) {
+            alert('ACESSO NEGADO: operador fora da lista do DEV_CORE.');
             window.location.href = '../menu';
             return false;
         }
 
-        currentOperator = { id: uid, nome: authInfo.nome };
+        const perfil = OPERATOR_THEMES[uid];
 
-        // Aplica o tema visual do operador
-        document.body.classList.add(authInfo.tema);
+        currentOperator = {
+            id: uid,
+            nome: perfil?.nome || isb.nome
+        };
 
-        // Atualiza o nome do operador no header
+        const tema = perfil?.tema || (isb.cargo === 'mestre' ? 'theme-mestre' : '');
+        if (tema) document.body.classList.add(tema);
+
         const opNameEl = document.getElementById('operatorName');
-        if (opNameEl) opNameEl.textContent = authInfo.nome.toUpperCase();
+        if (opNameEl) opNameEl.textContent = currentOperator.nome.toUpperCase();
 
         if (overlay) {
             overlay.style.opacity = '0';
@@ -67,7 +70,7 @@ async function verificarAcessoDev() {
 
         return true;
     } catch (err) {
-        console.error('[DEV_CORE] Falha crítica no gatekeeper:', err);
+        console.error('[DEV_CORE] Falha ao validar acesso:', err);
         alert('FALHA CRÍTICA DE SEGURANÇA. Redirecionando...');
         window.location.href = '../menu';
         return false;
@@ -147,7 +150,6 @@ function selecionarPersonagem(id) {
 
     selectedCharacter = char;
 
-    // Atualiza destaque visual na lista
     document.querySelectorAll('.roster-item').forEach(el => {
         el.classList.toggle('active', el.dataset.id === id);
     });
@@ -222,7 +224,6 @@ async function salvarAvatar() {
         return;
     }
 
-    // Auditoria direcionada para logs_auditoria
     await registrarLogAuditoria({
         personagem_id: selectedCharacter.id,
         tipo_evento: 'ATUALIZACAO_AVATAR',
@@ -234,10 +235,7 @@ async function salvarAvatar() {
     const idx = allCharacters.findIndex(c => c.id === selectedCharacter.id);
     if (idx !== -1) allCharacters[idx].img_url = novoUrl;
 
-    renderRoster(document.getElementById('searchInput').value.trim()
-        ? allCharacters.filter(c => (c.nome || '').toLowerCase().includes(document.getElementById('searchInput').value.trim().toLowerCase()))
-        : allCharacters);
-
+    filtrarPersonagens();
     mostrarFeedback('Imagem do dossiê atualizada e registrada na auditoria.', 'success');
 }
 
@@ -273,7 +271,6 @@ async function salvarFaccao() {
         return;
     }
 
-    // Auditoria direcionada para logs_auditoria
     await registrarLogAuditoria({
         personagem_id: selectedCharacter.id,
         tipo_evento: 'ALTERACAO_FACCAO',
@@ -309,7 +306,6 @@ async function ajustarSaldo(field, operacao) {
 
     if (novoValor < 0) novoValor = 0;
 
-    // Trava os botões durante a transação
     const buttons = document.querySelectorAll(`[data-field="${field}"] button`);
     buttons.forEach(b => b.disabled = true);
 
@@ -326,7 +322,6 @@ async function ajustarSaldo(field, operacao) {
         return;
     }
 
-    // Auditoria
     const sinal = operacao === 'add' ? '+' : '-';
     await registrarLogBancario({
         personagem_id: selectedCharacter.id,
@@ -342,7 +337,6 @@ async function ajustarSaldo(field, operacao) {
         }
     });
 
-    // Atualiza estado local e tela
     selectedCharacter[field] = novoValor;
     const idx = allCharacters.findIndex(c => c.id === selectedCharacter.id);
     if (idx !== -1) allCharacters[idx][field] = novoValor;
@@ -359,15 +353,13 @@ async function ajustarSaldo(field, operacao) {
 async function registrarLogAuditoria({ personagem_id, tipo_evento, descricao, mudanca_creditos = null }) {
     try {
         const { error } = await supabaseClient.from('logs_auditoria').insert([{
-            personagem_id: personagem_id,
-            tipo_evento: tipo_evento,
-            descricao: descricao,
-            mudanca_creditos: mudanca_creditos
+            personagem_id,
+            tipo_evento,
+            descricao,
+            mudanca_creditos
         }]);
 
-        if (error) {
-            console.error('[DEV_CORE] Falha ao gravar log de auditoria geral:', error);
-        }
+        if (error) console.error('[DEV_CORE] Falha ao gravar log de auditoria geral:', error);
     } catch (err) {
         console.error('[DEV_CORE] Exceção ao gravar log de auditoria geral:', err);
     }
@@ -377,16 +369,14 @@ async function registrarLogBancario({ personagem_id, tipo_evento, descricao, val
     try {
         const { error } = await supabaseClient.from('log_bancario').insert([{
             user_id: currentOperator.id,
-            personagem_id: personagem_id,
-            tipo_evento: tipo_evento,
-            descricao: descricao,
+            personagem_id,
+            tipo_evento,
+            descricao,
             valor_creditos: valor_creditos || 0,
             dados_adicionais: dados_adicionais || {}
         }]);
 
-        if (error) {
-            console.error('[DEV_CORE] Falha ao gravar log bancário:', error);
-        }
+        if (error) console.error('[DEV_CORE] Falha ao gravar log bancário:', error);
     } catch (err) {
         console.error('[DEV_CORE] Exceção ao gravar log bancário:', err);
     }
@@ -451,11 +441,7 @@ function initEventBindings() {
     document.getElementById('btnSaveFaction').addEventListener('click', salvarFaccao);
 
     document.querySelectorAll('.balance-controls button[data-op]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const field = btn.dataset.field;
-            const op = btn.dataset.op;
-            ajustarSaldo(field, op);
-        });
+        btn.addEventListener('click', () => ajustarSaldo(btn.dataset.field, btn.dataset.op));
     });
 
     initAvatarPreview();
