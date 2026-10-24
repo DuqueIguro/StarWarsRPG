@@ -1,6 +1,7 @@
 (() => {
     const sb = typeof supabaseClient !== 'undefined' ? supabaseClient : window.supabaseClient;
-    const DEVS = ['Duque Iguro', 'EidenFox'];
+    const DEVS = ['Duque Iguro', 'EidenFox', 'Equipe de Desenvolvimento'];
+    const DEV_KEYS = ['duque', 'eiden'];
     const ETAPAS = {
         por_fazer: 'Por fazer',
         em_andamento: 'Em andamento',
@@ -8,12 +9,29 @@
         abandonado: 'Abandonado',
         concluido: 'Concluído'
     };
-    const S = { user: null, nome: '', cargo: '', tab: 'bug', items: [], logs: [] };
+    const ETAPAS_FINAIS = ['concluido', 'abandonado'];
+
+    const S = {
+        user: null,
+        nome: '',
+        cargo: '',
+        tab: 'bug',
+        items: [],
+        logs: [],
+        notas: {},          // registro_id -> [{ autor, data, texto }]
+        isDev: false,
+        expandidos: new Set(),
+        rascunhos: {}
+    };
 
     const $ = s => document.querySelector(s);
     const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const agora = () => new Date().toISOString();
     const fmt = d => d ? new Date(d).toLocaleString('pt-BR') : '';
+
+    // 'aberto' é o valor legado de chamados. Para chamados, equivale a 'Por fazer'.
+    const etapaDe = i => (i.tipo !== 'post' && i.status === 'aberto') ? 'por_fazer' : i.status;
+    const finalizado = i => ETAPAS_FINAIS.includes(etapaDe(i));
 
     function toast(msg, tipo = 'info') {
         const f = $('#feedback');
@@ -33,14 +51,24 @@
         if (tema) document.body.classList.add(tema);
     }
 
+    // Controles de dev (excluir, log) só para os devs. O cargo mestre tem prioridade.
+    function calcularIsDev() {
+        const n = S.nome.toLowerCase();
+        return S.cargo !== 'mestre' && DEV_KEYS.some(k => n.includes(k));
+    }
+
+    const opcoesEtapa = atual => Object.entries(ETAPAS)
+        .map(([k, v]) => `<option value="${k}" ${k === atual ? 'selected' : ''}>${v}</option>`).join('');
+
     async function init() {
         if (!sb) return negar('ERRO: CLIENTE SUPABASE NÃO CARREGADO');
         if (!window.isbReady) return negar('ERRO: GATEKEEPER NÃO CARREGADO');
 
         const isb = await window.isbReady;
-        if (!isb) return; // o gatekeeper já redirecionou
+        if (!isb) return;
 
         Object.assign(S, { user: isb.user, nome: isb.nome, cargo: isb.cargo });
+        S.isDev = calcularIsDev();
         aplicarTema();
         $('#operatorName').textContent = S.nome.toUpperCase();
         $('#fResp').innerHTML = DEVS.map(d => `<option>${esc(d)}</option>`).join('')
@@ -65,18 +93,35 @@
         $('#formNovo').addEventListener('submit', criar);
         $('#lista').addEventListener('click', onAcao);
         $('#lista').addEventListener('change', onMudanca);
+        $('#lista').addEventListener('input', onDigitar);
     }
 
     async function carregar() {
         const { data, error } = await sb.from('dev_itens').select('*').order('created_at', { ascending: false });
         if (error) return toast('Erro ao carregar: ' + error.message, 'error');
         S.items = data;
+        await carregarNotas();
         render();
+    }
+
+    // Notas ficam no log (acao = 'NOTA'), então não precisam de coluna própria.
+    async function carregarNotas() {
+        const { data, error } = await sb.from('logs_dev')
+            .select('registro_id, usuario_nome, created_at, resumo')
+            .eq('tabela', 'dev_itens')
+            .eq('acao', 'NOTA')
+            .order('created_at', { ascending: true })
+            .limit(5000);
+        if (error) return toast('Erro ao carregar notas: ' + error.message, 'error');
+        S.notas = {};
+        data.forEach(n => {
+            (S.notas[n.registro_id] ||= []).push({ autor: n.usuario_nome, data: n.created_at, texto: n.resumo });
+        });
     }
 
     async function carregarLog() {
         const { data, error } = await sb.from('logs_dev')
-            .select('created_at, usuario_nome, usuario_cargo, acao, titulo_registro, resumo')
+            .select('id, created_at, usuario_nome, usuario_cargo, acao, titulo_registro, resumo')
             .order('created_at', { ascending: false }).limit(300);
         if (error) return toast('Erro no log: ' + error.message, 'error');
         S.logs = data;
@@ -95,6 +140,7 @@
             resumo
         }]);
         if (error) console.warn('Falha ao registrar log:', error.message);
+        return !error;
     }
 
     async function criar(e) {
@@ -107,7 +153,7 @@
             titulo,
             pagina: $('#fPagina').value.trim() || null,
             descricao: $('#fDesc').value.trim() || null,
-            status: tipo === 'servico' ? 'por_fazer' : 'aberto',
+            status: tipo === 'post' ? 'aberto' : 'por_fazer',
             responsavel: $('#fResp').value || null,
             origem: 'dev',
             reportado_por: S.nome,
@@ -133,52 +179,178 @@
         carregarLog();
     }
 
-    function onAcao(e) {
-        const b = e.target.closest('[data-act="toggle"]');
-        if (!b) return;
-        const item = S.items.find(i => i.id === Number(b.dataset.id));
-        if (!item) return;
+    async function adicionarNota(item) {
+        const texto = (S.rascunhos[item.id] || '').trim();
+        if (!texto) return toast('Escreva a nota antes de adicionar.', 'error');
+        const ok = await registrar('NOTA', item, texto);
+        if (!ok) return toast('Erro ao salvar a nota.', 'error');
+        delete S.rascunhos[item.id];
+        // Atualiza updated_at para disparar o realtime e os outros devs recarregarem as notas
+        await sb.from('dev_itens').update({ updated_at: agora() }).eq('id', item.id);
+        toast('Nota adicionada.', 'success');
+        carregar();
+        carregarLog();
+    }
+
+    async function excluirItem(item) {
+        if (!S.isDev) return;
+        if (!confirm(`Excluir o reporte "${item.titulo}"? Essa ação não pode ser desfeita.`)) return;
+        const { error } = await sb.from('dev_itens').delete().eq('id', item.id);
+        if (error) return toast('Erro ao excluir: ' + error.message, 'error');
+        await registrar('EXCLUIR', item, 'Excluiu o reporte');
+        S.items = S.items.filter(i => i.id !== item.id);
+        S.expandidos.delete(item.id);
+        delete S.rascunhos[item.id];
+        delete S.notas[item.id];
+        toast('Reporte excluído.', 'success');
+        render();
+        carregarLog();
+    }
+
+    async function excluirLog(id) {
+        if (!S.isDev) return;
+        if (!confirm('Excluir este registro do log?')) return;
+        const { data, error } = await sb.from('logs_dev').delete().eq('id', id).select('id');
+        if (error) return toast('Erro ao excluir log: ' + error.message, 'error');
+        if (!data.length) return toast('Nada foi excluído. Verifique a policy de DELETE em logs_dev.', 'error');
+        S.logs = S.logs.filter(l => l.id !== id);
+        toast('Registro de log excluído.', 'success');
+        render();
+    }
+
+    function toggleConcluir(item) {
         const reabrir = item.status === 'concluido';
         atualizar(item,
             { status: reabrir ? 'aberto' : 'concluido', fechado_em: reabrir ? null : agora() },
             reabrir ? 'REABRIR' : 'CONCLUIR',
-            reabrir ? 'Reabriu o chamado' : 'Concluiu/fechou o chamado');
+            reabrir ? 'Reabriu o post' : 'Concluiu o post');
+    }
+
+    function alternarExpandido(id) {
+        S.expandidos.has(id) ? S.expandidos.delete(id) : S.expandidos.add(id);
+        render();
+    }
+
+    function onAcao(e) {
+        const btn = e.target.closest('[data-act]');
+        if (!btn) return;
+        const act = btn.dataset.act;
+        const id = Number(btn.dataset.id);
+
+        if (act === 'excluir-log') return excluirLog(id);
+        if (act === 'expandir') return alternarExpandido(id);
+
+        const item = S.items.find(i => i.id === id);
+        if (!item) return;
+
+        if (act === 'toggle') return toggleConcluir(item);
+        if (act === 'add-nota') return adicionarNota(item);
+        if (act === 'excluir') return excluirItem(item);
     }
 
     function onMudanca(e) {
         const sel = e.target;
-        if (!sel.dataset.act) return;
+        const act = sel.dataset.act;
+        if (!act || act === 'nota-rascunho') return;
         const item = S.items.find(i => i.id === Number(sel.dataset.id));
         if (!item) return;
-        if (sel.dataset.act === 'etapa') {
+
+        if (act === 'etapa') {
+            const st = sel.value;
             atualizar(item,
-                { status: sel.value, fechado_em: sel.value === 'concluido' ? agora() : null },
-                'ETAPA', `Etapa: ${ETAPAS[sel.value]}`);
-        } else if (sel.dataset.act === 'resp') {
+                { status: st, fechado_em: ETAPAS_FINAIS.includes(st) ? agora() : null },
+                'ETAPA', `Etapa: ${ETAPAS[st]}`);
+        } else if (act === 'resp') {
             atualizar(item,
                 { responsavel: sel.value || null },
                 'ATRIBUIR', sel.value ? `Atribuiu a ${sel.value}` : 'Removeu responsável');
         }
     }
 
+    // Guarda o rascunho da nota para não perder o texto quando o realtime re-renderiza
+    function onDigitar(e) {
+        const ta = e.target;
+        if (ta.dataset.act !== 'nota-rascunho') return;
+        S.rascunhos[Number(ta.dataset.id)] = ta.value;
+    }
+
+    function notaHTML(n) {
+        return `<div class="nota">
+            <div class="nota-meta">${esc(n.autor)} · ${fmt(n.data)}</div>
+            <div class="nota-texto">${esc(n.texto)}</div>
+        </div>`;
+    }
+
     function cardHTML(i) {
-        const concl = i.status === 'concluido';
+        const expandido = S.expandidos.has(i.id);
+        const etapa = etapaDe(i);
+        const fin = finalizado(i);
         const origem = i.origem === 'manutencao' ? '<span class="tag warn">VIA MANUTENÇÃO</span>' : '';
-        const resp = `<select class="hud-input mini" data-act="resp" data-id="${i.id}">
-            <option value="">— sem responsável —</option>
-            ${DEVS.map(d => `<option ${d === i.responsavel ? 'selected' : ''}>${esc(d)}</option>`).join('')}
-        </select>`;
-        const acao = i.tipo === 'servico'
-            ? `<select class="hud-input mini" data-act="etapa" data-id="${i.id}">
-                ${Object.entries(ETAPAS).map(([k, v]) => `<option value="${k}" ${k === i.status ? 'selected' : ''}>${v}</option>`).join('')}
-               </select>`
-            : `<button class="btn-mini ${concl ? 'btn-add' : 'btn-confirm'}" data-act="toggle" data-id="${i.id}">${concl ? 'REABRIR' : 'CONCLUIR'}</button>`;
-        return `<article class="item ${concl ? 'done' : ''}">
-            <header><span class="tag">${esc(i.tipo.toUpperCase())}</span>${origem}<b class="titulo">${esc(i.titulo)}</b></header>
-            <div class="meta">Página: ${esc(i.pagina || '—')} · Reportado por: ${esc(i.reportado_por || '—')} · ${fmt(i.created_at)}${i.fechado_em ? ` · Fechado: ${fmt(i.fechado_em)}` : ''}</div>
-            ${i.descricao ? `<p class="desc">${esc(i.descricao)}</p>` : ''}
-            <div class="acoes">${resp}${acao}</div>
+
+        const controle = i.tipo === 'post'
+            ? `<button class="btn-mini ${i.status === 'concluido' ? 'btn-add' : 'btn-confirm'}" data-act="toggle" data-id="${i.id}">${i.status === 'concluido' ? 'REABRIR' : 'CONCLUIR'}</button>`
+            : `<select class="hud-input mini" data-act="etapa" data-id="${i.id}">${opcoesEtapa(etapa)}</select>`;
+
+        const responsavel = i.responsavel
+            ? `<span class="tag">${esc(i.responsavel)}</span>`
+            : '<span class="dim">sem responsável</span>';
+
+        const notas = S.notas[i.id] || [];
+        const rascunho = S.rascunhos[i.id] || '';
+
+        const detalhes = expandido ? `
+            <div class="detalhes">
+                <div class="bloco-titulo">DESCRIÇÃO</div>
+                <p class="desc">${i.descricao ? esc(i.descricao) : '<span class="dim">Sem descrição.</span>'}</p>
+
+                <div class="bloco-titulo">RESPONSÁVEL</div>
+                <select class="hud-input mini" data-act="resp" data-id="${i.id}">
+                    <option value="">— sem responsável —</option>
+                    ${DEVS.map(d => `<option ${d === i.responsavel ? 'selected' : ''}>${esc(d)}</option>`).join('')}
+                </select>
+
+                <div class="bloco-titulo">NOTAS (${notas.length})</div>
+                ${notas.length ? notas.map(notaHTML).join('') : '<div class="dim">Nenhuma nota ainda.</div>'}
+                <div class="nota-form">
+                    <textarea class="hud-input" rows="2" data-act="nota-rascunho" data-id="${i.id}" placeholder="Adicionar nota ou detalhe...">${esc(rascunho)}</textarea>
+                    <button class="btn-mini btn-confirm" data-act="add-nota" data-id="${i.id}">ADICIONAR NOTA</button>
+                </div>
+
+                <div class="dim">Criado em ${fmt(i.created_at)}${i.fechado_em ? ` · Fechado em ${fmt(i.fechado_em)}` : ''}</div>
+
+                ${S.isDev ? `<div class="acoes perigo"><button class="btn-danger" data-act="excluir" data-id="${i.id}">EXCLUIR REPORTE</button></div>` : ''}
+            </div>` : '';
+
+        const classeEstado = fin ? (etapa === 'abandonado' ? 'abandonado' : 'done') : '';
+
+        return `<article class="item ${classeEstado} ${expandido ? 'expandido' : ''}">
+            <div class="item-topo">
+                <div>
+                    <span class="tag">${esc(i.tipo.toUpperCase())}</span>${origem}
+                    <b class="titulo">${esc(i.titulo)}</b>
+                </div>
+                <div class="acoes">
+                    ${controle}
+                    <button class="btn-expand" data-act="expandir" data-id="${i.id}">${expandido ? '▴ RECOLHER' : '▾ DETALHES'}</button>
+                </div>
+            </div>
+            <div class="meta">Página: ${esc(i.pagina || '—')} · Responsável: ${responsavel} · Reportado por: ${esc(i.reportado_por || '—')} · ${fmt(i.created_at)}</div>
+            ${detalhes}
         </article>`;
+    }
+
+    function logHTML(l) {
+        return `<div class="item log-row">
+            <div class="item-topo">
+                <div>
+                    <span class="dim">${fmt(l.created_at)}</span>
+                    <b>${esc(l.usuario_nome)}</b> <span class="tag">${esc(l.acao)}</span>
+                    ${esc(l.titulo_registro || '')}
+                </div>
+                ${S.isDev ? `<div class="acoes"><button class="btn-danger" data-act="excluir-log" data-id="${l.id}">EXCLUIR</button></div>` : ''}
+            </div>
+            <div class="dim">${esc(l.resumo || '')}</div>
+        </div>`;
     }
 
     function render() {
@@ -191,24 +363,20 @@
 
         document.querySelectorAll('[data-count]').forEach(b => {
             const t = b.dataset.count;
-            b.textContent = S.items.filter(i => i.tipo === t && i.status !== 'concluido').length;
+            b.textContent = S.items.filter(i => i.tipo === t && !finalizado(i)).length;
         });
 
         const cont = $('#lista');
         if (tab === 'log') {
             cont.innerHTML = S.logs.length
-                ? S.logs.map(l => `<div class="item log-row">
-                    <span class="dim">${fmt(l.created_at)}</span>
-                    <b>${esc(l.usuario_nome)}</b> <span class="tag">${esc(l.acao)}</span>
-                    ${esc(l.titulo_registro || '')}
-                    <div class="dim">${esc(l.resumo || '')}</div></div>`).join('')
+                ? S.logs.map(logHTML).join('')
                 : '<div class="empty">Sem registros.</div>';
             return;
         }
 
         const lista = S.items
             .filter(i => i.tipo === tab)
-            .sort((a, b) => (a.status === 'concluido') - (b.status === 'concluido')
+            .sort((a, b) => finalizado(a) - finalizado(b)
                 || new Date(b.created_at) - new Date(a.created_at));
         cont.innerHTML = lista.length ? lista.map(cardHTML).join('') : '<div class="empty">Nada registrado aqui.</div>';
     }

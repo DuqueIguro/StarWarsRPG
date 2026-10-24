@@ -3,38 +3,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const commandInput = document.getElementById('commandInput');
     const terminalBody = document.getElementById('terminal-body');
 
+    // Deve bater com DEVS em controleBugs.js
+    const DEVS = ['Duque Iguro', 'EidenFox', 'Equipe de Desenvolvimento'];
+    // Limites para evitar reportes gigantes (a validação real fica no front, sem garantia no banco)
+    const LIMITE = { nome: 60, pagina: 100, descricao: 2000 };
+
     const welcomeMessage = "Conectando ao sistema de suporte...\nConexão estabelecida.\n\nBem-vindo ao Terminal de Manutenção. \n\nDigite 'ajuda' para uma lista de comandos.";
     let commandHistory = [];
     let historyIndex = -1;
 
+    // Escapa texto digitado pelo usuário antes de exibir com innerHTML
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    // Mensagens com HTML fixo. Qualquer valor vindo do usuário deve passar por esc() antes.
     function print(message, className = '') {
         const p = document.createElement('p');
         if (className) {
             p.className = className;
         }
-        p.innerHTML = message; // Usando innerHTML para permitir tags HTML no formulário
+        p.innerHTML = message;
         output.appendChild(p);
         terminalBody.scrollTop = terminalBody.scrollHeight;
     }
 
     function showBugReportForm() {
-        commandInput.disabled = true; // Desabilita o input principal
+        commandInput.disabled = true;
         const formContainer = document.createElement('div');
         formContainer.id = 'bug-report-form';
 
-
         const formHTML = `
             <p>Seu nome:</p>
-            <input type="text" id="reporter-name" class="form-input">
+            <input type="text" id="reporter-name" class="form-input" maxlength="${LIMITE.nome}">
             <p>Reportar para o Dev:</p>
             <select id="dev-select" class="form-select">
-                <option value="Duque Iguro">Duque Iguro</option>
-                <option value="EidenFox">EidenFox</option>
+                ${DEVS.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('')}
             </select>
             <p>Página do Bug:</p>
-            <input type="text" id="bug-page" class="form-input" placeholder="Ex: ficha.html">
+            <input type="text" id="bug-page" class="form-input" placeholder="Ex: ficha.html" maxlength="${LIMITE.pagina}">
             <p>Descrição do Bug:</p>
-            <textarea id="bug-description" class="form-textarea" rows="4"></textarea>
+            <textarea id="bug-description" class="form-textarea" rows="4" maxlength="${LIMITE.descricao}"></textarea>
             <button id="submit-bug-report" class="form-button">Enviar Report</button>
             <button id="cancel-bug-report" class="form-button">Cancelar</button>
         `;
@@ -54,9 +61,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            if (!DEVS.includes(dev)) {
+                print('\n<span class="error">Erro: Dev inválido.</span>', 'error');
+                return;
+            }
+
+            if (reporterName.length > LIMITE.nome || bugPage.length > LIMITE.pagina || bugDescription.length > LIMITE.descricao) {
+                print('\n<span class="error">Erro: Um dos campos excede o tamanho máximo.</span>', 'error');
+                return;
+            }
+
             submitBtn.innerText = 'Enviando...';
             submitBtn.disabled = true;
 
+            // status 'aberto' é obrigatório aqui: a policy "dev_itens manutencao envia bug" (anon)
+            // só aceita tipo='bug', origem='manutencao', status='aberto' e criado_por IS NULL.
+            // O controleBugs exibe 'aberto' em chamados como "Por fazer".
             const { error } = await supabaseClient.from('dev_itens').insert([{
                 tipo: 'bug',
                 origem: 'manutencao',
@@ -69,13 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }]);
 
             if (error) {
-                print(`\n<span class="error">Erro ao enviar: ${error.message}</span>`, 'error');
+                print(`\n<span class="error">Erro ao enviar: ${esc(error.message)}</span>`, 'error');
                 submitBtn.innerText = 'Tentar Novamente';
                 submitBtn.disabled = false;
                 return;
             }
 
-            print(`\n<span class="success">Bug reportado com sucesso!</span>\nObrigado, ${reporterName}. Report enviado para o Dev ${dev}.`, 'success');
+            print(`\n<span class="success">Bug reportado com sucesso!</span>\nObrigado, ${esc(reporterName)}. Report enviado para o Dev ${esc(dev)}.`, 'success');
             formContainer.remove();
             commandInput.disabled = false;
             commandInput.focus();
@@ -88,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
             commandInput.focus();
         });
     }
-    ///////////////////////////
 
     const commands = {
         'ajuda': 'Comandos disponíveis:\n  faq - Exibe perguntas frequentes.\n  reportar - Inicia o processo de reporte de bug.\n  limpar - Limpa a tela do terminal.\n  creditos - Exibe os créditos.',
@@ -102,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         'limpar': () => {
             output.innerHTML = '';
-            // Recria a mensagem de boas vindas para um contexto limpo
             typeWriter(welcomeMessage, true);
             return '';
         },
@@ -113,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function executeCommand(command) {
         commandHistory.unshift(command);
         historyIndex = -1;
-        print(`> ${command}`);
+        print(`> ${esc(command)}`);
         if (commands[command]) {
             const result = commands[command];
             if (typeof result === 'function') {
@@ -123,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 print(result, 'info');
             }
         } else {
-            print(`Erro: comando '${command}' não encontrado.`, 'error');
+            print(`Erro: comando '${esc(command)}' não encontrado.`, 'error');
         }
     }
 
@@ -147,18 +165,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Efeito de digitação para a mensagem de boas-vindas
-    let i = 0;
+    // Efeito de digitação para a mensagem de boas-vindas.
+    // Escreve só dentro de um <p> próprio. Antes, output.innerHTML += char recriava
+    // todo o conteúdo e destruía os botões do formulário (e seus listeners).
+    let typeTimer = null;
+    let typeIndex = 0;
+    let welcomeEl = null;
+
     function typeWriter(text, clear = false) {
         if (clear) {
+            clearTimeout(typeTimer);
             output.innerHTML = '';
-            i = 0;
+            typeIndex = 0;
+            welcomeEl = null;
         }
-        if (i < text.length) {
-            output.innerHTML += text.charAt(i);
-            i++;
+        if (!welcomeEl) {
+            welcomeEl = document.createElement('p');
+            output.appendChild(welcomeEl);
+        }
+        if (typeIndex < text.length) {
+            welcomeEl.textContent += text.charAt(typeIndex);
+            typeIndex++;
             terminalBody.scrollTop = terminalBody.scrollHeight;
-            setTimeout(() => typeWriter(text), 25);
+            typeTimer = setTimeout(() => typeWriter(text), 25);
         }
     }
 
