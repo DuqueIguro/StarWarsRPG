@@ -47,6 +47,33 @@
             <button class="tab" data-tab="log">LOG DE ATIVIDADE</button>
         </nav>
 
+        <div id="tabDescricao" class="tab-descricao" aria-live="polite"></div>
+
+        <div id="logFilters" class="log-filters hidden">
+            <div class="log-filter-grid">
+                <div class="log-filter-group log-filter-search">
+                    <label for="logBusca">BUSCA</label>
+                    <input id="logBusca" class="hud-input" type="text" placeholder="Pessoa, ação, conteúdo, título...">
+                </div>
+                <div class="log-filter-group">
+                    <label for="logUsuario">USUÁRIO</label>
+                    <select id="logUsuario" class="hud-input"></select>
+                </div>
+                <div class="log-filter-group">
+                    <label for="logAcao">AÇÃO</label>
+                    <select id="logAcao" class="hud-input"></select>
+                </div>
+                <div class="log-filter-group">
+                    <label for="logData">DATA</label>
+                    <input id="logData" class="hud-input" type="date">
+                </div>
+                <div class="log-filter-group log-filter-actions">
+                    <label>&nbsp;</label>
+                    <button id="logLimpar" type="button" class="btn-mini btn-confirm">LIMPAR</button>
+                </div>
+            </div>
+        </div>
+
         <div id="feedback" class="feedback"></div>
 
         <main class="dev-main">

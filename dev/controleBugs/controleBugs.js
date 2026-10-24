@@ -10,6 +10,24 @@
         concluido: 'Concluído'
     };
     const ETAPAS_FINAIS = ['concluido', 'abandonado'];
+    const TAB_DESCRICOES = {
+        bug: {
+            titulo: 'Chamados',
+            texto: 'Use esta aba para registrar bugs, falhas e itens que exigem revisão e correção pela equipe. É o canal ideal quando algo quebrou, ficou inconsistente ou precisa de acompanhamento para ser resolvido.'
+        },
+        post: {
+            titulo: 'Posts',
+            texto: 'Use esta aba para comunicar novidades, atualizações, campanhas e conteúdos públicos da equipe. Serve para alinhar mensagens, divulgar mudanças e manter o time informado sobre o que saiu ou precisa ser publicado.'
+        },
+        servico: {
+            titulo: 'Serviços',
+            texto: 'Use esta aba para registrar demandas internas, serviços prestados e tarefas que não são bug nem post. É o espaço certo para trabalhos de apoio, manutenção de rotina e solicitações que precisam de execução e controle.'
+        },
+        log: {
+            titulo: 'Log de atividade',
+            texto: 'Aqui fica o histórico do que foi criado, atualizado, concluído ou anotado no painel. É útil para acompanhar a evolução do trabalho e revisar ações passadas sem perder o contexto.'
+        }
+    };
 
     const S = {
         user: null,
@@ -90,6 +108,17 @@
             if (S.tab === 'log') carregarLog();
             render();
         }));
+        $('#logBusca').addEventListener('input', render);
+        $('#logUsuario').addEventListener('change', render);
+        $('#logAcao').addEventListener('change', render);
+        $('#logData').addEventListener('change', render);
+        $('#logLimpar').addEventListener('click', () => {
+            $('#logBusca').value = '';
+            $('#logUsuario').value = '';
+            $('#logAcao').value = '';
+            $('#logData').value = '';
+            render();
+        });
         $('#formNovo').addEventListener('submit', criar);
         $('#lista').addEventListener('click', onAcao);
         $('#lista').addEventListener('change', onMudanca);
@@ -353,13 +382,53 @@
         </div>`;
     }
 
+    function preencherFiltrosLog() {
+        const usuarioSelect = $('#logUsuario');
+        const acaoSelect = $('#logAcao');
+        if (!usuarioSelect || !acaoSelect) return;
+
+        const usuarios = [...new Set(S.logs.map(l => l.usuario_nome).filter(Boolean))].sort();
+        const acoes = [...new Set(S.logs.map(l => l.acao).filter(Boolean))].sort();
+        const usuarioAtual = usuarioSelect.value || '';
+        const acaoAtual = acaoSelect.value || '';
+
+        usuarioSelect.innerHTML = '<option value="">Todos os usuários</option>' + usuarios.map(u =>
+            `<option value="${esc(u)}" ${u === usuarioAtual ? 'selected' : ''}>${esc(u)}</option>`
+        ).join('');
+
+        acaoSelect.innerHTML = '<option value="">Todas as ações</option>' + acoes.map(a =>
+            `<option value="${esc(a)}" ${a === acaoAtual ? 'selected' : ''}>${esc(a)}</option>`
+        ).join('');
+    }
+
+    function logsFiltrados() {
+        const busca = ($('#logBusca')?.value || '').trim().toLowerCase();
+        const usuario = ($('#logUsuario')?.value || '').trim();
+        const acao = ($('#logAcao')?.value || '').trim();
+        const data = ($('#logData')?.value || '').trim();
+
+        return S.logs.filter(l => {
+            const texto = `${l.usuario_nome || ''} ${l.acao || ''} ${l.titulo_registro || ''} ${l.resumo || ''}`.toLowerCase();
+            const bateBusca = !busca || texto.includes(busca);
+            const bateUsuario = !usuario || (l.usuario_nome || '') === usuario;
+            const bateAcao = !acao || (l.acao || '') === acao;
+            const bateData = !data || (l.created_at || '').slice(0, 10) === data;
+            return bateBusca && bateUsuario && bateAcao && bateData;
+        });
+    }
+
     function render() {
         const tab = S.tab;
+        const descricao = TAB_DESCRICOES[tab] || TAB_DESCRICOES.bug;
+
+        document.body.classList.toggle('log-mode', tab === 'log');
         $('#novoPanel').classList.toggle('hidden', tab === 'log');
+        $('#logFilters').classList.toggle('hidden', tab !== 'log');
         if (tab !== 'log') $('#fTipo').value = tab;
         $('#listTitle').textContent = {
             bug: '◈ CHAMADOS', post: '◈ POSTS', servico: '◈ SERVIÇOS', log: '◈ LOG DE ATIVIDADE DOS DEVS'
         }[tab];
+        $('#tabDescricao').innerHTML = `<div class="tab-descricao-titulo">${esc(descricao.titulo)}</div><p>${esc(descricao.texto)}</p>`;
 
         document.querySelectorAll('[data-count]').forEach(b => {
             const t = b.dataset.count;
@@ -368,9 +437,11 @@
 
         const cont = $('#lista');
         if (tab === 'log') {
-            cont.innerHTML = S.logs.length
-                ? S.logs.map(logHTML).join('')
-                : '<div class="empty">Sem registros.</div>';
+            preencherFiltrosLog();
+            const lista = logsFiltrados();
+            cont.innerHTML = lista.length
+                ? lista.map(logHTML).join('')
+                : '<div class="empty">Nenhum registro encontrado com os filtros atuais.</div>';
             return;
         }
 
