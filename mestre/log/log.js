@@ -1064,7 +1064,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (new URLSearchParams(window.location.search).get('aba') === 'holonet') alternarAbas('holonet');
 });
 
-// 11. Aba DEVS — lê logs_dev (atividade da página de devs)
+// 11. Aba DEVS — lê logs_dev (atividade da página de controleBugs)
 async function carregarLogsDev() {
     const client = getSupabaseClient();
     const tbody = document.getElementById('logs-dev-body');
@@ -1078,7 +1078,7 @@ async function carregarLogsDev() {
     const dataInicio = dateStart ? dateStart.value : null;
     const dataFim = dateEnd ? dateEnd.value : null;
 
-    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-green-400 animate-pulse">Consultando registros dos devs...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-green-400 animate-pulse">Consultando registros dos controleBugs...</td></tr>';
 
     let query = client
         .from('logs_dev')

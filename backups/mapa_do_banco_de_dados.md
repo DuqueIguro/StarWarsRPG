@@ -59,7 +59,7 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 | **logs_auditoria** | id, personagem_id, tipo_evento, descricao, mudanca_creditos, created_at | uuid, uuid, text, text, int8, timestamptz | Primary Key (id) |
 | **logs_cassino** | id, personagem_id, user_id, jogo, tipo_evento, descricao, delta_fichas, created_at | uuid, uuid, uuid, varchar, varchar, text, int4, timestamptz | Primary Key (id) |
 | **logs_dados** | id, personagem_id, user_id, nome_rolagem, dado_puro, bonus_total, resultado_final, detalhamento, created_at | int8, uuid, uuid, text, int4, int4, int4, text, timestamptz | Primary Identity (id) |
-| **logs_dev** | id, created_at, user_id, usuario_nome, usuario_cargo, acao, tabela, registro_id, titulo_registro, resumo | int8, timestamptz, uuid, text, text, text, text, text, text, text | Primary Identity (id). Atividade da página de devs (`dev/devs.html`). Não recebe registros da manutenção, que é anônima |
+| **logs_dev** | id, created_at, user_id, usuario_nome, usuario_cargo, acao, tabela, registro_id, titulo_registro, resumo | int8, timestamptz, uuid, text, text, text, text, text, text, text | Primary Identity (id). Atividade da página de controleBugs (`dev/controleBugs.html`). Não recebe registros da manutenção, que é anônima |
 | **logs_taticos** | id, user_id, nome_jogador, nave_nome, faccao, acao, detalhes, created_at | uuid, uuid, text, text, text, text, text, timestamptz | Primary Key (id) |
 | **ordens_servico** | id, ano_aby, sigla_localidade, serie, localidade, data_texto, sigiloso, status, titulo, mecanicos, unidade_responsavel, cliente, relatorio_problema, notas_mecanico, itens, taxas, taxas_ocultas, gorjeta, financeiro, termos_automaticos, termos_manuais, termos, created_by, created_at, updated_at | text, int2, text, int4, text, text, bool, text, text, text[], text, jsonb, text, text, jsonb, jsonb, jsonb, jsonb, jsonb, text[], text, text, uuid, timestamptz, timestamptz | Primary Key (id), Unique (ano_aby, sigla_localidade, serie). `id` e `serie` gerados pelo trigger `trg_os_gerar_id` no formato `OS-[ANO]-[SIGLA]-[SERIE 3 dígitos]` (ex.: `OS-14-COR-003`); o ID é imutável após criado. `status` ∈ Em Aberto, Em Progresso, Aguardando Peça, Concluído, Cancelado. `created_by` default `auth.uid()` |
 | **ordens_servico_leitura** *(view)* | mesmas colunas de `ordens_servico`, exceto `created_by` | — | View de leitura pública (`anon`, `authenticated`). Filtra `sigiloso = false` OU `os_pode_editar()`; `taxas_ocultas` vira `[]` e `financeiro` perde `subtotalTaxasOcultas` para quem não é ISB. Roda com privilégios do dono (contorna o RLS da tabela de propósito) |
@@ -117,7 +117,7 @@ Os blocos acima seguem o mesmo padrão: a condição ISB é `EXISTS (SELECT 1 FR
 | :--- | :--- | :--- | :--- |
 | holonet_logs leitura ISB | SELECT | authenticated | `holonet_is_mestre()` |
 
-Não há política de INSERT para `holonet_logs` no dump atual. A gravação é feita pela página Holonet com privilégios que já estão configurados. A política antiga `holonet_logs insert devs` foi removida, porque as ações da página de devs passaram para `logs_dev`.
+Não há política de INSERT para `holonet_logs` no dump atual. A gravação é feita pela página Holonet com privilégios que já estão configurados. A política antiga `holonet_logs insert controleBugs` foi removida, porque as ações da página de controleBugs passaram para `logs_dev`.
 
 ### `holonet_mercados`, `holonet_noticias`, `holonet_ticker`, `holonet_transmissoes`
 | Política | Comando | Roles | Regra RLS (Resumo) |
@@ -270,10 +270,10 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 
 ---
 
-## 8. Painel de devs (`dev/devs.html`)
+## 8. Painel de controleBugs (`dev/controleBugs.html`)
 *   **Chamados, posts e serviços:** tudo em `dev_itens`, com realtime ativo (`supabase_realtime`).
 *   **Reports da manutenção:** `pages/manutencao.html` grava direto em `dev_itens` com `origem = 'manutencao'` (usuário anônimo, role `anon`). Aparecem na aba Chamados com a marca VIA MANUTENÇÃO.
-*   **Log de atividade:** cada criação, conclusão, reabertura, mudança de etapa ou atribuição grava uma linha em `logs_dev`. A página do mestre lê essa tabela na aba "Devs (Atividade)" de `log.html`.
+*   **Log de atividade:** cada criação, conclusão, reabertura, mudança de etapa ou atribuição grava uma linha em `logs_dev`. A página do mestre lê essa tabela na aba "Desenvolvedore (DEV_CORE)" de `log.html`.
 *   **Holonet:** `holonet_logs` continua exclusivo das ações da página Holonet.
 *   **Tema:** aplicado pelo nome do operador (Duque → verde, Eiden → rosa) ou pelo cargo `mestre` (vermelho), usando as mesmas variáveis do `controleUsuario.css`.
 

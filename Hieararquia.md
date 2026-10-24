@@ -33,14 +33,14 @@ StarWarsRPG
 │  ├─ planetasSecretos.json
 │  └─ planetas_database.json
 ├─ dev
+│  ├─ controleBugs
+│  │  ├─ controleBugs.css
+│  │  └─ controleBugs.js
+│  ├─ controleBugs.html
 │  ├─ controleUsuario
 │  │  ├─ controleUsuario.css
 │  │  └─ controleUsuario.js
-│  ├─ controleUsuario.html
-│  ├─ devs
-│  │  ├─ devs.css
-│  │  └─ devs.js
-│  └─ devs.html
+│  └─ controleUsuario.html
 ├─ durtoc
 │  ├─ database
 │  │  ├─ durtoc.js
