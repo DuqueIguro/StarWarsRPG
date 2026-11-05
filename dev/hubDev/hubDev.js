@@ -23,10 +23,27 @@
         { titulo: 'HoloNet Mestre',    desc: 'Painel de notícias, mercados e transmissões', href: '../mestre/holonetMestre.html',       icone: '◎' },
         { titulo: 'Frota Mestre',      desc: 'Gerenciamento da frota',                     href: '../mestre/frotaMestre.html',         icone: '✈' },
         { titulo: 'Escudos',           desc: 'Controle dos escudos das naves',             href: '../mestre/escudo.html',              icone: '◍' },
+        { titulo: 'Balanceamento',     desc: 'Ajuste de fichas e balanceamento',           href: '../mestre/fichasBalanceamento.html', icone: '⚖' },
         { titulo: 'Terminal Bancário', desc: 'Operações bancárias dos personagens',        href: '../mestre/terminalBancario.html',    icone: '₡' },
         { titulo: 'Redirecionamentos', desc: 'Gerenciar redirecionamentos de páginas',     href: '../mestre/redirecionamentos.html',   icone: '↪' },
-        { titulo: 'Balanceamento',     desc: '[LEGADO] Ajuste de fichas e balanceamento',           href: '../mestre/fichasBalanceamento.html', icone: '⚖' },
-        { titulo: 'Macro Antigo',      desc: '[LEGADO] Macro v0.7',                     href: '../mestre/oldMacro.html',            icone: '⌘' }
+        { titulo: 'Macro Antigo',      desc: 'Versão legada do macro',                     href: '../mestre/oldMacro.html',            icone: '⌘' }
+    ];
+
+    // Abas de métricas
+    const METRICA_TABS = [
+        { k: 'bug',     label: 'Chamados' },
+        { k: 'servico', label: 'Serviços' },
+        { k: 'post',    label: 'Posts' },
+        { k: 'geral',   label: 'Geral' }
+    ];
+
+    // Etapas usadas por chamados e serviços
+    const ETAPAS_TIPO = [
+        { k: 'por_fazer',          label: 'Por fazer' },
+        { k: 'em_andamento',       label: 'Em andamento' },
+        { k: 'aguardando_revisao', label: 'Esperando revisão' },
+        { k: 'abandonado',         label: 'Abandonado' },
+        { k: 'concluido',          label: 'Concluído' }
     ];
 
     // Levantamento de segurança do mapa_do_banco_de_dados.md (seção 9)
@@ -41,13 +58,17 @@
         { nivel: 'baixo',   tabela: 'dev_itens (anon)',               problema: 'Insert anônimo da manutenção. Monitorar volume de chamados falsos.' }
     ];
 
-    const S = { user: null, dev: null, items: [], logs: [], mestreAberto: false };
+    const S = { user: null, dev: null, items: [], logs: [], mestreAberto: false, metricaTab: 'bug' };
 
     const $ = s => document.querySelector(s);
     const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const fmt = d => d ? new Date(d).toLocaleString('pt-BR') : '';
     const finalizado = i => ETAPAS_FINAIS.includes(i.status);
     const abertos = () => S.items.filter(i => !finalizado(i));
+    const contar = filtro => S.items.filter(filtro).length;
+
+    // 'aberto' é o valor legado de chamados e serviços. Equivale a 'Por fazer'.
+    const etapaDe = i => (i.tipo !== 'post' && i.status === 'aberto') ? 'por_fazer' : i.status;
 
     function toast(msg, tipo = 'info') {
         const f = $('#feedback');
@@ -91,6 +112,14 @@
     function bind() {
         $('#notas').addEventListener('input', salvarNotas);
         $('#atalhos').addEventListener('click', onAtalhosClick);
+        $('#metricas').addEventListener('click', onMetricaTabClick);
+    }
+
+    function onMetricaTabClick(e) {
+        const b = e.target.closest('[data-metric-tab]');
+        if (!b) return;
+        S.metricaTab = b.dataset.metricTab;
+        renderMetricas();
     }
 
     function onAtalhosClick(e) {
@@ -183,21 +212,49 @@
             mestreHTML;
     }
 
+    // Cartões de cada aba de métricas
+    function cardsMetrica(tab) {
+        if (tab === 'post') {
+            return [
+                { label: 'Ativos',                  valor: contar(i => i.tipo === 'post' && i.status === 'aberto') },
+                { label: 'Concluídos / Resolvidos', valor: contar(i => i.tipo === 'post' && i.status === 'concluido') }
+            ];
+        }
+
+        if (tab === 'geral') {
+            const ab = abertos();
+            return [
+                { label: 'Total de registros', valor: S.items.length },
+                { label: 'Ativos',             valor: ab.length },
+                { label: 'Em andamento',       valor: contar(i => i.status === 'em_andamento') },
+                { label: 'Esperando revisão',  valor: contar(i => i.status === 'aguardando_revisao') },
+                { label: 'Concluídos',         valor: contar(i => i.status === 'concluido') },
+                { label: 'Abandonados',        valor: contar(i => i.status === 'abandonado') },
+                { label: 'Sem responsável',    valor: ab.filter(i => i.tipo !== 'post' && !i.responsavel).length, alerta: true },
+                { label: 'Via manutenção',     valor: ab.filter(i => i.origem === 'manutencao').length, alerta: true }
+            ];
+        }
+
+        // Chamados ou serviços: uma categoria por etapa
+        return ETAPAS_TIPO.map(e => ({
+            label: e.label,
+            valor: contar(i => i.tipo === tab && etapaDe(i) === e.k)
+        }));
+    }
+
     function renderMetricas() {
-        const ab = abertos();
-        const m = [
-            { label: 'Chamados abertos',   valor: ab.filter(i => i.tipo === 'bug').length },
-            { label: 'Em andamento',       valor: ab.filter(i => i.status === 'em_andamento').length },
-            { label: 'Sem responsável',    valor: ab.filter(i => i.tipo !== 'post' && !i.responsavel).length, alerta: true },
-            { label: 'Via manutenção',     valor: ab.filter(i => i.origem === 'manutencao').length, alerta: true },
-            { label: 'Serviços abertos',   valor: ab.filter(i => i.tipo === 'servico').length },
-            { label: 'Posts ativos',       valor: ab.filter(i => i.tipo === 'post').length }
-        ];
-        $('#metricas').innerHTML = m.map(x => `
+        const tabs = METRICA_TABS.map(t => `
+            <button class="metric-tab ${t.k === S.metricaTab ? 'active' : ''}" data-metric-tab="${t.k}">${esc(t.label)}</button>`).join('');
+
+        const cards = cardsMetrica(S.metricaTab).map(x => `
             <div class="metric">
                 <div class="metric-valor ${x.alerta && x.valor > 0 ? 'alerta' : ''}">${x.valor}</div>
                 <div class="metric-label">${esc(x.label)}</div>
             </div>`).join('');
+
+        $('#metricas').innerHTML = `
+            <div class="metric-tabs">${tabs}</div>
+            <div class="metric-cards">${cards}</div>`;
     }
 
     function renderMeus() {

@@ -335,3 +335,34 @@ body {
     transition: transform .2s ease;
 }
 .grupo-toggle[aria-expanded="true"] .grupo-seta { transform: rotate(90deg); }
+
+/* Métricas em abas */
+#metricas { display: block; }
+.metric-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+.metric-tab {
+    font-family: var(--font-title);
+    font-size: .62rem;
+    letter-spacing: 1px;
+    padding: 7px 12px;
+    background: transparent;
+    color: var(--dev-text-dim);
+    border: 1px solid var(--dev-border);
+    cursor: pointer;
+    transition: all .15s ease;
+}
+.metric-tab:hover,
+.metric-tab.active {
+    color: var(--dev-accent);
+    background: var(--dev-accent-dim);
+    box-shadow: inset 0 0 10px var(--dev-accent-glow);
+}
+.metric-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+}
