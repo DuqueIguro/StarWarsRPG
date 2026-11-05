@@ -94,6 +94,13 @@
 
         bind();
         $('#accessOverlay').classList.add('hidden');
+
+        // Abre a aba indicada no hash (ex.: controleBugs.html#log)
+        const abaInicial = location.hash.slice(1);
+        if (['bug', 'post', 'servico', 'log'].includes(abaInicial)) {
+            document.querySelector(`.tab[data-tab="${abaInicial}"]`)?.click();
+        }
+
         await Promise.all([carregar(), carregarLog()]);
 
         sb.channel('dev_itens_sync')

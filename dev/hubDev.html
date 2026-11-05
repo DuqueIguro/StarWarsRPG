@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV_CORE - HUB</title>
+    <link rel="icon" type="image/x-icon" href="../img/dado.png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="hubDev/hubDev.css">
+</head>
+
+<body data-isb-overlay="custom">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/isb_gatekeeper.js"></script>
+
+    <div class="access-overlay" id="accessOverlay">
+        <div class="access-box">
+            <div class="access-spinner"></div>
+            <div id="accessMsg">VERIFICANDO CREDENCIAIS...</div>
+        </div>
+    </div>
+
+    <div class="hud-frame">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+
+        <header class="dev-header">
+            <div class="dev-brand">
+                <div class="dev-icon">⌬</div>
+                <div>
+                    <h1>HUB DOS DESENVOLVEDORES</h1>
+                    <div class="dev-sub">CENTRAL DE OPERAÇÕES · DEV_CORE</div>
+                </div>
+            </div>
+            <div class="dev-operator">
+                <span class="op-label">OPERADOR</span>
+                <span class="op-name" id="operatorName">—</span>
+            </div>
+            <a class="btn-back" href="../menu.html">← MENU</a>
+        </header>
+
+        <div class="feedback" id="feedback"></div>
+
+        <section class="atalhos" id="atalhos"></section>
+
+        <main class="hub-main">
+            <div class="col">
+                <section class="panel">
+                    <div class="panel-title">◈ MÉTRICAS</div>
+                    <div class="metric-grid" id="metricas"></div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-title">◈ ATRIBUÍDOS A MIM <span class="count-badge" id="meusCount">0</span></div>
+                    <div class="lista-simples" id="meus"></div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-title">◈ ANOTAÇÕES PESSOAIS <span class="dim" id="notasStatus"></span></div>
+                    <textarea class="hud-input" id="notas" rows="8"
+                        placeholder="Lembretes, TODOs e rascunhos. Salvo neste navegador."></textarea>
+                </section>
+            </div>
+
+            <div class="col">
+                <section class="panel">
+                    <div class="panel-title">◈ ATIVIDADE RECENTE</div>
+                    <div class="lista-simples" id="atividade"></div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-title">◈ PENDÊNCIAS DE SEGURANÇA (RLS)</div>
+                    <div class="lista-simples" id="pendencias"></div>
+                    <div class="dim nota-rodape">Levantamento do mapa do banco. Confirme no painel do Supabase antes de
+                        alterar políticas, porque algumas podem ser intencionais.</div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="dev-footer">
+            <span>HUB DEV · v1.0</span>
+            <span id="ultimaSync">—</span>
+        </footer>
+    </div>
+
+    <script src="hubDev/hubDev.js"></script>
+</body>
+
+</html>

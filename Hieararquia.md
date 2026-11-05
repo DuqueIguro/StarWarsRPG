@@ -40,7 +40,11 @@ StarWarsRPG
 │  ├─ controleUsuario
 │  │  ├─ controleUsuario.css
 │  │  └─ controleUsuario.js
-│  └─ controleUsuario.html
+│  ├─ controleUsuario.html
+│  ├─ hubDev
+│  │  ├─ hubDev.css
+│  │  └─ hubDev.js
+│  └─ hubDev.html
 ├─ durtoc
 │  ├─ database
 │  │  ├─ durtoc.js
@@ -123,6 +127,8 @@ StarWarsRPG
 │  ├─ dado.png
 │  ├─ Death_Star.ico
 │  ├─ droid.ico
+│  ├─ Duque.jpg
+│  ├─ Eiden.png
 │  ├─ error-404.ico
 │  ├─ fichas.png
 │  ├─ HNN.ico
