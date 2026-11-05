@@ -1,6 +1,6 @@
 # Contexto de Desenvolvimento: Banco de Dados Supabase (Star Wars RPG)
 
-> Atualizado em 05/11/2026: cupons de desconto nas lojas (`consumir_cupom`, `js/cupomDesconto.js`, `styles/cupons.css`).
+> Atualizado em 05/11/2026: cupons de desconto nas lojas (`consumir_cupom`, `js/cupomDesconto.js`, `styles/cupons.css`) e status de personagem (`personagens.ativo`, trigger `trg_personagens_proteger_ativo`).
 
 ## 1. Arquitetura de Conexão
 O projeto utiliza Supabase como BaaS. As credenciais (URL e Anon Key) estão modularizadas em um arquivo JSON/JS de configuração e são injetadas no escopo global.
@@ -66,7 +66,7 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 | **ordens_servico** | id, ano_aby, sigla_localidade, serie, localidade, data_texto, sigiloso, status, titulo, mecanicos, unidade_responsavel, cliente, relatorio_problema, notas_mecanico, itens, taxas, taxas_ocultas, gorjeta, financeiro, termos_automaticos, termos_manuais, termos, created_by, created_at, updated_at | text, int2, text, int4, text, text, bool, text, text, text[], text, jsonb, text, text, jsonb, jsonb, jsonb, jsonb, jsonb, text[], text, text, uuid, timestamptz, timestamptz | Primary Key (id), Unique (ano_aby, sigla_localidade, serie). `id` e `serie` gerados pelo trigger `trg_os_gerar_id` no formato `OS-[ANO]-[SIGLA]-[SERIE 3 dígitos]` (ex.: `OS-14-COR-003`); o ID é imutável após criado. `status` ∈ Em Aberto, Em Progresso, Aguardando Peça, Concluído, Cancelado. `created_by` default `auth.uid()` |
 | **ordens_servico_leitura** *(view)* | mesmas colunas de `ordens_servico`, exceto `created_by` | — | View de leitura pública (`anon`, `authenticated`). Filtra `sigiloso = false` OU `os_pode_editar()`; `taxas_ocultas` vira `[]` e `financeiro` perde `subtotalTaxasOcultas` para quem não é ISB. Roda com privilégios do dono (contorna o RLS da tabela de propósito) |
 | **permissoes** | id, user_id, cargo, created_at, nome | int4, uuid, text, timestamptz, text | Primary Key (id) |
-| **personagens** | id, user_id, nome, creditos, dados_ficha, created_at, updated_at, grupo_faccao, chave_transferencia, fichas, img_url, facecred, peggats | uuid, uuid, text, int8, jsonb, timestamptz, timestamptz, text, varchar, int4, text, int4, int4 | Primary Key (id), Unique (chave_transferencia) |
+| **personagens** | id, user_id, nome, creditos, dados_ficha, created_at, updated_at, grupo_faccao, chave_transferencia, fichas, img_url, facecred, peggats, ativo | uuid, uuid, text, int8, jsonb, timestamptz, timestamptz, text, varchar, int4, text, int4, int4, bool | Primary Key (id), Unique (chave_transferencia). `ativo` default `true` (NOT NULL). `ativo = false` = perfil inativo: some da listagem de personagens do mestre (`log.js`), mas o jogador continua usando o site normalmente. Só ISB altera (trigger `trg_personagens_proteger_ativo`) |
 | **rotas_hiperespaco** | id, planeta_a, planeta_b, distancia_pc, criado_por, created_at | int8, text, text, int4, uuid, timestamptz | Primary Identity (id), Unique (planeta_a, planeta_b). Check: `planeta_a < planeta_b` (par sempre em ordem alfabética: A↔B e B↔A são a mesma linha); `distancia_pc > 0` |
 | **servicos_mcmt** | id, oficina, nome_servico, categoria, mao_de_obra, peca, preco_componentes, descricao, created_at | int8, varchar, text, varchar, int2, text, int4, text, timestamptz | Primary Identity (id) |
 | **status_faccoes** | faccao, em_combate | text, bool | Primary Key (faccao) |
@@ -210,6 +210,8 @@ A linha `REPORTE` é gravada pela função `log_reporte_manutencao()` (SECURITY 
 | Permitir leitura geral personagens | SELECT | authenticated | `true` (ver seção 8) |
 | Permitir update personagens | UPDATE | authenticated | `true` (ver seção 8) |
 
+Nota (`ativo`): a ocultação em `log.html` é só de interface, feita por `.eq('ativo', true)` em `carregarPersonagens()`. A RLS de leitura continua liberando a linha para `authenticated`, então quem usa a API ainda vê perfis inativos. A alteração de `ativo` é bloqueada pelo trigger `BEFORE UPDATE OF ativo` para quem não é ISB, mesmo com a policy `Permitir update personagens` aberta.
+
 ### `rotas_hiperespaco`
 | Política | Comando | Roles | Regra RLS (Resumo) |
 | :--- | :--- | :--- | :--- |
@@ -252,6 +254,7 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 | `obter_ou_criar_rota(p_a, p_b, p_regiao_a, p_regiao_b)` | text, text, text, text | tabela `(distancia int, criada bool)` | Devolve a distância da rota; se for a primeira viagem, sorteia no servidor (`sortear_distancia`), grava em `rotas_hiperespaco` e retorna `criada = true`. Resistente a corrida (o primeiro a gravar vence). |
 | `ajustar_combustivel(p_inventario_id, p_tipo, p_delta)` | uuid (`inventario.id`), text (`'subluz'` ou `'hiperespacial'`), numeric | numeric (nível resultante) | Soma (`delta > 0`, Posto) ou desconta (`delta < 0`, Navegação) combustível de uma nave em `inventario.dados_customizados` (`subLevel`/`hypLevel`). Trava a linha (`FOR UPDATE`), limita ao máximo (`subCap`/`hypCap`) e só altera o nível. Só o dono (`inventario.user_id`) ou ISB. Erros: `NAO_AUTENTICADO`, `TIPO_INVALIDO`, `QUANTIDADE_INVALIDA`, `NAVE_NAO_ENCONTRADA`, `SEM_PERMISSAO`, `NAVE_NAO_CALIBRADA`, `COMBUSTIVEL_INSUFICIENTE`. |
 | `log_reporte_manutencao()` (trigger) | — | trigger | Trigger `trg_dev_itens_log_manutencao` (AFTER INSERT em `dev_itens`, SECURITY DEFINER). Quando `origem = 'manutencao'`, grava em `logs_dev` a ação `REPORTE` com o nome do reporter, o dev escolhido e a página. Não é chamada via `rpc`. |
+| `personagens_proteger_ativo()` (trigger) | — | trigger | Trigger `trg_personagens_proteger_ativo` (BEFORE UPDATE OF `ativo` em `personagens`). Se `ativo` mudar e o usuário não passar em `holonet_is_mestre()`, levanta `SEM_PERMISSAO`. Não é chamada via `rpc`. |
 | `definir_motor_nave(p_inventario_id, p_classe)` | uuid, text (`'0.5'`, `'1'`, `'2'`, `'3'`) | void | Grava `dados_customizados.motorClass`. Jogador define **uma única vez** (se estiver vazio); ISB altera sempre. Erros: `CLASSE_INVALIDA`, `MOTOR_JA_DEFINIDO`, `SEM_PERMISSAO`, `NAVE_NAO_ENCONTRADA`. |
 | `consumir_cupom(p_codigo, p_moeda)` | text, text (`p_moeda` = `'CREDITOS'` ou `'BRL'`) | tabela `(r_codigo, r_moeda, r_tipo, r_valor)` | Consome um uso de cupom no checkout das lojas. Trava a linha (`FOR UPDATE`), checa se está ativo, se a moeda confere (`AMBAS` aceita as duas) e se há limite; então incrementa `vezes_usado`. Só `authenticated`. Erros: `NAO_AUTENTICADO`, `MOEDA_INVALIDA`, `CUPOM_INVALIDO`, `CUPOM_MOEDA_INVALIDA`, `CUPOM_ESGOTADO`. Não existe RPC de devolução de propósito, para não permitir contornar o limite. |
 
@@ -301,6 +304,7 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 
 ### Controle de usuário (`dev/controleUsuario.html`)
 *   Usa o gatekeeper com `data-isb-overlay="custom"` e mantém a animação própria. A autorização vem do cargo no banco, não de uma lista de UIDs.
+*   Status do personagem: botão ATIVAR/DESATIVAR no dossiê grava `personagens.ativo` (com `.select('id')` para detectar bloqueio silencioso da RLS). Inativos aparecem esmaecidos e marcados como INATIVO no roster. Cada alteração grava `logs_auditoria` com `tipo_evento = 'STATUS_PERSONAGEM'`.
 
 ---
 
@@ -312,8 +316,8 @@ Achados da leitura das políticas atuais. Alguns podem ser intencionais (mesa co
 | :--- | :--- | :--- | :--- |
 | **system_access** | Enable read access for all users / Permitir leitura publica | SELECT público (`true`) expõe a coluna `password` | Qualquer visitante anônimo lê senhas, se a tabela tiver valores reais. **Prioridade máxima** |
 | **storage_access** | Enable read access for all users | SELECT público (`true`) expõe a coluna `password` | Idem |
-| **personagens** | Permitir leitura geral personagens | SELECT para `authenticated` com `true` | Qualquer usuário logado lê as fichas de todos. Sobrepõe a política de dono, pois políticas permissivas se somam |
-| **personagens** | Permitir update personagens | UPDATE para `authenticated` com `true` | Qualquer usuário logado altera créditos, facção e demais campos de qualquer personagem |
+| **personagens** | Permitir leitura geral personagens | SELECT para `authenticated` com `true` | Qualquer usuário logado lê as fichas de todos, inclusive inativos (`ativo = false`), já que a ocultação em `log.html` é só de interface. Sobrepõe a política de dono, pois políticas permissivas se somam |
+| **personagens** | Permitir update personagens | UPDATE para `authenticated` com `true` | Qualquer usuário logado altera créditos, facção e demais campos de qualquer personagem. O campo `ativo` é protegido pelo trigger `trg_personagens_proteger_ativo` (só ISB), mas o restante continua aberto |
 | **inventario** | Inventario_Select / Insert / Update / Delete | CRUD total para `authenticated` | Qualquer usuário logado altera o inventário de outros |
 | **logs_auditoria** | LogsAuditoria_Select / LogsAuditoria_Insert | Leitura e inserção `true` para `authenticated` | Qualquer usuário lê toda a auditoria e pode forjar registros |
 | **log_bancario** | Permitir insercao log_bancario autenticado | INSERT com `true` | Registros bancários podem ser forjados por qualquer usuário logado |

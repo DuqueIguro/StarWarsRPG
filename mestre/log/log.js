@@ -15,6 +15,7 @@ async function carregarPersonagens() {
     const { data, error } = await client
         .from('personagens')
         .select('id, nome, creditos, fichas, facecred, peggats')
+        .eq('ativo', true)
         .order('nome');
 
     if (!error && data) {

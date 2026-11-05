@@ -579,3 +579,37 @@ body.scan-active::before {
     color: var(--dev-text-dim);
     letter-spacing: 1px;
 }
+
+/* ============ STATUS DO PERSONAGEM ============ */
+.status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-badge {
+    font-family: var(--font-title);
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    padding: 6px 10px;
+    border: 1px solid var(--dev-border);
+    border-radius: 2px;
+}
+
+.status-badge.ativo {
+    color: var(--dev-accent);
+    background: var(--dev-accent-dim);
+}
+
+.status-badge.inativo {
+    color: var(--dev-danger);
+    border-color: var(--dev-danger);
+}
+
+.roster-item.inativo {
+    opacity: 0.45;
+}
+
+.roster-item.inativo:hover {
+    opacity: 0.8;
+}

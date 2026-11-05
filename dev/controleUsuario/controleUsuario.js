@@ -88,7 +88,7 @@ async function carregarPersonagens() {
 
     const { data, error } = await supabaseClient
         .from('personagens')
-        .select('id, nome, creditos, facecred, peggats, fichas, grupo_faccao, img_url')
+        .select('id, nome, creditos, facecred, peggats, fichas, grupo_faccao, img_url, ativo')
         .order('nome', { ascending: true });
 
     if (error) {
@@ -113,7 +113,9 @@ function renderRoster(list) {
 
     list.forEach(char => {
         const item = document.createElement('div');
-        item.className = 'roster-item' + (selectedCharacter && selectedCharacter.id === char.id ? ' active' : '');
+        item.className = 'roster-item'
+            + (selectedCharacter && selectedCharacter.id === char.id ? ' active' : '')
+            + (char.ativo === false ? ' inativo' : '');
         item.dataset.id = char.id;
 
         const imgSrc = char.img_url && char.img_url.trim() !== '' ? char.img_url : AVATAR_FALLBACK;
@@ -122,7 +124,7 @@ function renderRoster(list) {
             <img src="${imgSrc}" alt="${escapeHTML(char.nome || 'Sem nome')}" onerror="this.src='${AVATAR_FALLBACK}'">
             <div class="roster-item-info">
                 <span class="roster-item-name">${escapeHTML(char.nome || 'Identidade Desconhecida')}</span>
-                <span class="roster-item-faction">${escapeHTML(char.grupo_faccao || 'Não Atribuído / Civil')}</span>
+                <span class="roster-item-faction">${escapeHTML(char.grupo_faccao || 'Não Atribuído / Civil')}${char.ativo === false ? ' · INATIVO' : ''}</span>
             </div>
         `;
 
@@ -172,12 +174,73 @@ function preencherEditor(char) {
 
     document.getElementById('factionSelect').value = char.grupo_faccao || 'Não Atribuído / Civil';
 
+    atualizarBotaoStatus(char);
+
     BALANCE_FIELDS.forEach(field => {
         const el = document.getElementById(`val-${field}`);
         if (el) el.textContent = (char[field] ?? 0).toLocaleString('pt-BR');
         const amtInput = document.getElementById(`amt-${field}`);
         if (amtInput) amtInput.value = '';
     });
+}
+
+/* ============================================================
+   3B. STATUS DO PERSONAGEM (ativo / inativo na listagem do mestre)
+   ============================================================ */
+function atualizarBotaoStatus(char) {
+    const badge = document.getElementById('statusBadge');
+    const btn = document.getElementById('btnToggleAtivo');
+    const ativo = char.ativo !== false;
+
+    badge.textContent = ativo ? 'ATIVO' : 'INATIVO';
+    badge.className = 'status-badge ' + (ativo ? 'ativo' : 'inativo');
+
+    btn.textContent = ativo ? 'Desativar' : 'Ativar';
+    btn.className = 'btn-mini ' + (ativo ? 'btn-sub' : 'btn-confirm');
+}
+
+async function alternarStatusPersonagem() {
+    if (!selectedCharacter) return;
+
+    const nome = selectedCharacter.nome;
+    const novoStatus = selectedCharacter.ativo === false; // inverte o atual
+
+    if (!novoStatus && !confirm(
+        `Desativar [${nome}]?\n\nEle some da listagem do mestre (log.html), mas continua usando o site normalmente.`
+    )) return;
+
+    const btn = document.getElementById('btnToggleAtivo');
+    btn.disabled = true;
+
+    const { data, error } = await supabaseClient
+        .from('personagens')
+        .update({ ativo: novoStatus })
+        .eq('id', selectedCharacter.id)
+        .select('id');
+
+    btn.disabled = false;
+
+    // Sem erro e sem linha afetada = RLS bloqueou silenciosamente
+    if (error || !data || data.length === 0) {
+        console.error('[DEV_CORE] Erro ao alterar status:', error);
+        mostrarFeedback('Falha ao alterar o status do personagem.', 'error');
+        return;
+    }
+
+    await registrarLogAuditoria({
+        personagem_id: selectedCharacter.id,
+        tipo_evento: 'STATUS_PERSONAGEM',
+        descricao: `[${nome}] ${novoStatus ? 'ativado' : 'desativado'} por ${currentOperator.nome}.`,
+        mudanca_creditos: null
+    });
+
+    selectedCharacter.ativo = novoStatus;
+    const idx = allCharacters.findIndex(c => c.id === selectedCharacter.id);
+    if (idx !== -1) allCharacters[idx].ativo = novoStatus;
+
+    atualizarBotaoStatus(selectedCharacter);
+    filtrarPersonagens();
+    mostrarFeedback(`[${nome}] ${novoStatus ? 'ativado' : 'desativado'} e registrado na auditoria.`, 'success');
 }
 
 /* ============================================================
@@ -439,6 +502,7 @@ function initEventBindings() {
     document.getElementById('searchInput').addEventListener('input', filtrarPersonagens);
     document.getElementById('btnSaveAvatar').addEventListener('click', salvarAvatar);
     document.getElementById('btnSaveFaction').addEventListener('click', salvarFaccao);
+    document.getElementById('btnToggleAtivo').addEventListener('click', alternarStatusPersonagem);
 
     document.querySelectorAll('.balance-controls button[data-op]').forEach(btn => {
         btn.addEventListener('click', () => ajustarSaldo(btn.dataset.field, btn.dataset.op));
