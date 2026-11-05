@@ -1,84 +1,105 @@
-# Star Wars RPG - Plataforma de Suporte para Campanhas 🚀
+<div align="center">
 
-Uma aplicação web imersiva e completa para suporte a campanhas de RPG de mesa no universo Star Wars. Desenvolvida inteiramente com tecnologias front-end (HTML5, CSS3 e JavaScript ES6+), oferecendo interfaces dinâmicas e ricas em recursos sem necessidade de backend.
+# Star Wars RPG
 
-**Acesse online:** [www.duqueiguro.xyz](http://www.duqueiguro.xyz)
+**Uma plataforma web de apoio a campanhas de RPG ambientadas no universo de Star Wars.**
 
----
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6%2B-f7df1e?style=flat-square&logo=javascript&logoColor=000)](https://developer.mozilla.org/docs/Web/JavaScript)
+[![HTML5](https://img.shields.io/badge/HTML5-sem%C3%A2ntico-e34f26?style=flat-square&logo=html5&logoColor=fff)](https://developer.mozilla.org/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-responsivo-1572b6?style=flat-square&logo=css3&logoColor=fff)](https://developer.mozilla.org/docs/Web/CSS)
+[![Supabase](https://img.shields.io/badge/Supabase-autentica%C3%A7%C3%A3o-3ecf8e?style=flat-square&logo=supabase&logoColor=fff)](https://supabase.com/)
 
-## 📊 Composição do Projeto
+[**Acessar a aplicação**](https://starwars.duqueiguro.xyz) · [Reportar um problema](https://github.com/DuqueIguro/StarWarsRPG/issues)
 
-![JavaScript](https://img.shields.io/badge/JavaScript-47.9%25-F7DF1E?style=flat-square&logo=javascript)
-![HTML](https://img.shields.io/badge/HTML-35.4%25-E34C26?style=flat-square&logo=html5)
-![CSS](https://img.shields.io/badge/CSS-16.7%25-1572B6?style=flat-square&logo=css3)
-
----
-
-## ✨ Funcionalidades Principais
-
-A plataforma é modularizada em várias seções, cada uma otimizada para um propósito específico:
-
-| Funcionalidade | Descrição | Arquivo |
-|---|---|---|
-| **🎭 Ficha de Personagem** | Sistema completo de criação e gerenciamento de fichas com cálculos automáticos de atributos e perícias | `ficha.html` |
-| **🤖 Oficina de Droides** | Interface para gerenciar ordens de serviço, reparos e modificações em droides e equipamentos | `oficina.html` |
-| **🚀 Hangar de Naves** | Painel de visualização e gerenciamento de naves espaciais com controle de combustível e status de sistemas | `hangar.html` |
-| **🌌 Mapa Galáctico** | Representação interativa da galáxia de Star Wars com consulta de dados de planetas | `mapa_galatico.html` |
-| **🎒 Sistema de Inventário** | Ferramenta para gerenciamento de itens dos personagens com interface intuitiva | `inventario.html` |
-| **📡 Terminal de Comunicação** | Simulador de terminal de comunicação para imersão no universo Star Wars | `comunicacao.html` |
-| **⚔️ Escudo do Mestre** | Área dedicada ao mestre do jogo com ferramentas para condução da campanha | `Escudo/mestre.html` |
+</div>
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Sobre o projeto
 
-- **HTML5** - Estruturação semântica e responsiva
-- **CSS3** - Estilização avançada e layouts responsivos
-- **JavaScript (ES6+)** - Lógica de negócio, DOM manipulation e gerenciamento de dados
-- **JSON** - Armazenamento estruturado de dados (planetas, itens, configurações)
+O **Star Wars RPG** reúne ferramentas digitais para apoiar a organização e a condução de campanhas de RPG. A aplicação combina uma interface temática com módulos para personagens, navegação galáctica, inventário, comunicações, gerenciamento de recursos e conteúdo narrativo.
 
----
+O projeto é uma aplicação web estática, construída principalmente com HTML, CSS e JavaScript. Os dados de referência são mantidos em arquivos JSON; a autenticação é integrada ao Supabase.
 
-## 🚀 Como Executar o Projeto
+## Funcionalidades
 
-Como este é um projeto puramente front-end, não há necessidade de um processo de build complexo. Você pode executar a aplicação de duas maneiras:
+Os módulos estão organizados em diferentes áreas da aplicação:
 
-1.  **Acessando a versão online:**
+- **Personagens e jogo:** fichas, seleção de personagens e rolagem de dados.
+- **Exploração e navegação:** mapa galáctico, consulta de planetas e cálculo de distâncias.
+- **Gestão de recursos:** inventário, armazém, banco, loja e posto de abastecimento.
+- **Comunicação e ambientação:** Holonet, terminal de comunicação e conteúdos de facções.
+- **Frota e operações:** painéis da frota rebelde, manutenção e ferramentas de apoio ao mestre.
+- **Áreas especializadas:** ferramentas de oficina, droides, tripulantes, cassino e módulos de administração da campanha.
 
-      * O projeto está hospedado no GitHub Pages e pode ser acessado através do link (se aplicável, com base no arquivo `CNAME`): `http://www.duqueiguro.xyz`
+A disponibilidade e o acesso a determinados módulos podem variar conforme a configuração da aplicação e a autenticação.
 
-2.  **Executando localmente:**
+## Tecnologias
 
-      * Clone o repositório: `git clone https://github.com/duqueiguro/starwarsrpg.git`
-      * Navegue até o diretório do projeto: `cd starwarsrpg`
-      * Abra o arquivo `index.html` no seu navegador de preferência.
+- **HTML5** para a estrutura das páginas.
+- **CSS3** para estilos e layouts.
+- **JavaScript (ES6+)** para interações e lógica da aplicação.
+- **JSON** para conjuntos de dados usados pelos módulos.
+- **Supabase** para autenticação.
+- **GitHub Pages e GitHub Actions** para publicação do site estático.
 
-## 💡 Arquitetura de Dados
+## Executar localmente
 
-A aplicação faz uso intensivo de arquivos JSON para simular um banco de dados. Essa abordagem permite uma fácil manutenção e atualização das informações do jogo (como planetas, itens, etc.) sem a necessidade de alterar o código JavaScript principal.
+Não é necessário instalar dependências de Node.js nem executar um processo de build. Como a aplicação carrega recursos locais, execute-a por um servidor HTTP em vez de abrir os arquivos diretamente no navegador.
 
-Os scripts em JavaScript são responsáveis por carregar esses arquivos JSON dinamicamente e renderizar as informações na interface do usuário, criando uma experiência fluida e reativa.
+1. Clone o repositório e entre na pasta do projeto:
 
-## 🔮 Futuras Implementações
+   ```bash
+   git clone https://github.com/DuqueIguro/StarWarsRPG.git
+   cd StarWarsRPG
+   ```
 
-O projeto tem um grande potencial de expansão. Algumas das funcionalidades planejadas para o futuro incluem:
+2. Inicie um servidor local. Com Python instalado, por exemplo:
 
-  * **Sistema de combate:** Um módulo para gerenciar iniciativas, turnos e ações durante o combate.
-  * **Persistência de dados em nuvem:** Utilização de serviços como Firebase ou um back-end próprio para permitir que os dados das campanhas sejam salvos e acessados de qualquer lugar.
-  * **Autenticação de usuários:** Para que cada jogador possa ter seu próprio perfil e personagens.
+   ```bash
+   python -m http.server 8000
+   ```
 
-## 🤝 Como Contribuir
+   Se o comando `python` não estiver disponível, tente `python3 -m http.server 8000`.
 
-Contribuições são sempre bem-vindas\! Se você tem alguma ideia para melhorar o projeto, siga os seguintes passos:
+3. Acesse [http://localhost:8000](http://localhost:8000) no navegador.
 
-1.  Faça um *fork* deste repositório.
-2.  Crie uma nova *branch* para a sua funcionalidade: `git checkout -b feature/sua-feature`
-3.  Faça o *commit* das suas alterações: `git commit -m 'Adiciona nova feature'`
-4.  Envie para a sua *branch*: `git push origin feature/sua-feature`
-5.  Abra um *Pull Request*.
+A página inicial é `index.html`; o menu principal está em `menu.html`. Recursos que dependem do Supabase requerem uma configuração válida do serviço.
 
-## 📄 Licença
+## Publicação
 
-Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+O site é publicado pelo GitHub Pages usando o workflow em `.github/workflows/static.yml`. O workflow envia o conteúdo do repositório para o Pages quando há alterações na branch `main`, ou pode ser iniciado manualmente pela aba **Actions** do GitHub.
 
------
+O domínio configurado para a aplicação é [starwars.duqueiguro.xyz](https://starwars.duqueiguro.xyz).
+
+## Estrutura do repositório
+
+| Caminho | Conteúdo |
+|---|---|
+| `index.html`, `menu.html` | Entrada e hub principal da aplicação |
+| `pages/` | Páginas dos módulos principais |
+| `js/` | Scripts JavaScript compartilhados e lógica dos módulos |
+| `styles/` | Folhas de estilo |
+| `data/` | Dados JSON e recursos utilizados pela aplicação |
+| `durtoc/`, `mestre/`, `monopoly/`, `rebeldes/`, `terminal/` | Áreas e experiências especializadas |
+| `img/` | Imagens, ícones e demais recursos visuais |
+| `.github/workflows/` | Automação de publicação no GitHub Pages |
+
+Para uma listagem mais detalhada, consulte [`Hieararquia.md`](Hieararquia.md).
+
+## Contribuições
+
+Contribuições são bem-vindas. Para propor uma mudança:
+
+1. Abra uma issue para relatar um problema ou discutir uma melhoria relevante.
+2. Faça um fork do repositório e crie uma branch descritiva para sua alteração.
+3. Implemente e teste a mudança localmente.
+4. Envie um pull request com uma descrição clara do que foi alterado e, quando aplicável, como testar.
+
+## Licença
+
+Nenhum arquivo de licença foi identificado neste repositório. Até que uma licença seja adicionada, os direitos de uso e redistribuição permanecem reservados ao titular dos direitos autorais.
+
+## Créditos e propriedade intelectual
+
+Este é um projeto de fã, sem afiliação ou endosso da Lucasfilm Ltd. ou da The Walt Disney Company. **Star Wars** e seus elementos relacionados pertencem aos respectivos titulares. O projeto destina-se a apoiar campanhas de RPG e não reivindica propriedade sobre esse material.
