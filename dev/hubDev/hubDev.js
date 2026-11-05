@@ -9,12 +9,24 @@
     };
 
     const ETAPAS_FINAIS = ['concluido', 'abandonado'];
-    const ATALHOS = [
+
+    const ATALHOS_DEV = [
         { titulo: 'Chamados',            desc: 'Bugs e falhas que pedem correção',           href: 'controleBugs.html#bug',     icone: '⚠', count: 'bug' },
         { titulo: 'Posts',               desc: 'Novidades e comunicados da equipe',          href: 'controleBugs.html#post',    icone: '✉', count: 'post' },
         { titulo: 'Serviços',            desc: 'Demandas internas e tarefas de rotina',      href: 'controleBugs.html#servico', icone: '⚙', count: 'servico' },
         { titulo: 'Log de Atividade',    desc: 'Histórico de ações de todos os devs',        href: 'controleBugs.html#log',     icone: '≣' },
         { titulo: 'Controle de Usuário', desc: 'Saldos, créditos e ajustes de personagens',  href: 'controleUsuario.html',      icone: '◉' }
+    ];
+
+    const ATALHOS_MESTRE = [
+        { titulo: 'Log Geral',         desc: 'Log do mestre, com a aba DEV_CORE',          href: '../mestre/log.html',                 icone: '≡' },
+        { titulo: 'HoloNet Mestre',    desc: 'Painel de notícias, mercados e transmissões', href: '../mestre/holonetMestre.html',       icone: '◎' },
+        { titulo: 'Frota Mestre',      desc: 'Gerenciamento da frota',                     href: '../mestre/frotaMestre.html',         icone: '✈' },
+        { titulo: 'Escudos',           desc: 'Controle dos escudos das naves',             href: '../mestre/escudo.html',              icone: '◍' },
+        { titulo: 'Terminal Bancário', desc: 'Operações bancárias dos personagens',        href: '../mestre/terminalBancario.html',    icone: '₡' },
+        { titulo: 'Redirecionamentos', desc: 'Gerenciar redirecionamentos de páginas',     href: '../mestre/redirecionamentos.html',   icone: '↪' },
+        { titulo: 'Balanceamento',     desc: '[LEGADO] Ajuste de fichas e balanceamento',           href: '../mestre/fichasBalanceamento.html', icone: '⚖' },
+        { titulo: 'Macro Antigo',      desc: '[LEGADO] Macro v0.7',                     href: '../mestre/oldMacro.html',            icone: '⌘' }
     ];
 
     // Levantamento de segurança do mapa_do_banco_de_dados.md (seção 9)
@@ -29,7 +41,7 @@
         { nivel: 'baixo',   tabela: 'dev_itens (anon)',               problema: 'Insert anônimo da manutenção. Monitorar volume de chamados falsos.' }
     ];
 
-    const S = { user: null, dev: null, items: [], logs: [] };
+    const S = { user: null, dev: null, items: [], logs: [], mestreAberto: false };
 
     const $ = s => document.querySelector(s);
     const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -65,7 +77,9 @@
 
         document.body.classList.add(S.dev.tema);
         $('#operatorName').textContent = S.dev.nome.toUpperCase();
+        S.mestreAberto = lerEstadoMestre();
         renderPendencias();
+        renderAtalhos();
         carregarNotas();
         bind();
         $('#accessOverlay').classList.add('hidden');
@@ -76,6 +90,24 @@
 
     function bind() {
         $('#notas').addEventListener('input', salvarNotas);
+        $('#atalhos').addEventListener('click', onAtalhosClick);
+    }
+
+    function onAtalhosClick(e) {
+        const btn = e.target.closest('[data-toggle="mestre"]');
+        if (!btn) return;
+        S.mestreAberto = !S.mestreAberto;
+        salvarEstadoMestre(S.mestreAberto);
+        renderAtalhos();
+    }
+
+    // Lembra se o painel do mestre estava aberto
+    const estadoKey = 'hubDev:mestreAberto';
+    function lerEstadoMestre() {
+        try { return localStorage.getItem(estadoKey) === '1'; } catch (e) { return false; }
+    }
+    function salvarEstadoMestre(aberto) {
+        try { localStorage.setItem(estadoKey, aberto ? '1' : '0'); } catch (e) { /* storage indisponível */ }
     }
 
     async function carregarItens() {
@@ -111,6 +143,16 @@
         renderMeus();
     }
 
+    const cardAtalho = (a, count) => `
+        <a class="atalho" href="${esc(a.href)}">
+            <div class="atalho-topo">
+                <span class="atalho-icone">${a.icone}</span>
+                ${count !== undefined ? `<span class="atalho-count">${count}</span>` : ''}
+            </div>
+            <div class="atalho-titulo">${esc(a.titulo)}</div>
+            <div class="atalho-desc">${esc(a.desc)}</div>
+        </a>`;
+
     function renderAtalhos() {
         const ab = abertos();
         const counts = {
@@ -118,15 +160,27 @@
             post: ab.filter(i => i.tipo === 'post').length,
             servico: ab.filter(i => i.tipo === 'servico').length
         };
-        $('#atalhos').innerHTML = ATALHOS.map(a => `
-            <a class="atalho" href="${esc(a.href)}">
-                <div class="atalho-topo">
-                    <span class="atalho-icone">${a.icone}</span>
-                    ${a.count ? `<span class="atalho-count">${counts[a.count]}</span>` : ''}
-                </div>
-                <div class="atalho-titulo">${esc(a.titulo)}</div>
-                <div class="atalho-desc">${esc(a.desc)}</div>
-            </a>`).join('');
+
+        const devHTML = ATALHOS_DEV.map(a => cardAtalho(a, a.count ? counts[a.count] : undefined)).join('');
+
+        const aberto = S.mestreAberto;
+        const toggleHTML = `
+            <div class="atalho-grupo">
+                <button class="grupo-toggle" data-toggle="mestre" aria-expanded="${aberto}">
+                    <span class="grupo-seta">▸</span>
+                    PAINEL DO MESTRE
+                    <span class="atalho-count">${ATALHOS_MESTRE.length}</span>
+                </button>
+                <span class="grupo-desc">${aberto ? 'Clique para recolher' : 'Clique para expandir'}</span>
+            </div>`;
+
+        const mestreHTML = aberto ? ATALHOS_MESTRE.map(a => cardAtalho(a)).join('') : '';
+
+        $('#atalhos').innerHTML =
+            `<div class="atalho-grupo"><span class="grupo-titulo">◈ DEV_CORE</span><span class="grupo-desc">Ferramentas de desenvolvimento</span></div>` +
+            devHTML +
+            toggleHTML +
+            mestreHTML;
     }
 
     function renderMetricas() {

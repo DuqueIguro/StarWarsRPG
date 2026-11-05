@@ -291,3 +291,47 @@ body {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
     font-size: .65rem; color: var(--dev-text-dim); letter-spacing: 1px;
 }
+
+/* Cabeçalhos de grupo nos atalhos */
+.atalho-grupo {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+}
+.grupo-titulo {
+    font-family: var(--font-title);
+    font-size: .75rem;
+    letter-spacing: 1.5px;
+    color: var(--dev-accent);
+    text-shadow: 0 0 8px var(--dev-accent-glow);
+}
+.grupo-desc { color: var(--dev-text-dim); font-size: .65rem; }
+
+.grupo-toggle {
+    background: none;
+    border: 1px solid var(--dev-border);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: var(--font-title);
+    font-size: .75rem;
+    letter-spacing: 1.5px;
+    color: var(--dev-accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--dev-accent-dim);
+    transition: all .15s ease;
+}
+.grupo-toggle:hover {
+    background: var(--dev-accent);
+    color: #000;
+    box-shadow: 0 0 10px var(--dev-accent-glow);
+}
+.grupo-seta {
+    display: inline-block;
+    transition: transform .2s ease;
+}
+.grupo-toggle[aria-expanded="true"] .grupo-seta { transform: rotate(90deg); }
