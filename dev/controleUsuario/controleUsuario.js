@@ -111,26 +111,40 @@ function renderRoster(list) {
         return;
     }
 
-    list.forEach(char => {
-        const item = document.createElement('div');
-        item.className = 'roster-item'
-            + (selectedCharacter && selectedCharacter.id === char.id ? ' active' : '')
-            + (char.ativo === false ? ' inativo' : '');
-        item.dataset.id = char.id;
+    const ativos = list.filter(c => c.ativo !== false);
+    const inativos = list.filter(c => c.ativo === false);
 
-        const imgSrc = char.img_url && char.img_url.trim() !== '' ? char.img_url : AVATAR_FALLBACK;
+    ativos.forEach(char => rosterList.appendChild(criarItemRoster(char)));
 
-        item.innerHTML = `
-            <img src="${imgSrc}" alt="${escapeHTML(char.nome || 'Sem nome')}" onerror="this.src='${AVATAR_FALLBACK}'">
-            <div class="roster-item-info">
-                <span class="roster-item-name">${escapeHTML(char.nome || 'Identidade Desconhecida')}</span>
-                <span class="roster-item-faction">${escapeHTML(char.grupo_faccao || 'Não Atribuído / Civil')}${char.ativo === false ? ' · INATIVO' : ''}</span>
-            </div>
-        `;
+    if (inativos.length) {
+        const divisor = document.createElement('div');
+        divisor.className = 'roster-divider';
+        divisor.textContent = `◈ INATIVOS (${inativos.length})`;
+        rosterList.appendChild(divisor);
 
-        item.addEventListener('click', () => selecionarPersonagem(char.id));
-        rosterList.appendChild(item);
-    });
+        inativos.forEach(char => rosterList.appendChild(criarItemRoster(char)));
+    }
+}
+
+function criarItemRoster(char) {
+    const item = document.createElement('div');
+    item.className = 'roster-item'
+        + (selectedCharacter && selectedCharacter.id === char.id ? ' active' : '')
+        + (char.ativo === false ? ' inativo' : '');
+    item.dataset.id = char.id;
+
+    const imgSrc = char.img_url && char.img_url.trim() !== '' ? char.img_url : AVATAR_FALLBACK;
+
+    item.innerHTML = `
+        <img src="${imgSrc}" alt="${escapeHTML(char.nome || 'Sem nome')}" onerror="this.src='${AVATAR_FALLBACK}'">
+        <div class="roster-item-info">
+            <span class="roster-item-name">${escapeHTML(char.nome || 'Identidade Desconhecida')}</span>
+            <span class="roster-item-faction">${escapeHTML(char.grupo_faccao || 'Não Atribuído / Civil')}</span>
+        </div>
+    `;
+
+    item.addEventListener('click', () => selecionarPersonagem(char.id));
+    return item;
 }
 
 function filtrarPersonagens() {

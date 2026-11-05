@@ -613,3 +613,13 @@ body.scan-active::before {
 .roster-item.inativo:hover {
     opacity: 0.8;
 }
+
+.roster-divider {
+    font-family: var(--font-title);
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+    color: var(--dev-text-dim);
+    border-top: 1px dashed var(--dev-border);
+    padding-top: 10px;
+    margin-top: 8px;
+}
