@@ -25,6 +25,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="../styles/inventario.css">
     <link rel="icon" type="image/x-icon" href="../img/sabres.ico">
+    <link rel="stylesheet" href="../styles/cupons.css">
 </head>
 
 <body class="min-h-screen p-4 md:p-8">
@@ -144,6 +145,7 @@
         <div id="cart-items" class="flex-grow overflow-y-auto pr-2">
         </div>
         <div class="mt-4 pt-4 border-t border-cyan-700">
+            <div id="cupom-slot"></div>
             <div class="mb-2 flex justify-between items-center">
                 <span class="font-bold">Total Pessoal:</span>
                 <div class="text-right">
@@ -245,6 +247,7 @@
         </div>
     </div>
 
+    <script src="../js/cupomDesconto.js"></script>
     <script src="../js/databaseInventario.js"></script>
     <script src="../js/inventario.js" defer></script>
 

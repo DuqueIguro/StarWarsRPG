@@ -249,9 +249,7 @@ const renderCart = () => {
         });
     }
 
-    const totalInReais = totalPersonal / 10000;
-    cartTotalPersonalEl.textContent = `${totalPersonal.toLocaleString()} Créditos`;
-    cartTotalReaisEl.textContent = `R$ ${totalInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    CupomDesconto.renderTotais(totalPersonal, cartTotalPersonalEl, cartTotalReaisEl);
 
     document.querySelectorAll('.remove-from-cart-btn').forEach(btn => btn.addEventListener('click', (e) => handleRemoveFromCart(parseInt(e.target.dataset.index))));
 };
@@ -332,6 +330,8 @@ const handleCheckout = async () => {
     const selectedPayment = document.querySelector('input[name="payment-method"]:checked').value;
     let personalCost = 0;
     state.cart.forEach(cartItem => { personalCost += cartItem.item.price; });
+    const totaisCarrinho = CupomDesconto.totais(personalCost); // aplica o cupom, se houver
+    personalCost = totaisCarrinho.finalCR;
 
     // Desativa o botão temporariamente para evitar cliques duplos (Double Spend)
     checkoutBtn.disabled = true;
@@ -364,6 +364,15 @@ const handleCheckout = async () => {
             return;
         }
 
+        // Consome o cupom no banco (valida limite e moeda e incrementa o uso de forma atômica)
+        const cupomCR = await CupomDesconto.consumir('CREDITOS');
+        if (!cupomCR.ok) {
+            showNotification(cupomCR.msg, 'danger');
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = "FINALIZAR COMPRA";
+            return;
+        }
+
         const novoSaldo = saldoReal - personalCost;
 
         // Debita o valor na conta do Supabase
@@ -390,8 +399,15 @@ const handleCheckout = async () => {
             -personalCost
         );
     } else if (selectedPayment === 'reais') {
+        const cupomBRL = await CupomDesconto.consumir('BRL');
+        if (!cupomBRL.ok) {
+            showNotification(cupomBRL.msg, 'danger');
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = "FINALIZAR COMPRA";
+            return;
+        }
         window.open('https://livepix.gg/doisimperadores', '_blank');
-        showNotification('Aguardando compensação via Livepix. Itens despachados!', 'success');
+        showNotification(`Aguardando compensação via Livepix (${CupomDesconto.fmtBRL(totaisCarrinho.finalBRL)}). Itens despachados!`, 'success');
 
         // REGISTRA O LOG DE COMPRA COM REAIS
         const nomesItens = state.cart.map(c => c.item.name).join(', ');
@@ -427,6 +443,7 @@ const handleCheckout = async () => {
 
         // Limpa o carrinho
         state.cart = [];
+        CupomDesconto.limpar();
         cartEl.classList.add('translate-x-full');
 
         // Recarrega os dados do banco de dados para garantir que a interface está atualizada
@@ -539,7 +556,8 @@ const init = async () => {
     closeModalBtn.addEventListener('click', () => customItemModal.classList.add('hidden'));
     customItemForm.addEventListener('submit', handleCustomItemSubmit);
     sortByEl.addEventListener('change', renderItems);
-
+    CupomDesconto.montar(document.getElementById('cupom-slot'), renderCart);
+    
     renderItems(); // Desenha a base de dados em memória
     await carregarDadosDoBanco(); // Procura o utilizador e sincroniza
 };

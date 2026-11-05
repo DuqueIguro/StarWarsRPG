@@ -321,9 +321,7 @@ const renderCart = () => {
         });
     }
 
-    const totalInReais = totalPersonal / 10000;
-    cartTotalPersonalEl.textContent = `${totalPersonal.toLocaleString()} Créditos`;
-    cartTotalReaisEl.textContent = `R$ ${totalInReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    CupomDesconto.renderTotais(totalPersonal, cartTotalPersonalEl, cartTotalReaisEl);
 
     // Listeners Reativos: Gravam a mudança de rota IMEDIATAMENTE na memória
     document.querySelectorAll('.remove-from-cart-btn').forEach(btn => btn.addEventListener('click', (e) => handleRemoveFromCart(parseInt(e.target.dataset.index))));
@@ -415,6 +413,8 @@ const handleCheckout = async () => {
     const selectedPayment = document.querySelector('input[name="payment-method"]:checked').value;
     let personalCost = 0;
     state.cart.forEach(cartItem => { personalCost += cartItem.item.price; });
+    const totaisCarrinho = CupomDesconto.totais(personalCost); // aplica o cupom, se houver
+    personalCost = totaisCarrinho.finalCR;
 
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = "PROCESSANDO TRANSAÇÃO...";
@@ -464,6 +464,15 @@ const handleCheckout = async () => {
             return;
         }
 
+        // Consome o cupom no banco (valida limite e moeda e incrementa o uso de forma atômica)
+        const cupomCR = await CupomDesconto.consumir('CREDITOS');
+        if (!cupomCR.ok) {
+            showNotification(cupomCR.msg, 'danger');
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = "FINALIZAR COMPRA";
+            return;
+        }
+
         const novoSaldo = saldoReal - personalCost;
 
         // 3. Debita o valor no cofre específico
@@ -490,12 +499,19 @@ const handleCheckout = async () => {
         await registarLog(
             currentPersonagemId,
             'COMPRA_LOJA',
-            `Compra Finalizada (Pago por: ${payerName}) - Itens: [${nomesItens}]. Saldo do cofre caiu de ${saldoReal} para ${novoSaldo}`,
+            `Compra Finalizada (Pago por: ${payerName}) - Itens: [${nomesItens}]. Saldo do cofre caiu de ${saldoReal} para ${novoSaldo}${CupomDesconto.descricaoLog('CREDITOS')}`,
             -personalCost
         );
     } else if (selectedPayment === 'reais') {
+        const cupomBRL = await CupomDesconto.consumir('BRL');
+        if (!cupomBRL.ok) {
+            showNotification(cupomBRL.msg, 'danger');
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = "FINALIZAR COMPRA";
+            return;
+        }
         window.open('https://livepix.gg/doisimperadores', '_blank');
-        showNotification('Aguardando compensação via Livepix. Itens despachados!', 'success');
+        showNotification(`Aguardando compensação via Livepix (${CupomDesconto.fmtBRL(totaisCarrinho.finalBRL)}). Itens despachados!`, 'success');
 
         const nomesItens = state.cart.map(c => c.item.name).join(', ');
         await registarLog(
@@ -540,6 +556,7 @@ const handleCheckout = async () => {
 
         // Limpa o carrinho
         state.cart = [];
+        CupomDesconto.limpar();
         cartEl.classList.add('translate-x-full');
 
         // Puxa o banco atualizado (agora as abas corretas vão receber os itens novos)
@@ -777,6 +794,7 @@ const init = async () => {
     customItemForm.addEventListener('submit', handleCustomItemSubmit);
     sortByEl.addEventListener('change', renderItems);
 
+    CupomDesconto.montar(document.getElementById('cupom-slot'), renderCart);
     renderItems(); // Desenha a base de dados em memória
     await carregarDadosDoBanco(); // Procura o utilizador e sincroniza
 };

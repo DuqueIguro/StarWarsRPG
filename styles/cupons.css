@@ -1,0 +1,97 @@
+/* =============================================
+   cupons.css
+   Caixa de cupom minimalista para as lojas.
+   Usa as variáveis da página quando existem (MCMT/oficina);
+   nas outras páginas cai nos valores de fallback (ciano).
+   ============================================= */
+
+.cupom {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-main, inherit);
+}
+
+.cupom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cupom-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-deep, #0b1220);
+  border: 1px solid var(--border, #1e3a4a);
+  border-radius: var(--radius, 0.375rem);
+  padding: 0.4rem 0.55rem;
+  color: var(--text-primary, #e2e8f0);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cupom-input::placeholder { color: var(--text-dim, #64748b); text-transform: none; letter-spacing: 0.05em; }
+.cupom-input:focus { border-color: var(--green-mid, #0891b2); }
+
+.cupom-btn {
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--green-mid, #0891b2);
+  color: var(--green-bright, #67e8f9);
+  font-family: inherit;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.cupom-btn:hover:not(:disabled) { opacity: 0.75; }
+.cupom-btn:disabled { opacity: 0.4; cursor: wait; }
+
+.cupom-applied {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+.cupom-code {
+  color: var(--inv-credit, #d9bf6a);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.cupom-desc {
+  color: var(--text-dim, #94a3b8);
+  margin-left: 0.45rem;
+}
+
+.cupom-remove {
+  background: none;
+  border: none;
+  color: var(--inv-danger, #e07070);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+.cupom-remove:hover { opacity: 0.7; }
+
+.cupom-msg {
+  margin: 0.3rem 0 0;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--text-dim, #94a3b8);
+}
+.cupom-msg:empty { display: none; }
+.cupom-msg.ok { color: var(--green-bright, #4ade80); }
+.cupom-msg.erro { color: var(--inv-danger, #f87171); }
+
+.cupom-old {
+  color: var(--text-dim, #64748b);
+  margin-right: 0.3rem;
+  font-size: 0.85em;
+}

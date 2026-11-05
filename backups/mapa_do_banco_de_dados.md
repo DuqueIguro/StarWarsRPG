@@ -1,5 +1,7 @@
 # Contexto de Desenvolvimento: Banco de Dados Supabase (Star Wars RPG)
 
+> Atualizado em 05/11/2026: cupons de desconto nas lojas (`consumir_cupom`, `js/cupomDesconto.js`, `styles/cupons.css`).
+
 ## 1. Arquitetura de Conexão
 O projeto utiliza Supabase como BaaS. As credenciais (URL e Anon Key) estão modularizadas em um arquivo JSON/JS de configuração e são injetadas no escopo global.
 *   **Variável Global:** O cliente do Supabase é declarado como `const supabaseClient` em `js/supabase.js`. Por ser `const`, ele fica acessível pelo nome em qualquer script, mas **não** é propriedade de `window`. Use `supabaseClient` diretamente, ou `typeof supabaseClient !== 'undefined' ? supabaseClient : window.supabaseClient` como fallback.
@@ -44,7 +46,7 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 
 | Tabela | Coluna | Tipo de Dado | Restrições / Notas |
 | :--- | :--- | :--- | :--- |
-| **cupons** | id, codigo, moeda, tipo_desconto, valor_desconto, limite_usos, vezes_usado, is_ativo, created_at, updated_at | uuid, text, text, text, numeric, int4, int4, bool, timestamptz, timestamptz | Primary Key (id), Unique (codigo) |
+| **cupons** | id, codigo, moeda, tipo_desconto, valor_desconto, limite_usos, vezes_usado, is_ativo, created_at, updated_at | uuid, text, text, text, numeric, int4, int4, bool, timestamptz, timestamptz | Primary Key (id), Unique (codigo). `moeda` ∈ AMBAS, CREDITOS, BRL. `tipo_desconto` ∈ PERCENTAGE, FIXED. `limite_usos` nulo = ilimitado. `vezes_usado` só é incrementado pela RPC `consumir_cupom` |
 | **dev_itens** | id, tipo, titulo, descricao, pagina, status, responsavel, origem, reportado_por, criado_por, created_at, updated_at, fechado_em | int8, text, text, text, text, text, text, text, text, uuid, timestamptz, timestamptz, timestamptz | Primary Identity (id). `tipo` ∈ bug, post, servico. `origem` ∈ dev, manutencao. `status` (constraint `dev_itens_status_check`): valores aceitos = aberto, por_fazer, em_andamento, aguardando_revisao, abandonado, concluido. Posts usam aberto/concluido. Chamados e serviços usam o fluxo completo. `aberto` em chamados é legado e a UI exibe como "Por fazer". A constraint não cruza `tipo` com `status`, então a validação por tipo fica no JS. `criado_por` deve ter default `auth.uid()` (a confirmar no painel). Reports anônimos da página de manutenção entram com `origem = 'manutencao'` e `criado_por` nulo. Todo insert com `origem = 'manutencao'` dispara o trigger `trg_dev_itens_log_manutencao` (AFTER INSERT), que grava a linha `REPORTE` em `logs_dev`. |
 | **dividas_emprestimos** | id, categoria, titulo, alvo_descricao, personagem_id, valor_original, taxa_juros, valor_total, frequencia, status, observacoes, created_at, updated_at, ciclos_totais, ciclos_pagos | uuid, text, text, text, uuid, int8, numeric, int8, text, text, text, timestamptz, timestamptz, int4, int4 | Primary Key (id) |
 | **frota_ativa** | id, nome, imagem, escudo_atual, escudo_maximo, casco_atual, casco_maximo, faccao, custo, created_at, visivel | uuid, text, text, int4, int4, int4, int4, text, int4, timestamptz, bool | Primary Key (id) |
@@ -83,6 +85,8 @@ Resumo por tabela. Políticas permissivas se somam: se uma política libera o ac
 | :--- | :--- | :--- | :--- |
 | Leitura de cupons ativos | SELECT | anon, authenticated | `is_ativo = true` |
 | ISB gerenciamento total de cupons | ALL | authenticated | Cargos ISB (`mestre`, `dev`, `desenvolvedor`) |
+
+Jogadores não têm UPDATE em `cupons`. O uso é incrementado só pela RPC `consumir_cupom` (SECURITY DEFINER).
 
 ### `dividas_emprestimos`
 | Política | Comando | Roles | Regra RLS (Resumo) |
@@ -249,6 +253,7 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 | `ajustar_combustivel(p_inventario_id, p_tipo, p_delta)` | uuid (`inventario.id`), text (`'subluz'` ou `'hiperespacial'`), numeric | numeric (nível resultante) | Soma (`delta > 0`, Posto) ou desconta (`delta < 0`, Navegação) combustível de uma nave em `inventario.dados_customizados` (`subLevel`/`hypLevel`). Trava a linha (`FOR UPDATE`), limita ao máximo (`subCap`/`hypCap`) e só altera o nível. Só o dono (`inventario.user_id`) ou ISB. Erros: `NAO_AUTENTICADO`, `TIPO_INVALIDO`, `QUANTIDADE_INVALIDA`, `NAVE_NAO_ENCONTRADA`, `SEM_PERMISSAO`, `NAVE_NAO_CALIBRADA`, `COMBUSTIVEL_INSUFICIENTE`. |
 | `log_reporte_manutencao()` (trigger) | — | trigger | Trigger `trg_dev_itens_log_manutencao` (AFTER INSERT em `dev_itens`, SECURITY DEFINER). Quando `origem = 'manutencao'`, grava em `logs_dev` a ação `REPORTE` com o nome do reporter, o dev escolhido e a página. Não é chamada via `rpc`. |
 | `definir_motor_nave(p_inventario_id, p_classe)` | uuid, text (`'0.5'`, `'1'`, `'2'`, `'3'`) | void | Grava `dados_customizados.motorClass`. Jogador define **uma única vez** (se estiver vazio); ISB altera sempre. Erros: `CLASSE_INVALIDA`, `MOTOR_JA_DEFINIDO`, `SEM_PERMISSAO`, `NAVE_NAO_ENCONTRADA`. |
+| `consumir_cupom(p_codigo, p_moeda)` | text, text (`p_moeda` = `'CREDITOS'` ou `'BRL'`) | tabela `(r_codigo, r_moeda, r_tipo, r_valor)` | Consome um uso de cupom no checkout das lojas. Trava a linha (`FOR UPDATE`), checa se está ativo, se a moeda confere (`AMBAS` aceita as duas) e se há limite; então incrementa `vezes_usado`. Só `authenticated`. Erros: `NAO_AUTENTICADO`, `MOEDA_INVALIDA`, `CUPOM_INVALIDO`, `CUPOM_MOEDA_INVALIDA`, `CUPOM_ESGOTADO`. Não existe RPC de devolução de propósito, para não permitir contornar o limite. |
 
 ### Regras de negócio da navegação (`distanciaPlanetas.html`)
 *   **Rotas fixas:** a distância entre dois planetas é sorteada **uma única vez** (1ª viagem real) e gravada em `rotas_hiperespaco`. Vale nos dois sentidos.
@@ -266,6 +271,16 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 *   **Serviços:** o formulário puxa o catálogo de `servicos_mcmt` (`nome_servico`, `peca`, `preco_componentes`, `mao_de_obra`) e grava uma cópia em `itens`; mudanças posteriores no catálogo não alteram OS antigas.
 *   **Financeiro:** calculado no frontend e gravado em `financeiro`. Base `servico_total` = valor de todas as peças + mão de obra; `peca` inclui peças fornecidas pelo cliente (`cobrada = false`), que não entram em `subtotalPecas`.
 *   **Siglas de localidade:** vêm de `durtoc/database/siglasLocalidade.json`. OS legadas `OS-14-OFI-001/002` mantêm a sigla `OFI`, que não existe nesse arquivo.
+
+### Lojas e cupons de desconto (`pages/inventario.html`, `durtoc/inventarioOficina.html`)
+*   **Arquivos:** `js/cupomDesconto.js` (objeto `CupomDesconto`, compartilhado pelas duas páginas) e `styles/cupons.css`. A lógica da loja fica em `js/inventario.js` (página comum) e `durtoc/database/inventarioOficina.js` (oficina).
+*   **Validação de exibição:** ao clicar em Aplicar, o front lê `cupons` pelo código. A RLS de leitura só traz cupons com `is_ativo = true`. O front recusa cupom inexistente, inativo ou com `vezes_usado >= limite_usos`. Nada é gravado nessa etapa.
+*   **Consumo no checkout:** `consumir_cupom` é chamada depois da checagem de saldo e antes do débito. `p_moeda` é `CREDITOS` (pagamento em créditos) ou `BRL` (Livepix). Se a RPC recusar, a compra não é cobrada. Para cupom esgotado ou inválido, o cupom também sai da tela.
+*   **Regra de moeda:** `CREDITOS` só desconta compra em créditos. `BRL` só desconta compra em reais. `AMBAS` vale para as duas. Em `FIXED` + `AMBAS`, o valor é aplicado em CR no total de créditos e em R$ no total de reais. `PERCENTAGE` aplica o percentual nas duas.
+*   **Conversão:** 10.000 CR = R$ 1,00, como nas outras telas. Os totais saem sempre de `CupomDesconto.totais(subtotalCR)`.
+*   **Log:** a compra em créditos grava `Cupom [CODIGO] aplicado.` na descrição de `COMPRA_LOJA` (`logs_auditoria`). A compra em reais não registra o cupom no log. O uso aparece só em `cupons.vezes_usado`.
+*   **Falha após o consumo:** se o débito falhar depois do consumo, o uso não é devolvido. Isso é intencional, para não permitir burlar o limite. Compra em reais consome o uso ao finalizar, mesmo que o Livepix não seja pago.
+*   **Limitação:** o cálculo do preço fica no navegador, como o restante das lojas. A RPC garante limite e moeda de forma atômica, mas não o valor cobrado.
 
 ### Gatekeeper ISB (`js/isb_gatekeeper.js`)
 *   Exposto como `window.isbReady`, uma promise que resolve com `{ user, nome, cargo }` quando o acesso é aprovado, ou `null` quando redireciona.
@@ -309,5 +324,6 @@ Achados da leitura das políticas atuais. Alguns podem ser intencionais (mesa co
 | **dev_itens** / **logs_dev** | Exclusão e controles de dev | `holonet_is_mestre()` permite DELETE também para `mestre`. O botão de excluir só aparece para os devs, mas a regra é só de interface | Mestre consegue excluir reportes e logs pela API. Para bloquear no banco, a policy precisa filtrar por nome ou UID dos devs |
 | **dev_itens** | Constraint `dev_itens_status_check` | Não valida a combinação `tipo` x `status` | Um post pode receber status de chamado pela API. A validação fica no JS |
 | **logs_dev** / **dev_itens** | Trigger `trg_dev_itens_log_manutencao` | `usuario_nome` vem de `reportado_por`, texto livre enviado pelo usuário anônimo | Autor pode ser forjado no log dos devs, e cada reporte falso também gera uma linha de log. Se `logs_dev.user_id` for nulo, a linha não tem autor verificável |
+| **cupons** | Desconto calculado no navegador | A RPC `consumir_cupom` garante limite e moeda, mas o valor debitado é calculado no front (mesmo modelo das lojas). Falha no débito após o consumo queima um uso | Cliente modificado pode pagar menos. Para fechar, mover o cálculo do débito para uma RPC |
 
 Observação: a correção depende de decisão sobre quais tabelas são intencionalmente compartilhadas. Antes de alterar, confirme o default de `criado_por` em `dev_itens` no painel do Supabase, porque o dump não mostra defaults.
