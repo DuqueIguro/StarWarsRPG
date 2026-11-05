@@ -306,6 +306,7 @@ async function carregarLogsBancario() {
     let query = client
         .from('log_bancario')
         .select('*, personagens(nome)')
+        .not('tipo_evento', 'ilike', '%CUPOM%')
         .order('created_at', { ascending: false })
         .limit(250);
 
@@ -1198,6 +1199,156 @@ async function carregarLogsDev() {
         ['filter-date-start', 'filter-date-end'].forEach(id => {
             document.getElementById(id)?.addEventListener('change', () => {
                 if (devsAtivo()) carregarLogsDev();
+            });
+        });
+    });
+})();
+
+// 13. Aba CUPONS — lê logs_cupons (criação, edição, remoção e uso)
+const COUPON_ACOES = {
+    CRIADO: ['text-emerald-400 bg-emerald-950/40 border-emerald-800/50', 'CRIADO'],
+    EDITADO: ['text-amber-400 bg-amber-950/40 border-amber-800/50', 'EDITADO'],
+    REMOVIDO: ['text-rose-400 bg-rose-950/40 border-rose-800/50', 'REMOVIDO'],
+    USADO: ['text-sky-400 bg-sky-950/40 border-sky-800/50', 'USADO']
+};
+
+function detalhesCupom(log) {
+    if (log.acao !== 'EDITADO' || !log.dados_antes || !log.dados_depois) return '';
+    return Object.keys(log.dados_depois).map(campo => {
+        const antes = String(log.dados_antes[campo] ?? '—');
+        const depois = String(log.dados_depois[campo] ?? '—');
+        return `<div><span class="text-stone-500">${holonetEsc(campo)}:</span> ${holonetEsc(antes)} → <span class="text-stone-200">${holonetEsc(depois)}</span></div>`;
+    }).join('');
+}
+
+async function carregarLogsCupons() {
+    const client = getSupabaseClient();
+    const tbody = document.getElementById('logs-cupons-body');
+    if (!client || !tbody) return;
+
+    const inputBusca = document.getElementById('filter-text');
+    const selectAcao = document.getElementById('filter-cupom-acao');
+    const dateStart = document.getElementById('filter-date-start');
+    const dateEnd = document.getElementById('filter-date-end');
+
+    const txt = inputBusca ? inputBusca.value.trim().replace(/[%*,()]/g, ' ') : '';
+
+    tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-amber-400 animate-pulse">Consultando registros de cupons...</td></tr>';
+
+    let query = client
+        .from('logs_cupons')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(300);
+
+    if (txt) query = query.or(`codigo.ilike.%${txt}%,usuario_nome.ilike.%${txt}%,pagina.ilike.%${txt}%,resumo.ilike.%${txt}%`);
+    if (selectAcao && selectAcao.value) query = query.eq('acao', selectAcao.value);
+    if (dateStart && dateStart.value) query = query.gte('created_at', `${dateStart.value}T00:00:00-03:00`);
+    if (dateEnd && dateEnd.value) query = query.lte('created_at', `${dateEnd.value}T23:59:59-03:00`);
+
+    const { data, error } = await query;
+
+    if (error) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500 font-bold">Falha ao buscar logs de cupons: ${holonetEsc(error.message)}</td></tr>`;
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-stone-500">Nenhum registro de cupom com estes filtros.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+
+    data.forEach(log => {
+        const dataObj = new Date(log.created_at);
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const [classeAcao, labelAcao] = COUPON_ACOES[log.acao] || ['text-cyan-400 bg-cyan-950/40 border-cyan-800/50', log.acao];
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-stone-900/50 transition-colors';
+        tr.innerHTML = `
+            <td class="p-4 text-stone-400 text-xs whitespace-nowrap">${dataFormatada}</td>
+            <td class="p-4 whitespace-nowrap">
+                <div class="font-bold text-stone-200 text-xs uppercase tracking-wider">${holonetEsc(log.usuario_nome || 'Desconhecido')}</div>
+                ${log.usuario_cargo ? `<div class="text-[10px] text-stone-500 uppercase">${holonetEsc(log.usuario_cargo)}</div>` : ''}
+            </td>
+            <td class="p-4 whitespace-nowrap"><span class="px-2 py-1 text-[10px] tracking-widest font-bold rounded border ${classeAcao}">${labelAcao}</span></td>
+            <td class="p-4 font-bold text-amber-300 text-xs whitespace-nowrap tracking-wider">${holonetEsc(log.codigo || '—')}</td>
+            <td class="p-4 text-stone-400 text-xs whitespace-nowrap">${holonetEsc(log.pagina || '—')}</td>
+            <td class="p-4 text-stone-300 text-xs">
+                <div>${holonetEsc(log.resumo || '')}</div>
+                ${detalhesCupom(log)}
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// 14. Integração da aba CUPONS 
+(function integrarAbaCupons() {
+    const alternarBase = window.alternarAbas;
+    const cssInativo = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors';
+    const cssAtivo = 'px-4 py-2 font-bold text-sm tracking-wider uppercase bg-sky-900/40 text-sky-400 border border-sky-500 rounded transition-colors';
+
+    window.alternarAbas = function (aba) {
+        const btnCupons = document.getElementById('btn-tab-cupons');
+        const contCupons = document.getElementById('conteudo-cupons');
+        const filtroChar = document.getElementById('filter-char');
+        const filtroTipo = document.getElementById('filter-action');
+        const filtroBusca = document.getElementById('filter-text');
+
+        // Reabilita os filtros do topo antes da aba base, que decide o estado deles
+        [filtroChar, filtroTipo].forEach(el => {
+            if (el) { el.disabled = false; el.classList.remove('opacity-30', 'cursor-not-allowed'); }
+        });
+
+        alternarBase(aba);
+
+        if (btnCupons) btnCupons.className = cssInativo;
+        if (contCupons) {
+            contCupons.classList.add('hidden');
+            contCupons.classList.remove('block');
+        }
+
+        if (aba !== 'cupons') return;
+
+        if (btnCupons) btnCupons.className = cssAtivo;
+        if (contCupons) {
+            contCupons.classList.remove('hidden');
+            contCupons.classList.add('block');
+        }
+        [filtroChar, filtroTipo].forEach(el => {
+            if (el) { el.disabled = true; el.classList.add('opacity-30', 'cursor-not-allowed'); }
+        });
+        if (filtroTipo) filtroTipo.value = '';
+        if (filtroBusca) {
+            filtroBusca.disabled = false;
+            filtroBusca.classList.remove('opacity-30', 'cursor-not-allowed');
+            filtroBusca.placeholder = 'Ex: código, operador, página...';
+        }
+        carregarLogsCupons();
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const cuponsAtivo = () => {
+            const c = document.getElementById('conteudo-cupons');
+            return !!c && !c.classList.contains('hidden');
+        };
+
+        ['btn-refresh', 'btn-search', 'btn-clear'].forEach(id => {
+            document.getElementById(id)?.addEventListener('click', () => {
+                if (cuponsAtivo()) carregarLogsCupons();
+            });
+        });
+
+        document.getElementById('filter-text')?.addEventListener('keypress', e => {
+            if (e.key === 'Enter' && cuponsAtivo()) carregarLogsCupons();
+        });
+
+        ['filter-date-start', 'filter-date-end', 'filter-cupom-acao'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', () => {
+                if (cuponsAtivo()) carregarLogsCupons();
             });
         });
     });

@@ -1,6 +1,6 @@
 # Contexto de Desenvolvimento: Banco de Dados Supabase (Star Wars RPG)
 
-> Atualizado em 05/11/2026: cupons de desconto nas lojas (`consumir_cupom`, `js/cupomDesconto.js`, `styles/cupons.css`) e status de personagem (`personagens.ativo`, trigger `trg_personagens_proteger_ativo`).
+> Atualizado em 05/11/2026: cupons de desconto nas lojas (`consumir_cupom`, `js/cupomDesconto.js`, `styles/cupons.css`) status de personagem (`personagens.ativo`, trigger `trg_personagens_proteger_ativo`) e log de cupons (tabela `logs_cupons`, trigger `trg_cupons_log`, aba CUPONS em `log.html`).
 
 ## 1. Arquitetura de Conexão
 O projeto utiliza Supabase como BaaS. As credenciais (URL e Anon Key) estão modularizadas em um arquivo JSON/JS de configuração e são injetadas no escopo global.
@@ -60,6 +60,7 @@ O banco utiliza campos `jsonb` e `text` (com JSON parseado) para flexibilidade. 
 | **log_bancario** | id, user_id, personagem_id, tipo_evento, descricao, valor_creditos, dados_adicionais, created_at | uuid, uuid, uuid, text, text, int8, jsonb, timestamptz | Primary Key (id) |
 | **logs_auditoria** | id, personagem_id, tipo_evento, descricao, mudanca_creditos, created_at | uuid, uuid, text, text, int8, timestamptz | Primary Key (id) |
 | **logs_cassino** | id, personagem_id, user_id, jogo, tipo_evento, descricao, delta_fichas, created_at | uuid, uuid, uuid, varchar, varchar, text, int4, timestamptz | Primary Key (id) |
+| **logs_cupons** | id, created_at, acao, cupom_id, codigo, user_id, usuario_nome, usuario_cargo, pagina, resumo, dados_antes, dados_depois | int8, timestamptz, text, uuid, text, uuid, text, text, text, text, jsonb, jsonb | Primary Identity (id). `acao` ∈ CRIADO, EDITADO, REMOVIDO, USADO. Preenchida só pelo trigger `trg_cupons_log`, nunca pelo front. `cupom_id` sem FK, para o registro sobreviver à remoção. `pagina` ainda não é preenchida (ver seção 9). `usuario_nome` vem de `permissoes.nome`; se não houver, do primeiro personagem do usuário; senão `Jogador`. `dados_antes`/`dados_depois` guardam só os campos alterados em EDITADO, e o campo alterado em USADO |
 | **logs_dados** | id, personagem_id, user_id, nome_rolagem, dado_puro, bonus_total, resultado_final, detalhamento, created_at | int8, uuid, uuid, text, int4, int4, int4, text, timestamptz | Primary Identity (id) |
 | **logs_dev** | id, created_at, user_id, usuario_nome, usuario_cargo, acao, tabela, registro_id, titulo_registro, resumo | int8, timestamptz, uuid, text, text, text, text, text, text, text | Primary Identity (id). Atividade da página de controleBugs (`dev/controleBugs.html`). Os registros da manutenção entram pelo trigger `trg_dev_itens_log_manutencao` (ação `REPORTE`), não pelo front, porque o usuário é anônimo. Nessas linhas `usuario_cargo = 'manutencao'` e `usuario_nome` é o nome digitado pelo reporter. `user_id` fica nulo, se a coluna aceitar nulo (conferir no painel). `registro_id` guarda o id de `dev_itens` como texto. `acao` ∈ CRIAR, ETAPA, ATRIBUIR, CONCLUIR, REABRIR, NOTA, EXCLUIR, REPORTE. Notas são linhas com `acao = 'NOTA'`, em que `resumo` guarda o texto da nota e `usuario_nome` o autor. Não há coluna própria de notas. Excluir uma linha do log também apaga a nota correspondente |
 | **logs_taticos** | id, user_id, nome_jogador, nave_nome, faccao, acao, detalhes, created_at | uuid, uuid, text, text, text, text, text, timestamptz | Primary Key (id) |
@@ -166,6 +167,13 @@ Não há política de INSERT para `holonet_logs` no dump atual. A gravação é 
 | Permitir insert proprio logs_cassino | INSERT | authenticated | `auth.uid() = user_id` (WITH CHECK) |
 | Permitir delete ISB logs_cassino | DELETE | authenticated | Cargos ISB |
 
+### `logs_cupons`
+| Política | Comando | Roles | Regra RLS (Resumo) |
+| :--- | :--- | :--- | :--- |
+| logs_cupons leitura ISB | SELECT | authenticated | `holonet_is_mestre()` |
+
+Não há policy de INSERT nem de UPDATE/DELETE. A gravação é feita pela função `log_cupom_evento()` (SECURITY DEFINER), que não passa pela RLS. Assim ninguém forja linhas pela API.
+
 ### `logs_dados`
 | Política | Comando | Roles | Regra RLS (Resumo) |
 | :--- | :--- | :--- | :--- |
@@ -255,6 +263,7 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 | `ajustar_combustivel(p_inventario_id, p_tipo, p_delta)` | uuid (`inventario.id`), text (`'subluz'` ou `'hiperespacial'`), numeric | numeric (nível resultante) | Soma (`delta > 0`, Posto) ou desconta (`delta < 0`, Navegação) combustível de uma nave em `inventario.dados_customizados` (`subLevel`/`hypLevel`). Trava a linha (`FOR UPDATE`), limita ao máximo (`subCap`/`hypCap`) e só altera o nível. Só o dono (`inventario.user_id`) ou ISB. Erros: `NAO_AUTENTICADO`, `TIPO_INVALIDO`, `QUANTIDADE_INVALIDA`, `NAVE_NAO_ENCONTRADA`, `SEM_PERMISSAO`, `NAVE_NAO_CALIBRADA`, `COMBUSTIVEL_INSUFICIENTE`. |
 | `log_reporte_manutencao()` (trigger) | — | trigger | Trigger `trg_dev_itens_log_manutencao` (AFTER INSERT em `dev_itens`, SECURITY DEFINER). Quando `origem = 'manutencao'`, grava em `logs_dev` a ação `REPORTE` com o nome do reporter, o dev escolhido e a página. Não é chamada via `rpc`. |
 | `personagens_proteger_ativo()` (trigger) | — | trigger | Trigger `trg_personagens_proteger_ativo` (BEFORE UPDATE OF `ativo` em `personagens`). Se `ativo` mudar e o usuário não passar em `holonet_is_mestre()`, levanta `SEM_PERMISSAO`. Não é chamada via `rpc`. |
+| `log_cupom_evento()` (trigger) | — | trigger | Trigger `trg_cupons_log` (AFTER INSERT OR UPDATE OR DELETE em `cupons`, SECURITY DEFINER). Grava em `logs_cupons`: INSERT → `CRIADO`; DELETE → `REMOVIDO`; UPDATE com `vezes_usado` maior → `USADO`; outro UPDATE → `EDITADO` (só se algum campo além de `updated_at` mudou). Operador = `auth.uid()`. Não é chamada via `rpc`. |
 | `definir_motor_nave(p_inventario_id, p_classe)` | uuid, text (`'0.5'`, `'1'`, `'2'`, `'3'`) | void | Grava `dados_customizados.motorClass`. Jogador define **uma única vez** (se estiver vazio); ISB altera sempre. Erros: `CLASSE_INVALIDA`, `MOTOR_JA_DEFINIDO`, `SEM_PERMISSAO`, `NAVE_NAO_ENCONTRADA`. |
 | `consumir_cupom(p_codigo, p_moeda)` | text, text (`p_moeda` = `'CREDITOS'` ou `'BRL'`) | tabela `(r_codigo, r_moeda, r_tipo, r_valor)` | Consome um uso de cupom no checkout das lojas. Trava a linha (`FOR UPDATE`), checa se está ativo, se a moeda confere (`AMBAS` aceita as duas) e se há limite; então incrementa `vezes_usado`. Só `authenticated`. Erros: `NAO_AUTENTICADO`, `MOEDA_INVALIDA`, `CUPOM_INVALIDO`, `CUPOM_MOEDA_INVALIDA`, `CUPOM_ESGOTADO`. Não existe RPC de devolução de propósito, para não permitir contornar o limite. |
 
@@ -282,6 +291,7 @@ Funções com `SECURITY DEFINER` centralizam escritas sensíveis ou que precisam
 *   **Regra de moeda:** `CREDITOS` só desconta compra em créditos. `BRL` só desconta compra em reais. `AMBAS` vale para as duas. Em `FIXED` + `AMBAS`, o valor é aplicado em CR no total de créditos e em R$ no total de reais. `PERCENTAGE` aplica o percentual nas duas.
 *   **Conversão:** 10.000 CR = R$ 1,00, como nas outras telas. Os totais saem sempre de `CupomDesconto.totais(subtotalCR)`.
 *   **Log:** a compra em créditos grava `Cupom [CODIGO] aplicado.` na descrição de `COMPRA_LOJA` (`logs_auditoria`). A compra em reais não registra o cupom no log. O uso aparece só em `cupons.vezes_usado`.
+*   **Auditoria de cupons (`logs_cupons`):** criação, edição, remoção e uso são gravados pelo trigger `trg_cupons_log`, com operador, horário e dados alterados. A aba CUPONS de `log.html` lê essa tabela (somente ISB). O Terminal Bancário exclui linhas de `log_bancario` com `tipo_evento` contendo `CUPOM` (`.not('tipo_evento', 'ilike', '%CUPOM%')`), então criações antigas gravadas lá deixam de aparecer ali, mas continuam no banco.
 *   **Falha após o consumo:** se o débito falhar depois do consumo, o uso não é devolvido. Isso é intencional, para não permitir burlar o limite. Compra em reais consome o uso ao finalizar, mesmo que o Livepix não seja pago.
 *   **Limitação:** o cálculo do preço fica no navegador, como o restante das lojas. A RPC garante limite e moeda de forma atômica, mas não o valor cobrado.
 
@@ -329,5 +339,7 @@ Achados da leitura das políticas atuais. Alguns podem ser intencionais (mesa co
 | **dev_itens** | Constraint `dev_itens_status_check` | Não valida a combinação `tipo` x `status` | Um post pode receber status de chamado pela API. A validação fica no JS |
 | **logs_dev** / **dev_itens** | Trigger `trg_dev_itens_log_manutencao` | `usuario_nome` vem de `reportado_por`, texto livre enviado pelo usuário anônimo | Autor pode ser forjado no log dos devs, e cada reporte falso também gera uma linha de log. Se `logs_dev.user_id` for nulo, a linha não tem autor verificável |
 | **cupons** | Desconto calculado no navegador | A RPC `consumir_cupom` garante limite e moeda, mas o valor debitado é calculado no front (mesmo modelo das lojas). Falha no débito após o consumo queima um uso | Cliente modificado pode pagar menos. Para fechar, mover o cálculo do débito para uma RPC |
+| **logs_cupons** | Coluna `pagina` | Não é preenchida. O trigger não recebe a página de origem, e as páginas que criam/editam cupons e a chamada de `consumir_cupom` em `cupomDesconto.js` ainda não enviam esse dado | Aba CUPONS mostra "—" na página. Pendência: passar a página nas chamadas do front e gravá-la |
+| **log_bancario** | Criações antigas de cupom (`tipo_evento` com `CUPOM`) | A página que cria cupons ainda grava nessa tabela | Duplicidade de origem: o log novo é o trigger, mas o código antigo ainda escreve em `log_bancario`. Remover essa gravação quando o código for revisado |
 
 Observação: a correção depende de decisão sobre quais tabelas são intencionalmente compartilhadas. Antes de alterar, confirme o default de `criado_por` em `dev_itens` no painel do Supabase, porque o dump não mostra defaults.

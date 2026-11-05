@@ -151,6 +151,10 @@
                 class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
                 Holonet (HNN)
             </button>
+            <button id="btn-tab-cupons" onclick="alternarAbas('cupons')"
+                class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
+                Cupons
+            </button>
             <button id="btn-tab-devs" onclick="alternarAbas('devs')"
                 class="px-4 py-2 font-bold text-sm tracking-wider uppercase bg-stone-900/40 text-stone-500 border border-stone-800 rounded hover:text-stone-300 transition-colors">
                 Devsenvolvedores (DEV_CORE)
@@ -365,6 +369,43 @@
                                 <td colspan="5" class="p-8 text-center text-stone-500">Aguardando registros da
                                     Holonet...
                                 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="conteudo-cupons" class="hidden">
+            <div class="flex flex-wrap gap-3 items-end mb-4">
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] uppercase tracking-widest text-stone-500">Ação</label>
+                    <select id="filter-cupom-acao" class="bg-stone-950 border border-stone-700 text-stone-200 text-xs rounded px-3 py-2">
+                        <option value="">Todas</option>
+                        <option value="CRIADO">Criados</option>
+                        <option value="EDITADO">Editados</option>
+                        <option value="REMOVIDO">Removidos</option>
+                        <option value="USADO">Usados</option>
+                    </select>
+                </div>
+                <span class="text-[10px] text-stone-500 pb-2">Busca e período usam os filtros do topo.</span>
+            </div>
+            <div class="bg-stone-950 border border-stone-800 rounded-lg overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[1000px]">
+                        <thead>
+                            <tr class="bg-stone-900 border-b border-stone-800 text-amber-400 text-xs uppercase tracking-wider">
+                                <th class="p-4 w-48">Data / Hora Local</th>
+                                <th class="p-4 w-44">Operador</th>
+                                <th class="p-4 w-32">Ação</th>
+                                <th class="p-4 w-40">Cupom</th>
+                                <th class="p-4 w-40">Página</th>
+                                <th class="p-4">Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-cupons-body" class="text-sm divide-y divide-stone-800/50">
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-amber-400 animate-pulse">Aguardando consulta...</td>
                             </tr>
                         </tbody>
                     </table>
